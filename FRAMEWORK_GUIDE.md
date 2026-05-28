@@ -123,6 +123,8 @@ Four tracks run in parallel. Converge at the end.
 |---|---|
 | `/common-ground` | Tech stack decision, repo structure, COMMON-GROUND.md |
 
+> `/common-ground` is part of the [fullstack-dev-skills](https://github.com/jeffallan/claude-skills) plugin. Pureinn pairs naturally with it - spec and product definition from Pureinn, technical execution from fullstack-dev-skills. Install both for the full stack.
+
 ---
 
 ### Phase 6 + 7 - FDD Delivery (repeats per Stripe, ~2 weeks each)
@@ -138,11 +140,25 @@ Four tracks run in parallel. Converge at the end.
 | `/pm-business-rule-core` | RULE-B: Core Business Rules |
 | `/pm-business-rule-governance` | RULE-C: Governance / Policy / UX Rules |
 | `/pm-fsd` | Functional Specification (flows, validations, acceptance criteria) |
+| `/impeccable-teach` [once at Phase 6 start] | PRODUCT.md + DESIGN.md (design system context for Claude) |
+| `/impeccable-shape` [per feature] | UX/UI shape brief - defines layout, interactions, and visual intent before implementation |
 | `/feature-forge` [per feature, AFTER BRD + FSD] | Feature Card (acceptance criteria, tasks) |
 
 **Build (per feature, after spec gate):**
 
-`/fullstack-guardian` → `/impeccable-craft` → `/test-master` → `/playwright-expert` → `/code-reviewer` → `/impeccable-harden` → `/devops-engineer` → `/monitoring-expert`
+| Skill | From | Purpose |
+|---|---|---|
+| `/fullstack-guardian` | fullstack-dev-skills | Full-stack implementation |
+| `/impeccable-craft` | impeccable | Frontend UI implementation from shape brief |
+| `/test-master` | fullstack-dev-skills | Unit + integration tests |
+| `/playwright-expert` | fullstack-dev-skills | E2E tests |
+| `/code-reviewer` | fullstack-dev-skills | Code review |
+| `/impeccable-harden` | impeccable | UI edge cases, error states, accessibility |
+| `/security-reviewer` | fullstack-dev-skills | Security audit |
+| `/devops-engineer` | fullstack-dev-skills | CI/CD, deployment |
+| `/monitoring-expert` | fullstack-dev-skills | Observability, alerting |
+
+Not every skill applies to every feature. Choose what fits the scope of each feature.
 
 **Stripe close:** `/pm-stripe close` → Stripe retrospective, learnings, next Stripe prep
 
@@ -167,11 +183,11 @@ Use when: product exists, active users, goal is adding new functionality.
 
 Run once to sync current state into Notion and generate Claude context:
 
-| Skill | Output |
-|---|---|
-| `/pureinn` | Workspace setup, state.json, pureinn-variables.md |
-| `/common-ground` | Technical context: stack, APIs, domain model, debt → COMMON-GROUND.md |
-| `/impeccable-teach` | Design context: design system, UX patterns → PRODUCT.md + DESIGN.md |
+| Skill | Output | From |
+|---|---|---|
+| `/pureinn` | Workspace setup, state.json, pureinn-variables.md | Pureinn |
+| `/common-ground` | Technical context: stack, APIs, domain model, debt → COMMON-GROUND.md | fullstack-dev-skills |
+| `/impeccable-teach` | Design context: design system, UX patterns → PRODUCT.md + DESIGN.md | impeccable |
 | `/pm-glossary` | Domain glossary |
 | `/pm-reverse-extract` | Feature inventory (FDD format) with status (Done/In Progress/Planned); MFS → FS → Feature hierarchy pushed to Notion; local Phase 5 artifacts for Claude context |
 
@@ -183,12 +199,12 @@ Then proceed directly to Phase 6 + 7.
 
 Run once per project - not per feature:
 
-| Skill | Output |
-|---|---|
-| `/pureinn` | Product context: users, roadmap, known problems, workarounds |
-| `/common-ground` | Technical context: stack, domain model, APIs, debt → COMMON-GROUND.md |
-| `/impeccable-teach` | Design context: design system, UX patterns, components → PRODUCT.md + DESIGN.md |
-| `/pm-glossary` | Domain glossary |
+| Skill | Output | From |
+|---|---|---|
+| `/pureinn` | Product context: users, roadmap, known problems, workarounds | Pureinn |
+| `/common-ground` | Technical context: stack, domain model, APIs, debt → COMMON-GROUND.md | fullstack-dev-skills |
+| `/impeccable-teach` | Design context: design system, UX patterns, components → PRODUCT.md + DESIGN.md | impeccable |
+| `/pm-glossary` | Domain glossary | Pureinn |
 
 Skip if all three context files exist from a prior session.
 
@@ -348,3 +364,31 @@ pureinn-workspace/
 Every phase requires human approval before advancing. This is intentional - not optional. The engine routes, generates, and structures. The human validates and decides.
 
 Run `/pureinn` after completing a phase to trigger the exit gate. Exit gates have quantitative thresholds (e.g., "≥10 customer interviews complete", "Go/No-Go hypothesis verdict recorded"). Only when criteria are met does the engine advance.
+
+---
+
+## Works best with
+
+Pureinn covers the product and spec layer. For the full development stack, pair it with:
+
+| Plugin / Skill | What it adds | Install |
+|---|---|---|
+| **fullstack-dev-skills** | 66+ specialist skills for implementation: backend, frontend, infrastructure, testing, DevOps, security | `/plugin install fullstack-dev-skills@jeffallan` |
+| **impeccable** | Production-grade UI/UX: shape briefs, frontend implementation, design system, accessibility, polish | `/plugin install impeccable` |
+
+The combination covers the complete product development lifecycle:
+- **Pureinn** - discovery, validation, domain modeling, feature planning, spec
+- **fullstack-dev-skills** - technical context setup, implementation, testing, deployment
+- **impeccable** - design context, UX shaping, frontend craft, UI hardening
+
+---
+
+## Acknowledgements
+
+The build-phase skills referenced in Phase 6-7 are part of two excellent open-source projects:
+
+- **[fullstack-dev-skills](https://github.com/jeffallan/claude-skills)** by [@jeffallan](https://github.com/jeffallan) - a comprehensive skill pack for full-stack development covering 66+ specialist skills across languages, frameworks, infrastructure, and workflows. The `common-ground`, `fullstack-guardian`, `test-master`, `playwright-expert`, `code-reviewer`, `security-reviewer`, `devops-engineer`, `monitoring-expert`, and `feature-forge` skills referenced in this guide are all from this project.
+
+- **[impeccable](https://github.com/impeccable-dev/impeccable)** - a production-grade frontend design skill for Claude Code. The `impeccable-teach`, `impeccable-shape`, `impeccable-craft`, and `impeccable-harden` skills referenced in this guide are from this project.
+
+Pureinn focuses on what comes before the build: the methodology, the thinking, the decisions, and the specifications. These two projects pick up where Pureinn ends and take the product into production. Credit where it is due.
