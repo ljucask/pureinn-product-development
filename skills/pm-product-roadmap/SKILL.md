@@ -1,0 +1,360 @@
+---
+name: pm-product-roadmap
+description: Generate or update the Product Roadmap. Living document - v1 created in Phase 3 (vision + problem + business model), v2 updated in Phase 4 (domain constraints), v3 updated in Phase 5 (feature and delivery view). Run this skill at each update point.
+license: MIT
+metadata:
+  author: https://github.com/ljucask
+  version: "1.0.0"
+  domain: product-management
+  triggers: product roadmap, roadmap, strategic roadmap, roadmap v1 v2 v3, delivery plan
+  role: specialist
+  scope: planning
+  output-format: document
+  related-skills: pm-prd, pm-mvp-scope, pm-features-list, pm-kpis
+---
+
+# PM - Product Roadmap
+
+## What this skill does
+
+Creates and maintains the Product Roadmap - a living strategic document that evolves across phases:
+
+- **v1 (Phase 3):** Vision + validated problem + customer segments + business model horizon. No features yet - strategic direction only.
+- **v2 (Phase 4):** Domain constraints and architecture decisions incorporated. Technical realities added. Still no delivery details.
+- **v3 (Phase 5):** Feature view added. Phases aligned with Feature Sets and Delivery Stripes. Delivery timeline visible.
+
+This skill handles all three versions. Step 0 determines which version applies and what updates are needed.
+
+The roadmap is NOT a sprint backlog. It communicates strategic intent and phase sequencing - not implementation details.
+
+---
+
+## Dependencies
+
+**Recommended before running v1 (Phase 3):**
+- `pm-problem-validation` - validated problem is the strategic foundation
+- `pm-business-model` - revenue model and segments frame the roadmap horizon
+- `pm-kpis` - success metrics anchor each roadmap phase
+
+**Recommended before running v2 (Phase 4):**
+- v1 roadmap must exist
+- `pm-domain-model` - domain constraints affect phase ordering
+- `pm-privacy-requirements` - compliance requirements may shift timelines
+
+**Recommended before running v3 (Phase 5):**
+- v2 roadmap must exist
+- `pm-features-list` - feature inventory for the feature view
+- `pm-mvp-scope` - MVP scope, Feature Sets, and Delivery Stripes define the delivery structure
+
+**Produces artifacts used by:**
+- `pm-prd` - roadmap is a required PRD section
+- `pm-business-case` - roadmap phases inform investment staging
+- All Phase 6 skills - roadmap v3 defines what gets built in which stripe
+
+---
+
+## Step 0: Current state check
+
+Check for existing artifacts:
+- Product Roadmap (any version)
+
+If a roadmap exists: identify the current version (v1 / v2 / v3) and what phase we are in now. Determine what update is needed.
+
+Also check: what Phase 3 artifacts exist (Business Model Canvas, KPIs, Business Case)? What Phase 4 artifacts exist (Domain Model)? What Phase 5 artifacts exist (Features List, MVP Scope)?
+
+Look for: roadmap that jumps straight to features without strategic context, phases without success criteria, missing "not now" section, timeline without explicit assumptions, v1 being updated with feature detail before Phase 5 is complete.
+
+Apply the standard skill interaction pattern (CLAUDE.md).
+
+---
+
+## Step 1: Gather inputs
+
+The questions differ by version. After Step 0, Claude identifies which version and asks accordingly.
+
+### For v1 (Phase 3 - new roadmap):
+
+```
+I need inputs for the Product Roadmap v1.
+
+1. VISION
+   What is the 3-year product vision in one sentence? (What does the world look like if we succeed?)
+   What is the 12-month goal? (Where do we want to be in a year?)
+
+2. STRATEGIC PHASES
+   How do you currently think about the product in phases?
+   (e.g., Phase 1: Prove value with early adopters → Phase 2: Scale core use case → Phase 3: Expand)
+   What are the major strategic bets or pivots at each phase?
+
+3. NORTH STAR & METRICS
+   What is the North Star Metric? (from pm-kpis)
+   What is the success signal that exits each phase?
+
+4. WHAT WE ARE NOT BUILDING (YET)
+   What is explicitly out of scope for the first 12 months?
+   What do customers ask for that we are choosing not to build? Why?
+
+5. DEPENDENCIES AND RISKS
+   What external factors could shift the timeline? (regulation, funding, hiring, partnership)
+   What is the biggest strategic risk to the roadmap?
+```
+
+### For v2 (Phase 4 update):
+
+```
+I need inputs to update the Product Roadmap to v2.
+
+1. DOMAIN CONSTRAINTS
+   What did the Domain Model reveal about system complexity or data structure?
+   Are there domain-driven constraints that affect phase ordering or timeline?
+
+2. TECHNICAL REALITIES
+   What technical decisions (from architecture or tech feasibility) change what can be built when?
+   Are there dependencies between technical capabilities that affect sequencing?
+
+3. COMPLIANCE / PRIVACY
+   Any regulatory requirements (from pm-privacy-requirements) that add time to specific phases?
+
+4. ADJUSTMENTS NEEDED
+   What changes from v1? (new phases, shifted timelines, dropped scope, new risks)
+```
+
+### For v3 (Phase 5 update):
+
+```
+I need inputs to update the Product Roadmap to v3.
+
+1. MVP SCOPE
+   What is in MVP? (from pm-mvp-scope)
+   What are the Feature Sets and their priority order?
+   What are the planned Delivery Stripes? (2-week time-boxes, in sequence)
+
+2. DELIVERY VIEW
+   How many Delivery Stripes are planned for MVP?
+   What does the post-MVP roadmap look like? (Phase 2 of product - what comes after MVP)
+
+3. ADJUSTMENTS NEEDED
+   What changes from v2? (feature decisions that shift strategic direction, new risks, scope changes)
+```
+
+---
+
+## Step 2: Generate artifact
+
+Generate in English.
+
+---
+
+### ARTIFACT: Product Roadmap
+
+> The template below is for v1. Claude adapts for v2 (adds domain/technical layer) and v3 (adds feature/stripe view) based on the current version being created.
+
+```markdown
+# Product Roadmap - [Product Name]
+
+> **Phase created:** 3 - Define & Validation
+> **Current version:** v1 / v2 / v3
+> **Last updated:** [date]
+> **Next scheduled update:** Phase 4 (domain model complete) / Phase 5 (MVP scope defined)
+
+---
+
+## Vision
+
+**3-year vision:**
+[One sentence: what does the world look like if this product succeeds?]
+
+**12-month goal:**
+[What we want to achieve in the next 12 months - measurable direction, not a feature list]
+
+**North Star Metric:** [NSM from pm-kpis]
+**NSM Target (Month 12):** [X]
+
+---
+
+## Strategic Phases
+
+> v1: strategic direction only. Feature detail comes in v3.
+
+### Phase 1: [Name] - [Timeframe]
+**Goal:** [What this phase achieves - one sentence]
+**Focus:** [What we concentrate on]
+**Key hypothesis being tested:** [The core assumption this phase validates]
+
+**Success criteria (phase exit gate):**
+- [ ] [Measurable condition 1 - e.g., 20 paying customers]
+- [ ] [Measurable condition 2 - e.g., Day 30 retention > 40%]
+- [ ] [Measurable condition 3]
+
+**What we are NOT doing in this phase:**
+- [Explicitly excluded scope]
+- [Features deferred to Phase 2]
+
+---
+
+### Phase 2: [Name] - [Timeframe]
+**Goal:** [What this phase achieves]
+**Focus:** [What we concentrate on]
+**Key hypothesis being tested:** [The core assumption]
+
+**Unlock condition:** [What must be true before Phase 2 starts - exit gate from Phase 1]
+
+**Success criteria:**
+- [ ] [Condition 1]
+- [ ] [Condition 2]
+
+---
+
+### Phase 3: [Name] - [Timeframe]
+**Goal:** [What this phase achieves]
+**Focus:** [Expansion / optimization / new segments]
+
+**Unlock condition:** [Exit gate from Phase 2]
+
+**Success criteria:**
+- [ ] [Condition 1]
+
+---
+
+## What We Are Not Building (Now)
+
+These are features and capabilities we have explicitly decided not to build in the current horizon. This is a strategic choice, not a backlog.
+
+| Item | Why deferred | Reconsider when |
+|---|---|---|
+| [Feature / capability] | [Too complex for MVP, wrong segment, unvalidated demand...] | [Phase 2 / after X customers / if Y signal appears] |
+| [Feature 2] | | |
+| [Feature 3] | | |
+
+---
+
+## Dependencies and Risks
+
+| Dependency / Risk | Type | Impact | Mitigation |
+|---|---|---|---|
+| [e.g., Payment integration timeline] | External | Could delay Phase 1 by [X weeks] | [Start early, parallel track] |
+| [e.g., Regulatory approval in SK] | Regulatory | Could block Phase 2 | [Legal track started in Phase 2] |
+| [e.g., Hiring key engineer] | Internal | Phase 1 delayed if not hired by [date] | [Recruiting started now] |
+| [e.g., AI API pricing increase] | Technical | Margin compression → repricing needed | [Cost model reviewed quarterly] |
+
+---
+
+## Roadmap Assumptions
+
+The timeline in this roadmap assumes:
+- [Assumption 1: e.g., Team of X fully onboarded by [date]]
+- [Assumption 2: e.g., First paying customers acquired through founder-led sales]
+- [Assumption 3: e.g., No major regulatory changes in target markets]
+- [Assumption 4: e.g., AI API costs remain within ±20% of current rate card]
+
+**If any of these change:** [Which phase gates should be reviewed and how]
+
+---
+
+## Version History
+
+| Version | Date | Phase | Key changes |
+|---|---|---|---|
+| v1 | [date] | Phase 3 | Initial - strategic phases, vision, success criteria |
+| v2 | [date] | Phase 4 | Domain constraints added, [X] timeline adjustments |
+| v3 | [date] | Phase 5 | Feature view added, Delivery Stripes defined |
+```
+
+---
+
+### v3 Additions (Phase 5 update)
+
+When updating to v3, Claude adds the following section to the artifact:
+
+```markdown
+---
+
+## MVP Delivery View (v3)
+
+> Added in Phase 5 after MVP Scope is defined.
+
+### Feature Sets (logical groupings)
+
+| Feature Set | Description | BRD/FSD Status | Priority |
+|---|---|---|---|
+| [FS-01: Name] | [What functional area this covers] | [To be written / In progress / Complete] | P1 |
+| [FS-02: Name] | | | P2 |
+| [FS-03: Name] | | | P3 |
+
+### Delivery Stripes (2-week time-boxes)
+
+| Stripe | Timeframe | Features included | Feature Set(s) | Goal |
+|---|---|---|---|---|
+| Stripe 1 | [Week 1-2] | [Feature A, Feature B] | FS-01 | [What this stripe proves or delivers] |
+| Stripe 2 | [Week 3-4] | [Feature C, Feature D] | FS-01, FS-02 | |
+| Stripe 3 | [Week 5-6] | [Feature E] | FS-02 | |
+| ... | | | | |
+
+**MVP completion:** [Stripe X] - [Estimated date]
+
+### Post-MVP Roadmap
+
+| Horizon | Focus | Feature Sets planned |
+|---|---|---|
+| Month 1-3 post-MVP | [Retention + activation optimization] | [FS-04, FS-05] |
+| Month 4-6 post-MVP | [Expansion features] | [FS-06] |
+| Month 7-12 post-MVP | [Scale and new segment] | [TBD based on data] |
+```
+
+---
+
+## Internal completeness checklist
+
+<!-- Claude reference only - not shown to user.
+     Use in Step 0 to identify gaps in existing artifacts.
+     Use in Step 2 to verify full coverage before finalizing output. -->
+
+**v1 Product Roadmap must cover:**
+- [ ] 3-year vision stated (direction, not feature list)
+- [ ] 12-month goal stated (measurable direction)
+- [ ] Strategic phases defined (2-4 phases, each with name + timeframe + goal)
+- [ ] Success criteria per phase (measurable, specific - not "grow users")
+- [ ] Unlock condition per phase (what must be true before phase starts)
+- [ ] "What we are not building" section - explicit deferred scope
+- [ ] Roadmap assumptions listed (what must hold for the timeline to be valid)
+- [ ] North Star Metric stated with phase-aligned targets
+
+**v2 additions must cover:**
+- [ ] Domain constraints incorporated (any from Domain Model that affect sequencing)
+- [ ] Technical dependencies added (architecture decisions that gate features)
+- [ ] Compliance requirements reflected in timeline (GDPR, licensing, etc.)
+- [ ] Version history updated
+
+**v3 additions must cover:**
+- [ ] Feature Sets listed with priority
+- [ ] Delivery Stripes defined (2-week time-boxes, in sequence)
+- [ ] Each stripe has a stated goal (not just a feature list)
+- [ ] MVP completion stripe identified
+- [ ] Post-MVP roadmap direction stated
+- [ ] BRD/FSD status per Feature Set noted (spec must exist before build starts)
+- [ ] Version history updated
+
+**Living document quality:**
+- [ ] Version number and date are current
+- [ ] Assumptions section is up to date
+- [ ] "What we are not building" is reviewed and reflects current decisions
+- [ ] No outdated phase goals from earlier versions
+
+**For SaaS/AI products:**
+- [ ] Phase 1 explicitly targets early adopters (not general availability)
+- [ ] AI feature maturity staged (MVP: basic AI → Phase 2: trained on customer data → Phase 3: advanced)
+- [ ] Compliance phase included if GDPR / EU AI Act requirements need to be addressed before launch
+- [ ] Freemium funnel is a strategic phase consideration (when to introduce free tier)
+
+## Notion
+
+Read `pureinn-variables.md` key "Product Roadmap" → if URL present, remind user after saving:
+`Roadmap saved locally. Update Notion: [Product Roadmap URL]`
+
+## Save to
+
+```
+pureinn-workspace/[project-slug]/artifacts/phase-3/product-roadmap-v1.md
+pureinn-workspace/[project-slug]/artifacts/phase-4/product-roadmap-v2.md
+pureinn-workspace/[project-slug]/artifacts/phase-5/product-roadmap-v3.md
+```

@@ -1,0 +1,381 @@
+---
+name: pm-business-model
+description: Generate a Business Model Canvas from Phase 2 discovery outputs and founder knowledge. Use in Phase 3 after Problem Validation Summary. Produces the commercial logic of the product.
+license: MIT
+metadata:
+  author: https://github.com/ljucask
+  version: "1.0.0"
+  domain: product-management
+  triggers: business model, revenue model, pricing strategy, monetization
+  role: specialist
+  scope: strategy
+  output-format: document
+  related-skills: pm-lean-canvas, pm-kpis, pm-business-case
+---
+
+# PM - Business Model Canvas
+
+## What this skill does
+
+Takes Phase 2 validated problem + market context + founder assumptions and produces a structured Business Model Canvas - the commercial logic that connects the product to revenue.
+
+This is a synthesis skill. It combines what was learned in Phase 2 with strategic decisions about how the product will create, deliver, and capture value.
+
+Output is used directly by `pm-kpis` (metrics follow from revenue model), `pm-business-case` (financial projections extend the model), and `pm-prd` (business model is a core PRD section).
+
+---
+
+## Dependencies
+
+**Recommended before running:**
+- `pm-problem-validation` - validated customer segments and core problem are the foundation
+- `pm-market-analysis` - market size and competitor positioning inform revenue model choices
+- `pm-personas` - personas clarify which customer relationships and channels make sense
+
+**Produces artifacts used by:**
+- `pm-kpis` - revenue model drives metric selection (AARRR, North Star)
+- `pm-business-case` - business model is the commercial assumption set for financial modeling
+- `pm-product-roadmap` - strategic context for roadmap prioritization
+- `pm-prd` - business model is a required PRD section
+
+---
+
+## Step 0: Current state check
+
+Check for existing artifacts:
+- Business Model Canvas
+
+Also check: does a Problem Validation Summary exist? Does a Market Analysis exist? Cross-reference customer segments and competitive whitespace identified there against the model being built here.
+
+Look for: revenue streams without pricing evidence, value proposition not tied to validated pains, cost structure missing AI/infrastructure costs, no channel strategy defined, customer relationships undefined (self-serve vs. sales-led).
+
+Apply the standard skill interaction pattern (CLAUDE.md).
+
+---
+
+## Step 1: Gather inputs
+
+Ask the user all questions at once:
+
+```
+I need inputs for the Business Model Canvas.
+
+1. VALUE PROPOSITION
+   What is the core value you deliver? What pain do you solve, and how?
+   What is the primary outcome the customer gets? (not features - outcomes)
+   Why would a customer choose you over alternatives?
+
+2. CUSTOMER SEGMENTS
+   Who is the primary paying customer? (confirm or refine from Phase 2)
+   Are there secondary segments worth modeling separately?
+   B2B or B2C or both? If B2B: who is the buyer vs. who is the user?
+
+3. REVENUE MODEL
+   How will the product make money? (subscription, usage-based, marketplace cut, freemium + upgrade, one-time, hybrid...)
+   What is the pricing model? (per seat, per property, flat monthly, tiered, usage...)
+   What is the target price point? (what does your research or competitor analysis suggest?)
+   Is there a free tier planned? If yes, what is the upgrade trigger?
+
+4. CHANNELS
+   How will customers find you? (inbound SEO, outbound, partnerships, community, referral, paid ads...)
+   How will you acquire the first 10-50 customers specifically?
+   What is the primary onboarding path? (self-serve / assisted / sales-led)
+
+5. CUSTOMER RELATIONSHIPS
+   What type of relationship do customers expect? (self-serve tool, managed service, community, white-glove...)
+   What does retention look like? (network effects, switching costs, habit formation, contracts...)
+
+6. KEY RESOURCES
+   What is essential to deliver the value proposition? (technology, data, brand, team, IP...)
+   What is hardest to replicate? (your defensible core)
+
+7. KEY ACTIVITIES
+   What must you do continuously to deliver value? (product development, content, community, sales, ops...)
+   What would break if you stopped doing it?
+
+8. KEY PARTNERS
+   Who do you depend on to operate? (APIs, payment processors, data providers, channel partners...)
+   Are any of these partners also potential competitors?
+
+9. COST STRUCTURE
+   What are the primary cost drivers? (team, infrastructure, AI API costs, sales, support, compliance...)
+   What is the expected unit economics direction? (does COGS go up or down as you scale?)
+   If AI-powered: what is the estimated AI cost per active user / per transaction?
+```
+
+---
+
+## Step 2: Generate artifact
+
+Generate in English.
+
+---
+
+### ARTIFACT: Business Model Canvas
+
+```markdown
+# Business Model Canvas - [Product Name]
+
+> **Phase:** 3 - Define & Validation
+> **Date:** [date]
+> **Version:** v1 (initial - based on Phase 2 discovery)
+> **Status:** Draft - validated against Problem Validation Summary, not yet market-tested
+
+---
+
+## Canvas Overview
+
+| | | |
+|---|---|---|
+| **Key Partners** | **Key Activities** | **Value Propositions** |
+| [partners] | [activities] | [value props] |
+| | **Key Resources** | |
+| | [resources] | |
+| **Cost Structure** | | **Revenue Streams** |
+| [costs] | **Customer Relationships** | [revenue] |
+| | [relationships] | |
+| | **Channels** | **Customer Segments** |
+| | [channels] | [segments] |
+
+---
+
+## 1. Value Propositions
+
+**Primary value proposition:**
+[1-2 sentences: What outcome does the customer get? What pain disappears?]
+
+**For [Segment 1]:**
+- [Specific value delivered]
+- [Pain eliminated]
+- [Outcome created]
+
+**For [Segment 2] (if applicable):**
+- [Specific value delivered]
+
+**Differentiation from alternatives:**
+[Why this and not competitor X or status quo - tied to competitive whitespace from Market Analysis]
+
+---
+
+## 2. Customer Segments
+
+| Segment | Type | Size (SAM) | Priority |
+|---|---|---|---|
+| [Primary segment] | [B2B / B2C / B2B2C] | [X,000 / $XM] | Primary |
+| [Secondary segment] | | | Secondary |
+
+**Primary segment decision:** [1-2 sentences on why this is the segment to focus on first]
+
+**B2B specifics (if applicable):**
+- Buyer: [who signs / pays]
+- User: [who uses daily]
+- Champion: [who drives internal adoption]
+- Decision process: [self-serve / procurement / executive buy-in]
+
+---
+
+## 3. Channels
+
+**Acquisition channels:**
+
+| Channel | Type | Priority | Estimated CAC | Notes |
+|---|---|---|---|---|
+| [e.g., Inbound SEO / content] | Inbound | High | Low (long-term) | [detail] |
+| [e.g., Direct outreach to hosts] | Outbound | High (early) | Med | [detail] |
+| [e.g., Partner referrals] | Partnership | Med | Low | [detail] |
+
+**First 10-50 customer strategy:**
+[Specific approach to get the first paying customers - founder-led, direct outreach, community, etc.]
+
+**Onboarding model:** Self-serve / Assisted / Sales-led
+[Brief rationale - driven by customer sophistication and price point]
+
+---
+
+## 4. Customer Relationships
+
+**Relationship type:** [e.g., Self-serve SaaS / Community-led / High-touch onboarding]
+
+**Retention mechanism:**
+- [What creates stickiness - data lock-in, network effects, habit, contract...]
+- [What switching cost does the customer face after 6 months of use]
+
+**Support model:**
+- Phase 1 (early): [e.g., Founder-led, email, Intercom]
+- Scale: [e.g., Self-serve docs + async support]
+
+**Community / expansion:**
+[Is there a community element planned? Referral program? Expansion revenue (upsell/cross-sell)?]
+
+---
+
+## 5. Revenue Streams
+
+**Primary revenue model:** [Subscription / Usage-based / Marketplace / Freemium / Hybrid]
+
+| Revenue Stream | Model | Price Point | Trigger | Est. % of Revenue |
+|---|---|---|---|---|
+| [Primary: e.g., Monthly subscription] | [Recurring] | [$X/month per property] | [Signup + first property added] | [80%] |
+| [Secondary: e.g., Booking fee] | [Transactional] | [X% per booking] | [Booking confirmed] | [20%] |
+
+**Pricing tiers (if applicable):**
+
+| Tier | Price | For whom | Key limits / features |
+|---|---|---|---|
+| [Free / Starter] | $0 | [Early traction, lead gen] | [X properties, limited features] |
+| [Pro] | $X/mo | [Core target customer] | [Full features] |
+| [Business] | $X/mo | [Larger operators] | [Multi-user, API access...] |
+
+**Freemium upgrade trigger (if applicable):**
+[The specific limit or feature that converts free to paid - must be concrete]
+
+**Unit economics direction:**
+- ARPU: $[X]/month
+- Estimated churn target: < [X]% monthly
+- LTV/CAC target ratio: [3:1 minimum]
+
+---
+
+## 6. Key Resources
+
+| Resource | Type | Own / Partner / Build | Strategic Importance |
+|---|---|---|---|
+| [e.g., Product + tech stack] | Technology | Build | Core |
+| [e.g., AI model / LLM access] | Technology | Partner (API) | Critical dependency |
+| [e.g., Domain data / dataset] | Data | Build / Accumulate | Defensible moat |
+| [e.g., Founder domain expertise] | Human | Own | High (early stage) |
+| [e.g., Brand + community] | Intangible | Build | Long-term moat |
+
+**Defensible core:**
+[What resource, once built, is hard to replicate and creates durable advantage]
+
+---
+
+## 7. Key Activities
+
+| Activity | Frequency | Owner | Why it matters |
+|---|---|---|---|
+| [e.g., Product development] | Continuous | CTO / team | Core value delivery |
+| [e.g., Customer success / onboarding] | Per new customer | Founder | Retention driver (early) |
+| [e.g., Content / SEO] | Weekly | PM / Marketing | Inbound acquisition |
+| [e.g., AI model tuning / prompt engineering] | Ongoing | ML / PM | Output quality maintenance |
+
+---
+
+## 8. Key Partners
+
+| Partner | Role | Dependency Level | Risk |
+|---|---|---|---|
+| [e.g., Stripe] | Payment processing | High | Low - commodity |
+| [e.g., OpenAI / Anthropic] | AI inference | High | Medium - pricing, policy changes |
+| [e.g., Airbnb / Booking.com] | Channel / data source | Med | High - platform risk |
+| [e.g., Legal counsel] | Compliance | Low-Med | Low |
+
+**Platform risk assessment:**
+[Are any key partners also competitors or could become competitors? What is the mitigation?]
+
+---
+
+## 9. Cost Structure
+
+**Cost model type:** Fixed-dominant / Variable-dominant / Mixed
+
+| Cost Category | Type | Est. Scale | Notes |
+|---|---|---|---|
+| Engineering team | Fixed | [X FTEs] | |
+| AI / LLM API costs | Variable | [$X per active user/month] | Critical for SaaS margin |
+| Infrastructure (hosting, DB, storage) | Variable + Fixed | [$X/month base + usage] | |
+| Customer acquisition | Variable | [$X CAC target] | |
+| Compliance / legal | Fixed | [$X/year] | |
+| Customer support | Semi-variable | [grows with user count] | |
+
+**Unit economics - COGS:**
+[What is included in cost of goods sold? What is gross margin target at scale? (SaaS target: >70%)]
+
+**AI cost sensitivity:**
+[If AI usage scales with usage: what happens to margin at 10x users? Is there a cost ceiling or optimization path?]
+
+---
+
+## Business Model Assumptions (to validate)
+
+| Assumption | Current Belief | Confidence | How to validate |
+|---|---|---|---|
+| [e.g., Customers will pay $X/month] | [Based on competitor pricing + 3 interviews] | Med | [Pricing experiment / waitlist signup] |
+| [e.g., Self-serve onboarding will work] | [Based on persona tech sophistication] | Low | [Onboarding test with 5 early adopters] |
+| [e.g., CAC < $X via inbound] | [Industry benchmark] | Low | [First campaign results] |
+| [e.g., AI cost < $X per user/month] | [API rate card estimate] | Med | [Load testing] |
+
+---
+
+## Business Model Risks
+
+| Risk | Probability | Impact | Mitigation |
+|---|---|---|---|
+| [e.g., Pricing too high for SMB segment] | Med | High | [Freemium entry tier / annual discount] |
+| [e.g., AI API costs erode margin at scale] | Med | High | [Cost optimization roadmap / model fine-tuning] |
+| [e.g., Platform dependency on Airbnb API] | High | High | [Multi-channel strategy, direct booking support] |
+| [e.g., Sales cycle too long for B2B] | Low-Med | Med | [Self-serve motion for SMB, sales-assist for enterprise] |
+```
+
+---
+
+## Internal completeness checklist
+
+<!-- Claude reference only - not shown to user.
+     Use in Step 0 to identify gaps in existing artifacts.
+     Use in Step 2 to verify full coverage before finalizing output. -->
+
+**Value Proposition must cover:**
+- [ ] Core outcome stated (not features - what the customer achieves)
+- [ ] Pain eliminated is the top validated pain from Problem Validation Summary
+- [ ] Differentiation from status quo and direct competitors stated
+- [ ] Value proposition per segment if multiple segments
+
+**Customer Segments must cover:**
+- [ ] Primary segment confirmed and prioritized
+- [ ] B2B: buyer / user / champion distinction made
+- [ ] Segment size tied to Market Analysis SAM
+
+**Revenue Streams must cover:**
+- [ ] Revenue model explicitly chosen (subscription / usage / marketplace / hybrid)
+- [ ] Pricing model defined (per seat, per unit, flat, tiered)
+- [ ] Price point grounded in research (competitor pricing, interview willingness to pay)
+- [ ] Freemium trigger defined if freemium model (must be specific - not vague)
+- [ ] Unit economics direction: ARPU, churn target, LTV/CAC target
+
+**Channels must cover:**
+- [ ] Acquisition channels identified with CAC estimate
+- [ ] First 10-50 customer strategy concrete (not "social media" - specific actions)
+- [ ] Onboarding model chosen (self-serve / assisted / sales-led) with rationale
+
+**Cost Structure must cover:**
+- [ ] All major cost categories identified
+- [ ] AI/LLM API cost per user estimated (for AI products)
+- [ ] Gross margin target stated
+- [ ] COGS defined (what's in it, what's not)
+
+**Key Partners must cover:**
+- [ ] Critical dependencies identified
+- [ ] Platform risk assessed (partner = potential competitor?)
+- [ ] Single points of failure noted
+
+**Business Model Assumptions:**
+- [ ] Key assumptions that could invalidate the model are listed
+- [ ] Each assumption has a validation approach
+- [ ] Confidence level assigned per assumption
+
+**For SaaS/AI products:**
+- [ ] AI inference cost modeled per active user per month
+- [ ] Gross margin sensitivity to AI cost increase assessed
+- [ ] Freemium conversion rate assumption stated (industry baseline: 2-5%)
+- [ ] Annual vs monthly pricing split considered (annual: better LTV, harder early sales)
+- [ ] Multi-tenant architecture cost implications noted
+- [ ] Network effect potential assessed (does value grow with more users/data?)
+- [ ] AI commoditization risk: if core AI feature becomes table stakes, what is the durable differentiator?
+
+## Save to
+
+```
+pureinn-workspace/[project-slug]/artifacts/phase-3/business-model-canvas.md
+```

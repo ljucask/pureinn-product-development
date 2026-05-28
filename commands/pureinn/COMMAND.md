@@ -1,0 +1,1392 @@
+---
+description: Pureinn workflow engine entry point. Reads existing documents, evaluates current state, maps to phases, and routes to the correct starting point. Run with a product idea or name to start. Run with 'map' for the full framework overview. Run with a known project slug to resume.
+argument-hint: "[product idea or name | map | help | project-slug]"
+---
+
+# Pureinn - Workflow Engine
+
+## Input
+
+$ARGUMENTS
+
+---
+
+## Usage Patterns
+
+### Greenfield - new product from scratch
+```
+/pureinn "B2B SaaS pre správu projektov v konštrukčných firmách"
+/pureinn "marketplace pre freelancerov a klientov"
+```
+Engine spustí intake (9 otázok), nascanuje existujúce dokumenty, vyberie Greenfield playbook, ukáže dashboard s Phase 1 skills queue.
+
+### Greenfield - máš research alebo čiastočné materiály
+```
+/pureinn "food delivery app" [+ vlož interview notes, research docs do working directory]
+```
+Engine prečíta dokumenty, zmapuje ich na fázy, identifikuje kde si, preskočí pokryté fázy.
+
+### Feature Implementation - pridávaš feature do existujúceho produktu
+```
+/pureinn "Acme CRM - chceme pridať AI asistenta do reportingu"
+/pureinn "náš e-shop, potrebujeme loyalty program"
+```
+Engine vyberie Feature playbook. Ak Phase 0 nie je hotová, začne kontextovým setupom (pureinn + common-ground + impeccable-teach). Ak Phase 0 existuje, smeruje priamo na Feature Viability Assessment.
+
+### Pokračovanie v rozpracovanom projekte
+```
+/pureinn acme-crm
+/pureinn-resume acme-crm
+```
+Engine prečíta `state.json`, obnoví kontext z `assessment.md`, zobrazí dashboard s aktuálnou fázou.
+
+### Prehľad celého frameworku
+```
+/pureinn map
+/pureinn help
+```
+Zobrazí Framework Map - všetky playbooki, fázy, skills a artifact chains na jednom mieste.
+
+---
+
+## Special Commands
+
+If $ARGUMENTS is `map` or `help`:
+→ Skip all steps. Go directly to **FRAMEWORK MAP** at the bottom of this skill.
+
+If $ARGUMENTS matches a known project slug and a `state.json` exists:
+→ Go to **STEP 1B (Resume path)**.
+
+Otherwise:
+→ Go to **STEP 1A (New / intake path)**.
+
+---
+
+## STEP 1A - Guidance Mode Check
+
+Ask the user:
+
+```
+Do you want guidance throughout the workflow?
+
+  A) Yes - explain the why behind each phase and skill as we go
+  B) No - just tell me what to run next
+```
+
+Store the answer. Save as `"guidance_mode": true` or `false` in state.json.
+
+**What guidance mode means:**
+- ON: Before each phase and before recommending each skill, Claude adds 2-3 sentences of context - what this phase is trying to achieve, what to watch out for, common mistakes. Applied consistently throughout the workflow, not just at the start.
+- OFF: Pure routing. Dashboard + skills queue, no explanatory text.
+
+---
+
+## STEP 1B - Resume Path
+
+A state.json exists for this project. Read it and go directly to **STEP 7 (Dashboard)**.
+
+---
+
+## STEP 2 - Document Scan and Intake
+
+First, scan the entire working directory recursively for any existing documents (.md, .txt, .pdf, .docx, .csv, notes, research files - anything that could be product or research material). Exclude code files, system files, and this framework's own files (`.claude/`, `Framework know-how/`, `docs - product framing/`, `pureinn-workspace/`).
+
+**If documents are found outside the framework:**
+
+Read them. Then inform the user:
+
+```
+I found the following files that may be relevant:
+
+  [list of files with paths]
+
+I'll include these in the analysis. If you have additional documents
+not yet in the directory, add them now and let me know - otherwise
+we'll proceed with what's here.
+```
+
+**If no documents found:**
+
+```
+I don't see any existing documents in the directory.
+
+If you have research notes, specs, interview transcripts, or anything
+else relevant - add them anywhere in this directory and let me know.
+
+If you're starting from scratch, say "nothing" and we'll go from there.
+```
+
+Wait for confirmation. If user adds files, read them. If "nothing", proceed to Step 3 with no documents.
+
+---
+
+## STEP 3 - Intake Questions
+
+Ask these questions regardless of whether documents were found. Documents give Claude the written record; these questions capture current thinking, intent, and product shape that documents often don't contain.
+
+Ask all at once:
+
+```
+A few questions to understand what you're building and where you are.
+
+1. WHAT ARE YOU BUILDING?
+   Describe it in 2-3 sentences.
+
+2. PRODUCT TYPE
+   Which best describes it?
+     a) SaaS web application
+     b) Mobile application (iOS / Android / both)
+     c) Marketplace or platform (connects two or more sides)
+     d) Internal tool (used only within your company)
+     e) API or developer platform
+     f) Something else: [describe]
+
+3. WHO IS IT FOR?
+   a) External customers (product for sale)
+   b) Internal team only (internal tool)
+   c) Both (internal + external facing)
+
+4. PLATFORM STRATEGY
+   What is the primary experience?
+     a) Mobile first - the main value is delivered on mobile
+     b) Desktop first - the main experience is web/desktop (e.g., CRM, admin tool, dashboard)
+     c) Both equally - needs full parity across mobile and web
+     d) Not sure yet
+
+5. BUSINESS MODEL
+   Will the product be paid?
+     a) Yes - paid from day one (subscription, one-time, usage-based)
+     b) Freemium - free tier + paid upgrade
+     c) Free / internal - no revenue target
+     d) Not decided yet
+
+6. WHERE YOU ARE NOW
+   How would you describe your current stage?
+     a) Idea only - nothing validated yet
+     b) Have some research or customer insights
+     c) Validated problem, understand the customer
+     d) Have a strategy / business model, moving to execution
+     e) Have specs or design, ready to build
+
+7. WHAT MATTERS MOST RIGHT NOW
+   What is the single most important thing you need to produce or figure out?
+   (e.g., "validate whether the problem is real", "define MVP scope", "get to a spec I can build from")
+
+8. TEAM STRUCTURE
+   Who is building this?
+     a) Solo - just me, no team
+     b) Small founding team (2-3 people, wearing multiple hats)
+     c) Team with defined roles (PM, developers, designer, etc.)
+     d) Corporate / enterprise team (multiple stakeholders, governance needed)
+
+9. CONSTRAINTS
+   Anything that shapes how we approach this?
+   (e.g., 3-month runway, regulated industry, must integrate with existing system, specific tech stack)
+```
+
+Wait for answers. These answers, combined with any documents found, form the full input picture.
+
+**Why these questions matter downstream:**
+- Product type and platform strategy affect tech stack recommendations, Phase 6 approach, and which skills apply
+- Internal vs. external changes compliance scope, pricing model, and go-to-market
+- Business model (paid/free) drives KPI selection and exit gate criteria
+- Team structure determines which Phase 1 skills are relevant (see Phase 1 adaptation rules below)
+- Current stage determines starting phase directly
+
+---
+
+### Phase 1 Adaptation by Team Structure
+
+Phase 1 skills are not all relevant for every team type. Apply these rules:
+
+**Solo builder:**
+- Skip: `/pm-stakeholder-map` (no stakeholders), `/pm-team-roster` (no team), `/pm-comms-charter` (no team communication)
+- Keep: `/pm-project-charter` - simplified: assumptions, risks, personal constraints, success definition
+- Phase 1 for solo = one skill, ~30 minutes
+
+**Small founding team (2-3 people):**
+- Skip: `/pm-stakeholder-map` (unless external investors or advisors are involved)
+- Simplify: `/pm-team-roster` (decision rights matter, skill gaps matter - RACI overkill)
+- Keep: `/pm-project-charter`, `/pm-comms-charter` (even 2 people need alignment on how they work)
+- Phase 1 for small team = 2-3 skills
+
+**Team with defined roles:**
+- Run all 4 Phase 1 skills
+- Full RACI and stakeholder map are worth the time
+
+**Corporate / enterprise team:**
+- Run all 4 Phase 1 skills
+- Stakeholder map and escalation tree are critical - political complexity is real
+
+---
+
+## STEP 3B - Assessment
+
+Combine documents (if any) with intake answers to produce a unified picture of the current state.
+
+If documents exist: for each one, identify content type, phase mapping, and quality signals.
+
+Then synthesize everything - documents + intake answers - into a structured assessment. This is the most important output of the entry point.
+
+---
+
+### Assessment Output Format
+
+**1. Brief context** (2-3 sentences)
+What Claude sees, the general picture, what kind of project and stage this appears to be - based on documents and intake answers combined.
+
+**2. Document inventory** (skip section if no documents found)
+
+```
+| Document | Content type | Maps to | Quality |
+|---|---|---|---|
+| [filename or "intake answers"] | [e.g., Interview transcripts] | Phase 2 - Discovery (Track D) | ✅ Good / ⚠️ Partial / ❌ Thin |
+```
+
+**3. Phase coverage**
+
+```
+| Phase | Coverage | Source | Confidence |
+|---|---|---|---|
+| Phase 1 - Foundation | ✅ / ⚠️ / ❌ | [document / intake / none] | High / Med / Low |
+| Phase 2 - Discovery  | ✅ / ⚠️ / ❌ | | |
+| Phase 3 - Define     | ✅ / ⚠️ / ❌ | | |
+| Phase 4 - Domain     | ✅ / ⚠️ / ❌ | | |
+| Phase 5 - Features   | ✅ / ⚠️ / ❌ | | |
+```
+
+**4. What Claude understands about this product**
+
+Synthesize the actual product/market/customer picture. Be specific. Clearly mark the difference between **conclusions** (from documents or explicit user statements) and **assumptions** (inferred by Claude).
+
+```
+PROBLEM
+  - [Conclusion] [what the problem is, from documents or stated by user]
+  - [Assumption] [what Claude is inferring that wasn't explicitly stated]
+
+CUSTOMER
+  - [Conclusion] [who the primary customer is]
+  - [Assumption] [...]
+
+MARKET
+  - [Conclusion] [what market context is established]
+  - [Assumption] [...]
+
+BUSINESS MODEL
+  - [Conclusion] [revenue logic that's visible]
+  - [Assumption] [...]
+
+OPEN QUESTIONS
+  - [What is unclear, missing, or contradictory - and why it matters]
+```
+
+**5. Confirmation**
+
+```
+Review the above. For each section:
+
+  ✅ Confirm - correct
+  ✗  Reject   - wrong, here's what's right: [correction]
+  ~  Adjust   - partially right, here's the nuance: [adjustment]
+
+Add anything I missed.
+```
+
+Wait for user response. Update the assessment based on corrections before proceeding.
+
+After confirmation, save the finalized assessment to:
+`pureinn-workspace/[slug]/assessment.md`
+
+**5. Confirmation prompt**
+
+```
+Review the above. For each section:
+
+  ✅ Confirm - this is correct
+  ✗ Reject - this is wrong, here's what's correct: [correction]
+  ~ Adjust - partially right, here's the nuance: [adjustment]
+
+You can also add anything I missed.
+```
+
+Wait for user confirmation. Update the assessment based on their corrections before proceeding.
+
+After confirmation, save the finalized assessment to:
+`pureinn-workspace/[slug]/assessment.md`
+
+---
+
+## STEP 4 - Playbook Selection
+
+If not already determined from document analysis, ask:
+
+```
+One question to confirm the right playbook:
+
+Does the product already exist in any form?
+  A) No - building from scratch
+  B) Yes, but no active users yet
+  C) Yes, with active users - adding features
+  D) Yes, with active users - rebuilding or migrating
+```
+
+Map to playbook:
+- A or B → **Greenfield**
+- C → **Feature**
+- D → **Rebuild**
+
+**Feature playbook note:**
+Feature Implementation does not start at Phase 1. It starts at Phase 0 (context setup).
+Phase 0 runs once per project onboarding - not per feature. After Phase 0, each feature goes through Feature Viability Assessment before any spec work begins.
+If Phase 0 is already done (context exists from a prior session), skip to Feature Viability Assessment.
+
+**Rebuild playbook note:**
+Rebuild starts at Phase 1 (Foundation) but includes two additional Rebuild-only phases: R2 (Legacy Assessment) and R3 (Migration Strategy) before Phase 3. Do not skip these - poor legacy analysis is the primary cause of Rebuild failures.
+
+---
+
+## STEP 5 - Starting Phase Determination
+
+Based on the document analysis and confirmed assessment, determine the starting phase:
+
+- Phase covered with high confidence → mark as done, skip
+- Phase covered but partial or low confidence → flag gaps, user decides: fill gaps first or proceed with acknowledged risk
+- Phase not covered → must be done
+
+Starting phase = lowest incomplete phase.
+
+If guidance mode is ON, before announcing the starting phase add:
+
+```
+[Phase N] - [Phase Name] is where we start because [1-2 sentences explaining
+what this phase accomplishes and why it's the right entry point given what you have].
+```
+
+---
+
+## STEP 6 - Workspace Setup
+
+If no state.json exists yet:
+
+1. Derive `project-slug`: lowercase, kebab-case, max 30 chars.
+2. Create the artifact folder structure (playbook-aware):
+
+**Greenfield:**
+```
+pureinn-workspace/[slug]/
+  state.json
+  assessment.md
+  glossary.md                            ← pm-glossary (cross-phase)
+  artifacts/
+    phase-1/_index.md                    ← Foundation & Collaboration Setup
+    phase-2/_index.md                    ← Ideation & Discovery
+    phase-3/_index.md                    ← Define & Validation
+    phase-4/_index.md                    ← Domain Modeling
+    phase-5/_index.md                    ← Feature Planning
+    phase-6/_index.md                    ← Spec by Feature Set (all playbooks)
+    phase-6/feature-cards/_index.md      ← Feature Cards (generated by /feature-forge)
+    phase-7/_index.md                    ← Stripe close & retro (all playbooks)
+```
+
+**Feature Implementation:**
+```
+pureinn-workspace/[slug]/
+  state.json
+  assessment.md
+  glossary.md                            ← pm-glossary (cross-phase)
+  artifacts/
+    phase-6/_index.md                    ← Spec by Feature Set
+    phase-6/feature-cards/_index.md      ← Feature Cards (generated by /feature-forge)
+    phase-7/_index.md                    ← Stripe close & retro
+```
+
+Each `_index.md` is a one-line placeholder: `# [Phase Name] - artifacts will appear here.`
+This creates the folder and makes the structure visible in any file explorer.
+
+**2b. Create pureinn-variables.md**
+
+Create `pureinn-workspace/[project-slug]/pureinn-variables.md` with the following content (all URLs blank - user fills them in):
+
+```markdown
+# pureinn-variables.md - [Project Name]
+# Edit this file to connect Notion to this project.
+# Skills read these URLs automatically. Leave blank to be asked when needed.
+# DB = database (push supported). Page = single Notion page (referenced/linked).
+
+## Core
+
+| Key | Type | URL |
+|---|---|---|
+| Dashboard | Page | |
+| Feature Backlog | DB | |
+
+## Product (Phase 2-3)
+
+| Key | Type | Skill | URL |
+|---|---|---|---|
+| Product Roadmap | Page | pm-product-roadmap | |
+| Elevator Pitch | Page | design-thinking | |
+| Lean Canvas | Page | pm-lean-canvas | |
+| BRD | Page | pm-brd | |
+| Kotler Five Levels | Page | pm-kotler | |
+| Competitor Analysis | Page | pm-market-analysis | |
+| SWOT Analysis | Page | pm-market-analysis | |
+
+## Research (Phase 2)
+
+| Key | Type | Skill | URL |
+|---|---|---|---|
+| Customer Personas | Page | pm-personas | |
+| Customer Discovery | Page | pm-problem-validation | |
+| Customer Interviews | DB | pm-personas | |
+| Research Lab | DB | pm-market-analysis | |
+
+## Validation & Metrics (Phase 3)
+
+| Key | Type | Skill | URL |
+|---|---|---|---|
+| Hypothesis Validation | Page | pm-hypotheses | |
+| OKRs | Page | pm-kpis | |
+| KPIs | DB | pm-kpis | |
+| Investor Pitch | Page | pm-pitch-deck | |
+
+## Engineering (Phase 4-6)
+
+| Key | Type | Skill | URL |
+|---|---|---|---|
+| Domain Model | Page | pm-domain-model | |
+| FSD | Page | pm-fsd | |
+| Architecture | Page | architecture-designer | |
+| Diagrams | Page | pm-diagrams | |
+
+## Business Logic DBs (Phase 4-6)
+
+| Key | Type | Skill | URL |
+|---|---|---|---|
+| Business Rules | DB | pm-brd / pm-business-rule-* | |
+| Decision Models | DB | pm-brd | |
+| Event Catalogue | DB | pm-domain-model | |
+
+## Domain Model DBs (Phase 4)
+
+| Key | Type | Skill | URL |
+|---|---|---|---|
+| Internal Entity Catalogue | DB | pm-domain-model | |
+| External Entity Catalogue | DB | pm-domain-model | |
+| Data Sensitivity Map | DB | pm-privacy-requirements | |
+
+## Knowledge
+
+| Key | Type | Skill | URL |
+|---|---|---|---|
+| Glossary | DB | pm-glossary | |
+| Meetings | DB | pm-comms-charter | |
+| Open Questions | DB | pm-hypotheses | |
+```
+
+After creating the file, tell the user:
+
+```
+pureinn-variables.md created. Fill in the Notion URLs for the tools you want connected.
+Skills will read this file automatically - no need to re-enter URLs during skill runs.
+State.json caches processed Notion IDs so each URL is only fetched once per project.
+```
+
+**How skills read pureinn-variables.md:**
+
+When a skill needs a Notion URL, it:
+1. Reads `pureinn-workspace/[slug]/pureinn-variables.md`
+2. Finds the row matching the Key it needs (e.g., "Glossary", "Feature Backlog")
+3. Uses the URL in that row
+4. If URL is blank: asks the user, then saves the provided URL back to pureinn-variables.md
+5. For DBs: checks `state.json` for a cached data_source_id before calling notion-fetch
+
+**state.json caches notion data source IDs** (so notion-fetch is called at most once per DB per project):
+
+```json
+"notion_ids": {
+  "feature_backlog": null,
+  "glossary": null,
+  "kpis": null,
+  "business_rules": null,
+  "decision_models": null,
+  "event_catalogue": null,
+  "internal_entity_catalogue": null,
+  "external_entity_catalogue": null,
+  "data_sensitivity_map": null,
+  "customer_interviews": null,
+  "research_lab": null,
+  "meetings": null,
+  "open_questions": null
+}
+```
+
+**Artifact save paths by skill (reference for all skills in this project):**
+
+| Skill | Artifact | Path |
+|---|---|---|
+| pm-stakeholder-map | stakeholder-map.md, raci-matrix.md, escalation-tree.md | phase-1/ |
+| pm-project-charter | project-charter.md, assumptions-risks-register.md | phase-1/ |
+| pm-team-roster | team-roster.md, decision-rights-matrix.md, skill-gap-assessment.md | phase-1/ |
+| pm-comms-charter | communication-charter.md, meeting-rhythm.md | phase-1/ |
+| pm-tech-feasibility | tech-feasibility-report.md | phase-2/ |
+| pm-domain-analysis | domain-analysis-report.md, legal-regulatory-requirements.md | phase-2/ |
+| pm-market-analysis | market-size-analysis.md, competitor-analysis.md, swot-analysis.md, market-timing-rationale.md | phase-2/ |
+| pm-personas | customer-segments.md, personas.md, early-adopters-profile.md | phase-2/ |
+| jtbd-building | jtbd-analysis.md | phase-2/ |
+| pm-problem-validation | problem-validation-summary.md | phase-2/ |
+| design-thinking | design-thinking-synthesis.md | phase-3/ |
+| pm-hypotheses | hypothesis-register.md, go-no-go.md | phase-3/ |
+| pm-kotler | kotler-five-levels.md | phase-3/ |
+| pm-lean-canvas | lean-canvas.md | phase-3/ |
+| pm-kpis | north-star-metric.md, aarrr-metrics.md, okrs.md | phase-3/ |
+| pm-business-case | business-case.md | phase-3/ |
+| pm-prd | prd.md | phase-3/ |
+| pm-product-roadmap | product-roadmap-v1.md | phase-3/ |
+| pm-pitch-deck | pitch-deck-brief.md | phase-3/ |
+| pm-domain-model | domain-model.md | phase-4/ |
+| pm-brd (skeleton) | brd-skeleton.md | phase-4/ |
+| pm-privacy-requirements | pii-inventory.md, privacy-requirements.md, gdpr-action-plan.md | phase-4/ |
+| pm-product-roadmap | product-roadmap-v2.md | phase-4/ |
+| pm-features-list | features-list.md, feature-dependency-map.md, kano-analysis.md, value-complexity-matrix.md | phase-5/ |
+| pm-mvp-scope | mvp-scope.md, feature-sets.md, delivery-stripes.md | phase-5/ |
+| pm-reverse-extract | features-list.md, feature-sets.md, delivery-stripes.md | phase-5/ (migration path - updates root state.json) |
+| pm-product-roadmap | product-roadmap-v3.md | phase-5/ |
+| pm-feature-set-overview | [fs-id]-overview.md | phase-6/ |
+| pm-brd | [fs-id]-brd.md | phase-6/ |
+| pm-fsd | [fs-id]-fsd.md | phase-6/ |
+| pm-stripe (kickoff) | stripe-[N]-plan.md | phase-6/ |
+| feature-forge | [feature-slug].md | phase-6/feature-cards/ |
+| pm-stripe (close) | stripe-[N]-close.md | phase-7/ |
+| pm-glossary | glossary.md | [slug]/ root |
+
+3. Write `pureinn-workspace/[project-slug]/state.json`:
+
+```json
+{
+  "project": "[human-readable name]",
+  "slug": "[project-slug]",
+  "created": "[ISO 8601 date]",
+  "guidance_mode": true,
+  "playbook": "[Greenfield | Feature | Rebuild]",
+  "starting_phase": [N],
+  "current_phase_index": [N],
+  "current_phase_name": "[name]",
+  "phases_completed": [],
+  "phases_skipped": [],
+  "input": "[original user input]",
+  "product_shape": {
+    "type": "[SaaS | Mobile | Marketplace | Internal | API | Other]",
+    "audience": "[External | Internal | Both]",
+    "platform_strategy": "[Mobile first | Desktop first | Both | Unknown]",
+    "business_model": "[Paid | Freemium | Free | Unknown]"
+  },
+  "team_structure": "[Solo | Small founding team | Team with roles | Corporate]",
+  "documents_found": ["[list of filenames read]"],
+  "assessment_file": "assessment.md",
+  "current_stripe": null,
+  "delivery_stripes": [],
+  "feature_sets": [],
+  "notion_ids": {
+    "feature_backlog": null,
+    "glossary": null,
+    "kpis": null,
+    "business_rules": null,
+    "decision_models": null,
+    "event_catalogue": null,
+    "internal_entity_catalogue": null,
+    "external_entity_catalogue": null,
+    "data_sensitivity_map": null,
+    "customer_interviews": null,
+    "research_lab": null,
+    "meetings": null,
+    "open_questions": null
+  }
+}
+```
+
+Notion integration uses two files:
+- `pureinn-variables.md` - human-editable URLs per project (created at init, user fills in)
+- `state.json notion_ids` - cached data source IDs fetched from Notion (never edit manually)
+
+Skills always read the URL from pureinn-variables.md first, then check notion_ids for a cached ID. If no cached ID, they call notion-fetch and save the result.
+
+Fields added in Phase 6-7 by `/pm-stripe`:
+- `current_stripe` - ID of the active Delivery Stripe
+- `delivery_stripes` - array of Stripe objects (id, name, goal, timeline, status, notion_master_feature_set, feature_sets_in_stripe)
+- `feature_sets` - array of FS objects with spec completion status (overview/brd/fsd/cards: done|in_progress|pending)
+
+Note: individual feature status is tracked in Notion, not state.json.
+
+---
+
+## STEP 7 - Dashboard and Routing
+
+Display the project dashboard. Phase status display depends on playbook:
+
+**Greenfield dashboard:**
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PROJECT: [Product Name]
+PLAYBOOK: Greenfield
+GUIDANCE: [On / Off]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PHASE STATUS
+  Phase 1 - Foundation & Collaboration   [✅ Done / ⏭ Skipped / 🔲 To do]
+  Phase 2 - Discovery                    [✅ Done / ⚠️ Partial / ⏭ Skipped / 🔲 To do]
+  Phase 3 - Define & Validation          [✅ Done / ⚠️ Partial / ⏭ Skipped / 🔲 To do]
+  Phase 4 - Domain Modeling              [🔲 To do]
+  Phase 5 - Feature Planning             [🔲 To do]
+  Phase 6 + 7 - Delivery Cycle           [🔲 To do]
+
+STARTING FROM: Phase [N] - [Phase Name]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+**Feature Implementation dashboard:**
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PROJECT: [Product Name]
+PLAYBOOK: Feature Implementation
+GUIDANCE: [On / Off]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PHASE STATUS
+  Phase 0 - Context Setup                [✅ Done / 🔲 To do]
+             (pureinn + common-ground + impeccable-teach - runs once)
+  Feature Viability Assessment           [runs per feature]
+             (KANO + V×C + demand validation + MDP + success metrics)
+  Track A / Track B                      [determined per feature]
+  Spec Writing                           [BRD + FSD + Feature Card per feature]
+  Delivery Cycle (Phase 6 + 7)           [🔲 To do]
+             (same as Greenfield + backward compat + feature flags + regression)
+
+CURRENT FEATURE: [feature name or "none - viability assessment pending"]
+ACTIVE STRIPE: [stripe name or "none"]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+**Rebuild dashboard:**
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PROJECT: [Product Name]
+PLAYBOOK: Rebuild
+GUIDANCE: [On / Off]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PHASE STATUS
+  Phase 1 - Foundation & Collaboration   [✅ Done / ⏭ Skipped / 🔲 To do]
+  Phase R2 - Legacy Assessment           [✅ Done / ⚠️ Partial / 🔲 To do]
+  Phase R3 - Migration Strategy          [✅ Done / ⚠️ Partial / 🔲 To do]
+  Phase 3 - Define & Scoping             [🔲 To do]
+  Phase 4 - Domain Modeling              [🔲 To do]
+  Phase 5 - Feature Planning             [🔲 To do]
+  Phase 6 + 7 - Delivery Cycle           [🔲 To do]
+  Parallel Run + Cutover                 [🔲 To do]
+
+STARTING FROM: Phase [N] - [Phase Name]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+Then show the skills queue for the current phase.
+
+If guidance mode is ON, precede the queue with the phase purpose:
+
+```
+PHASE [N] - [PHASE NAME]
+[2-3 sentences: what this phase is trying to achieve, what the output is, why it matters for what comes next]
+```
+
+Then always show:
+
+```
+SKILLS FOR THIS PHASE (run in order):
+
+  1. /[skill-name]
+     → Produces: [artifacts]
+     → Input needed: [what to prepare or bring]
+
+  2. /[skill-name]
+     → Produces: [artifacts]
+     → Input needed: [what to prepare or bring]
+
+  [👤 Human activity: e.g., conduct interviews]
+     → Before running /[next-skill]
+
+  3. /[skill-name]
+     → Produces: [artifacts]
+
+Each skill checks your current state when you run it.
+Run /pureinn again after this phase is complete to advance.
+```
+
+---
+
+## Phase → Skills Reference
+
+### Phase 1 - Foundation & Collaboration Setup
+```
+Skills shown depend on team structure (set during intake):
+
+Solo builder:
+  /pm-project-charter    → Project Charter (simplified: assumptions, risks, success definition)
+
+Small founding team:
+  /pm-project-charter    → Project Charter, Assumptions & Risks Register
+  /pm-team-roster        → Decision Rights, Skill Gap Assessment (RACI skipped)
+  /pm-comms-charter      → Communication Charter, Meeting Rhythm
+
+Team with defined roles / Corporate:
+  /pm-stakeholder-map    → Stakeholder Map, RACI, Escalation Tree
+  /pm-project-charter    → Project Charter, Assumptions & Risks Register
+  /pm-team-roster        → Team Roster, Decision Rights, Skill Gap Assessment
+  /pm-comms-charter      → Communication Charter, Meeting Rhythm
+```
+
+### Phase 2 - Ideation & Discovery
+```
+/pm-tech-feasibility   → Tech Feasibility Report
+                         [🔍 Before: research with Perplexity / Tech Lead input]
+/pm-domain-analysis    → Domain Analysis, Legal Requirements
+                         [🔍 Before: Perplexity research on domain + regulations]
+/pm-market-analysis    → Market Size, Competitor Analysis, SWOT, Market Timing
+                         [🔍 Before: Perplexity market data + competitor research]
+/pm-personas           → Customer Segments, Personas, Early Adopters Profile
+                         [👤 Before: ≥10 customer interviews / SynthFolk / ChatGPT]
+/jtbd-building         → JTBD Analysis
+                         [Run after /pm-personas - uses personas as input]
+/pm-problem-validation → Problem Validation Summary (Phase 2 exit artifact)
+                         [Synthesizes all Track A-D outputs - run last in Phase 2]
+```
+
+### Phase 3 - Define & Validation
+```
+/design-thinking       → Problem Statement, POV, HMW, Ideation synthesis, Elevator Pitch
+                         [Outputs Validation Hypotheses draft → feeds into /pm-hypotheses]
+/pm-hypotheses         → Hypothesis Register: ICP, assumption map, experiment plan, success criteria
+  [Plan mode]            [Run immediately after /design-thinking]
+                         [Assigns experiment type per hypothesis - Problem / Customer / Solution / Market]
+                         [Success criteria defined BEFORE experiments run]
+[👤 Experiments run]   → Landing page / Smoke test / Pre-order / Rapid Prototype / Concierge MVP
+                         [Human activity - execute the experiment plan from /pm-hypotheses]
+/pm-hypotheses         → Go/No-Go Decision (Go / Pivot / Stop)
+  [Results mode]         [Run after all assigned experiments complete]
+                         [Hard gate: only GO advances to /pm-kotler and beyond]
+/pm-kotler             → Product Definition (5 levels: Core / Basic / Expected / Augmented / Potential)
+/pm-lean-canvas        → Lean Canvas (one-page business model for startups)
+                         [Replaces BMC - optimized for validation stage, not established operations]
+/pm-kpis               → North Star Metric, AARRR, OKRs
+/pm-business-case      → Business Case (3-year projections, Go/No-Go)
+/pm-product-roadmap    → Product Roadmap v1
+/pm-prd                → PRD - Phase 3 exit artifact (synthesizes all Phase 2+3)
+/pm-pitch-deck         → Pitch Deck content brief (slide-by-slide spec → Gamma visual deck)
+                         [Optional - run if raising capital, selling to customers, or pitching partners]
+                         [Requires: pm-lean-canvas + pm-business-case + pm-problem-validation]
+                         [Gamma MCP required for visual output; skill outputs content brief if Gamma not connected]
+```
+
+### Phase 4 - Domain Modeling (FDD Stage 1)
+```
+/pm-domain-model       → Domain Model, ERD + optional Excalidraw domain diagram
+/pm-privacy-requirements → PII Inventory, Privacy Requirements, GDPR action plan
+/pm-brd                → BRD Skeleton (full detail in Phase 6)
+/pm-product-roadmap    → Product Roadmap v2 (update with domain constraints)
+```
+
+### Phase 5 - Feature Planning (FDD Stage 2)
+```
+/pm-features-list      → Features List (FDD), Dependency Map, KANO Analysis, V×C Matrix
+                          → Notion push: Feature entries (Status=Backlog, Priority from KANO+V×C)
+/pm-mvp-scope          → MVP Scope (IN/POST-MVP/CUT), Feature Sets (MFS→FS), Delivery Stripes
+                          → Notion: create MFS/FS entries; enrich Features with Phase/Stripe/Parent
+/pm-product-roadmap    → Product Roadmap v3 (update with feature and delivery view)
+```
+
+### Pre-Phase 6 - Technical Foundation
+```
+/common-ground         → Tech stack, repo structure, COMMON-GROUND.md
+[👤 Architecture decisions, infrastructure setup]
+```
+
+---
+
+### Cross-Phase Skills (run at any time)
+> These skills are not tied to a specific phase. Run them progressively throughout the project or on demand.
+
+```
+/pm-glossary           → Project Glossary (terms, entities, artifacts, abbreviations)
+                         [Continuous - run after each phase or when new terminology surfaces]
+                         [Also run on demand: /pm-glossary add "term1, term2"]
+
+/pm-diagrams           → Visual diagrams via Excalidraw (inline render + excalidraw.com export)
+                         [Supported types: Domain Model Overview / User Flow /
+                          Business Process Model / System Architecture / JTBD Four Forces]
+                         [Requires: Excalidraw MCP connected]
+```
+
+---
+
+### Feature Implementation - Phase Sequence
+> Use this section when playbook = Feature. Replaces Phases 1-5 entirely.
+
+```
+MIGRATION PATH (existing product built outside the framework)
+  /pureinn              → always first: workspace setup, state.json, pureinn-variables.md
+  /common-ground        → technical context (stack, APIs, debt) → COMMON-GROUND.md
+  /impeccable-teach     → design context (design system, components) → PRODUCT.md + DESIGN.md
+  /pm-glossary          → start domain glossary
+  /pm-reverse-extract   → reads existing FSD/BRD/Feature Cards/codebase
+                          → extracts feature inventory in FDD format with status
+                          → Notion: creates MFS/FS/Feature hierarchy (primary: team visibility)
+                          → generates features-list.md, feature-sets.md, delivery-stripes.md
+                          Use INSTEAD of pm-features-list + pm-mvp-scope.
+                          Then proceed to Phase 6 + 7 directly.
+
+─────────────────────────────────────────────
+
+PHASE 0 - CONTEXT SETUP  [runs once per project onboarding, not per feature]
+  /pureinn              → Product context (users, roadmap, known problems, workarounds)
+  /common-ground        → Technical context (stack, domain model, APIs, debt) → COMMON-GROUND.md
+  /impeccable-teach     → Design context (design system, UX patterns, components) → PRODUCT.md + DESIGN.md
+
+  Exit: All three dimensions covered. Team has shared product understanding.
+  Skip if already done (context files exist from a prior session).
+
+─────────────────────────────────────────────
+
+FEATURE VIABILITY ASSESSMENT  [runs per feature, before any spec work]
+
+  Feature Target Profile
+    → Which existing segment/persona does this serve?
+    → KANO: Must-be / Performance / Delighter / Indifferent
+    → V×C: Quick Win / Big Bet / Fill-in / Time Waster
+    → Usage frequency + % of user base
+
+  Demand Validation
+    → Existing signal: analytics, support tickets, feature requests
+    → Lightweight experiments if signal weak: fake door, mockup test, landing page
+    → B2B: pilot commitment or letter of intent
+
+  Strategic Alignment
+    → Core vs. Adjacent: build vs. buy vs. integrate
+    → Business impact: revenue / churn / support / strategic
+
+  MDP Definition
+    → Minimum Delightful Product: core value only
+    → What is explicitly deferred to V1.1
+
+  Success Metrics  [defined before build, dashboard set up before code is written]
+    → Depth of usage (return rate, consistency)
+    → Behavior change (does it shift workflow?)
+    → Business impact (retention, conversion, support cost)
+    → Avoid vanity metrics (raw clicks, impressions, DAU without depth)
+
+─────────────────────────────────────────────
+
+TRACK A - KNOW WHAT WE WANT  [skip Track B if here]
+
+  Feature Set Assignment:
+    Existing FS → extend BRD + FSD additively (add sections, never rewrite)
+    New FS      → write full BRD + FSD
+
+  Skills:
+    /pm-brd           → BRD (new or extend existing)
+    /pm-fsd           → FSD (new or extend existing, with backward compat analysis)
+    /feature-forge    → Feature Card [AFTER BRD + FSD complete - hard rule]
+
+─────────────────────────────────────────────
+
+TRACK B - KNOW THE AREA, NOT THE SOLUTION  [discovery needed, output → Track A]
+
+  [👤 Human] User research (5-10 interviews, target segment only)
+  [👤 Human] Competitive analysis (if solution direction unclear)
+  [👤 Human] Tech feasibility (with existing stack)
+  /feature-value-prop → Feature Value Prop (WHO / WHAT / WHERE / WHEN / IMPACT)
+  /pm-business-case   → Feature Business Case (revenue/retention impact, ROI, Go/No-Go)
+  /pm-kpis            → Feature Success Metrics (depth / behavior / business impact)
+
+  After discovery: apply KANO + V×C to defined feature → enter Track A.
+
+─────────────────────────────────────────────
+
+DELIVERY CYCLE  [same as Greenfield Phase 6+7, with Feature Implementation additions]
+  See Phase 6 + 7 section below.
+  Feature Implementation additions per feature:
+    ⚠️ All new code wrapped in feature flag (OFF by default), FE + BE both respect flag
+    ⚠️ API changes: additive only, or v2 alongside v1 with deprecation timeline
+    ⚠️ DB changes: additive only (new tables, new columns) - no renames, no deletes
+    ⚠️ Full regression suite per feature before merge
+    ⚠️ Performance gate: feature adds ≤10% latency to existing API calls
+    ⚠️ Gradual rollout: Internal → 5% → 25% → 50% → 100%
+    ⚠️ Kill switch: disable flag if error rate >5%
+```
+
+---
+
+### Phase 6 + 7 - FDD Delivery Cycle (Stripe-based, repeats per Stripe)
+
+Phase 6 and 7 run as an integrated FDD cycle, not as sequential phases.
+Each Delivery Stripe covers one or more Feature Sets through spec → build.
+Notion is the source of truth for feature backlog and status.
+pm-features-list and pm-mvp-scope push and enrich entries automatically; Notion connection is configured per project in state.json.
+
+```
+STRIPE ORCHESTRATION (use for every Stripe)
+/pm-stripe             → Kickoff, routing per feature, Stripe close
+
+SPEC SKILLS (Phase 6 - per Feature Set)
+/pm-feature-set-overview    → Feature Set overview and scope
+/pm-brd                     → BRD full detail for this FS
+/pm-fsd                     → FSD for this FS
+/pm-business-rule-critical  → RULE-A: Critical Invariants
+/pm-business-rule-core      → RULE-B: Core Business Rules
+/pm-business-rule-governance → RULE-C: Governance / Policy / UX Rules
+/architecture-designer      → System Design Blueprint, ADRs
+/api-designer               → API contracts, OpenAPI spec
+/impeccable-teach           → PRODUCT.md + DESIGN.md [run once at Phase 6 start]
+/impeccable-shape           → UX/UI shape brief per feature
+/feature-forge              → Feature Card per feature
+
+BUILD SKILLS (Phase 7 - per feature)
+/fullstack-guardian    → BE implementation
+/impeccable-craft      → FE implementation
+/test-master           → Unit + integration tests
+/playwright-expert     → E2E tests
+/code-reviewer         → Code review
+/impeccable-audit      → Code quality review
+/impeccable-harden     → Security hardening
+/security-reviewer     → Security audit
+/devops-engineer       → CI/CD, deployment
+/monitoring-expert     → Observability, alerting
+
+Spec gate: BRD + FSD + Feature Card must be complete before build starts for any feature.
+```
+
+---
+
+## Exit Gate (when user runs /pureinn after completing a phase)
+
+Check state.json: if `current_phase_index` has increased or user states a phase is done, run exit gate.
+
+Read exit gate thresholds from the relevant playbook file.
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EXIT GATE - Phase [N]: [Phase Name]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[Show quantitative thresholds from playbook]
+
+For each threshold, did you meet it? (yes / no / unknown)
+```
+
+If all critical thresholds met:
+```
+Exit gate passed. Phase [N] complete.
+
+Type GO to advance to Phase [N+1], or tell me what to revisit first.
+```
+
+If thresholds not met:
+```
+Exit gate not passed. Conditions unmet:
+  ❌ [Condition 1] - [brief note on what's missing]
+  ❌ [Condition 2]
+
+Options:
+  A) Go back and address the gaps (recommended skills: [list])
+  B) Proceed anyway - I acknowledge the risk (FORCE)
+```
+
+On GO or FORCE: update state.json - add phase to `phases_completed`, advance `current_phase_index`.
+
+---
+
+## FRAMEWORK MAP
+
+> Shown when user runs `/pureinn map` or `/pureinn help`
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PUREINN - FRAMEWORK MAP
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Three entry points:
+  /pureinn [idea or product name]  Start or continue a project
+  /pureinn map                     This view - full framework overview
+  /common-ground                   Technical setup (Pre-Phase 6)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+Then display each phase as a block:
+
+```
+PHASE 1 - FOUNDATION & COLLABORATION SETUP
+Goal: Align on context, assumptions, and constraints before discovery begins.
+Output: Scales by team size - from a single project charter to full governance setup.
+─────────────────────────────────────────────
+  /pm-project-charter   [all team types]
+    Input:  Project context, goals, constraints, risks, success definition
+    Output: Project Charter, Assumptions & Risks Register
+
+  /pm-team-roster       [small team / full team / corporate]
+    Input:  Team members, roles, skill inventory
+    Output: Team Roster, Decision Rights Matrix, Skill Gap Assessment
+    Note:   Skip for solo builders. RACI simplified for small founding teams.
+
+  /pm-comms-charter     [small team / full team / corporate]
+    Input:  Team preferences, meeting cadence, tools
+    Output: Communication Charter, Meeting Rhythm
+    Note:   Skip for solo builders.
+
+  /pm-stakeholder-map   [full team / corporate only]
+    Input:  Product idea, team structure, organization context
+    Output: Stakeholder Map, RACI Matrix, Escalation Tree
+    Note:   Skip for solo and small founding teams unless external investors/board involved.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PHASE 2 - IDEATION & DISCOVERY
+Goal: Validate the problem, customer, market, and technical feasibility.
+Output: Problem Validation Summary (synthesizes all 4 tracks).
+Four parallel tracks - can run simultaneously.
+─────────────────────────────────────────────
+  TRACK A - Tech Feasibility
+  /pm-tech-feasibility
+    Input:  Tech research (Perplexity / Tech Lead), stack assumptions
+    Output: Tech Feasibility Report
+
+  TRACK B - Domain & Legal
+  /pm-domain-analysis
+    Input:  Domain research (Perplexity), regulatory landscape
+    Output: Domain Analysis Report, Legal & Regulatory Requirements
+
+  TRACK C - Market
+  /pm-market-analysis
+    Input:  Market data (Perplexity), competitor research
+    Output: Market Size (TAM/SAM/SOM), Competitor Analysis, SWOT, Market Timing
+
+  TRACK D - Voice of Customer
+  👤 Human: ≥10 customer interviews (or SynthFolk / ChatGPT synthetic)
+  /pm-personas
+    Input:  Interview transcripts, survey data, observations
+    Output: Customer Segments, Personas, Early Adopters Profile
+  /jtbd-building
+    Input:  Personas + interview data
+    Output: JTBD Analysis, Forces Diagram
+
+  CONVERGENCE
+  /pm-problem-validation
+    Input:  All Track A-D outputs
+    Output: Problem Validation Summary (Phase 2 exit artifact)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PHASE 3 - DEFINE & VALIDATION
+Goal: Define the strategy, validate core assumptions, and produce a Go/No-Go before building.
+Output: PRD (consolidates all Phase 2+3 into one coherent document).
+─────────────────────────────────────────────
+  /design-thinking
+    Input:  Problem Validation Summary, Personas
+    Output: Problem Statement, POV, HMW Questions, Ideation Synthesis, Elevator Pitch,
+            Validation Hypotheses draft
+
+  /pm-hypotheses  [Plan mode]
+    Input:  Validation Hypotheses draft, Phase 2 evidence (JTBD, Personas, Problem Validation)
+    Output: Hypothesis Register (ICP definition, assumption map, experiment plan, success criteria)
+
+  [👤 Experiments - human activity]
+    Input:  Experiment plan from /pm-hypotheses
+    Activity: Landing page, smoke test, targeted ads, pre-order, rapid prototype - based on plan
+    Budget: €100-300 for quantitative experiments
+
+  /pm-hypotheses  [Results mode]
+    Input:  Experiment results vs. pre-defined success criteria
+    Output: Hypothesis Register (updated), Go/No-Go Decision (Go / Pivot / Stop)
+    Note:   Hard gate - only GO advances past this point
+
+  /pm-kotler
+    Input:  High-level Feature Vision (from design-thinking), JTBD, Personas
+    Output: Product Definition - 5 levels (Core Benefit / Basic / Expected / Augmented / Potential)
+
+  /pm-lean-canvas
+    Input:  Design Thinking outputs, Kotler Product Definition, Phase 2 research
+    Output: Lean Canvas (one-page business model: Problem / Solution / UVP / Unfair Advantage /
+            Customer Segments / Key Metrics / Channels / Cost Structure / Revenue Streams)
+
+  /pm-kpis
+    Input:  Lean Canvas (Key Metrics block), Problem Validation
+    Output: North Star Metric, AARRR Funnel Metrics, OKRs
+
+  /pm-business-case
+    Input:  Lean Canvas, KPIs, Market Analysis
+    Output: Business Case (3-year projections, unit economics, Go/No-Go)
+
+  /pm-product-roadmap  [v1]
+    Input:  Problem Validation, Lean Canvas, KPIs
+    Output: Product Roadmap v1 (vision + strategic phases)
+
+  /pm-prd  [Phase 3 exit artifact]
+    Input:  All Phase 2 + Phase 3 outputs
+    Output: PRD (full product-level consolidation document)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PHASE 4 - DOMAIN MODELING  [FDD Stage 1]
+Goal: Model the domain, data structures, and business rules at system level.
+─────────────────────────────────────────────
+  /pm-domain-model
+    Input:  PRD, domain knowledge, feature ideas
+    Output: Domain Model, ERD, Ubiquitous Language Glossary
+
+  /pm-privacy-requirements
+    Input:  Domain Model, Legal Requirements, product description
+    Output: PII Inventory, Privacy Requirements, GDPR Action Plan
+
+  /pm-brd  [skeleton]
+    Input:  Domain Model, PRD
+    Output: BRD Skeleton (structure + business rules outline per Feature Set)
+
+  /pm-product-roadmap  [v2 update]
+    Input:  Roadmap v1, Domain Model constraints
+    Output: Product Roadmap v2 (+ domain constraints layer)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PHASE 5 - FEATURE PLANNING  [FDD Stage 2]
+Goal: Define the feature set, prioritize, and structure for delivery.
+─────────────────────────────────────────────
+  /pm-features-list
+    Input:  PRD, Domain Model, user research
+    Output: Features List in FDD format (action + result + object)
+
+  /pm-mvp-scope
+    Input:  Features List, business priorities
+    Output: Dependency Map, KANO Analysis, MVP Scope,
+            Feature Sets, Delivery Stripes
+
+  /pm-product-roadmap  [v3 update]
+    Input:  Roadmap v2, Feature Sets, Delivery Stripes
+    Output: Product Roadmap v3 (+ feature and delivery view)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PRE-PHASE 6 - TECHNICAL FOUNDATION
+─────────────────────────────────────────────
+  /common-ground
+    Input:  PRD, Domain Model, team tech preferences
+    Output: Tech Stack Decision, Repo Structure, COMMON-GROUND.md
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PHASE 6 + 7 - FDD DELIVERY CYCLE  [FDD Stages 3 + 4]
+Goal: Deliver working features, Stripe by Stripe.
+Repeats per Delivery Stripe. Notion tracks feature status.
+pureinn-workspace/ holds spec artifacts for Claude context.
+─────────────────────────────────────────────
+  STRIPE ORCHESTRATION (runs every Stripe)
+  /pm-stripe
+    Input:  Feature Sets assigned in Notion, spec status
+    Output: Stripe plan, spec gate check, routing per feature, Stripe close
+
+  SPEC (Phase 6 - per Feature Set, before build starts)
+  /pm-feature-set-overview     → Feature Set scope and overview
+  /pm-brd                      → Business Rules (state machines, event model)
+  /pm-fsd                      → Functional Specification
+  /pm-business-rule-critical   → RULE-A: Critical Invariants
+  /pm-business-rule-core       → RULE-B: Core Business Rules
+  /pm-business-rule-governance → RULE-C: Governance / Policy / UX Rules
+  /architecture-designer       → System Design Blueprint, ADRs
+  /api-designer                → API contracts, OpenAPI spec
+  /impeccable-teach   [once]   → PRODUCT.md, DESIGN.md
+  /impeccable-shape   [per feature] → UX/UI shape brief
+  /feature-forge      [per feature] → Feature Card (acceptance criteria, tasks)
+
+  SPEC GATE - must pass before build starts for any feature in a FS:
+    BRD complete + FSD complete + Feature Card exists
+
+  BUILD (Phase 7 - per feature, after spec gate)
+  /fullstack-guardian    → BE implementation
+  /impeccable-craft      → FE implementation
+  /test-master           → Unit + integration tests
+  /playwright-expert     → E2E tests
+  /code-reviewer         → Code review
+  /impeccable-audit      → Code quality
+  /impeccable-harden     → Security hardening
+  /security-reviewer     → Security audit
+  /devops-engineer       → CI/CD, deployment
+  /monitoring-expert     → Observability, alerting
+
+  PRIORITIZATION: user and Claude decide together which feature to work on next,
+  informed by Notion backlog state and artifact context in pureinn-workspace/.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+GREENFIELD - RUNNING THIS PLAYBOOK
+Use when: building a new product from scratch, 0 active users, validating PMF.
+─────────────────────────────────────────────
+ONCE AT START
+  /pureinn [idea]         → intake, document scan, playbook selection, dashboard
+  /pm-glossary            → start domain glossary; update continuously
+
+PHASE 1 - FOUNDATION  [~1 day, scales by team size]
+  Solo:  /pm-project-charter
+  Team:  /pm-project-charter → /pm-team-roster → /pm-comms-charter
+  Corp:  + /pm-stakeholder-map first
+  Run /pureinn when done to advance.
+
+PHASE 2 - DISCOVERY  [1-3 weeks, four parallel tracks]
+  🔍 → /pm-tech-feasibility      (tech feasibility)
+  🔍 → /pm-domain-analysis       (domain + legal)
+  🔍 → /pm-market-analysis       (market + competitors)
+  👤 ≥10 interviews → /pm-personas → /jtbd-building  (customer + JTBD)
+  Converge: /pm-problem-validation  (Phase 2 exit artifact)
+  Run /pureinn when done to advance.
+
+PHASE 3 - DEFINE & VALIDATION  [2-4 weeks]
+  /design-thinking          → Problem Statement, HMW, Elevator Pitch,
+                              Validation Hypotheses draft
+  /pm-hypotheses [Plan]     → Hypothesis Register (ICP, experiments, success
+                              criteria set BEFORE running)
+  👤 Run experiments        → landing page / smoke test / pre-order / concierge
+  /pm-hypotheses [Results]  → Go/No-Go verdict
+  HARD GATE: GO advances. PIVOT re-validates. STOP ends project.
+
+  After GO:
+  /pm-kotler             → Product Definition (5 levels)
+  /pm-lean-canvas        → Lean Canvas
+  /pm-kpis               → North Star Metric, AARRR, OKRs
+  /pm-business-case      → 3-year projections, Go/No-Go
+  /pm-product-roadmap    → Roadmap v1
+  /pm-prd                → PRD (Phase 3 exit artifact)
+  /pm-pitch-deck         → Pitch Deck (optional)
+  Run /pureinn when done to advance.
+
+PHASE 4 - DOMAIN MODELING  [3-5 days]
+  /pm-domain-model          → Domain Model, ERD
+  /pm-privacy-requirements  → PII Inventory, GDPR action plan
+  /pm-brd [skeleton]        → BRD structure outline
+  /pm-product-roadmap       → Roadmap v2 (+ domain constraints)
+  Run /pureinn when done to advance.
+
+PHASE 5 - FEATURE PLANNING  [2-3 days]
+  /pm-features-list    → Features List (FDD), Dependency Map, KANO, V×C
+                         → Notion: Feature entries pushed
+  /pm-mvp-scope        → MVP Scope, Feature Sets, Delivery Stripes
+                         → Notion: MFS/FS created, Features enriched
+  /pm-product-roadmap  → Roadmap v3 (+ feature + delivery view)
+  Run /pureinn when done to advance.
+
+PRE-PHASE 6
+  /common-ground       → Tech stack decision, repo structure → COMMON-GROUND.md
+
+PHASE 6 + 7 - DELIVERY  [repeats per Stripe, 2 weeks each]
+  /pm-stripe kickoff   → Stripe plan, spec gate check, feature routing
+  Per Feature Set (before build):
+    /pm-feature-set-overview, /pm-brd, /pm-fsd
+    /architecture-designer, /api-designer  (if needed)
+    /impeccable-teach [once], /impeccable-shape [per feature]
+    /feature-forge  (AFTER BRD + FSD - hard rule)
+  Per feature (build):
+    /fullstack-guardian → /impeccable-craft → /test-master → /playwright-expert
+    → /code-reviewer → /impeccable-harden → /devops-engineer → /monitoring-expert
+  /pm-stripe close     → Retro, learnings, next Stripe
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+FEATURE IMPLEMENTATION PLAYBOOK
+Use when: product exists, users are active, goal is adding new functionality.
+Does NOT follow Phase 1-5. Has its own entry sequence.
+─────────────────────────────────────────────
+MIGRATION PATH  [product built outside the framework - run once]
+  /pureinn             → always first: workspace setup, state.json, pureinn-variables.md
+  /common-ground       → technical context (stack, APIs, debt) → COMMON-GROUND.md
+  /impeccable-teach    → design context (design system, components) → PRODUCT.md + DESIGN.md
+  /pm-glossary         → start domain glossary
+  /pm-reverse-extract  → reads existing FSD/BRD/Feature Cards/codebase
+                         → extracts feature inventory in FDD format
+                         → derives MFS → FS → Feature hierarchy with status
+                         → pushes full structure to Notion (primary: team visibility)
+                         → generates features-list.md, feature-sets.md,
+                           delivery-stripes.md (secondary: Claude context)
+  → proceed to Phase 6 + 7
+
+─────────────────────────────────────────────
+STANDARD PATH  [onboarding a new feature project]
+  PHASE 0 - CONTEXT SETUP  [once per project onboarding]
+  /pureinn           → Product context (users, roadmap, problems, workarounds)
+  /common-ground     → Technical context → COMMON-GROUND.md
+  /impeccable-teach  → Design context → PRODUCT.md + DESIGN.md
+
+  FEATURE VIABILITY ASSESSMENT  [per feature, before spec]
+  Feature Target Profile:
+    - Target segment + KANO classification (Must-be / Performance / Delighter / Indifferent)
+    - V×C Matrix (Quick Win / Big Bet / Fill-in / Time Waster)
+    - Usage frequency + % of user base
+  Demand Validation:
+    - Existing signal: analytics, support tickets, requests
+    - Lightweight experiments if signal weak (fake door, mockup, landing page)
+    - B2B: pilot commitment or letter of intent
+  Strategic Alignment: Core vs. Adjacent
+  MDP Definition: minimum delightful product scope
+  Success Metrics: depth of usage / behavior change / business impact (set before build)
+
+  TRACK A - KNOW WHAT WE WANT
+    Feature Set assignment (existing FS → extend additively / new FS → full BRD + FSD)
+    /pm-brd            → BRD (new or extend)
+    /pm-fsd            → FSD (new or extend, includes backward compat analysis)
+    /feature-forge     → Feature Card [after BRD + FSD - hard rule]
+
+  TRACK B - KNOW THE AREA, NOT THE SOLUTION
+    👤 User research (5-10 interviews), competitive analysis, tech feasibility
+    Feature Value Prop, Business Case, Success Metrics
+    → Converges into Track A after discovery
+
+  DELIVERY CYCLE  [same as Phase 6+7 below, plus FI-specific rules]
+    Feature flags mandatory (all new code OFF by default)
+    Backward compat: API and DB changes additive only
+    Regression suite per feature (≤10% latency increase gate)
+    Gradual rollout: Internal → 5% → 25% → 50% → 100%
+    Kill switch: disable flag if error rate >5%
+    Post-launch: minimum 4 weeks monitoring
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+LEGEND
+  👤 Human activity - done outside Claude (interviews, Figma, domain research)
+  🔍 External AI - Perplexity, ChatGPT - results brought in as skill input
+  🤖 AI Skill - Claude generates the artifact
+
+ARTIFACT CHAIN - GREENFIELD
+  Phase 2 → Problem Validation Summary
+  Phase 3 → PRD (primary reference for Phase 4+)
+  Phase 4 → Domain Model + BRD Skeleton
+  Phase 5 → MVP Scope + Feature Sets + Delivery Stripes
+  Phase 6 → BRD + FSD + Feature Cards (per Feature Set)
+  Phase 7 → Working software (per Delivery Stripe)
+
+ARTIFACT CHAIN - FEATURE IMPLEMENTATION
+  Phase 0 → Product + Technical + Design context (COMMON-GROUND.md, PRODUCT.md, DESIGN.md)
+  Per feature → Feature Target Profile + Demand Validation + MDP + Success Metrics
+  Per feature → BRD (extended or new) + FSD (extended or new) + Feature Card
+  Per Stripe → Build → Regression → Review → Deploy (feature-flagged)
+  Per feature → Gradual rollout (Internal → 5% → 25% → 50% → 100%)
+  Post-launch → 4 weeks monitoring
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+---
+
+## Behavioral Rules
+
+- Never execute skill logic. Route to the right skill, let the user invoke it.
+- Document analysis (Step 3) is the primary assessment mechanism - not a questionnaire. Read first, ask second.
+- Conclusions and assumptions must be explicitly separated in the assessment. Never mix them.
+- User confirmation of the assessment is mandatory before routing. They confirm, reject, or adjust each section.
+- Guidance mode is persistent throughout the workflow - not a one-time intro.
+- If guidance is ON: always add phase purpose before the skills queue. Never skip it.
+- Phase skipping is allowed for phases with confirmed coverage. Record in state.json.
+- One phase at a time in the dashboard. Show only the current phase skills queue in detail.
+- If user asks to pause: save state and say "Run /pureinn [slug] to continue."

@@ -1,0 +1,472 @@
+---
+name: pm-prd
+description: Generate the Product Requirements Document (PRD) - the Phase 3 consolidation artifact. Synthesizes all Phase 2 and Phase 3 outputs into one coherent product-level document. Most complex skill - requires all predecessor artifacts. Run at end of Phase 3.
+license: MIT
+metadata:
+  author: https://github.com/ljucask
+  version: "1.0.0"
+  domain: product-management
+  triggers: PRD, product requirements document, Phase 3 exit, product consolidation, product specification
+  role: specialist
+  scope: documentation
+  output-format: document
+  related-skills: pm-lean-canvas, pm-kpis, pm-domain-model, pm-product-roadmap
+---
+
+# PM - Product Requirements Document (PRD)
+
+## What this skill does
+
+Synthesizes all Phase 2 and Phase 3 outputs into a single coherent product-level document:
+
+**Phase 2 inputs:**
+- Tech Feasibility Report (Track A)
+- Domain Analysis + Legal Requirements (Track B)
+- Market Size Analysis, Competitor Analysis, SWOT, Market Timing (Track C)
+- Customer Segments, Personas, Early Adopters Profile, JTBD Analysis (Track D)
+- Problem Validation Summary (convergence)
+
+**Phase 3 inputs:**
+- Business Model Canvas
+- KPIs & Metrics Framework (North Star, AARRR, OKRs)
+- Business Case
+- Product Roadmap v1
+
+The PRD is not a requirements spec. It is a product-level document that answers: who is this for, what problem does it solve, why does it matter, what does success look like, what are the commercial assumptions. Phase 4+ uses it as the stable reference.
+
+No new research. Pure synthesis.
+
+---
+
+## Dependencies
+
+**Required before running (all of these):**
+- `pm-problem-validation` - validated problem, customer, evidence
+- `pm-business-model` - commercial logic and revenue model
+- `pm-kpis` - North Star, AARRR, OKRs
+- `pm-business-case` - financial projections and investment rationale
+- `pm-product-roadmap` (v1) - strategic phases and roadmap direction
+
+**Strongly recommended (Phase 2 artifacts):**
+- `pm-personas` - customer segments and personas
+- `pm-market-analysis` - market context
+- `pm-domain-analysis` - domain constraints and regulatory landscape
+- `pm-tech-feasibility` - technical context
+
+**Produces artifacts used by:**
+- Phase 4 domain modeling (`pm-domain-model`, `pm-brd`)
+- Phase 5 feature planning (`pm-features-list`, `pm-mvp-scope`)
+- Phase 6 design and spec work (all skills)
+- External stakeholders, investors, team onboarding
+
+---
+
+## Step 0: Current state check
+
+Check for existing artifacts:
+- PRD
+
+Then map which inputs are available:
+
+| Input | Artifact | Status |
+|---|---|---|
+| Phase 2 convergence | Problem Validation Summary | ✅ / ⚠️ / ❌ |
+| Phase 2 Track D | Personas + JTBD | ✅ / ⚠️ / ❌ |
+| Phase 2 Track C | Market Analysis | ✅ / ⚠️ / ❌ |
+| Phase 2 Track B | Domain Analysis + Legal | ✅ / ⚠️ / ❌ |
+| Phase 2 Track A | Tech Feasibility | ✅ / ⚠️ / ❌ |
+| Phase 3 | Business Model Canvas | ✅ / ⚠️ / ❌ |
+| Phase 3 | KPIs (NSM, AARRR, OKRs) | ✅ / ⚠️ / ❌ |
+| Phase 3 | Business Case | ✅ / ⚠️ / ❌ |
+| Phase 3 | Product Roadmap v1 | ✅ / ⚠️ / ❌ |
+
+If critical inputs are missing (Problem Validation Summary, Business Model Canvas, KPIs), block until resolved. If secondary inputs are missing, inform user and generate with noted gaps.
+
+Look for: PRD without a clear problem statement, value proposition not tied to validated pains, success criteria not tied to NSM, roadmap section not consistent with pm-product-roadmap v1, missing "out of scope" section, regulatory constraints not surfaced.
+
+Apply the standard skill interaction pattern (CLAUDE.md).
+
+---
+
+## Step 1: Gather inputs
+
+```
+To generate the PRD I will synthesize your Phase 2 and Phase 3 artifacts.
+
+Please confirm which are available in context (or paste them below):
+
+PHASE 2:
+- Problem Validation Summary: [available in context / paste here]
+- Personas + JTBD Analysis: [available in context / paste here]
+- Market Analysis (TAM/SAM/SOM, Competitor Analysis, SWOT, Market Timing): [available / paste]
+- Domain Analysis + Legal Requirements: [available / paste]
+- Tech Feasibility Report: [available / paste]
+
+PHASE 3:
+- Business Model Canvas: [available / paste]
+- KPIs (North Star, AARRR, OKRs): [available / paste]
+- Business Case: [available / paste]
+- Product Roadmap v1: [available / paste]
+
+Additional questions:
+1. Has anything changed or been revised since these artifacts were generated?
+   (e.g., pricing decision, scope cut, segment change)
+2. Is this PRD for internal use only, or will it be shared externally?
+   (External: we use softer language on risks and assumptions)
+3. Are there any open decisions that need to be flagged in the PRD as unresolved?
+```
+
+---
+
+## Step 2: Synthesize
+
+Before generating, Claude must:
+1. Identify the core validated problem and primary customer (from Problem Validation Summary)
+2. Check that the Business Model value proposition aligns with validated pains from Phase 2
+3. Check that KPIs (NSM) connect logically to the problem and business model
+4. Check that the Roadmap phases align with the business case investment staging
+5. Surface any contradictions between artifacts (market size vs. business case targets, persona vs. revenue model, tech feasibility vs. roadmap timeline)
+6. Flag any sections where inputs are weak or missing
+
+---
+
+## Step 3: Generate artifact
+
+Generate in English.
+
+---
+
+### ARTIFACT: Product Requirements Document (PRD)
+
+```markdown
+# Product Requirements Document - [Product Name]
+
+> **Phase:** 3 - Define & Validation (Phase 3 exit artifact)
+> **Date:** [date]
+> **Version:** 1.0
+> **Status:** [Draft / Final / Approved]
+> **Owner:** [PM name]
+> **Audience:** Internal team, [investors / advisors / partners if external]
+
+---
+
+## Document Purpose
+
+This PRD is the consolidation of Phase 2 (Discovery) and Phase 3 (Define) outputs. It captures the validated product-market fit hypothesis and serves as the stable reference for Phase 4+ execution.
+
+It is NOT a feature spec. Feature specifications are generated per Feature Set in Phase 6 (BRD + FSD).
+
+---
+
+## 1. Problem Statement
+
+**The core problem:**
+[2-3 sentences: What is the problem? Who has it? When does it occur? What does it cost them?]
+
+**Evidence basis:**
+- [X] customer interviews conducted
+- [X] distinct JTBD identified
+- Problem urgency: High / Medium / Low
+
+**Why this problem is not solved well today:**
+[Current alternatives and why they fall short - tied to competitor analysis and JTBD forcing functions]
+
+---
+
+## 2. Target Customer
+
+### Primary Segment
+
+**Segment:** [Name]
+**Description:** [2-3 sentences: who they are, their context, scale]
+**Size (SAM):** [X,000 / $XM]
+
+**Primary Persona: [Name]**
+- Role: [Job title / context]
+- Core goal: [What they're trying to achieve]
+- Top pain: [Primary pain with current solution]
+- What triggers them to seek a new solution: [switching trigger]
+
+### Early Adopter Profile
+
+[2-3 sentences: who specifically will be the first 10-50 customers, what makes them different from the average segment member, how to find them]
+
+### Secondary Segment (if applicable)
+
+[Brief profile - segment name, size, difference from primary, timing of when we address them]
+
+---
+
+## 3. Product Vision and Value Proposition
+
+**Vision (3 years):**
+[One sentence: what does the world look like if this product succeeds?]
+
+**Value proposition:**
+[2-3 sentences: what outcome does the customer get, what pain disappears, why choose us over alternatives]
+
+**For [Primary Persona]:**
+- Primary outcome: [What they achieve]
+- Pain eliminated: [What disappears]
+- Differentiation: [Why this vs. the status quo or competitors]
+
+---
+
+## 4. Market Context
+
+**Market opportunity:**
+
+| Metric | Value | Confidence |
+|---|---|---|
+| TAM | $[X]M | [High/Med/Low] |
+| SAM | $[X]M | [High/Med/Low] |
+| SOM (Year 3) | $[X]M | [Low - assumption-based] |
+| Market CAGR | [X%] | [Source] |
+
+**Why now:**
+[2-3 sentences: the specific conditions (tech, regulation, behavior change) that open this window now]
+
+**Competitive position:**
+[2-3 sentences: who the key competitors are, where we win, what is defensible]
+
+**Competitive whitespace:**
+[Where no competitor is covering well that we can own]
+
+---
+
+## 5. Business Model
+
+**Revenue model:** [Subscription / Usage-based / Marketplace / Freemium + upgrade]
+
+**Pricing:**
+| Tier | Price | For whom |
+|---|---|---|
+| [Tier 1] | $[X]/month | [Target] |
+| [Tier 2] | $[X]/month | [Target] |
+
+**Unit economics targets:**
+| Metric | Target |
+|---|---|
+| ARPU | $[X]/month |
+| Monthly churn | < [X%] |
+| LTV/CAC | > 3:1 |
+| Gross margin | > [X%] |
+
+**Acquisition model:** [Primary channel + approach]
+
+---
+
+## 6. Success Metrics
+
+**North Star Metric:** [NSM definition]
+**NSM Target (Month 12):** [X]
+
+**Phase 1 exit criteria (Month [X] post-launch):**
+- [ ] [Measurable condition - e.g., 20 paying customers]
+- [ ] [Measurable condition - e.g., Day 30 retention > 40%]
+- [ ] [NPS > 30 with first cohort]
+
+**Phase 2 targets (Month [X]-[Y]):**
+- [ ] [MRR target]
+- [ ] [Churn target]
+- [ ] [Growth rate]
+
+**AARRR summary:**
+
+| Stage | Key Metric | Target |
+|---|---|---|
+| Acquisition | [Metric] | [Target] |
+| Activation | [Metric - activation event] | [X%] |
+| Retention | [Day 30 retention] | [X%] |
+| Revenue | [MRR Month 6] | $[X]K |
+| Referral | [NPS] | > [X] |
+
+---
+
+## 7. Product Scope
+
+### In Scope (MVP)
+
+[High-level description of what the product does - functional areas, not feature list]
+
+1. [Functional area 1: e.g., Property listing management]
+2. [Functional area 2: e.g., Booking calendar sync]
+3. [Functional area 3: e.g., Guest communication automation]
+
+> Feature-level detail is defined in Phase 6 BRD + FSD per Feature Set.
+
+### Out of Scope (MVP)
+
+These items are explicitly excluded from the MVP. This is a strategic decision.
+
+| Item | Reason | Reconsider when |
+|---|---|---|
+| [Feature / capability] | [Not validated / wrong segment / too complex] | [Phase 2 / after X customers] |
+| [Feature 2] | | |
+
+### Deferred (Post-MVP)
+
+| Item | Target phase | Trigger |
+|---|---|---|
+| [Feature] | Phase 2 of product | [Condition] |
+| [Feature] | Phase 3 of product | [Condition] |
+
+---
+
+## 8. Constraints and Risks
+
+### Technical Constraints
+
+| Constraint | Impact | Source |
+|---|---|---|
+| [e.g., Airbnb API rate limits] | [Affects sync frequency] | Tech Feasibility Report |
+| [e.g., AI API cost ceiling] | [Gross margin constraint] | Tech Feasibility Report |
+
+**Technical feasibility verdict:** 🟢 Feasible / 🟡 Feasible with risks / 🔴 Not feasible
+[Key risks from Tech Feasibility Report]
+
+### Regulatory Constraints
+
+| Regulation | Jurisdiction | Requirement | Timeline |
+|---|---|---|---|
+| GDPR | EU | [Key requirements] | Before launch |
+| [Local regulation] | [SK/CZ/...] | [Requirement] | [When] |
+
+**Regulatory showstoppers:** [None / List]
+
+**Compliance requirements to address before launch:**
+- [ ] [Requirement 1]
+- [ ] [Requirement 2]
+
+### Business Constraints
+
+| Constraint | Impact |
+|---|---|
+| [e.g., Budget: $XK for 12 months] | [Limits team size and marketing spend] |
+| [e.g., Founding team = 2 people] | [Sequencing: cannot build everything in parallel] |
+| [e.g., Must reach X customers by date Y for funding] | [Hard deadline on Phase 1 exit] |
+
+---
+
+## 9. Open Questions and Assumptions
+
+### Open Questions (not yet resolved)
+
+| Question | Priority | Owner | Target date |
+|---|---|---|---|
+| [What we don't know yet] | High / Med / Low | [Who resolves] | [When] |
+| ... | | | |
+
+### Critical Assumptions (that could invalidate the product)
+
+| Assumption | Confidence | How to validate | By when |
+|---|---|---|---|
+| [e.g., Customers will pay $X/month] | Med | [Pricing test] | [Month X] |
+| [e.g., Self-serve onboarding will work] | Low | [5-user test] | [Before launch] |
+| [e.g., CAC < $X via inbound] | Low | [First campaign] | [Month 2] |
+
+---
+
+## 10. Product Roadmap (summary)
+
+> Full roadmap in Product Roadmap v1 artifact.
+
+**Phase 1 - [Name]:** [Timeframe] - [Goal in one sentence]
+**Phase 2 - [Name]:** [Timeframe] - [Goal in one sentence]
+**Phase 3 - [Name]:** [Timeframe] - [Goal in one sentence]
+
+---
+
+## 11. Artifact Input Map
+
+This PRD synthesizes the following Phase 2 and Phase 3 artifacts:
+
+| Artifact | Status | Key contribution to PRD |
+|---|---|---|
+| Problem Validation Summary | ✅ / ⚠️ / ❌ | Problem statement, evidence, validated pains |
+| Customer Segments + Personas | ✅ / ⚠️ / ❌ | Target customer, early adopter profile |
+| JTBD Analysis | ✅ / ⚠️ / ❌ | Customer motivation, switching forces |
+| Market Analysis | ✅ / ⚠️ / ❌ | Market size, competitive position, timing |
+| Domain Analysis + Legal | ✅ / ⚠️ / ❌ | Domain constraints, regulatory requirements |
+| Tech Feasibility Report | ✅ / ⚠️ / ❌ | Technical constraints and risks |
+| Business Model Canvas | ✅ / ⚠️ / ❌ | Revenue model, pricing, channels |
+| KPIs (NSM, AARRR, OKRs) | ✅ / ⚠️ / ❌ | Success metrics |
+| Business Case | ✅ / ⚠️ / ❌ | Financial targets, investment |
+| Product Roadmap v1 | ✅ / ⚠️ / ❌ | Strategic phases |
+
+**Gaps noted:** [List any artifacts that were missing or partial and how it affected the PRD]
+
+---
+
+## 12. Revision History
+
+| Version | Date | Author | Changes |
+|---|---|---|---|
+| 1.0 | [date] | [PM] | Initial - end of Phase 3 |
+```
+
+---
+
+## Internal completeness checklist
+
+<!-- Claude reference only - not shown to user.
+     Use in Step 0 to identify gaps in existing artifacts.
+     Use in Step 2 to verify full coverage before finalizing output. -->
+
+**Problem Statement must cover:**
+- [ ] Problem clearly stated with who, when, and what it costs
+- [ ] Evidence basis: number of interviews, JTBD identified
+- [ ] Why current alternatives fail - tied to JTBD analysis and competitor research
+- [ ] Problem urgency level stated
+
+**Target Customer must cover:**
+- [ ] Primary segment identified with size
+- [ ] Primary persona named and described
+- [ ] Early adopter profile - who specifically are the first 10-50 customers
+- [ ] B2B: buyer vs. user distinction
+
+**Product Scope must cover:**
+- [ ] In-scope functional areas (MVP) - clear statement of what the product does
+- [ ] Out of scope explicitly listed (strategic decision, not omission)
+- [ ] Deferred items with trigger conditions
+- [ ] No feature-level detail in scope (that belongs in Phase 6 BRD/FSD)
+
+**Business Model must cover:**
+- [ ] Revenue model type stated
+- [ ] Pricing structure
+- [ ] Unit economics targets (ARPU, churn, LTV/CAC, gross margin)
+- [ ] Primary acquisition model
+
+**Success Metrics must cover:**
+- [ ] North Star Metric defined
+- [ ] Phase 1 exit criteria (measurable)
+- [ ] AARRR summary table
+- [ ] OKR period and key results
+
+**Constraints must cover:**
+- [ ] Technical constraints from Tech Feasibility Report
+- [ ] Regulatory requirements from Domain Analysis
+- [ ] Regulatory showstoppers explicitly addressed (None or Listed)
+- [ ] Business constraints (budget, team size, hard deadlines)
+
+**Synthesis quality must cover:**
+- [ ] Value proposition aligned with top validated pains from Problem Validation Summary
+- [ ] NSM connected to business model (what customers do = what drives revenue)
+- [ ] Roadmap phases aligned with business case investment staging
+- [ ] No internal contradictions between sections (market size vs. financial targets, persona vs. pricing)
+- [ ] Open questions and critical assumptions surfaced, not hidden
+
+**For SaaS/AI products:**
+- [ ] AI product positioning: is AI a feature, the core product, or the infrastructure?
+- [ ] AI trust and adoption risk addressed (will target customers trust AI for this task?)
+- [ ] Data requirements for AI stated (what data does the AI need, who provides it?)
+- [ ] EU AI Act risk category assessed if applicable
+- [ ] AI cost impact on gross margin captured in business model section
+- [ ] Freemium strategy clarified (free tier, upgrade trigger, cost of free users)
+- [ ] SaaS-specific retention risks: single-user risk in B2B (what happens if champion leaves?), multi-seat expansion path
+
+## Save to
+
+```
+pureinn-workspace/[project-slug]/artifacts/phase-3/prd.md
+```

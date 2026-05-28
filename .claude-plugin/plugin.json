@@ -1,0 +1,41 @@
+{
+  "name": "pureinn-product-development",
+  "version": "1.0.0",
+  "description": "AI-native product development framework. 34 skills covering the full product lifecycle: discovery, validation, domain modeling, feature planning, and FDD delivery. Three playbooks: Greenfield, Feature Implementation, Rebuild. From zero to launch.",
+  "author": {
+    "name": "ljucask",
+    "email": "lukas.kianka@gmail.com"
+  },
+  "license": "MIT",
+  "repository": "https://github.com/ljucask/pureinn-product-development",
+  "keywords": [
+    "product-management",
+    "product-development",
+    "greenfield",
+    "feature-implementation",
+    "discovery",
+    "validation",
+    "domain-modeling",
+    "fdd",
+    "feature-driven-development",
+    "personas",
+    "jtbd",
+    "lean-canvas",
+    "brd",
+    "fsd",
+    "mvp",
+    "kano",
+    "okrs",
+    "kpis",
+    "roadmap",
+    "prd",
+    "notion",
+    "excalidraw",
+    "gamma",
+    "pm",
+    "startup",
+    "saas"
+  ],
+  "skills": "./skills/",
+  "commands": "./commands/"
+}
