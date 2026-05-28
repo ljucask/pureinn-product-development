@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/pureinn-banner.png" width="100%" alt="Pureinn - AI PM Workflow Engine"/>
+</p>
+
 # Pureinn - AI Product Development Framework
 
 A structured methodology for building products - from zero to launch. Implemented as a Claude Code plugin running an AI-native execution engine.
