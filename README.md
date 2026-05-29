@@ -12,7 +12,7 @@ A structured methodology for building products - from zero to launch. Implemente
 
 ```bash
 /plugin marketplace add ljucask/pureinn-product-development
-/plugin install pureinn-product-development@ljucask
+/plugin install pureinn-product-development@pureinn-product-development
 ```
 
 ---
