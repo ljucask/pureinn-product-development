@@ -49,29 +49,68 @@ Apply the standard skill interaction pattern (CLAUDE.md).
 
 ## Step 1: Gather inputs
 
-Ask the user all questions at once:
+Ask questions in 2 groups. After each group show a summary and wait for confirmation before continuing.
 
-```
-I need team context for the Communication Charter.
+---
 
-1. TEAM
-   Team size: how many people?
-   Timezones: is everyone in the same timezone, or distributed?
-   Fully remote / hybrid / office?
+### Group 1 of 2 - Team setup and tools
 
-2. AVAILABLE TOOLS
-   Async: Slack / Teams / Email / Notion / other
-   Documentation: Notion / Confluence / Google Drive / other
-   Project management: Linear / Jira / Asana / other
-   Video calls: Zoom / Meet / other
+Ask these three questions together:
 
-3. WORKING PREFERENCES
-   What is the team style - prefers async or meetings?
-   Are there any past problems you want to avoid repeating?
+What is the team's working arrangement?
 
-4. KEY COMMUNICATION MOMENTS
-   What are the critical communication moments in this project?
-```
+  A) Fully co-located - same office, same timezone
+  B) Hybrid - some in office, some remote, same timezone
+  C) Fully remote - same timezone
+  D) Distributed - multiple timezones
+
+What is the primary async communication tool?
+
+  A) Slack
+  B) Microsoft Teams
+  C) Email as primary (no dedicated async tool)
+  D) Other - describe
+
+What is the project management tool?
+
+  A) Linear
+  B) Jira
+  C) Notion or Google Sheets
+  D) Other - describe
+
+Then ask as plain text:
+
+What tools do you use for documentation and video calls? (list what you actually use)
+
+After answers, confirm: "Is this the correct toolset and setup?"
+
+---
+
+### Group 2 of 2 - Working style and communication moments
+
+Ask these two questions together:
+
+What best describes the team's natural working style?
+
+  A) Async-first - minimize meetings, communicate in writing
+  B) Meeting-heavy - prefer frequent syncs and verbal alignment
+  C) Balanced - async for execution, syncs for decisions
+  D) No clear preference yet - needs to be established
+
+How large is the team?
+
+  A) 2-3 people (founders only)
+  B) 4-7 people (small team)
+  C) 8-15 people (mid-size team)
+  D) 15+ people (larger team)
+
+Then ask as plain text:
+
+What are the critical communication moments in this project? (e.g., weekly standup, phase gate reviews, design reviews, stakeholder updates)
+
+Are there any past communication problems you want to make sure we avoid? (e.g., decisions made without key people, too many meetings, things falling between the cracks)
+
+After answers, show complete Communication Charter inputs summary. Ask for final confirmation before generating the artifact.
 
 ---
 

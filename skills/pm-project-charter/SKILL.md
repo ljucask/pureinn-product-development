@@ -51,36 +51,47 @@ Apply the standard skill interaction pattern (CLAUDE.md).
 
 ## Step 1: Gather inputs
 
-Ask the user all questions at once:
+Ask questions in 3 groups. After each group show a summary and wait for confirmation before continuing.
 
-```
-I need a few inputs to generate the Project Charter.
+---
 
-1. PRODUCT / IDEA
-   Describe the product or initiative (brain dump, doesn't need to be polished):
+### Group 1 of 3 - Product and motivation
 
-2. WHY NOW
-   What triggered this project? (competition, internal problem, market opportunity, other)
+Ask all as plain text:
 
-3. GOAL / SUCCESS
-   What does success look like? What must be true in 6-12 months?
-   (specific metrics if available)
+Describe the product or initiative. Brain dump is fine - no need to be polished. What are you building and who is it for?
 
-4. CONSTRAINTS AND NON-NEGOTIABLES
-   What is fixed? (budget cap, deadline, tech stack, regulation, other)
+What triggered this project? Why now and not 6 months ago or later?
 
-5. SCOPE - IN / OUT
-   What is explicitly IN scope? What is OUT of scope?
+What does success look like in 6-12 months? Be as specific as possible - name metrics, milestones, or observable outcomes.
 
-6. KEY ASSUMPTIONS
-   What are you building on that you haven't validated yet?
+After answers, confirm: "Is this the right framing of what we're building and why?"
 
-7. BIGGEST RISKS
-   What could kill or significantly slow down the project?
+---
 
-8. INVESTMENT / RUNWAY
-   Current budget or runway (rough estimate is fine)?
-```
+### Group 2 of 3 - Scope and constraints
+
+Ask all as plain text:
+
+What is fixed and non-negotiable? List hard constraints: budget cap, deadline, required tech stack, regulatory requirements, existing partnerships, or anything else that limits the solution space.
+
+What is explicitly IN scope? What is explicitly OUT of scope? If unclear, describe what you'd cut first if time or budget runs short.
+
+After answers, confirm: "Are these constraints and scope boundaries accurate?"
+
+---
+
+### Group 3 of 3 - Assumptions, risks, and resources
+
+Ask all as plain text:
+
+What key assumptions are you building on that haven't been validated yet? What would need to be true for this project to succeed?
+
+What could kill or significantly slow down the project? Name the 2-3 biggest risks.
+
+What is the current budget or runway? A rough estimate is fine.
+
+After answers, show complete Project Charter inputs summary. Ask for final confirmation before generating the artifact.
 
 ---
 

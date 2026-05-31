@@ -74,68 +74,61 @@ The questions differ by version. After Step 0, Claude identifies which version a
 
 ### For v1 (Phase 3 - new roadmap):
 
-```
-I need inputs for the Product Roadmap v1.
+Ask questions in 2 groups. After each group show a summary and wait for confirmation before continuing.
 
-1. VISION
-   What is the 3-year product vision in one sentence? (What does the world look like if we succeed?)
-   What is the 12-month goal? (Where do we want to be in a year?)
+**Group 1 of 2 - Vision and phases**
 
-2. STRATEGIC PHASES
-   How do you currently think about the product in phases?
-   (e.g., Phase 1: Prove value with early adopters → Phase 2: Scale core use case → Phase 3: Expand)
-   What are the major strategic bets or pivots at each phase?
+Ask all as plain text:
 
-3. NORTH STAR & METRICS
-   What is the North Star Metric? (from pm-kpis)
-   What is the success signal that exits each phase?
+What is the 3-year product vision in one sentence? What does the world look like if you succeed?
 
-4. WHAT WE ARE NOT BUILDING (YET)
-   What is explicitly out of scope for the first 12 months?
-   What do customers ask for that we are choosing not to build? Why?
+What is the 12-month goal? Where do you want to be in a year - specific metrics or milestones?
 
-5. DEPENDENCIES AND RISKS
-   What external factors could shift the timeline? (regulation, funding, hiring, partnership)
-   What is the biggest strategic risk to the roadmap?
-```
+How do you think about the product in strategic phases? Describe 2-4 phases with a name and primary goal for each. (e.g., "Phase 1: Prove value with early adopters → Phase 2: Scale core use case → Phase 3: Expand to adjacent segments")
+
+What is the North Star Metric? (from pm-kpis if available) What is the success signal that exits each phase?
+
+After answers, confirm: "Does this phase structure and success logic make sense?"
+
+**Group 2 of 2 - Scope and risks**
+
+Ask all as plain text:
+
+What is explicitly out of scope for the first 12 months? What do customers ask for that you are choosing not to build, and why?
+
+What external factors could shift the timeline? (regulation, funding, hiring, partnership) What is the biggest strategic risk to this roadmap?
+
+After answers, show complete v1 inputs summary. Ask for final confirmation before generating the roadmap.
+
+---
 
 ### For v2 (Phase 4 update):
 
-```
-I need inputs to update the Product Roadmap to v2.
+Ask all as plain text in one group:
 
-1. DOMAIN CONSTRAINTS
-   What did the Domain Model reveal about system complexity or data structure?
-   Are there domain-driven constraints that affect phase ordering or timeline?
+What did the Domain Model reveal about system complexity or data structure? Are there domain-driven constraints that affect phase ordering or timeline?
 
-2. TECHNICAL REALITIES
-   What technical decisions (from architecture or tech feasibility) change what can be built when?
-   Are there dependencies between technical capabilities that affect sequencing?
+What technical decisions change what can be built when? Are there dependencies between technical capabilities that affect sequencing?
 
-3. COMPLIANCE / PRIVACY
-   Any regulatory requirements (from pm-privacy-requirements) that add time to specific phases?
+Any regulatory requirements from pm-privacy-requirements that add time to specific phases?
 
-4. ADJUSTMENTS NEEDED
-   What changes from v1? (new phases, shifted timelines, dropped scope, new risks)
-```
+What changes from v1? (new phases, shifted timelines, dropped scope, new risks)
+
+Confirm before updating.
+
+---
 
 ### For v3 (Phase 5 update):
 
-```
-I need inputs to update the Product Roadmap to v3.
+Ask all as plain text in one group:
 
-1. MVP SCOPE
-   What is in MVP? (from pm-mvp-scope)
-   What are the Feature Sets and their priority order?
-   What are the planned Delivery Stripes? (2-week time-boxes, in sequence)
+What is in MVP? List the Feature Sets and their priority order. (from pm-mvp-scope if available)
 
-2. DELIVERY VIEW
-   How many Delivery Stripes are planned for MVP?
-   What does the post-MVP roadmap look like? (Phase 2 of product - what comes after MVP)
+What are the planned Delivery Stripes? How many for MVP? What does the post-MVP roadmap look like?
 
-3. ADJUSTMENTS NEEDED
-   What changes from v2? (feature decisions that shift strategic direction, new risks, scope changes)
-```
+What changes from v2? (feature decisions that shift strategic direction, new risks, scope changes)
+
+Confirm before updating.
 
 ---
 

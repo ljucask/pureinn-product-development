@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0] - 2026-05-31
+
+### Apply grouped question pattern to all remaining documentation skills: project-charter, stakeholder-map, team-roster, comms-charter, prd, product-roadmap, privacy-requirements
+
+---
+
+
 ## [1.2.0] - 2026-05-31
 
 ### Add grouped questions to decision skills; Path A/B to tech-feasibility and domain-analysis; Path C Octagon MCP to market-analysis

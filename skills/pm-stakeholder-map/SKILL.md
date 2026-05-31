@@ -50,31 +50,31 @@ Apply the standard skill interaction pattern (CLAUDE.md).
 
 ## Step 1: Gather inputs
 
-Ask the user all questions at once:
+Ask questions in 2 groups. After each group show a summary and wait for confirmation before continuing.
 
-```
-I need a stakeholder list and context for the Stakeholder Map.
+---
 
-1. INTERNAL STAKEHOLDERS
-   List the people/roles on the internal team:
-   E.g.: CEO, CTO, CFO, PM, Tech Lead, UX Designer, Marketing Lead, Legal...
+### Group 1 of 2 - Stakeholders
 
-2. EXTERNAL STAKEHOLDERS
-   Who outside the team has interest in or influence over the project?
-   E.g.: investors, customers (segments), partners, regulators, vendors...
+Ask all as plain text:
 
-3. FOR EACH STAKEHOLDER:
-   - What is their interest in the project?
-   - How much power / influence do they have? (can kill / block / ignore the project)
+List the internal team - roles involved in this project. For each, briefly describe their interest and how much influence they have over project outcomes.
 
-4. KEY DECISIONS
-   What are the 5-8 most important decisions in the project?
-   E.g.: Go/No-Go at phase gates, MVP scope, tech stack, pricing, hiring, fundraising...
+Who outside the team has a stake in or influence over this project? List external stakeholders: investors, customer segments, partners, regulators, vendors. For each, what do they care about and how much power do they have? (can kill it, can block it, can slow it, or can simply be ignored)
 
-5. CONFLICTS AND ESCALATION
-   Who has the final word when there is disagreement?
-   Are there anticipated conflicts?
-```
+After answers, confirm: "Is this a complete picture of who matters for this project?"
+
+---
+
+### Group 2 of 2 - Decisions and governance
+
+Ask all as plain text:
+
+What are the 5-8 most important decisions in this project? (e.g., Go/No-Go at phase gates, MVP scope, tech stack, pricing, hiring, fundraising)
+
+Who has the final word when there is disagreement? Are there anticipated conflicts between stakeholders that need a clear escalation path?
+
+After answers, show complete stakeholder inputs summary. Ask for final confirmation before generating the artifact.
 
 ---
 

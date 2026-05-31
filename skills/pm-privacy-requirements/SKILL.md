@@ -60,38 +60,63 @@ Apply the standard skill interaction pattern (CLAUDE.md).
 
 ## Step 1: Gather inputs
 
-```
-I need inputs for the Privacy Requirements analysis.
+Ask questions in 2 groups. After each group show a summary and wait for confirmation before continuing.
 
-1. DOMAIN MODEL
-   Paste the Entity Catalogue from the Domain Model (or confirm it's in context).
-   I need the entity names and their attributes to map PII accurately.
-   [paste Entity Catalogue or "in context"]
+---
 
-2. PRODUCT AND MARKET CONTEXT
-   What does the product do in one sentence?
-   Who are the users? (consumers, businesses, employees, children?)
-   What markets / jurisdictions? (EU, US, global...)
+### Group 1 of 2 - Data context
 
-3. KEY DATA FLOWS
-   Does the product collect data directly from users, or receive it from third parties?
-   Does the product share user data with third parties? (analytics, payment, marketing, AI APIs...)
-   Does the product use AI that processes user data? (e.g., sends user content to an LLM API)
+Ask these two questions together:
 
-4. SENSITIVE DATA
-   Does the product handle any of the following?
-   - Health or medical data
-   - Financial data (bank accounts, payment cards)
-   - Location data (real-time or historical)
-   - Biometric data (face recognition, fingerprints)
-   - Data about children (under 16 in EU)
-   - Political, religious, or union membership data
+Which markets / jurisdictions does this product launch in?
 
-5. EXISTING DECISIONS
-   Have any data retention periods been decided?
-   Is there a cookie / tracking plan?
-   Has a Data Protection Officer (DPO) been appointed or considered?
-```
+  A) EU only (GDPR applies)
+  B) EU + US (GDPR + state-level US privacy laws)
+  C) Global from launch
+  D) Non-EU only (no GDPR obligation)
+
+Who are the primary users whose data the product processes?
+
+  A) Adult consumers (B2C)
+  B) Business employees or professionals (B2B)
+  C) Mixed - both consumers and businesses
+  D) Includes minors (under 16 in EU) - requires additional safeguards
+
+Then ask as plain text:
+
+Paste the Entity Catalogue from the Domain Model (or confirm it's already in context). I need entity names and their attributes to map PII accurately.
+
+What does the product do in one sentence? Does it collect data directly from users, or receive it from third parties?
+
+After answers, confirm: "Is this the correct data context?"
+
+---
+
+### Group 2 of 2 - Data flows and sensitive data
+
+Ask these two questions together - select all that apply for sensitive data:
+
+Does the product handle any sensitive data categories?
+
+  A) Health / medical data or financial data (bank accounts, payment cards)
+  B) Location data (real-time or historical) or biometric data
+  C) Data about children under 16
+  D) None of the above - standard personal data only
+
+Does the product use AI that processes user data?
+
+  A) Yes - sends user content or personal data to an external LLM API (e.g., OpenAI, Anthropic)
+  B) Yes - uses AI but only on anonymized or aggregated data
+  C) No AI components that process personal data
+  D) Unknown - not yet assessed
+
+Then ask as plain text:
+
+Does the product share user data with third parties? List any: analytics (Google Analytics, Mixpanel), payments (Stripe), marketing tools, AI APIs, or other external services.
+
+Have any data retention periods been decided? Is there a cookie and tracking plan? Has a Data Protection Officer been appointed or considered?
+
+After answers, show complete privacy inputs summary. Ask for final confirmation before generating PII Inventory and GDPR Action Plan.
 
 ---
 

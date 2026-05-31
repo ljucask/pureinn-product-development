@@ -90,6 +90,10 @@ Apply the standard skill interaction pattern (CLAUDE.md).
 
 ## Step 1: Gather inputs
 
+### Step 1a - Confirm artifacts
+
+Ask as plain text:
+
 ```
 To generate the PRD I will synthesize your Phase 2 and Phase 3 artifacts.
 
@@ -107,14 +111,33 @@ PHASE 3:
 - KPIs (North Star, AARRR, OKRs): [available / paste]
 - Business Case: [available / paste]
 - Product Roadmap v1: [available / paste]
-
-Additional questions:
-1. Has anything changed or been revised since these artifacts were generated?
-   (e.g., pricing decision, scope cut, segment change)
-2. Is this PRD for internal use only, or will it be shared externally?
-   (External: we use softer language on risks and assumptions)
-3. Are there any open decisions that need to be flagged in the PRD as unresolved?
 ```
+
+After receiving artifact status, show a coverage table and note which sections of the PRD will have gaps due to missing inputs.
+
+---
+
+### Step 1b - Follow-up questions
+
+Ask these two questions together:
+
+Is this PRD for internal use only, or will it be shared externally?
+
+  A) Internal only - full transparency on risks and assumptions
+  B) Shared externally (investors, partners) - softer language on risks
+  C) Both versions needed
+
+Has anything changed or been revised since these artifacts were generated?
+
+  A) No - artifacts are current
+  B) Yes - minor updates (I'll describe them)
+  C) Yes - significant changes (pricing, scope, segment, pivot)
+
+Then ask as plain text:
+
+Are there any open decisions that need to be flagged in the PRD as unresolved? List them - they will appear as explicit open items in the document.
+
+After answers, confirm: "Ready to synthesize. Anything else before I generate the PRD?"
 
 ---
 

@@ -53,31 +53,31 @@ Apply the standard skill interaction pattern (CLAUDE.md).
 
 ## Step 1: Gather inputs
 
-Ask the user all questions at once:
+Ask questions in 2 groups. After each group show a summary and wait for confirmation before continuing.
 
-```
-I need team information for the Team Roster and Decision Rights.
+---
 
-1. CORE TEAM
-   List the core team members. For each:
-   - Role (PM, Tech Lead, FE Dev, BE Dev, UX Designer, QA, Data Analyst, GTM Lead, other)
-   - Availability (full-time / part-time - what % / external contact)
-   - Internal or external (employee / contractor / co-founder)
+### Group 1 of 2 - Team
 
-2. DECISION STRUCTURE
-   Who has the final say in these areas?
-   - Product scope and priorities
-   - Technical decisions (architecture, tech stack)
-   - Design and UX direction
-   - Budget and hiring
-   - Go/No-Go at each phase gate
+Ask all as plain text:
 
-3. SKILL GAPS
-   What is currently missing or weak in the team?
+List the core team members. For each person: role, full-time or part-time (what %), and whether they are an employee, contractor, or co-founder.
 
-4. MITIGATION
-   How do you plan to address the gaps? (hire, contractor, outsource, skip for now...)
-```
+After answers, confirm: "Is this the complete team for this project?"
+
+---
+
+### Group 2 of 2 - Decision rights and gaps
+
+Ask all as plain text:
+
+Who has the final say in each of these areas: product scope and priorities, technical decisions (architecture, stack), design and UX direction, budget and hiring, Go/No-Go at phase gates?
+
+What is currently missing or weak in the team? What roles or skills are gaps?
+
+How do you plan to address those gaps? (hire, contractor, outsource, skip for now, other)
+
+After answers, show complete team inputs summary. Ask for final confirmation before generating the artifact.
 
 ---
 
