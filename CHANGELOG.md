@@ -1,5 +1,27 @@
 # Changelog
 
+## [1.6.0] - 2026-06-01
+
+### pm-fsd: rewrite template to match reference FSD structure (11 sections)
+
+- Section 0: Document Meta table (Feature Set, Version, Owner, Status, Related BRD Sections, Related Domain Entities)
+- Section 1: Purpose & Context - 1.1 Purpose (business problems + BRD rules), 1.2 Business Context (process + affected lifecycles + downstream prerequisites), 1.3 In Scope / Out of Scope (detailed bullet lists, each out-of-scope item names responsible FS)
+- Section 2: References & Dependencies - 2.1 Referenced Business Rules (Rule ID | Name | Why enforced here), 2.2 Referenced State Machines (per entity), 2.3 Referenced Domain Entities (Entity | Attributes Used | Access R/W), 2.4 Dependencies on Other Feature Sets (FS | Dependency Type | Description)
+- Section 3: Responsibilities & Boundaries - 3.1 Core Responsibilities, 3.2 Explicit Non-Responsibilities (each names the FS that handles it instead), 3.3 Assumptions & Constraints
+- Section 4: Functional Behavior (BUSINESS-LOGIC VIEW) - 4.1 Entry Points / Triggers table, 4.2 Main Business Flow (numbered, named steps), 4.3 Validations & Guards table, 4.4 Edge Cases & Exceptional Scenarios
+- Section 5: Events & Reactions - 5.1 Events Produced (Canonical | When | Meaning as business fact), 5.2 Events Consumed (Canonical | Producer | Expected Context), 5.3 Idempotency (per-event table) + Ordering expectations (Entity/Lifecycle | Events | Expected order | What if out-of-order)
+- Section 6: State Interactions (Entity | From | To | Condition with rule reference)
+- Section 7: Acceptance Criteria - AC-01 to AC-N format (Given/When/Then/And), covers happy path, each validation failure, idempotency, expiry/housekeeping
+- Section 8: Non-Functional Expectations - 8.1 Performance, 8.2 Latency, 8.3 Consistency, 8.4 Accuracy (each with business justification)
+- Section 9: Operational & Observability Notes - 9.1 Business Signals table, 9.2 Key Metrics table, 9.3 Alert-Worthy Conditions table, 9.4 Operational Notes
+- Section 10: Open Questions & Pending Decisions
+- Section 11: Working Notes (Engineering Playground) - non-binding section for API drafts, diagrams, tech notes
+- Step 1 intake: restructured into 3 groups covering scope/context, behavior/events, and non-functional/observability
+- Completeness checklist: updated to cover all 11 sections with specific coverage requirements
+
+---
+
+
 ## [1.5.0] - 2026-06-01
 
 ### pm-brd: rewrite Phase 4 Skeleton and Phase 6 Detail templates to match reference BRD structure
