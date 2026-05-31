@@ -153,93 +153,339 @@ Generate in English.
 **Date:** [date]
 **Status:** Phase 4 - Skeleton. Full detail added per Feature Set in Phase 6.
 **Based on:** Domain Model v[X]
+**Author:** [Product Team]
+**Review Status:** Draft
 
 ---
 
-## 0. Document Scope
+## 0. Document Meta & Navigation
 
-### What this BRD defines
+### 0.1 Purpose & Scope
+
+This BRD defines the business behavior of [Product Name] - the rules, processes, state machines, and events that govern how the system operates. It is the authoritative reference for what the system must do at a business level, regardless of implementation.
+
+**Scope:** [Which product areas / Feature Sets are covered]
+**Out of scope:** [What is explicitly excluded from this BRD]
+
+### 0.2 What this BRD Defines / Does NOT Define
+
+**BRD defines:**
 - Business rules (RULE-A/B/C library)
-- Entity state machines (lifecycle transitions)
-- Business processes (conceptual level)
+- Entity lifecycle state machines
+- Business processes at conceptual level
 - Business events and their meaning
 - Governance, compliance, and data retention principles
+- Decision models and branching logic
 
-### What this BRD does NOT define
-- Entities, attributes, enums → Domain Model
-- API endpoints, payloads, integrations → FSD / Tech Docs
-- UI/UX flows → Design Docs
-- Infrastructure, retries → ADRs
+**BRD does NOT define:**
+- Entities, attributes, data types, enums → Domain Model
+- API endpoints, payloads, integration specs → FSD / Tech Docs
+- UI/UX flows, screen designs → Design Docs
+- Infrastructure, retry logic, deployment → ADRs
+- Algorithms, calculation logic → FSD
+
+### 0.3 Boundaries & Relationships
+
+| Document | Relationship | Precedence |
+|---|---|---|
+| Domain Model | BRD references entities defined there. Never duplicates them. | Domain Model is authoritative on structure. |
+| FSD | FSD implements what BRD specifies. FSD inherits rules by reference. | BRD is authoritative on behavior. |
+| PRD | PRD defines what and why. BRD defines how the system enforces it. | PRD is upstream. |
+| Feature Cards | Feature Cards reference BRD rules and states for acceptance criteria. | BRD is the reference layer. |
+
+### 0.4 Intended Audience
+
+| Audience | Purpose |
+|---|---|
+| Product Owner | Owns rule decisions, approves edge case handling |
+| Tech Lead / Architect | Designs system to enforce stated rules |
+| Backend Engineer | Implements state machines, rule enforcement, event emission |
+| QA Engineer | Derives test cases from state transitions and business rules |
+| Legal / Compliance | Reviews RULE-C entries for policy alignment |
+
+### 0.5 How to Read this Document
+
+- **Section 1** - understand the user ecosystem and system scope before reading anything else
+- **Section 2** - state machine overview; full detail added in Phase 6 per Feature Set
+- **Section 3** - process orchestration and dependency rules
+- **Sections 4-6** - rules, decisions, events; populated in Phase 6
+- **Sections 7-10** - supporting content (notifications, policies, NFRs, open questions)
+
+Search tip: every rule is tagged RULE-A/B/C-[ID]. Every entity is tagged ENT-[ID]. Every process is tagged PROC-[ID]. Every decision model is tagged DM-[ID].
+
+### 0.6 References
+
+| Document | Location | Notes |
+|---|---|---|
+| Domain Model | pureinn-workspace/[slug]/artifacts/phase-4/domain-model.md | Entities, attributes, relationships |
+| PRD | pureinn-workspace/[slug]/artifacts/phase-3/prd.md | Product definition, scope, metrics |
+| Feature Sets | pureinn-workspace/[slug]/artifacts/phase-5/feature-sets.md | Feature Set list and scope |
+
+### 0.7 Glossary & Notation
+
+| Term / Symbol | Meaning |
+|---|---|
+| RULE-A-[ID] | Critical Invariant - non-negotiable, no exceptions |
+| RULE-B-[ID] | Core Business Rule - standard behavior, may have edge cases |
+| RULE-C-[ID] | Governance / Policy / UX Rule |
+| ENT-[ID] | Entity identifier (as defined in Domain Model) |
+| PROC-[ID] | Business process identifier |
+| DM-[ID] | Decision Model identifier |
+| EVT-[Name] | Business event identifier |
+| TBL | Decision Table |
+| TRE | Decision Tree |
+| SCR | Scoring Model |
+| [Phase 6] | Content to be detailed in Phase 6 per Feature Set |
+
+### 0.8 Change Management
+
+| Version | Date | Author | Changes |
+|---|---|---|---|
+| 0.1 | [date] | [author] | Phase 4 skeleton |
 
 ---
 
 ## 1. System Boundary & Business Capabilities
 
-### User Roles
+### 1.1 User Ecosystem & Roles
 
-| Role | Type | Business responsibility |
-|---|---|---|
-| [Host] | Primary | [Creates listings, manages bookings, receives payouts] |
-| [Guest] | Primary | [Searches, books, pays, communicates with host] |
-| [Admin] | Support | [Resolves disputes, manages users, monitors platform] |
-| [System] | Automated | [Processes payments, sends notifications, enforces rules] |
+#### Primary Roles
 
-### System Boundary
+| Role ID | Role Name | Description | Access Level |
+|---|---|---|---|
+| ROLE-01 | [Host / Seller / Owner] | [Creates and manages supply-side content, receives payouts] | Full self-service |
+| ROLE-02 | [Guest / Buyer / User] | [Discovers, requests, pays, and consumes the service] | Full self-service |
 
-**In scope:** [What the system owns and manages]
-**Out of scope:** [What the system does NOT handle - explicitly stated]
+#### Secondary Roles
 
-### Business Capability Map
+| Role ID | Role Name | Description | Access Level |
+|---|---|---|---|
+| ROLE-03 | [Admin] | [Platform management, dispute resolution, monitoring] | Full platform access |
+| ROLE-04 | [System / Automated Actor] | [Background jobs, notifications, rule enforcement] | Internal only |
 
-| Capability | Description | Key entities |
-|---|---|---|
-| [Property Management] | [Host creates and manages listings] | ENT-002 Listing |
-| [Booking Orchestration] | [End-to-end booking flow from request to confirmation] | ENT-003 Booking |
-| [Payment Processing] | [Payments, payouts, refunds] | ENT-004 Payment |
+#### Motivations & Needs
+
+| Role | Primary Goal | Key Frustration | Success Signal |
+|---|---|---|---|
+| [Host] | [Earn income with minimal friction] | [Uncertainty about payout timing] | [Reliable, predictable payouts] |
+| [Guest] | [Find and confirm the right option quickly] | [Slow or unclear booking confirmation] | [Fast confirmation, clear status] |
+| [Admin] | [Maintain platform trust and resolve issues] | [Manual work, unclear escalation paths] | [Low dispute rate, fast resolution] |
+
+#### Multi-Role Logic
+
+[Describe scenarios where one user holds multiple roles simultaneously, e.g., a user who is both a Host and a Guest. Define precedence rules if role conflicts arise.]
 
 ---
 
-## 2. State Machine Overview (Phase 4 - high level)
+### 1.2 System Boundary
 
-| Entity | States | Key transitions | Detailed in |
+#### Inside - Platform Owns
+
+| Capability | Description |
+|---|---|
+| [Booking lifecycle management] | [Creating, confirming, cancelling, and completing bookings] |
+| [Payment orchestration] | [Collecting payments, releasing payouts, processing refunds] |
+| [Listing management] | [Creating, publishing, updating, and archiving listings] |
+| [Dispute resolution workflow] | [Managing escalations between parties] |
+| [Notification orchestration] | [Email, push, and in-app notifications for lifecycle events] |
+
+#### Outside - Platform Does NOT Own
+
+| Area | Who Owns It | Integration Required? |
+|---|---|---|
+| [Payment processing infrastructure] | [Stripe / Payment provider] | Yes - via API |
+| [Identity verification] | [External KYC provider] | Yes - via webhook |
+| [Tax calculation and filing] | [Accounting integrations / User] | Partial |
+| [Physical service delivery] | [Host / Service Provider] | No |
+
+#### External Systems
+
+| System | Direction | What it provides / receives | Trigger |
 |---|---|---|---|
-| ENT-002 Listing | Draft → Active → Archived | Host publishes, Host archives | Phase 6 - FS-01 |
-| ENT-003 Booking | Requested → Confirmed → Completed → Cancelled | Host approves/declines, Guest cancels | Phase 6 - FS-02 |
-| ENT-004 Payment | Pending → Captured → Released → Refunded | Booking confirmed, Booking completed | Phase 6 - FS-03 |
-
-Full state machine diagrams → added per Feature Set in Phase 6.
+| [Stripe] | Outbound + Inbound | [Payment capture, payout, refund] | [Booking confirmed / Booking completed] |
+| [Email provider] | Outbound | [Transactional emails] | [State change events] |
+| [KYC Provider] | Inbound | [Identity verification result] | [Host onboarding] |
 
 ---
 
-## 3. Business Rules Library - Overview (Phase 4)
+### 1.3 Business Capability Map
 
-Rules are added in Phase 6 per Feature Set. Structure defined here.
+| Capability | Domain | Description | Primary Entities | Phase 6 Detail |
+|---|---|---|---|---|
+| [User Onboarding & Identity] | [Identity] | [Account creation, verification, role assignment] | [ENT-001 User] | [FS-01] |
+| [Listing Management] | [Supply] | [Host creates, publishes, and manages listings] | [ENT-002 Listing] | [FS-02] |
+| [Booking Orchestration] | [Transactions] | [End-to-end booking flow: request → confirm → complete] | [ENT-003 Booking] | [FS-03] |
+| [Payment & Payout] | [Finance] | [Payments, payouts, refunds, escrow] | [ENT-004 Payment] | [FS-04] |
+| [Reviews & Trust] | [Trust] | [Post-booking review submission and moderation] | [ENT-005 Review] | [FS-05] |
 
-### RULE-A: Critical Invariants (non-negotiable, no exceptions)
+---
 
-| ID | Name | Scope | Defined in |
+### 1.4 Responsibility Split
+
+| Capability | Platform | External System | Manual / Human |
 |---|---|---|---|
-| RULE-A-001 | [TBD - payment release invariant] | Payments | Phase 6 - FS-03 |
+| [Booking state management] | Full ownership | - | Host approval |
+| [Payment processing] | Orchestration only | [Stripe] | - |
+| [Identity verification] | Data storage | [KYC Provider] | Admin review |
+| [Dispute resolution] | Workflow + escalation | - | Admin decision |
+| [Tax calculation] | Data provision | [Accounting tool] | User filing |
 
-### RULE-B: Core Business Rules (standard behavior, may have edge cases)
+---
 
-| ID | Name | Domain | Defined in |
+## 2. Core State Machines - Overview
+
+*Full state machine detail added per Feature Set in Phase 6.*
+
+| Entity | States (high level) | Key transitions | Detailed in |
 |---|---|---|---|
-| RULE-B-001 | [TBD - booking approval window] | Booking | Phase 6 - FS-02 |
+| [ENT-001 User] | [Unverified → Active → Suspended → Deactivated] | [Email verified, Admin suspend, User deactivate] | Phase 6 - FS-01 |
+| [ENT-002 Listing] | [Draft → Active → Paused → Archived] | [Host publishes, Host pauses, Admin archives] | Phase 6 - FS-02 |
+| [ENT-003 Booking] | [Requested → Confirmed → Completed → Cancelled] | [Host approves, Guest cancels, Auto-expires] | Phase 6 - FS-03 |
+| [ENT-004 Payment] | [Pending → Captured → Held → Released → Refunded] | [Booking confirmed, Booking completed, Dispute opened] | Phase 6 - FS-04 |
 
-### RULE-C: Governance / Policy / UX Rules
+---
 
-| ID | Name | Context | Defined in |
+## 3. Business Processes & Orchestration
+
+### 3.1 Process Overview
+
+| Process ID | Process Name | Layer | Trigger | Goal | Affected Lifecycles |
+|---|---|---|---|---|---|
+| PROC-001 | [Host Onboarding] | [Onboarding] | [User registers as host] | [Verified, capable host account] | [ENT-001 User] |
+| PROC-002 | [Booking Request & Approval] | [Core Transaction] | [Guest submits booking request] | [Confirmed booking with payment captured] | [ENT-003 Booking, ENT-004 Payment] |
+| PROC-003 | [Booking Completion & Payout] | [Finance] | [Booking date passes or service delivered] | [Released payout to host, completed booking] | [ENT-003 Booking, ENT-004 Payment] |
+| PROC-004 | [Cancellation & Refund] | [Exception] | [Guest or host cancels] | [Clean cancellation with correct refund] | [ENT-003 Booking, ENT-004 Payment] |
+| PROC-005 | [Dispute Resolution] | [Operations] | [Guest or host raises dispute] | [Fair, documented resolution] | [ENT-003 Booking, ENT-006 Dispute] |
+
+### 3.2 Orchestration Principles
+
+#### 3.2.1 Process Ordering Rules
+
+[Define which processes must run in a specific sequence. Example:]
+- Payment capture must occur before booking confirmation is issued.
+- Payout must not be released before booking completion is confirmed.
+- Host verification must be complete before listing can be published.
+
+#### 3.2.2 Blocking & Dependency Rules
+
+[Define which state transitions or processes block other processes. Example:]
+- An active dispute blocks payout release for the affected booking.
+- A suspended host account blocks all new booking confirmations for their listings.
+- A listing with an active booking cannot be archived.
+
+#### 3.2.3 Override & Priority Principles
+
+[Define who can override normal process flow and under what conditions. Example:]
+- Admin can force-close a booking regardless of state.
+- Admin can manually release or hold a payout (overrides automated rules).
+- System auto-expiry overrides inaction by host or guest.
+
+#### 3.2.4 Fallback & Recovery Principles
+
+[Define what the system does when a process fails or times out. Example:]
+- If payment capture fails: booking reverts to Requested state; guest is notified.
+- If host does not respond within [X] hours: booking request auto-expires; guest is refunded.
+- If payout fails: payment held in Held state; support ticket created; admin alerted.
+
+---
+
+## 4. Business Rules Library
+
+*Populated in Phase 6 per Feature Set.*
+
+| Name | Rule ID | Category | Affected Entity | Description | Domain | Priority |
+|---|---|---|---|---|---|---|
+| [TBD] | RULE-A-001 | A - Critical | [TBD] | [TBD] | [TBD] | Critical |
+
+Full rules defined per Feature Set in Phase 6. Structure: flat table, one row per rule. Decision logic (if/then) → Section 5. Event definitions → Section 6.
+
+---
+
+## 5. Decision Models Catalogue
+
+*Populated in Phase 6 per Feature Set.*
+
+| # | ID | Name | Domain | Notes | What is being decided | Type | Produces | Used in Process | Where in lifecycle | Uses Business Rules | Uses Scoring Models | Uses Other Decisions |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | DM-001 | [TBD] | [TBD] | [TBD] | [TBD] | TBL / TRE / SCR | [Outcomes] | PROC-[ID] | [Lifecycle state] | - | - | - |
+
+Types: TBL = Decision Table, TRE = Decision Tree, SCR = Scoring Model.
+
+---
+
+## 6. Business Events
+
+*Populated in Phase 6 per Feature Set.*
+
+### 6.1 Event Overview
+
+| Event | Category | Emitted by | Key Consumers | Lifecycle trigger |
+|---|---|---|---|---|
+| [TBD] | [Lifecycle / System / External] | [Feature Set] | [Feature Set] | [State transition] |
+
+### 6.2 Event Catalogue
+
+| Name | Category | Aliases | Business Meaning | Consumers | Lifecycle + State | Primary Entity | Producer | Related Rules/Decisions | Trigger Type | Related Decisions |
+|---|---|---|---|---|---|---|---|---|---|---|
+| [TBD] | [TBD] | [TBD] | [TBD] | [TBD] | [TBD] | [TBD] | [TBD] | [TBD] | [Automatic / Manual] | [TBD] |
+
+### 6.3 Event Propagation Maps
+
+*One propagation map per major process. Added in Phase 6.*
+
+---
+
+## 7. Notifications & Communication Rules
+
+*Populated in Phase 6 per Feature Set.*
+
+| Trigger Event | Recipient | Channel | Timing | Template ref | Rule ref |
+|---|---|---|---|---|---|
+| [TBD] | [TBD] | [Email / Push / In-app] | [Immediate / Delayed] | [TBD] | [TBD] |
+
+---
+
+## 8. Platform Policies & Compliance
+
+*Populated in Phase 6 per Feature Set. See also RULE-C entries in Section 4.*
+
+### 8.1 Data Retention Rules
+
+[TBD - added per Feature Set]
+
+### 8.2 Privacy & Consent Rules
+
+[TBD - added per Feature Set]
+
+### 8.3 Regulatory & Legal Constraints
+
+[TBD - added per Feature Set]
+
+---
+
+## 9. Non-Functional Business Requirements
+
+*Populated in Phase 6 per Feature Set.*
+
+| Requirement | Type | Target | Notes |
 |---|---|---|---|
-| RULE-C-001 | [TBD - data retention policy] | Compliance | Phase 6 - FS-XX |
+| [TBD] | [Availability / Latency / Throughput / Compliance] | [TBD] | [TBD] |
+
+---
+
+## 10. Open Questions & Decisions Log
+
+| # | Question / Open Item | Owner | Status | Target date | Resolution |
+|---|---|---|---|---|---|
+| 1 | [TBD] | [TBD] | Open | [TBD] | - |
 
 ---
 
 ## Version History
 
-| Version | Date | Changes |
-|---|---|---|
-| 0.1 | [date] | Phase 4 skeleton |
+| Version | Date | Author | Changes |
+|---|---|---|---|
+| 0.1 | [date] | [author] | Phase 4 skeleton |
 ```
 
 ---
@@ -248,110 +494,137 @@ Rules are added in Phase 6 per Feature Set. Structure defined here.
 
 ```markdown
 ---
+<!-- Phase 6 addition - Feature Set [FS-ID]: [Name] - appended, do not overwrite existing sections -->
 
-## Feature Set: [FS-ID] - [Name]
+## Phase 6 Addition: [FS-ID] - [Feature Set Name]
 
-### State Machine: [Entity Name]
-
-#### States
-
-| State | Description | Entry conditions |
-|---|---|---|
-| [State] | [Business meaning] | [What must be true to enter this state] |
-
-#### Transitions
-
-| From | Trigger | Guard (condition) | To | Action |
-|---|---|---|---|---|
-| [State A] | [User action / System event] | [Condition that must hold] | [State B] | [What happens] |
-
-#### State Diagram
-
-```mermaid
-stateDiagram-v2
-  [*] --> StateA : trigger
-  StateA --> StateB : trigger [guard]
-  StateB --> StateC : trigger
-```
+**Added:** [date]
+**Feature Set scope:** [Brief description of what this FS covers]
 
 ---
 
-### Business Rules - [FS-ID]
+### Section 2 Update: State Machines - [FS-ID]
 
-#### RULE-A-[ID]: [Name]
+#### 2.[X] Lifecycle: ENT-[Name]
 
-**Category:** A - Critical Invariant
+##### Lifecycle Overview
 
-**Intent:** [Why this rule must exist - what it protects]
+[1-2 sentences on the entity's business lifecycle within this Feature Set. What does it mean for this entity to move through its states? What business purpose does it serve?]
 
-**Invariant:**
-> "The system MUST NOT [X] / MUST always [Y]"
+##### States Catalogue
 
-**Scope:** [Which entities and states]
-
-**Enforcement:** [How the system enforces it - block, freeze, incident alert]
-
-**Violation handling:** [What happens if the invariant is about to be violated]
-
----
-
-#### RULE-B-[ID]: [Name]
-
-**Category:** B - Core Business Rule
-
-**Intent:** [What behavior this governs]
-
-**Logic:**
-> "If [condition], then [outcome]"
-
-**Edge cases:**
-| Condition | Handling |
-|---|---|
-| [Edge case 1] | [How the system responds] |
-
-**Related rules:** [RULE-A-XXX / RULE-C-XXX if relevant]
-
----
-
-#### RULE-C-[ID]: [Name]
-
-**Category:** C - Governance / Policy / UX
-
-**Policy:**
-> "[Actor] must / must not [action]"
-
-**Context:** [Governance / Admin / UX / Operations / Compliance]
-
-**Exception handling:** [Regional or time-bound variations if any]
-
----
-
-### Business Events - [FS-ID]
-
-| Event | Trigger | Business meaning | Consumers |
+| State | Description | Terminal? | Notes |
 |---|---|---|---|
-| `[entity.event]` | [What causes it] | [Why it matters in business terms] | [Which Feature Sets consume this event] |
+| [State A] | [Business meaning of being in this state] | N | [Entry/residence conditions worth noting] |
+| [State B] | [Business meaning] | N | |
+| [Final State] | [Business meaning - this state ends the lifecycle] | Y | [Terminal states cannot transition further] |
+
+##### Allowed Transitions
+
+| From State | To State | Trigger Type | Trigger Name | Conditions (high-level) | Related RULE IDs | Notes |
+|---|---|---|---|---|---|---|
+| [State A] | [State B] | [User action / System / Scheduled / External] | [e.g., host.approved_booking] | [e.g., Payment captured; Host within response window] | RULE-A-001 | |
+| [State B] | [State C] | [System] | [e.g., booking.completed] | [e.g., Service delivery confirmed] | RULE-B-003 | |
+
+##### Illegal / Blocked Transitions
+
+| From State | Forbidden To State | Reason / Constraint | Related RULE IDs |
+|---|---|---|---|
+| [Completed] | [Confirmed] | [Cannot re-confirm a completed booking] | RULE-A-001 |
+| [Cancelled] | [Any] | [Terminal state - no further transitions allowed] | RULE-A-002 |
+
+##### Entry / Exit Semantics
+
+**[State A]:**
+- On Entry: [What happens when this state is entered - notifications, locks, side effects]
+- On Exit: [What happens when this state is left - cleanup, releases, downstream triggers]
+
+**[State B]:**
+- On Entry: [...]
+- On Exit: [...]
+
+##### Exception & Override Paths
+
+- [Non-standard transitions available to specific roles, e.g., "Admin can force-cancel any booking in any non-terminal state"]
+- [System-triggered exception paths, e.g., "If payment fails during capture, system reverts booking to Requested without requiring host re-approval"]
+- [Time-based expiry paths, e.g., "If host does not respond within 48h, system auto-transitions to Expired"]
+
+##### Coverage & Gaps
+
+**Clear in documents:**
+- [What is fully specified and agreed upon]
+
+**Open questions:**
+- [What remains unresolved - edge cases, rule conflicts, missing stakeholder input]
 
 ---
 
-### Business Processes - [FS-ID]
+### Section 4 Update: Business Rules - [FS-ID]
 
-[Conceptual description of the main process this Feature Set owns. Step by step at business level - not implementation.]
+*Add rows to the flat Business Rules Library table in Section 4.*
 
-**[Process name]:**
-1. [Step 1 - business action]
-2. [Step 2]
-3. [Step 3 - decision point: if X → Y, if not X → Z]
-4. [Step 4]
+| Name | Rule ID | Category | Affected Entity | Description | Domain | Priority |
+|---|---|---|---|---|---|---|
+| [Rule name] | RULE-A-[ID] | A - Critical | ENT-[ID] | [Full rule statement] | [Domain name] | Critical |
+| [Rule name] | RULE-B-[ID] | B - Core | ENT-[ID] | [Full rule statement] | [Domain name] | High |
+| [Rule name] | RULE-C-[ID] | C - Governance | ENT-[ID] | [Full rule statement] | [Domain name] | Medium |
+
+**Rule detail cards** (for RULE-A and significant RULE-B entries):
+
+**RULE-A-[ID]: [Name]**
+- Intent: [Why this rule must exist - what it protects]
+- Invariant: "The system MUST NOT [X] / MUST always [Y]"
+- Scope: [Which entities and states]
+- Enforcement: [Block / Freeze / Alert / Reject]
+- Violation handling: [What the system does if this is about to be violated]
+
+**RULE-B-[ID]: [Name]**
+- Intent: [What behavior this governs]
+- Logic: "If [condition], then [outcome]"
+- Edge cases:
+  - [Edge case 1]: [Handling]
+  - [Edge case 2]: [Handling]
+- Related: [RULE-A-XXX / RULE-C-XXX]
 
 ---
 
-### Edge Cases and Failure Handling - [FS-ID]
+### Section 5 Update: Decision Models - [FS-ID]
 
-| Scenario | What the system does | Rule reference |
-|---|---|---|
-| [Payment fails during booking confirmation] | [Booking reverts to Requested state, guest notified] | RULE-A-XXX |
-| [Host does not respond within 48h] | [Booking request auto-expires, guest refunded] | RULE-B-XXX |
+*Add rows to the Decision Models Catalogue in Section 5.*
+
+| # | ID | Name | Domain | Notes | What is being decided | Type | Produces | Used in Process | Where in lifecycle | Uses Business Rules | Uses Scoring Models | Uses Other Decisions |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| [n] | DM-[ID] | [Decision name] | [Domain] | [Context] | [Decision question] | TBL | [Outcome options] | PROC-[ID] | [State + transition] | RULE-[IDs] | - | - |
+
+---
+
+### Section 6 Update: Business Events - [FS-ID]
+
+#### 6.2 Event Catalogue - [FS-ID] entries
+
+| Name | Category | Aliases | Business Meaning | Consumers | Lifecycle + State | Primary Entity | Producer | Related Rules/Decisions | Trigger Type | Related Decisions |
+|---|---|---|---|---|---|---|---|---|---|---|
+| [event.name] | [Lifecycle] | [alt names] | [What this event means in business terms] | [FS-XX, FS-YY] | [ENT-ID: State A → State B] | ENT-[ID] | [FS-ID] | RULE-[IDs] | Automatic | DM-[IDs] |
+
+#### 6.3 Event Propagation Map - [PROC-ID]: [Process Name]
+
+| Canonical Event | Producer | Primary Entity | Lifecycle + State Transition | Business Reaction | Triggered Decisions | Governing Rules | Notes |
+|---|---|---|---|---|---|---|---|
+| [event.name] | [FS-ID] | ENT-[ID] | [State A → State B] | [What the business expects to happen as a result] | DM-[ID] | RULE-[IDs] | |
+
+**Downstream effects:**
+- Entity side-effects: [Other entities whose state changes as a result of this event]
+- Blocking/overrides: [What this event blocks or overrides in other processes]
+
+---
+
+### Section 10 Update: Open Questions - [FS-ID]
+
+*Add rows to the Open Questions log in Section 10.*
+
+| # | Question / Open Item | Owner | Status | Target date | Resolution |
+|---|---|---|---|---|---|
+| [n] | [Open question from this FS] | [TBD] | Open | [TBD] | - |
 ```
 
 ---
@@ -363,20 +636,31 @@ stateDiagram-v2
      Use in Step 2 to verify full coverage before finalizing output. -->
 
 **Phase 4 Skeleton must cover:**
-- [ ] User roles defined with business responsibilities
-- [ ] System boundary stated (in scope + out of scope)
-- [ ] Business Capability Map
-- [ ] State Machine Overview table (all entities with lifecycles listed)
-- [ ] Rules Library structure established (even if TBD entries)
+- [ ] Section 0: purpose, scope, audience, notation, references, change log
+- [ ] Section 1.1: Primary Roles table, Secondary Roles table, Motivations & Needs table, Multi-Role Logic
+- [ ] Section 1.2: Inside (platform owns), Outside (platform does not own), External Systems table
+- [ ] Section 1.3: Business Capability Map grouped by domain
+- [ ] Section 1.4: Responsibility Split table (Platform / External / Manual)
+- [ ] Section 2: State Machine Overview table - all entities with states and key transitions listed
+- [ ] Section 3.1: Process Overview table (PROC-IDs, triggers, goals, affected lifecycles)
+- [ ] Section 3.2: Orchestration Principles - ordering rules, blocking rules, override principles, fallback recovery
+- [ ] Sections 4-10: structural placeholders with correct headers
 
 **Phase 6 Detail per Feature Set must cover:**
-- [ ] Full state machine with all states, transitions, guards, and actions
-- [ ] Mermaid state diagram
-- [ ] All business rules coded (RULE-A/B/C-XXX format)
-- [ ] Each rule has: intent, statement, scope, enforcement, edge cases
-- [ ] Business events: emitted and consumed
-- [ ] Business process: step-by-step at conceptual level
-- [ ] Edge cases and failure handling explicitly addressed
+- [ ] States Catalogue: State | Description | Terminal? Y/N | Notes
+- [ ] Allowed Transitions: From | To | Trigger Type | Trigger Name | Conditions | Related RULE IDs | Notes
+- [ ] Illegal / Blocked Transitions: From | Forbidden To | Reason | Related RULE IDs
+- [ ] Entry / Exit Semantics: On Entry and On Exit per state
+- [ ] Exception & Override Paths: role overrides, system exceptions, time-based expiry
+- [ ] Coverage & Gaps: clear items + open questions
+- [ ] Section 4 rows: flat table with Name | Rule ID | Category | Affected Entity | Description | Domain | Priority
+- [ ] RULE-A detail cards: intent, invariant statement, scope, enforcement, violation handling
+- [ ] RULE-B detail cards: intent, logic (if/then), edge cases, related rules
+- [ ] RULE-C entries: policy statement, context, exception handling
+- [ ] Section 5 rows: Decision Models Catalogue with all columns (Type, Produces, Used in, etc.)
+- [ ] Section 6.2 rows: Event Catalogue with all columns (Aliases, Consumers, Lifecycle+State, etc.)
+- [ ] Section 6.3: Event Propagation Map per process (Canonical Event | Producer | Primary Entity | Lifecycle | Business Reaction | Triggered Decisions | Governing Rules)
+- [ ] Section 6.3 Downstream effects: entity side-effects and blocking/overrides
 
 **Rule quality:**
 - [ ] RULE-A rules: are truly non-negotiable (financial, legal, integrity) - not just important

@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.5.0] - 2026-06-01
+
+### pm-brd: rewrite Phase 4 Skeleton and Phase 6 Detail templates to match reference BRD structure
+
+- Phase 4 Skeleton: 10-section structure (0: Document Meta, 1: System Boundary, 2: State Machines overview, 3: Processes & Orchestration, 4-10: placeholders)
+- Section 0: purpose/scope, BRD vs. non-BRD, boundaries & relationships, audience, how-to-read, references, notation glossary, change log
+- Section 1: Primary Roles table, Secondary Roles table, Motivations & Needs table, Multi-Role Logic; System Boundary (Inside/Outside/External Systems); Capability Map by domain; Responsibility Split
+- Section 2: State Machine Overview table (Entity | States | Key transitions | Detailed in)
+- Section 3: Process Overview table (PROC-IDs, Layer, Trigger, Goal, Affected Lifecycles) + Orchestration Principles (ordering, blocking, override, fallback/recovery)
+- Sections 4-10: flat-table placeholders (Business Rules, Decision Models, Event Catalogue 6.1/6.2/6.3, Notifications, Policies, NFRs, Open Questions)
+- Phase 6 Detail: rich state machine format per entity - States Catalogue (State | Description | Terminal? | Notes), Allowed Transitions (From | To | Trigger Type | Trigger Name | Conditions | Related RULE IDs | Notes), Illegal/Blocked Transitions table, Entry/Exit Semantics per state, Exception & Override Paths, Coverage & Gaps
+- Phase 6 Section 4 update: flat Business Rules table (Name | Rule ID | Category | Affected Entity | Description | Domain | Priority) + RULE-A/B detail cards
+- Phase 6 Section 5 update: Decision Models Catalogue with full column set (Type TBL/TRE/SCR, Produces, Used in Process, Where in lifecycle, Uses Rules/Models/Decisions)
+- Phase 6 Section 6 update: Event Catalogue 6.2 (Name | Category | Aliases | Business Meaning | Consumers | Lifecycle+State | Primary Entity | Producer | Related Rules | Trigger Type) + Event Propagation Map 6.3 (Canonical Event | Producer | Primary Entity | Lifecycle Transition | Business Reaction | Triggered Decisions | Governing Rules) with Downstream effects
+- Completeness checklist updated to match all new sections and table formats
+
+---
+
+
 ## [1.4.9] - 2026-06-01
 
 ### pm-brd: full Notion push to all 4 connected databases
