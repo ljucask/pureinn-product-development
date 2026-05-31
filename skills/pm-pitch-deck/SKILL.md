@@ -62,50 +62,59 @@ Apply the standard skill interaction pattern (CLAUDE.md).
 
 ## Step 1: Intake questionnaire
 
-Ask all questions at once. Do not proceed without answers to questions 1-4 (type, audience, context, stage). Questions 5-6 are style preferences with defaults if skipped.
+Questions are grouped into 2 rounds. Ask option-based questions together via interactive call, open-text questions as plain text. Show a confirmation summary after each group.
+
+Do not proceed without answers to Group 1 questions 1-4. Group 2 questions have defaults if skipped.
+
+---
+
+### Group 1 of 2 - What you're creating
+
+Ask these two questions together (both have options):
+
+What type of presentation is this?
+
+  A) Investor pitch (pre-seed, seed, or Series A)
+  B) Demo Day (short slot, goal: be remembered, get follow-up)
+  C) Sales or partnership pitch (goal: customer trial, contract, or strategic partner)
+  D) Internal / grant / accelerator (goal: budget approval or program acceptance)
+
+Where is the company right now?
+
+  A) Idea / pre-product (no users yet)
+  B) MVP / prototype (first users, no revenue)
+  C) Early traction (paying customers or strong engagement signals)
+  D) Revenue-stage (consistent MRR, growing)
+
+Then ask these three questions as plain text:
+
+Who will read or watch this? Describe their background, how much they know about your market, and what they care about most.
+
+What is the presentation context? Live pitch or sent ahead (self-read)? If live: how many minutes? If sent: teaser or follow-up?
+
+After receiving all Group 1 answers, output a summary:
 
 ```
-Before I build your pitch deck, I need to understand what you're creating.
+Here's what I understand:
+- Deck type: [type]
+- Company stage: [stage]
+- Audience: [summary]
+- Context: [live/sent, timing]
 
-1. PRESENTATION TYPE - which best describes this deck?
-   A) Investor pitch - pre-seed or seed (raising a round, goal: meeting or term sheet)
-   B) Investor pitch - Series A (significant traction, goal: lead investor)
-   C) Demo Day (3-5 min slot, goal: be remembered, get follow-up meetings)
-   D) Sales pitch (goal: customer trial or contract)
-   E) Partnership pitch (goal: strategic partnership agreement)
-   F) Internal / stakeholder pitch (goal: budget or executive approval)
-   G) Grant or accelerator application (goal: meet program criteria)
-
-2. AUDIENCE - who will read or watch this?
-   What is their background? (VC generalists / domain specialists / corporate decision-makers / technical / non-technical)
-   How much do they know about your market or domain?
-   What do they care about most? (market size / traction / team / technology / revenue model / other)
-   Will this be forwarded to others beyond the primary audience?
-
-3. PRESENTATION CONTEXT
-   Live pitch or sent ahead (self-read)?
-   If live: how many minutes do you have?
-   If sent: is this a teaser (they know nothing yet) or a follow-up (after an intro call)?
-   How many people in the room / on the call?
-
-4. COMPANY STAGE
-   Where are you right now?
-   A) Idea / pre-product (no users yet)
-   B) MVP / prototype (first users, no revenue)
-   C) Early traction (paying customers or strong engagement signals)
-   D) Revenue-stage (consistent MRR, growing)
-
-5. STYLE PREFERENCES (defaults apply if skipped)
-   Visual-heavy or content-balanced? (default: balanced)
-   Data-driven or story-driven? (default: story-first, data as proof)
-   Formal or conversational tone? (default: confident and direct)
-   Any visual references or brands you want to match the tone of?
-
-6. MAINTENANCE
-   Is this a one-time deck or a living document?
-   If living: what is the version? (seed deck v1, updated after first 10 customer meetings, etc.)
-   Should I note which slides change most often so you can maintain them easily?
+Is this correct, or anything to adjust before we continue?
 ```
+
+Wait for confirmation. If corrections needed, update and re-confirm. Then proceed to Group 2.
+
+---
+
+### Group 2 of 2 - Style and maintenance (optional, defaults apply if skipped)
+
+Ask as plain text:
+
+Style preferences: Visual-heavy or content-balanced? Data-driven or story-driven? Formal or conversational tone? Any visual references or brands you want to match? (Skip any you don't have strong preferences on - defaults will be used.)
+
+Maintenance: One-time deck or living document? If living: what version is this?
 
 ---
 

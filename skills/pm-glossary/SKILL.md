@@ -61,8 +61,7 @@ What do you want to do in this session?
   A) Add new terms - paste or describe what to capture (Recommended)
   B) Extract terms from an existing artifact - paste the artifact text
   C) Review and update existing entries
-  D) Export full glossary as a clean table
-  E) Something specific: ...
+  D) Export full glossary as a clean table or something specific
 ```
 
 If user provides explicit intent with the command (e.g., `/pm-glossary add "Feature Set, Delivery Stripe, Stripe"`), skip the question and proceed directly.

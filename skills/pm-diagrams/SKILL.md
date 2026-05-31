@@ -60,9 +60,7 @@ What diagram do you want to create?
   A) Domain Model Overview - domains, entities, relationships
   B) User Flow - step-by-step flow for a feature or process
   C) Business Process Model - BPMN-style with swim lanes and actors
-  D) System Architecture - components, layers, integrations
-  E) JTBD Four Forces - Push / Pull / Anxiety / Habit visualization
-  F) Something else - describe what you need
+  D) System Architecture, JTBD Four Forces, or something else - describe what you need
 ```
 
 ---

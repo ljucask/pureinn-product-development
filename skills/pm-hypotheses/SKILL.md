@@ -89,11 +89,10 @@ Apply the standard skill interaction pattern (CLAUDE.md).
 
 ```
 What do you want to do in this session?
-  A) Plan mode - structure hypotheses and design experiments (first run) (Recommended if register is empty)
+  A) Plan mode - structure hypotheses and design experiments (Recommended if register is empty)
   B) Results mode - record experiment outcomes and issue Go/No-Go verdict
-  C) Add a new hypothesis to an existing register
-  D) Review and update success criteria before experiments run
-  E) Something specific: ...
+  C) Add a new hypothesis or update success criteria in an existing register
+  D) Something specific: ...
 ```
 
 ---

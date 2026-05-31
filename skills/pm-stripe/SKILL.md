@@ -164,13 +164,10 @@ User brings a feature from Notion. They say something like:
 Ask if not clear from context:
 ```
 What do you want to do with [feature/FS name]?
-  a) Write or complete the spec (FSD / BRD / Feature Card not done yet)
-  b) Shape the UX brief for this feature
-  c) Build the backend for this feature
-  d) Build the frontend for this feature
-  e) Write tests for this feature
-  f) Review code for this feature
-  g) Deploy this feature
+  A) Write or complete the spec (BRD / FSD / Feature Card)
+  B) Design work - UX brief or wireframe
+  C) Build - backend, frontend, or both
+  D) Quality and ship - tests, code review, or deploy
 ```
 
 ---

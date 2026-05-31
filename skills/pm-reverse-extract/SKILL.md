@@ -93,8 +93,7 @@ What do you want to do in this session?
   A) Full migration - extract features, build hierarchy, push to Notion, generate Phase 5 artifacts (Recommended if starting fresh)
   B) Re-extract only - re-run extraction from docs/code, overwrite local artifacts (if docs changed)
   C) Notion push only - local artifacts already exist, push to Notion
-  D) Partial: just map Feature Sets + push hierarchy (skip feature-level extraction)
-  E) Something specific: ...
+  D) Partial or something specific - describe what you need
 ```
 
 ---

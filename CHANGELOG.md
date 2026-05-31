@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.7] - 2026-05-31
+
+### Apply grouped question pattern to all Type B skills: reduce options to max 4, restructure pm-pitch-deck into groups with confirmation
+
+---
+
+
 ## [1.0.6] - 2026-05-31
 
 ### Separate free-text and option-based questions within groups; document universal question pattern in CLAUDE.md
