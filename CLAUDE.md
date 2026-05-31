@@ -112,9 +112,15 @@ When a skill needs to ask the user questions before producing an artifact, use t
 6. After the final group, show a complete summary before proceeding to artifact generation.
 
 **When to apply:**
-- >4 questions total: group them (2-3 groups)
+- >4 questions total: group them (2-3 groups), confirmation after each group
 - 3-4 questions total: one group with one confirmation before proceeding
 - 1-2 questions: ask directly, no grouping needed
+
+**How to ask questions within a group:**
+- Questions with predefined answer options (A/B/C/D): ask all of them together in one interactive call - max 4 per call
+- Questions that require free-text input: ask as plain text, one at a time
+- Do NOT add fake A/B/C/D options to questions that are genuinely open-ended (descriptions, priorities, constraints) - that limits the user unnecessarily
+- Within one group: ask free-text questions first, then ask option-based questions together
 
 **Summary block format:**
 ```

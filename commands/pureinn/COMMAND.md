@@ -124,22 +124,31 @@ Wait for confirmation. If user adds files, read them. If "nothing", proceed to S
 
 Ask these questions regardless of whether documents were found. Documents give Claude the written record; these questions capture current thinking, intent, and product shape that documents often don't contain.
 
-Questions are grouped into 3 rounds. Ask all questions in a group together, then show a summary of your understanding and wait for confirmation before moving to the next group. If the user wants to correct something, update and confirm before proceeding.
+Questions are grouped into 3 rounds. Each round: ask questions, then show a summary and wait for confirmation before moving to the next round.
+
+**How to ask questions within a round:**
+- Questions with predefined answer options (A/B/C/D) - ask all of them together in one interactive call
+- Questions that require free-text input - ask as plain text, one at a time
+- Within a single round: ask free-text questions first, then ask the option-based questions together
 
 ---
 
 ### Group 1 of 3 - What you're building
 
-Ask these three questions together:
+**Free text (ask first):**
 
 What are you building? Describe it in 2-3 sentences.
+
+Wait for the user's answer, then ask the following two questions together:
+
+**Options (ask together):**
 
 What type of product is it?
 
   A) SaaS web application
   B) Mobile application (iOS / Android / both)
   C) Marketplace or platform (connects two or more sides)
-  D) Something else (internal tool, API, describe it)
+  D) Something else (internal tool, API)
 
 Who is it for?
 
@@ -147,7 +156,7 @@ Who is it for?
   B) Internal team only
   C) Both
 
-After receiving answers, output a summary block:
+After receiving all answers for Group 1, output a summary block:
 
 ```
 Here's what I understand so far:
@@ -164,7 +173,7 @@ Wait for confirmation. If corrections needed, update and re-confirm. Then procee
 
 ### Group 2 of 3 - Product shape
 
-Ask these two questions together:
+No free-text questions in this group. Ask both together:
 
 What is the primary experience?
 
@@ -196,7 +205,7 @@ Wait for confirmation. If corrections needed, update and re-confirm. Then procee
 
 ### Group 3 of 3 - Context and starting point
 
-Ask these four questions together:
+**Options (ask together first):**
 
 Where are you now?
 
@@ -205,8 +214,6 @@ Where are you now?
   C) Validated problem, ready to define strategy
   D) Have a strategy or specs, moving to execution
 
-What matters most right now? What is the single most important thing you need to produce or figure out? (e.g., "validate whether the problem is real", "define MVP scope", "get to a spec I can build from")
-
 Who is building this?
 
   A) Solo - just me, no team
@@ -214,9 +221,15 @@ Who is building this?
   C) Team with defined roles (PM, developers, designer)
   D) Corporate / enterprise team (multiple stakeholders)
 
+Wait for answers, then ask the following two free-text questions:
+
+**Free text (ask after options):**
+
+What matters most right now? What is the single most important thing you need to produce or figure out? (e.g., "validate whether the problem is real", "define MVP scope", "get to a spec I can build from")
+
 Any constraints that shape how we approach this? (e.g., 3-month runway, regulated industry, must integrate with existing system, specific tech stack). Say "none" if not applicable.
 
-After receiving answers, output a final summary block:
+After receiving all answers for Group 3, output a final summary block:
 
 ```
 Complete picture:

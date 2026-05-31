@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.6] - 2026-05-31
+
+### Separate free-text and option-based questions within groups; document universal question pattern in CLAUDE.md
+
+---
+
+
 ## [1.0.5] - 2026-05-31
 
 ### Group intake questions into 3 rounds with confirmation summaries; document grouped question pattern as universal standard
