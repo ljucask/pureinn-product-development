@@ -29,7 +29,10 @@ Claude reads the existing documents and codebase directly - it already has the c
 1. **Feature Inventory** - all features in FDD format, with status (Done / In Progress / Planned) and spec coverage
 2. **Feature Set Map** - MFS → FS → Feature hierarchy derived from existing domain groupings (BRD/FSD structure)
 3. **Delivery Baseline** - current state snapshot: live, in progress, backlog, plus next stripe recommendation
-4. **Notion push** - full MFS/FS/Feature hierarchy created in the Product Features database with accurate statuses
+4. **Notion push** - full MFS/FS/Feature hierarchy with content:
+   - FS entries include Feature Set Overview as page body
+   - Feature entries include Feature Card content as page body (inferred from FSD/code for Done features; stub for Planned)
+   - BRD/FSD/Domain Model pushed as Notion pages with full content; FS entries linked via FSD URL and BRD URL properties
 5. **Local artifacts** - features-list.md, feature-sets.md, delivery-stripes.md for Claude context in future sessions
 
 Can be re-run at any point to re-sync Notion after significant state changes.
@@ -400,20 +403,44 @@ For each MFS cluster from Artifact 2: call `mcp__claude_ai_Notion__notion-create
 
 Collect returned page URLs - needed for FS parent relations.
 
-### 4c. Create FS entries
+### 4c. Create FS entries with Feature Set Overview content
 
 For each Feature Set from Artifact 2: call `mcp__claude_ai_Notion__notion-create-pages` with:
 - Per FS entry: `Artefact Name` = FS name, `Artefact Type` = `"FS"`, `Status` = appropriate to FS status (Done FSs → `"Done"`, others → `"Backlog"`), `Parent` = URL of corresponding MFS from 4b
+- **Page body** - include Feature Set Overview as Notion page content:
 
-Collect returned page URLs - needed for Feature parent relations.
+```
+## [FS-XX]: [Feature Set Name]
 
-### 4d. Create Feature entries
+**Purpose:** [What this FS enables - user value]
+**Primary actor:** [Host / Guest / Admin / System]
+**Status:** Done / In Progress / Planned
+**BRD:** Exists / Missing
+**FSD:** Exists / Missing
+
+### Features in this set
+
+| ID | Feature | Status |
+|---|---|---|
+| F-001 | [Feature name] | Done |
+| F-006 | [Feature name] | Planned |
+
+### Spec action required
+[write from scratch / extend / already complete - per BRD and FSD]
+
+### Dependencies
+[None / depends on FS-XX / enables FS-XX]
+```
+
+Collect returned page URLs - needed for Feature parent relations and BRD/FSD URL update in step 4e.
+
+### 4d. Create Feature entries with Feature Card content
 
 For each feature from Artifact 1: call `mcp__claude_ai_Notion__notion-create-pages` with:
 - `parent.type` = `"data_source_id"`
 - `parent.data_source_id` = from 4a
 
-Per feature:
+Per feature properties:
 
 | Notion property | Value | Source |
 |---|---|---|
@@ -424,19 +451,73 @@ Per feature:
 | `Parent` | URL of corresponding FS page from 4c | Artifact 2 FS assignment |
 | `template_id` | Feature Template ID from database schema | From notion-fetch result |
 
-Status mapping:
-- Done (live) → `"Done"`
-- In Progress → `"In Progress"`
-- Planned → `"Backlog"`
-- Unclear → `"Backlog"` (flag in notes)
+Status mapping: Done (live) → `"Done"`, In Progress → `"In Progress"`, Planned/Unclear → `"Backlog"`
+
+**Page body** - include Feature Card content as Notion page content:
+
+For **Done / In Progress** features (infer from FSD sections and codebase):
+```
+## Feature Card: [Feature name]
+
+**Actor:** [who performs this]
+**Status:** Done / In Progress
+**Feature Set:** [FS-XX name]
+
+### What it does
+[1-2 sentences describing the feature behaviour]
+
+### Acceptance criteria
+- [ ] [AC inferred from FSD flow step or business rule]
+- [ ] [AC inferred from FSD or codebase]
+- [ ] [Edge case or error state if visible in code]
+
+### Notes
+[Any implementation notes, known edge cases, or constraints from the code]
+```
+
+For **Planned** features (stub only):
+```
+## Feature Card: [Feature name]
+
+**Actor:** [who performs this]
+**Status:** Backlog
+**Feature Set:** [FS-XX name]
+
+### What it does
+[1-sentence description based on context]
+
+### Acceptance criteria
+[To be written before feature enters build - run /feature-forge]
+```
 
 Push features in batches of up to 100 per call.
 
-### 4e. Confirm
+### 4e. Push BRD / FSD / Domain Model to Notion
 
-After push: report counts (MFS created, FS created, Features created, errors). Remind user:
-- BRD/FSD paths will be linked via `FSD URL` property on FS entries as spec is confirmed in Phase 6
-- Status of Done features reflects current production state at migration time
+Runs after 4c and 4d. For each doc type, check pureinn-variables.md for the parent page URL.
+
+**BRD (per Feature Set):**
+1. Read pureinn-variables.md key "BRD" → get parent page URL
+2. For each FS where a local BRD file exists: call `mcp__claude_ai_Notion__notion-create-pages` with the parent page URL and the full BRD markdown content as page body
+3. Collect the returned page URL
+4. Update the FS Notion entry (from 4c) with the BRD page URL via `mcp__claude_ai_Notion__notion-update-page`
+
+**FSD (per Feature Set):**
+1. Read pureinn-variables.md key "FSD" → get parent page URL
+2. For each FS where a local FSD file exists: call `mcp__claude_ai_Notion__notion-create-pages` with the parent page URL and the full FSD markdown content as page body
+3. Collect the returned page URL
+4. Update the FS Notion entry (from 4c) with the FSD page URL via `mcp__claude_ai_Notion__notion-update-page` (property: `FSD URL`)
+
+**Domain Model:**
+1. Read pureinn-variables.md key "Domain Model" → get parent page URL
+2. If a local Domain Model file exists: call `mcp__claude_ai_Notion__notion-create-pages` with the parent page URL and full Domain Model markdown content
+3. Save returned URL to pureinn-variables.md key "Domain Model" (overwrites the parent reference with the actual created page)
+
+If BRD, FSD, or Domain Model parent URL is blank in pureinn-variables.md: skip that doc type and note it in the summary. Do not ask the user mid-step.
+
+### 4f. Confirm
+
+After all steps complete: report counts (MFS created, FS created, Features created, BRD pages pushed, FSD pages pushed, Domain Model pushed, errors). Note any doc types skipped due to missing parent URL in pureinn-variables.md.
 
 ---
 
@@ -490,14 +571,17 @@ PRODUCTION BASELINE
   [X] features in backlog
 
 SPEC COVERAGE
-  [X] Feature Sets - spec complete (BRD + FSD exist)
+  [X] Feature Sets - spec complete (BRD + FSD exist and pushed to Notion)
   [X] Feature Sets - spec partial
   [X] Feature Sets - spec missing
 
 NOTION
   [X] MFS created
-  [X] FS created
-  [X] Features created
+  [X] FS created (with Feature Set Overview content)
+  [X] Features created (with Feature Card content)
+  [X] BRD pages pushed ([X] linked to FS entries, [X] skipped - parent URL missing)
+  [X] FSD pages pushed ([X] linked to FS entries, [X] skipped - parent URL missing)
+  [X] Domain Model pushed / skipped
 
 NEXT ACTIONS (in order)
   1. Run /pureinn to confirm project state and see Phase 6 dashboard
@@ -540,6 +624,12 @@ NEXT ACTIONS (in order)
 - [ ] Status accurately reflects production state (Done = live, not just "built")
 - [ ] Parent relations correct (Feature → FS → MFS)
 - [ ] No duplicate entries (check if MFS/FS names already exist before creating)
+- [ ] FS entries include Feature Set Overview as page body
+- [ ] Feature entries include Feature Card content as page body (full for Done/In Progress, stub for Planned)
+- [ ] BRD pushed as Notion page and FS entry updated with URL (where local BRD exists)
+- [ ] FSD pushed as Notion page and FS entry updated with FSD URL property (where local FSD exists)
+- [ ] Domain Model pushed as Notion page (where local file exists)
+- [ ] Skipped docs noted in summary with reason (missing parent URL in pureinn-variables.md)
 
 **state.json must:**
 - [ ] Set playbook to "feature-implementation"
@@ -551,9 +641,13 @@ NEXT ACTIONS (in order)
 
 ## Notion
 
-Read `pureinn-variables.md` key "Feature Backlog" - used in Step 4a.
+Keys read from `pureinn-variables.md`:
+- `Feature Backlog` (DB) - used in Step 4a for MFS/FS/Feature push
+- `BRD` (Page) - parent page for BRD subpages created in Step 4e
+- `FSD` (Page) - parent page for FSD subpages created in Step 4e
+- `Domain Model` (Page) - parent page for Domain Model push in Step 4e
 
-After migration: remind user to update Notion page references for BRD, FSD, and Domain Model once those pages exist in Notion. These are set in `pureinn-variables.md` under the Engineering section.
+If any of these URLs are blank: that step is skipped and noted in the migration summary. User can fill in the URL and re-run with Option C (Notion push only) to complete the push.
 
 ---
 

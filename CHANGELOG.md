@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.4.8] - 2026-06-01
+
+### pm-reverse-extract: push BRD/FSD/Domain Model to Notion, add FS Overview and Feature Card content
+
+- Step 4c: FS entries now include Feature Set Overview as Notion page body
+- Step 4d: Feature entries now include Feature Card content as page body (full for Done/In Progress, stub for Planned)
+- Step 4e (new): pushes existing local BRD/FSD/Domain Model files to Notion as pages; links FS entries via BRD/FSD URL properties; updates pureinn-variables.md with created page URLs
+- Step 4f (renamed from 4e): updated confirmation summary to include new push counts
+- Step 6 migration summary: updated to reflect FS Overview, Feature Card, and doc push results
+- Notion section: clarified which pureinn-variables.md keys are used in which steps; removed stale manual reminder
+
+---
+
+
 ## [1.4.7] - 2026-05-31
 
 ### Rename impeccable-teach to /impeccable document across all references
