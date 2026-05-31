@@ -64,29 +64,6 @@ Do you have market research data to work with?
 
   A) Yes - I have Perplexity/ChatGPT output, reports, or competitor research to paste
   B) No - I'll share what I know from my domain knowledge and observations
-  C) Research this for me - use Octagon Deep Research MCP to pull market data automatically
-
----
-
-### Path C - Octagon Deep Research MCP
-
-**Requires:** Octagon Deep Research MCP connected (`octagon-deep-research-mcp` via MCP settings). If not connected, fall back to Path A or B.
-
-First ask as plain text: What is the product, who is the target customer, and what geography are you targeting? Also: who are the main competitors you want researched?
-
-Then call `octagon-deep-research-agent` with a prompt structured as:
-
-```
-Research the following for a product market analysis:
-- Market: [product description and target customer]
-- Geography: [target market]
-- Required outputs: TAM/SAM/SOM estimates, top 5 competitors with pricing and positioning, market growth rate, key trends, barriers to entry, recent regulatory changes
-- Competitors to analyze specifically: [list from user]
-```
-
-After the MCP returns results, confirm with the user: "Here is what Octagon found - does this look accurate for your market? Anything to add or correct before I build the analysis?"
-
-Then proceed to Step 2 using the MCP output as the research input.
 
 ---
 

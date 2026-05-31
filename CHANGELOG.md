@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.2] - 2026-05-31
+
+### Remove Octagon Deep Research MCP integration (paid service)
+
+---
+
+
 ## [1.4.1] - 2026-05-31
 
 ### Apply grouped question pattern to pm-reverse-extract Step 1
