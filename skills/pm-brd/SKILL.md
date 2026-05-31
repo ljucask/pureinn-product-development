@@ -35,6 +35,13 @@ BRD never defines: entities/attributes (Domain Model), API endpoints (FSD/tech d
 - Phase 4: BRD Skeleton - system boundary, capability map, state machine overview
 - Phase 6: BRD Full Detail - written per Feature Set, one section at a time. Run this skill again for each Feature Set.
 
+**Notion output - four connected databases (all pushed automatically after approval):**
+- BRD page - full document content pushed to the BRD Notion page
+- Business Rules DB - one entry per RULE-A/B/C defined in this run
+- Decision Models DB - one entry per decision point / branching logic
+- Event Catalogue DB - one entry per business event emitted or consumed by this Feature Set
+- Data Sensitivity DB - one entry per RULE-C rule with compliance/data-retention context
+
 ---
 
 ## Dependencies
@@ -385,28 +392,109 @@ stateDiagram-v2
 - [ ] Data retention rules (RULE-C: user data deletion cascade, per GDPR requirements)
 - [ ] Subscription state machine if applicable (Trial → Active → Cancelled → Expired)
 
+**Notion push completeness:**
+- [ ] BRD page content pushed (Phase 4: set; Phase 6: appended, not overwritten)
+- [ ] All RULE-A/B/C entries pushed to Business Rules DB
+- [ ] All decision points pushed to Decision Models DB
+- [ ] All business events pushed to Event Catalogue DB (one entry per event in the Business Events section)
+- [ ] RULE-C compliance/data-governance entries pushed to Data Sensitivity DB
+- [ ] Skipped DBs (blank URL) noted in summary
+
 ## Notion push
 
 **Runs after user approves the BRD artifact.**
 
-Read `pureinn-variables.md` keys "Business Rules" and "Decision Models" → get DB URLs.
-Check `state.json notion_ids` for cached IDs per DB. Fetch and cache if missing.
+Read all relevant keys from `pureinn-variables.md`. Check `state.json notion_ids` for cached data source IDs. Fetch and cache any missing IDs via `notion-fetch` before pushing.
 
-**Business Rules DB:** push one entry per business rule defined in the BRD.
-Use actual schema from notion-fetch. Map: rule name → title, rule statement → description, rule type (Critical / Core / Governance) → type/category property, affected Feature Set → related field if available.
+---
 
-**Decision Models DB:** push one entry per decision point or branching logic defined in the BRD.
-Map: decision name → title, condition → description, outcome states → notes.
+### 1. BRD page content
 
-Skip any DB where URL is blank in pureinn-variables.md.
+Read `pureinn-variables.md` key "BRD" → get page URL.
 
-**Notion page link (BRD page):**
-Read `pureinn-variables.md` key "BRD" → if URL present, remind user:
-```
-BRD artifact saved locally. Paste content into Notion: [BRD URL]
-```
+- **Phase 4 skeleton:** Push the full skeleton markdown as the BRD page body via `notion-update-page` (replace/set content).
+- **Phase 6 per-FS section:** Append the new FS section to the existing BRD page body. Do not overwrite existing content - add the new section at the end.
 
-After push: report counts per DB (created, errors).
+If BRD URL is blank: save locally only, note in summary.
+
+---
+
+### 2. Business Rules DB
+
+Read `pureinn-variables.md` key "Business Rules" → get DB URL. Cache data source ID in `state.json notion_ids.business_rules`.
+
+Push one entry per RULE-A, RULE-B, and RULE-C defined in this run via `notion-create-pages`:
+
+| Notion property | Value | Source |
+|---|---|---|
+| `Artefact Name` | Rule name (e.g., "RULE-A-001: Payment Release Invariant") | BRD rule ID + name |
+| `Artefact Type` | `"Business Rule"` | Fixed |
+| `Short Description` | Rule statement (the invariant or logic line) | BRD rule statement |
+| `Status` | `"Active"` | Fixed |
+| Category property | `"Critical"` / `"Core"` / `"Governance"` | RULE-A/B/C |
+| Feature Set reference | FS-ID if available | BRD FS scope field |
+
+Skip if URL blank.
+
+---
+
+### 3. Decision Models DB
+
+Read `pureinn-variables.md` key "Decision Models" → get DB URL. Cache in `state.json notion_ids.decision_models`.
+
+Push one entry per decision point or branching logic in the BRD via `notion-create-pages`:
+
+| Notion property | Value | Source |
+|---|---|---|
+| `Artefact Name` | Decision name (e.g., "Booking Approval Decision") | BRD decision point |
+| `Artefact Type` | `"Decision Model"` | Fixed |
+| `Short Description` | Condition + outcome summary (e.g., "If host approves within 24h → Confirmed; else → Expired") | BRD logic |
+| `Status` | `"Active"` | Fixed |
+
+Skip if URL blank.
+
+---
+
+### 4. Event Catalogue DB
+
+Read `pureinn-variables.md` key "Event Catalogue" → get DB URL. Cache in `state.json notion_ids.event_catalogue`.
+
+Push one entry per business event defined in the BRD "Business Events" section via `notion-create-pages`:
+
+| Notion property | Value | Source |
+|---|---|---|
+| `Artefact Name` | Event name (e.g., `booking.confirmed`) | BRD event name |
+| `Artefact Type` | `"Event"` | Fixed |
+| `Short Description` | Trigger + business meaning (1 sentence) | BRD event description |
+| `Status` | `"Active"` | Fixed |
+| Producer | Feature Set that emits this event | BRD events table |
+| Consumers | Feature Sets that consume this event | BRD events table |
+
+Skip if URL blank.
+
+---
+
+### 5. Data Sensitivity DB
+
+Read `pureinn-variables.md` key "Data Sensitivity Map" → get DB URL. Cache in `state.json notion_ids.data_sensitivity_map`.
+
+Push one entry per RULE-C rule that has compliance, data-retention, or data-governance context via `notion-create-pages`:
+
+| Notion property | Value | Source |
+|---|---|---|
+| `Artefact Name` | Rule name (e.g., "RULE-C-003: User Data Deletion on Account Close") | BRD RULE-C ID + name |
+| `Artefact Type` | `"Data Governance Rule"` | Fixed |
+| `Short Description` | Policy statement from the rule | BRD RULE-C policy |
+| `Status` | `"Active"` | Fixed |
+| Context | `"Compliance"` / `"Retention"` / `"GDPR"` / `"Operations"` | BRD RULE-C context field |
+
+Only push RULE-C entries that have a compliance, retention, or data-handling context. Skip pure UX/policy rules. Skip if URL blank.
+
+---
+
+### 6. Confirm
+
+After all pushes: report counts per target (BRD page updated, Business Rules created, Decision Models created, Events created, Data Governance Rules created, errors). Note any targets skipped due to missing URL in pureinn-variables.md.
 
 ## Save to
 

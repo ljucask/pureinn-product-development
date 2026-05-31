@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.4.9] - 2026-06-01
+
+### pm-brd: full Notion push to all 4 connected databases
+
+- BRD page content now pushed directly to Notion page (Phase 4: set; Phase 6: append per FS) - no more "paste manually"
+- Event Catalogue DB push added: one entry per business event in the BRD Business Events section
+- Data Sensitivity DB push added: one entry per RULE-C rule with compliance/data-retention context
+- Business Rules DB and Decision Models DB pushes unchanged, now documented as numbered steps
+- Updated "What this skill does" to list all 4 Notion targets
+- Completeness checklist: added Notion push section
+
+---
+
+
 ## [1.4.8] - 2026-06-01
 
 ### pm-reverse-extract: push BRD/FSD/Domain Model to Notion, add FS Overview and Feature Card content
