@@ -59,6 +59,17 @@ Apply the standard skill interaction pattern (CLAUDE.md).
 
 ## Step 1: Gather inputs
 
+First, ask:
+
+Do you have interview data or research notes to work with?
+
+  A) Yes - I have transcripts or notes that capture switching triggers and hesitations
+  B) No - I'm working from my own knowledge and assumptions about this person
+
+---
+
+### Path A - Research data available
+
 ```
 I need inputs for the JTBD Analysis.
 
@@ -89,6 +100,75 @@ I need inputs for the JTBD Analysis.
    What makes them nervous about switching to something new?
    What do they fear losing or breaking?
 ```
+
+---
+
+### Path B - No research data (guided elicitation)
+
+Guide the user through 3 rounds of questions to reconstruct the JTBD picture from founder knowledge. The goal is to surface the forces that drive switching behavior without formal interview data. Output will be marked as assumption-based.
+
+**Group 1 of 3 - The person and the job**
+
+Ask these two questions together:
+
+Which persona are we analyzing? (name from pm-personas, or describe briefly if personas don't exist yet)
+
+How often does this job need to get done?
+
+  A) Daily - it's a recurring operational task
+  B) Weekly - regular but not daily
+  C) Monthly or less - periodic, project-based
+  D) Triggered by events - happens when something specific occurs
+
+Then ask these as plain text:
+
+What is the job they are trying to get done? Describe the outcome they want, not what your product does. What changes in their work or life when the job is done well?
+
+After answers, confirm: "Is this the right person and job to analyze?"
+
+---
+
+**Group 2 of 3 - Current solution and pain**
+
+Ask all as plain text:
+
+What do they use today to get this job done? Name specific tools, processes, or workarounds - even if the answer is "nothing formal" or "they do it manually."
+
+What frustrates them most about the current solution? What breaks, slows them down, or costs them the most?
+
+Describe a specific moment or event that would push someone to start actively looking for a better solution. What needs to go wrong - or right - for them to say "I need to fix this now"?
+
+What do they expect a new solution to deliver? What outcome would make them feel the switch was worth it?
+
+After answers, confirm: "Does this match what you'd expect from this type of person?"
+
+---
+
+**Group 3 of 3 - Switching forces**
+
+Ask these two questions together:
+
+What is their biggest anxiety about switching to something new?
+
+  A) Risk of losing data or breaking current processes
+  B) Learning curve and time investment to get up to speed
+  C) Cost or budget approval required
+  D) Fear that the new solution won't actually solve the problem
+
+What keeps them stuck with the current solution even when they're unhappy?
+
+  A) Habit - they know it, it works well enough, change feels risky
+  B) Switching cost - migration effort, data locked in, integrations
+  C) Social inertia - team uses it, hard to change alone
+  D) No clear alternative - nothing obviously better exists
+
+Then ask as plain text:
+
+What would need to happen - or what would the new solution need to show - for them to overcome those hesitations and commit to switching?
+
+After answers, show complete summary of all forces collected. Confirm before proceeding.
+
+Note at the top of every generated artifact: `> Assumption-based - built from founder knowledge, not validated research. Treat as hypotheses to be tested.`
 
 ---
 

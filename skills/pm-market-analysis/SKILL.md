@@ -58,7 +58,16 @@ Apply the standard skill interaction pattern (CLAUDE.md).
 
 ## Step 1: Gather inputs
 
-Ask the user all questions at once:
+First, ask:
+
+Do you have market research data to work with?
+
+  A) Yes - I have Perplexity/ChatGPT output, reports, or competitor research to paste
+  B) No - I'll share what I know from my domain knowledge and observations
+
+---
+
+### Path A - Research data available
 
 ```
 I need inputs for the Market Analysis.
@@ -87,6 +96,84 @@ I need inputs for the Market Analysis.
    Where does the market have bigger problems? What don't you know yet?
    What are the barriers to entry in this market?
 ```
+
+---
+
+### Path B - No research data (guided elicitation)
+
+Guide the user through 3 rounds to reconstruct a market picture from domain knowledge. Flag explicitly what needs external validation. Output marked as assumption-based.
+
+**Group 1 of 3 - Market definition**
+
+Ask these two questions together:
+
+What is the target geography for this product?
+
+  A) One country - focused single market
+  B) Regional - 2 to 5 countries with similar characteristics
+  C) Global from day one
+  D) Other - describe
+
+How would you describe the current state of the market?
+
+  A) New category - no clear solution exists today, problem is underserved
+  B) Emerging - solutions exist but no clear winner, market is consolidating
+  C) Established - clear leaders exist, competing on differentiation
+  D) Commoditized - price competition dominates
+
+Then ask as plain text:
+
+What market or industry is this? Describe it as a customer would, not as a tech category.
+
+Name the 2-3 main competitors or alternatives customers use today. What do they do well and where do they fall short?
+
+After answers, confirm and proceed.
+
+---
+
+**Group 2 of 3 - Market size and dynamics**
+
+Ask all as plain text:
+
+How large do you estimate the addressable market to be? Give your best reasoning - rough orders of magnitude are fine. (e.g., "~50,000 property managers in Slovakia and Czech Republic based on housing data")
+
+Is the market growing, stable, or shrinking? What is driving that? Is there a specific event, regulation, or technology shift creating a window right now?
+
+What is the biggest failure of existing solutions? Why are customers not fully satisfied with what is available today?
+
+What are the main barriers to entering this market? (regulatory, technical, long sales cycles, incumbent relationships, capital required)
+
+After answers, confirm: "Does this match your understanding of the market?"
+
+---
+
+**Group 3 of 3 - Positioning and defensibility**
+
+Ask these two questions together:
+
+How defensible is your position in this market once you launch?
+
+  A) Strong moat - proprietary data, network effects, or regulatory advantage
+  B) Moderate - first-mover advantage, deep domain expertise, or strong brand potential
+  C) Thin - primarily execution advantage, replicable by well-funded competitor
+  D) Unknown - too early to assess
+
+What is your biggest uncertainty about this market?
+
+  A) Whether the problem is large enough to build a business on
+  B) Whether customers will actually pay for a solution
+  C) Whether you can acquire customers at a sustainable cost
+  D) Whether a larger player will enter and outcompete you
+
+Then ask as plain text:
+
+Why would a customer choose you over the alternatives you named? What is your key differentiator?
+
+Why now? What has changed recently - in technology, regulation, customer behavior, or market conditions - that makes this the right moment?
+
+After answers, show complete summary. Flag explicitly which claims need external data validation before using in investor materials or strategy decisions.
+
+Note at the top of every generated artifact: `> Assumption-based - built from founder domain knowledge. Claims marked [NEEDS VALIDATION] should be verified with external sources before treating as reliable.`
 
 ---
 

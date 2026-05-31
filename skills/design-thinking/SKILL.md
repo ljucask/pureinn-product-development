@@ -67,6 +67,17 @@ Apply the standard skill interaction pattern (CLAUDE.md).
 
 ## Step 1: Gather inputs
 
+First, ask:
+
+Do you have Phase 2 research outputs to work with?
+
+  A) Yes - I have Problem Validation Summary and/or Personas + JTBD to paste or confirm in context
+  B) No - I have not run formal Phase 2 research, guide me through what I know
+
+---
+
+### Path A - Phase 2 artifacts available
+
 ```
 I need inputs for the Design Thinking synthesis.
 
@@ -94,6 +105,66 @@ I need inputs for the Design Thinking synthesis.
    (e.g., no native mobile app in MVP, must integrate with Airbnb, budget limits,
     regulatory constraints, team skill constraints)
 ```
+
+---
+
+### Path B - No Phase 2 research (guided elicitation)
+
+No Phase 2 artifacts exist. Guide the user through 3 rounds to build the input picture from founder knowledge. The goal is to extract enough to run a meaningful Define + Ideate synthesis. Output marked as assumption-based.
+
+**Group 1 of 3 - The person and their world**
+
+Ask all as plain text:
+
+Who is the primary person this product is for? Describe them concretely - role, context, a typical day. Be specific enough to picture a real human, not a demographic.
+
+What is the most important job they are trying to get done - the outcome they want, not the feature? Finish this sentence: "When [situation], they want to [motivation] so they can [outcome]."
+
+What frustrates them most about how they handle this today? What breaks, slows them down, or costs them the most?
+
+After answers, confirm: "Is this the person we're designing for? Anything to sharpen?"
+
+---
+
+**Group 2 of 3 - Evidence and solution space**
+
+Ask these two questions together:
+
+How solid is your evidence that this problem is real and this is the right person?
+
+  A) Strong - I have spoken directly with people matching this profile
+  B) Medium - indirect evidence (forums, observation, secondhand accounts)
+  C) Domain expertise - I know this world well but haven't formally validated
+  D) Assumption only - no external evidence yet
+
+Are you already thinking about specific solution directions?
+
+  A) Yes - I have a clear hypothesis about what to build
+  B) Partially - some directions but nothing concrete
+  C) No - completely open, need the ideation process
+  D) Yes but I want to challenge my assumptions before committing
+
+Then ask as plain text:
+
+What are the 2-3 most painful moments in this person's experience with the current solution? Be specific - describe situations, not generalizations.
+
+After answers, confirm and proceed.
+
+---
+
+**Group 3 of 3 - Solution constraints and direction**
+
+Ask all as plain text:
+
+What solutions or directions are you already considering? List them - even rough ideas are useful input for ideation.
+
+What hard constraints exist on what you can build? (e.g., no native mobile app in MVP, must integrate with a specific system, budget limits, team skill gaps, regulatory constraints)
+
+What feels most uncertain or risky about the solution space right now? What would you most need to get right?
+
+After answers, show complete summary. Note explicitly which insights are validated vs. assumed before proceeding to Define stage.
+
+Note at the top of every generated artifact: `> Assumption-based - no formal Phase 2 research conducted. Problem Statement and POV reflect founder hypotheses. HMW questions and ideation directions should be treated as starting points for validation, not confirmed insights.`
 
 ---
 

@@ -69,7 +69,16 @@ Apply the standard skill interaction pattern (CLAUDE.md).
 
 ## Step 1: Gather inputs
 
-Ask the user to provide the outputs from all Phase 2 tracks:
+First, ask:
+
+Do you have Phase 2 research artifacts to work with?
+
+  A) Yes - I have outputs from one or more Phase 2 tracks to paste or confirm in context
+  B) No - I have not done formal Phase 2 research, guide me through what I know
+
+---
+
+### Path A - Phase 2 artifacts available
 
 ```
 For the Problem Validation Summary I need outputs from all Tracks A-D.
@@ -93,6 +102,82 @@ Additional questions:
 2. Are you revising any initial assumptions from Phase 1 (Project Charter / Assumptions Register)?
 3. What is the biggest uncertainty that remains?
 ```
+
+---
+
+### Path B - No Phase 2 research (guided elicitation)
+
+No Phase 2 artifacts exist. Guide the user through 3 rounds to reconstruct the validation picture from founder knowledge across all four tracks. Output will be marked as assumption-based and gaps will be flagged explicitly.
+
+**Group 1 of 3 - The problem and the customer**
+
+Ask these two questions together:
+
+How confident are you that this problem is real and significant for your target customer?
+
+  A) Very confident - I have spoken directly with people who experience this
+  B) Somewhat confident - I have indirect evidence (forums, reviews, observation)
+  C) Working from domain expertise - I know this world but haven't validated formally
+  D) Mostly assumption - not yet tested with real people
+
+How technically feasible is building your proposed solution, as far as you know?
+
+  A) Proven stack - no significant technical unknowns
+  B) Largely proven with some unknowns to validate
+  C) Significant technical risks that need a spike or prototype to resolve
+  D) Unknown - haven't assessed feasibility yet
+
+Then ask as plain text:
+
+Describe the problem in one specific sentence from the customer's perspective. Not what your product does - what pain they feel.
+
+Who specifically experiences this problem? Describe the person: role, context, company size, how often the problem hits.
+
+After answers, confirm and proceed.
+
+---
+
+**Group 2 of 3 - Evidence and market**
+
+Ask all as plain text:
+
+What evidence do you have that this problem is real? Be specific - even anecdotal is useful. (e.g., "I managed 8 properties myself and felt this pain", "Three friends in this industry confirmed it", "I found 50+ complaints on Reddit")
+
+What do people use today to cope with this problem? Name specific solutions - tools, workarounds, manual processes, or nothing at all. What is wrong with each?
+
+Who are the 2-3 main competitors or close alternatives in this space? Why are customers not fully satisfied with them?
+
+Are there any legal, regulatory, or compliance factors relevant to this market or product that you are aware of?
+
+After answers, confirm: "Is this a fair summary of what you know about the market and problem?"
+
+---
+
+**Group 3 of 3 - Confidence and gaps**
+
+Ask these two questions together:
+
+What is your biggest uncertainty right now?
+
+  A) Whether the problem is painful enough to justify a paid solution
+  B) Whether you are targeting the right customer segment
+  C) Whether the solution you have in mind is technically feasible
+  D) Whether the market is large enough to build a business on
+
+Did your thinking about the problem or customer shift as you answered these questions?
+
+  A) No - my original assumptions held up
+  B) Yes - I realized I need to refine who the customer is
+  C) Yes - I realized the problem framing needs adjustment
+  D) Yes - significant doubts emerged that I need to address before continuing
+
+Then ask as plain text:
+
+What would need to happen for you to feel confident enough to move forward to strategy and business model work?
+
+After answers, show complete summary across all groups. Flag which areas have zero validation evidence and recommend which should be addressed before treating the Problem Validation Summary as reliable.
+
+Note at the top of every generated artifact: `> Assumption-based - no formal Phase 2 research conducted. Treat this summary as a hypothesis map, not validated evidence. Items marked [NO EVIDENCE] carry highest risk.`
 
 ---
 

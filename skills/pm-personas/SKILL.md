@@ -59,6 +59,17 @@ Apply the standard skill interaction pattern (CLAUDE.md).
 
 ## Step 1: Gather inputs
 
+First, ask:
+
+Do you have research data to work with?
+
+  A) Yes - I have interviews, surveys, or research notes to paste
+  B) No - I'm working from assumptions and domain knowledge
+
+---
+
+### Path A - Research data available
+
 Ask the user all questions at once:
 
 ```
@@ -89,6 +100,86 @@ I need VOC data for Customer Segments + Personas.
    What segments are you already suspecting? (if you have a preliminary view)
    Who do you think is the ideal early adopter and why?
 ```
+
+---
+
+### Path B - No research data (guided elicitation)
+
+No research data yet. Guide the user through 3 rounds of questions to extract maximum knowledge. The goal is to replace interview and observation work with structured founder knowledge. Output will be marked as assumption-based.
+
+**Group 1 of 3 - Who is this person?**
+
+Ask these two questions together:
+
+What is their organization or context size?
+
+  A) Solo / freelancer - works independently
+  B) Small team - 2 to 15 people
+  C) Mid-size company - 16 to 200 people
+  D) Large enterprise - 200+ people
+
+How tech-savvy are they compared to average?
+
+  A) Power user - adopts new tools early, comfortable with change
+  B) Average - uses tools that are widely adopted and proven
+  C) Reluctant - resists change, needs strong reason and support
+  D) Varies significantly across the segment
+
+Then ask these as plain text:
+
+What is their role or job title? What are they responsible for day-to-day?
+
+What are they measured on? What does a good week look like for them?
+
+After receiving answers, show summary and ask: "Is this the right person? Anything to adjust before we go deeper?"
+
+---
+
+**Group 2 of 3 - The problem**
+
+Ask all four as plain text:
+
+Describe the problem from their perspective - not what your product does, but what pain they feel and when.
+
+What do they currently use to deal with this? Name specific tools, workarounds, or manual processes.
+
+What does this problem cost them? Be specific - time wasted per week, money lost, stress level, risk, missed revenue.
+
+When does the pain hit hardest? What specific situation or moment triggers the need for a solution?
+
+After receiving answers, show summary and ask: "Does this match what you've observed or heard? Anything to correct?"
+
+---
+
+**Group 3 of 3 - Behavior and adoption**
+
+Ask these two questions together:
+
+How do people like this typically discover and adopt new tools?
+
+  A) Actively seek new solutions - look for better ways on their own
+  B) Peer-driven - adopt when colleagues or trusted contacts recommend
+  C) Top-down - adopt when their company mandates it
+  D) Pain-driven - only switch when current solution breaks badly enough
+
+Is your understanding of this person based on:
+
+  A) Direct conversations with real people matching this profile
+  B) Indirect observation (forums, reviews, support tickets, secondhand)
+  C) Domain expertise and pattern recognition - you know this world well
+  D) Mostly assumptions - not yet validated with real people
+
+Then ask these as plain text:
+
+Why haven't they solved this already? What's blocking them from fixing it today?
+
+What would make them try your product immediately - and what would make them hesitate?
+
+Do you know a specific real person who fits this profile? Describe what makes them the ideal early adopter.
+
+After receiving answers, show a complete summary of everything collected across all 3 groups. Ask for final confirmation before proceeding to artifact generation.
+
+Note at the top of every generated artifact: `> Assumption-based - built from founder knowledge, not validated research. Treat as hypotheses to be tested.`
 
 ---
 

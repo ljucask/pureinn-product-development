@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0] - 2026-05-31
+
+### Add guided elicitation mode (Path B) to 5 research-dependent skills: pm-personas, jtbd-building, pm-market-analysis, pm-problem-validation, design-thinking
+
+---
+
+
 ## [1.0.7] - 2026-05-31
 
 ### Apply grouped question pattern to all Type B skills: reduce options to max 4, restructure pm-pitch-deck into groups with confirmation
