@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1] - 2026-05-31
+
+### Test release script
+
+---
+
+
 ## [1.0.0] - 2025-05-29
 
 ### Initial release

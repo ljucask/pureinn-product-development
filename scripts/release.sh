@@ -1,0 +1,95 @@
+#!/usr/bin/env bash
+# Usage: ./scripts/release.sh <patch|minor|major> "Description of changes"
+
+set -e
+
+BUMP=${1:-patch}
+MESSAGE=${2:-""}
+PLUGIN_JSON=".claude-plugin/plugin.json"
+MARKETPLACE_JSON=".claude-plugin/marketplace.json"
+CHANGELOG="CHANGELOG.md"
+
+if [[ -z "$MESSAGE" ]]; then
+  echo "Error: release message required."
+  echo "Usage: ./scripts/release.sh <patch|minor|major> \"Description of changes\""
+  exit 1
+fi
+
+if [[ "$BUMP" != "patch" && "$BUMP" != "minor" && "$BUMP" != "major" ]]; then
+  echo "Error: bump type must be patch, minor, or major"
+  exit 1
+fi
+
+# Read current version from plugin.json
+CURRENT=$(python3 -c "import json; print(json.load(open('$PLUGIN_JSON'))['version'])")
+MAJOR=$(echo "$CURRENT" | cut -d. -f1)
+MINOR=$(echo "$CURRENT" | cut -d. -f2)
+PATCH=$(echo "$CURRENT" | cut -d. -f3)
+
+# Bump version
+if [[ "$BUMP" == "major" ]]; then
+  MAJOR=$((MAJOR + 1)); MINOR=0; PATCH=0
+elif [[ "$BUMP" == "minor" ]]; then
+  MINOR=$((MINOR + 1)); PATCH=0
+else
+  PATCH=$((PATCH + 1))
+fi
+
+NEW_VERSION="$MAJOR.$MINOR.$PATCH"
+TODAY=$(date +%Y-%m-%d)
+
+echo "Bumping $CURRENT -> $NEW_VERSION ($BUMP)"
+
+# Update plugin.json
+python3 - <<EOF
+import json
+
+with open('$PLUGIN_JSON', 'r') as f:
+    data = json.load(f)
+data['version'] = '$NEW_VERSION'
+with open('$PLUGIN_JSON', 'w') as f:
+    json.dump(data, f, indent=2)
+    f.write('\n')
+EOF
+
+# Update marketplace.json
+python3 - <<EOF
+import json
+
+with open('$MARKETPLACE_JSON', 'r') as f:
+    data = json.load(f)
+data['metadata']['version'] = '$NEW_VERSION'
+data['plugins'][0]['version'] = '$NEW_VERSION'
+with open('$MARKETPLACE_JSON', 'w') as f:
+    json.dump(data, f, indent=2)
+    f.write('\n')
+EOF
+
+# Prepend to CHANGELOG.md
+CHANGELOG_ENTRY="## [$NEW_VERSION] - $TODAY
+
+### $MESSAGE
+"
+
+if [[ "$BUMP" == "major" ]]; then
+  CHANGELOG_ENTRY="## [$NEW_VERSION] - $TODAY
+
+### Breaking Changes
+
+### $MESSAGE
+"
+fi
+
+EXISTING=$(cat "$CHANGELOG")
+echo -e "# Changelog\n\n$CHANGELOG_ENTRY\n---\n" > "$CHANGELOG"
+# Append existing content minus the first line (old "# Changelog" header)
+echo "$EXISTING" | tail -n +2 >> "$CHANGELOG"
+
+echo ""
+echo "Done. Version updated to $NEW_VERSION."
+echo ""
+echo "Next steps:"
+echo "  1. Review: plugin.json, marketplace.json, CHANGELOG.md"
+echo "  2. git add ."
+echo "  3. git commit -m \"Release v$NEW_VERSION - $MESSAGE\""
+echo "  4. git push"
