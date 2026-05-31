@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.4] - 2026-05-31
+
+### Rewrite intake questions in natural A/B/C/D format to trigger AskUserQuestion UI
+
+---
+
+
 ## [1.0.3] - 2026-05-31
 
 ### Use AskUserQuestion tool for interactive intake in pureinn

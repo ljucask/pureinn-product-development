@@ -124,78 +124,108 @@ Wait for confirmation. If user adds files, read them. If "nothing", proceed to S
 
 Ask these questions regardless of whether documents were found. Documents give Claude the written record; these questions capture current thinking, intent, and product shape that documents often don't contain.
 
-Use the AskUserQuestion tool for each question. Ask one at a time. Do not proceed to the next question until the user responds.
+Ask one question at a time. Wait for the user's response before asking the next.
 
-**Question 1** - use AskUserQuestion:
-- question: "What are you building?"
-- header: "Product idea"
-- options: this is open-ended - do not use options, just ask as plain text and wait for free-form response.
+**Question 1 of 9**
 
-Ask as plain text: "What are you building? Describe it in 2-3 sentences."
+What are you building? Describe it in 2-3 sentences.
+
+Wait for response, then ask Question 2.
+
+---
+
+**Question 2 of 9**
+
+What type of product is it?
+
+  A) SaaS web application
+  B) Mobile application (iOS / Android / both)
+  C) Marketplace or platform (connects two or more sides)
+  D) Something else (internal tool, API, describe it)
+
+Wait for response, then ask Question 3.
+
+---
+
+**Question 3 of 9**
+
+Who is it for?
+
+  A) External customers (product for sale)
+  B) Internal team only
+  C) Both
+
+Wait for response, then ask Question 4.
+
+---
+
+**Question 4 of 9**
+
+What is the primary experience?
+
+  A) Mobile first - main value delivered on mobile
+  B) Desktop first - web/desktop (CRM, dashboard, admin tool)
+  C) Both equally - full parity across mobile and web
+  D) Not sure yet
+
+Wait for response, then ask Question 5.
+
+---
+
+**Question 5 of 9**
+
+Will the product be paid?
+
+  A) Yes - paid from day one (subscription, one-time, usage-based)
+  B) Freemium - free tier + paid upgrade
+  C) Free / internal - no revenue target
+  D) Not decided yet
+
+Wait for response, then ask Question 6.
+
+---
+
+**Question 6 of 9**
+
+Where are you now?
+
+  A) Idea only - nothing validated yet
+  B) Have some research or early customer insights
+  C) Validated problem, ready to define strategy
+  D) Have a strategy or specs, moving to execution
+
+Wait for response, then ask Question 7.
+
+---
+
+**Question 7 of 9**
+
+What matters most right now? What is the single most important thing you need to produce or figure out? (e.g., "validate whether the problem is real", "define MVP scope", "get to a spec I can build from")
+
+Wait for response, then ask Question 8.
+
+---
+
+**Question 8 of 9**
+
+Who is building this?
+
+  A) Solo - just me, no team
+  B) Small founding team (2-3 people, wearing multiple hats)
+  C) Team with defined roles (PM, developers, designer)
+  D) Corporate / enterprise team (multiple stakeholders)
+
+Wait for response, then ask Question 9.
+
+---
+
+**Question 9 of 9**
+
+Any constraints that shape how we approach this? (e.g., 3-month runway, regulated industry, must integrate with existing system, specific tech stack). Say "none" if not applicable.
+
 Wait for response.
 
-**Question 2** - use AskUserQuestion:
-- question: "What type of product is it?"
-- header: "Product type"
-- options:
-  - "SaaS web application"
-  - "Mobile application (iOS / Android / both)"
-  - "Marketplace or platform"
-  - "Internal tool"
-  - "API or developer platform"
-
-**Question 3** - use AskUserQuestion:
-- question: "Who is it for?"
-- header: "Audience"
-- options:
-  - "External customers (product for sale)"
-  - "Internal team only"
-  - "Both"
-
-**Question 4** - use AskUserQuestion:
-- question: "What is the primary experience?"
-- header: "Platform"
-- options:
-  - "Mobile first - main value on mobile"
-  - "Desktop first - web/desktop (CRM, dashboard, admin)"
-  - "Both equally - full parity"
-  - "Not sure yet"
-
-**Question 5** - use AskUserQuestion:
-- question: "Will the product be paid?"
-- header: "Business model"
-- options:
-  - "Yes - paid from day one (subscription, one-time, usage-based)"
-  - "Freemium - free tier + paid upgrade"
-  - "Free / internal - no revenue target"
-  - "Not decided yet"
-
-**Question 6** - use AskUserQuestion:
-- question: "Where are you now?"
-- header: "Current stage"
-- options:
-  - "Idea only - nothing validated yet"
-  - "Have some research or customer insights"
-  - "Validated problem, understand the customer"
-  - "Have a strategy / business model, moving to execution"
-  - "Have specs or design, ready to build"
-
-**Question 7** - ask as plain text:
-"What matters most right now? What is the single most important thing you need to produce or figure out? (e.g., validate the problem, define MVP scope, get to a spec)"
-Wait for free-form response.
-
-**Question 8** - use AskUserQuestion:
-- question: "Who is building this?"
-- header: "Team"
-- options:
-  - "Solo - just me"
-  - "Small founding team (2-3 people)"
-  - "Team with defined roles (PM, dev, designer)"
-  - "Corporate / enterprise team"
-
-**Question 9** - ask as plain text:
-"Any constraints I should know about? (e.g., 3-month runway, regulated industry, existing system to integrate with, specific tech stack). Say 'none' if not applicable."
-Wait for free-form response.
+---
 
 All 9 answers, combined with any documents found, form the full input picture.
 
