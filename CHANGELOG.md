@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3] - 2026-05-31
+
+### Use AskUserQuestion tool for interactive intake in pureinn
+
+---
+
+
 ## [1.0.2] - 2026-05-31
 
 ### Intake questions now asked one at a time in pureinn
