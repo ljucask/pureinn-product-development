@@ -124,17 +124,15 @@ Wait for confirmation. If user adds files, read them. If "nothing", proceed to S
 
 Ask these questions regardless of whether documents were found. Documents give Claude the written record; these questions capture current thinking, intent, and product shape that documents often don't contain.
 
-Ask one question at a time. Wait for the user's response before asking the next.
-
-**Question 1 of 9**
-
-What are you building? Describe it in 2-3 sentences.
-
-Wait for response, then ask Question 2.
+Questions are grouped into 3 rounds. Ask all questions in a group together, then show a summary of your understanding and wait for confirmation before moving to the next group. If the user wants to correct something, update and confirm before proceeding.
 
 ---
 
-**Question 2 of 9**
+### Group 1 of 3 - What you're building
+
+Ask these three questions together:
+
+What are you building? Describe it in 2-3 sentences.
 
 What type of product is it?
 
@@ -143,23 +141,30 @@ What type of product is it?
   C) Marketplace or platform (connects two or more sides)
   D) Something else (internal tool, API, describe it)
 
-Wait for response, then ask Question 3.
-
----
-
-**Question 3 of 9**
-
 Who is it for?
 
   A) External customers (product for sale)
   B) Internal team only
   C) Both
 
-Wait for response, then ask Question 4.
+After receiving answers, output a summary block:
+
+```
+Here's what I understand so far:
+- [1-sentence summary of what they're building]
+- Product type: [type]
+- Target: [users]
+
+Is this correct, or do you want to change anything before we continue?
+```
+
+Wait for confirmation. If corrections needed, update and re-confirm. Then proceed to Group 2.
 
 ---
 
-**Question 4 of 9**
+### Group 2 of 3 - Product shape
+
+Ask these two questions together:
 
 What is the primary experience?
 
@@ -168,12 +173,6 @@ What is the primary experience?
   C) Both equally - full parity across mobile and web
   D) Not sure yet
 
-Wait for response, then ask Question 5.
-
----
-
-**Question 5 of 9**
-
 Will the product be paid?
 
   A) Yes - paid from day one (subscription, one-time, usage-based)
@@ -181,11 +180,23 @@ Will the product be paid?
   C) Free / internal - no revenue target
   D) Not decided yet
 
-Wait for response, then ask Question 6.
+After receiving answers, output a summary block:
+
+```
+Adding to the picture:
+- Platform: [platform]
+- Business model: [model]
+
+Does this match your intent, or anything to adjust?
+```
+
+Wait for confirmation. If corrections needed, update and re-confirm. Then proceed to Group 3.
 
 ---
 
-**Question 6 of 9**
+### Group 3 of 3 - Context and starting point
+
+Ask these four questions together:
 
 Where are you now?
 
@@ -194,19 +205,7 @@ Where are you now?
   C) Validated problem, ready to define strategy
   D) Have a strategy or specs, moving to execution
 
-Wait for response, then ask Question 7.
-
----
-
-**Question 7 of 9**
-
 What matters most right now? What is the single most important thing you need to produce or figure out? (e.g., "validate whether the problem is real", "define MVP scope", "get to a spec I can build from")
-
-Wait for response, then ask Question 8.
-
----
-
-**Question 8 of 9**
 
 Who is building this?
 
@@ -215,19 +214,26 @@ Who is building this?
   C) Team with defined roles (PM, developers, designer)
   D) Corporate / enterprise team (multiple stakeholders)
 
-Wait for response, then ask Question 9.
-
----
-
-**Question 9 of 9**
-
 Any constraints that shape how we approach this? (e.g., 3-month runway, regulated industry, must integrate with existing system, specific tech stack). Say "none" if not applicable.
 
-Wait for response.
+After receiving answers, output a final summary block:
+
+```
+Complete picture:
+- [1-sentence product description]
+- Type: [type] | Platform: [platform] | Business model: [model]
+- Target users: [users]
+- Current stage: [stage]
+- Priority: [what matters most]
+- Team: [team type]
+- Constraints: [constraints or none]
+
+Ready to continue with this? Or anything to correct first?
+```
+
+Wait for final confirmation before proceeding to Step 4.
 
 ---
-
-All 9 answers, combined with any documents found, form the full input picture.
 
 **Why these questions matter downstream:**
 - Product type and platform strategy affect tech stack recommendations, Phase 6 approach, and which skills apply

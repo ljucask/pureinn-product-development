@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.5] - 2026-05-31
+
+### Group intake questions into 3 rounds with confirmation summaries; document grouped question pattern as universal standard
+
+---
+
+
 ## [1.0.4] - 2026-05-31
 
 ### Rewrite intake questions in natural A/B/C/D format to trigger AskUserQuestion UI

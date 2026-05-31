@@ -98,6 +98,38 @@ metadata:
 2. If logic/flow changed significantly: bump `version` in the skill's own frontmatter metadata too
 3. Run `./scripts/release.sh patch "Updated [skill-name]: [what changed]"` (or minor if substantial)
 
+---
+
+## Skill question pattern (universal standard)
+
+When a skill needs to ask the user questions before producing an artifact, use the **grouped question pattern**:
+
+1. Group related questions naturally (typically 2-4 per group, max 3 groups)
+2. Ask all questions in the group together in one turn
+3. After receiving answers, output a summary: "Here's what I understand - is this correct?"
+4. Wait for confirmation. If user corrects something, update and re-confirm.
+5. Move to the next group only after confirmation.
+6. After the final group, show a complete summary before proceeding to artifact generation.
+
+**When to apply:**
+- >4 questions total: group them (2-3 groups)
+- 3-4 questions total: one group with one confirmation before proceeding
+- 1-2 questions: ask directly, no grouping needed
+
+**Summary block format:**
+```
+Here's what I understand:
+- [key point]
+- [key point]
+- [key point]
+
+Is this correct, or anything to adjust before we continue?
+```
+
+This pattern applies to all skills: intake rounds, discovery sessions, validation checks. Never dump all questions at once without a confirmation loop.
+
+---
+
 ### Renaming or removing a skill
 
 This is a major version change - existing users may have workflows referencing the old name.
