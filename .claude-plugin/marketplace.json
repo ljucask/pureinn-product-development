@@ -5,14 +5,14 @@
   },
   "metadata": {
     "description": "AI-native product development framework covering the full lifecycle from idea to launch",
-    "version": "1.0.1"
+    "version": "1.0.2"
   },
   "plugins": [
     {
       "name": "pureinn-product-development",
       "source": "./",
       "description": "34 skills and 2 commands covering the full product development lifecycle. Three playbooks: Greenfield (new product from zero), Feature Implementation (adding to existing product), Rebuild (technical transformation). Phases: Discovery, Validation, Domain Modeling, Feature Planning, FDD Delivery. Integrates with Notion, Excalidraw, and Gamma via MCP.",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "author": {
         "name": "ljucask",
         "email": "lukas.kianka@gmail.com"

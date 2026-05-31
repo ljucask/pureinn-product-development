@@ -124,67 +124,99 @@ Wait for confirmation. If user adds files, read them. If "nothing", proceed to S
 
 Ask these questions regardless of whether documents were found. Documents give Claude the written record; these questions capture current thinking, intent, and product shape that documents often don't contain.
 
-Ask all at once:
+Ask one question at a time. Wait for the user's response before asking the next. Do not show all questions upfront.
 
+**Question 1:**
 ```
-A few questions to understand what you're building and where you are.
-
-1. WHAT ARE YOU BUILDING?
-   Describe it in 2-3 sentences.
-
-2. PRODUCT TYPE
-   Which best describes it?
-     a) SaaS web application
-     b) Mobile application (iOS / Android / both)
-     c) Marketplace or platform (connects two or more sides)
-     d) Internal tool (used only within your company)
-     e) API or developer platform
-     f) Something else: [describe]
-
-3. WHO IS IT FOR?
-   a) External customers (product for sale)
-   b) Internal team only (internal tool)
-   c) Both (internal + external facing)
-
-4. PLATFORM STRATEGY
-   What is the primary experience?
-     a) Mobile first - the main value is delivered on mobile
-     b) Desktop first - the main experience is web/desktop (e.g., CRM, admin tool, dashboard)
-     c) Both equally - needs full parity across mobile and web
-     d) Not sure yet
-
-5. BUSINESS MODEL
-   Will the product be paid?
-     a) Yes - paid from day one (subscription, one-time, usage-based)
-     b) Freemium - free tier + paid upgrade
-     c) Free / internal - no revenue target
-     d) Not decided yet
-
-6. WHERE YOU ARE NOW
-   How would you describe your current stage?
-     a) Idea only - nothing validated yet
-     b) Have some research or customer insights
-     c) Validated problem, understand the customer
-     d) Have a strategy / business model, moving to execution
-     e) Have specs or design, ready to build
-
-7. WHAT MATTERS MOST RIGHT NOW
-   What is the single most important thing you need to produce or figure out?
-   (e.g., "validate whether the problem is real", "define MVP scope", "get to a spec I can build from")
-
-8. TEAM STRUCTURE
-   Who is building this?
-     a) Solo - just me, no team
-     b) Small founding team (2-3 people, wearing multiple hats)
-     c) Team with defined roles (PM, developers, designer, etc.)
-     d) Corporate / enterprise team (multiple stakeholders, governance needed)
-
-9. CONSTRAINTS
-   Anything that shapes how we approach this?
-   (e.g., 3-month runway, regulated industry, must integrate with existing system, specific tech stack)
+What are you building? Describe it in 2-3 sentences.
 ```
+Wait for response.
 
-Wait for answers. These answers, combined with any documents found, form the full input picture.
+**Question 2:**
+```
+What type of product is it?
+
+  a) SaaS web application
+  b) Mobile application (iOS / Android / both)
+  c) Marketplace or platform (connects two or more sides)
+  d) Internal tool (used only within your company)
+  e) API or developer platform
+  f) Something else - describe it
+```
+Wait for response.
+
+**Question 3:**
+```
+Who is it for?
+
+  a) External customers (product for sale)
+  b) Internal team only
+  c) Both
+```
+Wait for response.
+
+**Question 4:**
+```
+What is the primary experience?
+
+  a) Mobile first - main value delivered on mobile
+  b) Desktop first - main experience is web/desktop (CRM, dashboard, admin tool)
+  c) Both equally - full parity across mobile and web
+  d) Not sure yet
+```
+Wait for response.
+
+**Question 5:**
+```
+Will the product be paid?
+
+  a) Yes - paid from day one (subscription, one-time, usage-based)
+  b) Freemium - free tier + paid upgrade
+  c) Free / internal - no revenue target
+  d) Not decided yet
+```
+Wait for response.
+
+**Question 6:**
+```
+Where are you now?
+
+  a) Idea only - nothing validated yet
+  b) Have some research or customer insights
+  c) Validated problem, understand the customer
+  d) Have a strategy / business model, moving to execution
+  e) Have specs or design, ready to build
+```
+Wait for response.
+
+**Question 7:**
+```
+What matters most right now? What is the single most important thing you need to produce or figure out?
+(e.g., "validate whether the problem is real", "define MVP scope", "get to a spec I can build from")
+```
+Wait for response.
+
+**Question 8:**
+```
+Who is building this?
+
+  a) Solo - just me, no team
+  b) Small founding team (2-3 people, wearing multiple hats)
+  c) Team with defined roles (PM, developers, designer, etc.)
+  d) Corporate / enterprise team (multiple stakeholders, governance needed)
+```
+Wait for response.
+
+**Question 9:**
+```
+Any constraints that shape how we approach this?
+(e.g., 3-month runway, regulated industry, must integrate with existing system, specific tech stack)
+
+If none, just say "none".
+```
+Wait for response.
+
+All 9 answers, combined with any documents found, form the full input picture.
 
 **Why these questions matter downstream:**
 - Product type and platform strategy affect tech stack recommendations, Phase 6 approach, and which skills apply
