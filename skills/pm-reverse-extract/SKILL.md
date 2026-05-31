@@ -100,45 +100,41 @@ What do you want to do in this session?
 
 ## Step 1: Gather inputs
 
-Ask all questions at once:
+Ask questions in 2 groups. After each group show a summary and wait for confirmation before continuing.
 
-```
-I need a few inputs to run the migration.
+---
 
-1. PRODUCT NAME AND SLUG
-   What is the product name?
-   Project slug (lowercase, hyphens, used for folder name): [e.g., acme-rentals]
+### Group 1 of 2 - Setup and documents
 
-2. EXISTING DOCUMENTS
-   Paste or confirm in context:
-   - BRD: [paste path or content, or "in context"]
-   - FSD: [paste path or content, or "in context"]
-   - Feature Cards: [paste paths or content, or "in context"]
-   - Domain Model / Entity Catalogue: [paste or "in context"]
+Ask as plain text:
 
-3. CODEBASE ACCESS
-   Is the codebase accessible to Claude (same project directory)?
-   If yes: what are the key directories for features? (e.g., src/features/, app/controllers/)
-   If no: skip codebase scan.
+What is the product name and project slug? (slug: lowercase, hyphens, used for folder name - e.g., acme-rentals)
 
-4. CURRENT PRODUCT STATE
-   Which features are currently live in production?
-   (Describe or paste a list - even rough. e.g., "booking flow is live, payments not yet")
+Paste or confirm in context the existing documents I should read:
+- BRD: [paste path or content, or "in context"]
+- FSD: [paste path or content, or "in context"]
+- Feature Cards: [paste paths or content, or "in context"]
+- Domain Model / Entity Catalogue: [paste or "in context"]
 
-5. FEATURE SETS (if known)
-   Do you already have a named Feature Set structure (FS-01, FS-02...)?
-   If yes: paste it. If no: I will derive Feature Sets from the BRD/FSD domain groupings.
+Is the codebase accessible to Claude (same project directory)? If yes: what are the key directories for features? (e.g., src/features/, app/controllers/) If no: skip codebase scan.
 
-6. NEXT WORK
-   What is the next feature or Feature Set you plan to build?
-   (This determines which FS gets a BRD/FSD first in Phase 6)
+Do you already have a named Feature Set structure (FS-01, FS-02...)? If yes: paste it. If no: I will derive Feature Sets from the BRD/FSD domain groupings.
 
-7. NOTION SETUP
-   Read pureinn-variables.md key "Feature Backlog". Skip if URL is present.
-   If blank: do you have a Notion Product Features database?
-   If yes: paste the URL.
-   If no: migration runs as Markdown only. Add URL later to enable push.
-```
+After answers, confirm: "I have enough to read the documents and extract features. Before I start - anything else I should know about the codebase structure?"
+
+---
+
+### Group 2 of 2 - Current state and planning
+
+Ask as plain text:
+
+Which features are currently live in production? Describe or paste a rough list. (e.g., "booking flow is live, payments not yet")
+
+What is the next feature or Feature Set you plan to build? This determines which FS gets a BRD/FSD first in Phase 6.
+
+Notion setup: Read pureinn-variables.md key "Feature Backlog". Skip if URL is present. If blank: do you have a Notion Product Features database? If yes: paste the URL. If no: migration runs as Markdown only.
+
+After answers, show complete migration setup summary. Ask for final confirmation before starting extraction.
 
 ---
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.1] - 2026-05-31
+
+### Apply grouped question pattern to pm-reverse-extract Step 1
+
+---
+
+
 ## [1.4.0] - 2026-05-31
 
 ### Add scoping question to pm-features-list; add grouped alignment pattern to pm-mvp-scope with preliminary MVP cut after Group 1
