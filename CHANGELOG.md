@@ -1,5 +1,59 @@
 # Changelog
 
+## [1.4.7] - 2026-05-31
+
+### Rename impeccable-teach to /impeccable document across all references
+
+- COMMAND.md: all `/impeccable-teach` references updated to `/impeccable document`
+- FRAMEWORK_GUIDE.md: all `/impeccable-teach` references updated to `/impeccable document`
+- Reflects current impeccable plugin API (skill renamed upstream)
+
+---
+
+
+## [1.4.6] - 2026-05-31
+
+### Update FRAMEWORK_GUIDE.md for Path C and Notion template
+
+- Phase 2 Track C row: updated "Before you run" to note Path C requires no prep
+- "Bring your data" rule: added exception for pm-market-analysis Path C
+- Workspace section: added reference to NOTION_TEMPLATE.md
+
+---
+
+
+## [1.4.5] - 2026-05-31
+
+### Update README for Notion template and pm-market-analysis Path C
+
+- README: updated pm-market-analysis skill description to mention three input paths (A/B/C)
+- README: added Notion setup note in MCP integrations section with link to NOTION_TEMPLATE.md
+
+---
+
+
+## [1.4.4] - 2026-05-31
+
+### Add Notion template setup guide and onboarding flow
+
+- Added `NOTION_TEMPLATE.md` - setup guide with duplicate link (coming soon), full URL reference table, FAQ
+- Updated `/pureinn` init message: after creating pureinn-variables.md, offers Option A (duplicate Notion template) and Option B (use own setup)
+
+---
+
+
+## [1.4.3] - 2026-05-31
+
+### Add OpenAI Path C to pm-market-analysis with per-project API key via pureinn-variables.md
+
+- pm-market-analysis: added Path C (AI-powered research via OpenAI Responses API with web_search)
+- Path C reads OPENAI_API_KEY from pureinn-variables.md; prompts user to add key if blank
+- Runs 3 targeted web search queries (market size, competitor analysis, market timing)
+- pureinn COMMAND.md: added `AI Research` section to pureinn-variables.md template with OPENAI_API_KEY field
+
+---
+
+
 ## [1.4.2] - 2026-05-31
 
 ### Remove Octagon Deep Research MCP integration (paid service)

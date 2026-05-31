@@ -60,12 +60,12 @@ Four tracks run in parallel. Converge at the end.
 |---|---|---|---|
 | A - Tech | Perplexity / Tech Lead research | `/pm-tech-feasibility` | Tech Feasibility Report |
 | B - Domain | Perplexity / domain + regulatory research | `/pm-domain-analysis` | Domain Analysis, Legal Requirements |
-| C - Market | Perplexity / competitor research | `/pm-market-analysis` | Market Size (TAM/SAM/SOM), Competitor Analysis, SWOT |
+| C - Market | Perplexity / competitor research - or use Path C (AI-powered, no prep needed) | `/pm-market-analysis` | Market Size (TAM/SAM/SOM), Competitor Analysis, SWOT |
 | D - Customer | ≥10 customer interviews | `/pm-personas` | Customer Segments, Personas, Early Adopters |
 | D - JTBD | After pm-personas | `/jtbd-building` | JTBD Analysis, Forces Diagram |
 | Convergence | All Track A-D outputs complete | `/pm-problem-validation` | Problem Validation Summary (Phase 2 exit) |
 
-**"Bring your data" rule:** Claude structures and formalizes - it does not hallucinate market data or interview insights. Research must be done externally first (Perplexity, interviews, surveys), then fed into the skill.
+**"Bring your data" rule:** Claude structures and formalizes - it does not hallucinate market data or interview insights. Research must be done externally first (Perplexity, interviews, surveys), then fed into the skill. Exception: `/pm-market-analysis` Path C runs AI-powered web research automatically via OpenAI (requires OPENAI_API_KEY in pureinn-variables.md).
 
 ---
 
@@ -140,7 +140,7 @@ Four tracks run in parallel. Converge at the end.
 | `/pm-business-rule-core` | RULE-B: Core Business Rules |
 | `/pm-business-rule-governance` | RULE-C: Governance / Policy / UX Rules |
 | `/pm-fsd` | Functional Specification (flows, validations, acceptance criteria) |
-| `/impeccable-teach` [once at Phase 6 start] | PRODUCT.md + DESIGN.md (design system context for Claude) |
+| `/impeccable document` [once at Phase 6 start] | PRODUCT.md + DESIGN.md (design system context for Claude) |
 | `/impeccable-shape` [per feature] | UX/UI shape brief - defines layout, interactions, and visual intent before implementation |
 | `/feature-forge` [per feature, AFTER BRD + FSD] | Feature Card (acceptance criteria, tasks) |
 
@@ -187,7 +187,7 @@ Run once to sync current state into Notion and generate Claude context:
 |---|---|---|
 | `/pureinn` | Workspace setup, state.json, pureinn-variables.md | Pureinn |
 | `/common-ground` | Technical context: stack, APIs, domain model, debt → COMMON-GROUND.md | fullstack-dev-skills |
-| `/impeccable-teach` | Design context: design system, UX patterns → PRODUCT.md + DESIGN.md | impeccable |
+| `/impeccable document` | Design context: design system, UX patterns → PRODUCT.md + DESIGN.md | impeccable |
 | `/pm-glossary` | Domain glossary |
 | `/pm-reverse-extract` | Feature inventory (FDD format) with status (Done/In Progress/Planned); MFS → FS → Feature hierarchy pushed to Notion; local Phase 5 artifacts for Claude context |
 
@@ -203,7 +203,7 @@ Run once per project - not per feature:
 |---|---|---|
 | `/pureinn` | Product context: users, roadmap, known problems, workarounds | Pureinn |
 | `/common-ground` | Technical context: stack, domain model, APIs, debt → COMMON-GROUND.md | fullstack-dev-skills |
-| `/impeccable-teach` | Design context: design system, UX patterns, components → PRODUCT.md + DESIGN.md | impeccable |
+| `/impeccable document` | Design context: design system, UX patterns, components → PRODUCT.md + DESIGN.md | impeccable |
 | `/pm-glossary` | Domain glossary | Pureinn |
 
 Skip if all three context files exist from a prior session.
@@ -357,6 +357,8 @@ pureinn-workspace/
 
 `pureinn-variables.md` is human-editable. Fill in the Notion URLs once - skills read the file automatically and cache IDs in `state.json` so each Notion DB is fetched at most once per project.
 
+The fastest way to fill it in: duplicate the Pureinn Notion template to your workspace, then paste the URLs. See [NOTION_TEMPLATE.md](NOTION_TEMPLATE.md) for the template link and setup guide.
+
 ---
 
 ### Human-in-the-loop
@@ -389,6 +391,6 @@ The build-phase skills referenced in Phase 6-7 are part of two excellent open-so
 
 - **[fullstack-dev-skills](https://github.com/jeffallan/claude-skills)** by [@jeffallan](https://github.com/jeffallan) - a comprehensive skill pack for full-stack development covering 66+ specialist skills across languages, frameworks, infrastructure, and workflows. The `common-ground`, `fullstack-guardian`, `test-master`, `playwright-expert`, `code-reviewer`, `security-reviewer`, `devops-engineer`, `monitoring-expert`, and `feature-forge` skills referenced in this guide are all from this project.
 
-- **[impeccable](https://github.com/impeccable-dev/impeccable)** - a production-grade frontend design skill for Claude Code. The `impeccable-teach`, `impeccable-shape`, `impeccable-craft`, and `impeccable-harden` skills referenced in this guide are from this project.
+- **[impeccable](https://github.com/impeccable-dev/impeccable)** - a production-grade frontend design skill for Claude Code. The `impeccable document`, `impeccable-shape`, `impeccable-craft`, and `impeccable-harden` skills referenced in this guide are from this project.
 
 Pureinn focuses on what comes before the build: the methodology, the thinking, the decisions, and the specifications. These two projects pick up where Pureinn ends and take the product into production. Credit where it is due.

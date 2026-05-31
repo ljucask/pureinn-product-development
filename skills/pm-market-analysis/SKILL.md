@@ -23,7 +23,9 @@ Takes raw research input (Perplexity/ChatGPT market data, competitor research, m
 3. SWOT Analysis
 4. Market Timing Rationale ("Why now?")
 
-This is a "bring your data" skill - Claude structures and validates the logic. No hallucinated market numbers.
+Three input paths: (A) paste your own research, (B) guided elicitation from domain knowledge, (C) AI-powered research via OpenAI web search (requires OPENAI_API_KEY in pureinn-variables.md).
+
+Path A and C produce research-backed artifacts. Path B produces assumption-based output marked for validation.
 
 ---
 
@@ -58,12 +60,15 @@ Apply the standard skill interaction pattern (CLAUDE.md).
 
 ## Step 1: Gather inputs
 
-First, ask:
+First, check `pureinn-workspace/[slug]/pureinn-variables.md` for `OPENAI_API_KEY`. If present and non-blank, Path C is available. Then ask:
 
-Do you have market research data to work with?
+How do you want to approach market research?
 
-  A) Yes - I have Perplexity/ChatGPT output, reports, or competitor research to paste
-  B) No - I'll share what I know from my domain knowledge and observations
+  A) I have research data - I'll paste Perplexity/ChatGPT output, reports, or competitor research
+  B) No research yet - guide me through domain knowledge elicitation
+  C) AI-powered research - use OpenAI to research the market automatically (requires OPENAI_API_KEY in pureinn-variables.md)
+
+If user selects C and OPENAI_API_KEY is blank: tell the user to add their OpenAI API key to `pureinn-workspace/[slug]/pureinn-variables.md` under `AI Research > OPENAI_API_KEY`, then re-run. Do not proceed with Path C without the key.
 
 ---
 
@@ -174,6 +179,66 @@ Why now? What has changed recently - in technology, regulation, customer behavio
 After answers, show complete summary. Flag explicitly which claims need external data validation before using in investor materials or strategy decisions.
 
 Note at the top of every generated artifact: `> Assumption-based - built from founder domain knowledge. Claims marked [NEEDS VALIDATION] should be verified with external sources before treating as reliable.`
+
+---
+
+### Path C - AI-powered research (OpenAI)
+
+Ask these questions as plain text:
+
+What does the product do? (1-2 sentences)
+Who is the primary customer?
+What is the target geography? (SK, CZ, EU, US, global...)
+Who are the 2-3 main competitors or alternatives?
+Is there a specific market segment or angle you want the research to focus on?
+
+After receiving answers, read `OPENAI_API_KEY` from `pureinn-workspace/[slug]/pureinn-variables.md`.
+
+Run the following research queries using the Bash tool (one call per query):
+
+**Query 1 - Market size and growth:**
+```bash
+curl -s https://api.openai.com/v1/responses \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $OPENAI_API_KEY" \
+  -d '{
+    "model": "gpt-4o",
+    "tools": [{"type": "web_search_preview"}],
+    "input": "Market size, TAM, growth rate and key trends for [product category] in [geography]. Include recent statistics, CAGR, and data sources."
+  }'
+```
+
+**Query 2 - Competitor research:**
+```bash
+curl -s https://api.openai.com/v1/responses \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $OPENAI_API_KEY" \
+  -d '{
+    "model": "gpt-4o",
+    "tools": [{"type": "web_search_preview"}],
+    "input": "Competitor analysis for [competitor names] in [product category]: pricing, target customers, key features, market position, funding stage, weaknesses. Include recent news."
+  }'
+```
+
+**Query 3 - Market timing and enabling conditions:**
+```bash
+curl -s https://api.openai.com/v1/responses \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $OPENAI_API_KEY" \
+  -d '{
+    "model": "gpt-4o",
+    "tools": [{"type": "web_search_preview"}],
+    "input": "What recent changes (regulation, technology, customer behavior, market events) are creating new opportunities in [product category] in [geography]? Why is now a good or bad time to enter this market?"
+  }'
+```
+
+Replace `$OPENAI_API_KEY` with the actual key value read from pureinn-variables.md. Replace placeholders with the user's actual product, geography, and competitor names.
+
+After running all three queries: extract the research content from the `output[].content[].text` field of each response. Show the user a brief summary of what was found and cite sources from `output[].content[].annotations[]` where available.
+
+Then proceed to Step 2 using the AI research output as the data input (same as Path A, but sourced from the API responses).
+
+Note at the top of every generated artifact: `> AI-researched - market data retrieved via OpenAI web search on [date]. Verify critical numbers against primary sources before using in investor materials.`
 
 ---
 

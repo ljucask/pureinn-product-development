@@ -68,7 +68,7 @@ Full framework overview - all playbooks, phases, skills, and artifact chains.
 |---|---|
 | `/pm-tech-feasibility` | Tech Feasibility Report |
 | `/pm-domain-analysis` | Domain Analysis, Legal & Regulatory Requirements |
-| `/pm-market-analysis` | Market Size (TAM/SAM/SOM), Competitor Analysis, SWOT |
+| `/pm-market-analysis` | Market Size (TAM/SAM/SOM), Competitor Analysis, SWOT - three input paths: paste research (A), guided elicitation (B), AI-powered via OpenAI (C) |
 | `/pm-personas` | Customer Segments, Personas, Early Adopters Profile |
 | `/jtbd-building` | JTBD Analysis, Forces Diagram |
 | `/pm-problem-validation` | Problem Validation Summary (Phase 2 exit) |
@@ -134,6 +134,8 @@ Full framework overview - all playbooks, phases, skills, and artifact chains.
 | Gamma | `pm-pitch-deck` | Slide content brief only |
 
 Connect via `/mcp` in Claude Code.
+
+**Notion setup:** Duplicate the Pureinn Notion template to your workspace, then paste the URLs into `pureinn-variables.md` when the engine creates it. See [NOTION_TEMPLATE.md](NOTION_TEMPLATE.md) for the setup guide and template link.
 
 ---
 

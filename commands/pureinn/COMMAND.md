@@ -544,14 +544,30 @@ Create `pureinn-workspace/[project-slug]/pureinn-variables.md` with the followin
 | Glossary | DB | pm-glossary | |
 | Meetings | DB | pm-comms-charter | |
 | Open Questions | DB | pm-hypotheses | |
+
+## AI Research
+
+| Key | Description | Value |
+|---|---|---|
+| OPENAI_API_KEY | OpenAI API key - required for Path C (AI-powered market research) in pm-market-analysis | |
 ```
 
 After creating the file, tell the user:
 
 ```
-pureinn-variables.md created. Fill in the Notion URLs for the tools you want connected.
-Skills will read this file automatically - no need to re-enter URLs during skill runs.
-State.json caches processed Notion IDs so each URL is only fetched once per project.
+pureinn-variables.md created.
+
+To connect Notion, you have two options:
+
+  A) Use the Pureinn Notion template (recommended)
+     Duplicate it to your workspace, then paste the URLs here.
+     Template + setup guide: see NOTION_TEMPLATE.md in the plugin folder.
+
+  B) Use your own Notion setup
+     Open pureinn-variables.md and paste the URLs of your existing pages and databases.
+     Leave rows blank - skills will ask when they first need each item.
+
+Skills read pureinn-variables.md automatically. No need to re-enter URLs during skill runs.
 ```
 
 **How skills read pureinn-variables.md:**
@@ -896,7 +912,7 @@ Team with defined roles / Corporate:
 MIGRATION PATH (existing product built outside the framework)
   /pureinn              → always first: workspace setup, state.json, pureinn-variables.md
   /common-ground        → technical context (stack, APIs, debt) → COMMON-GROUND.md
-  /impeccable-teach     → design context (design system, components) → PRODUCT.md + DESIGN.md
+  /impeccable document     → design context (design system, components) → PRODUCT.md + DESIGN.md
   /pm-glossary          → start domain glossary
   /pm-reverse-extract   → reads existing FSD/BRD/Feature Cards/codebase
                           → extracts feature inventory in FDD format with status
@@ -910,7 +926,7 @@ MIGRATION PATH (existing product built outside the framework)
 PHASE 0 - CONTEXT SETUP  [runs once per project onboarding, not per feature]
   /pureinn              → Product context (users, roadmap, known problems, workarounds)
   /common-ground        → Technical context (stack, domain model, APIs, debt) → COMMON-GROUND.md
-  /impeccable-teach     → Design context (design system, UX patterns, components) → PRODUCT.md + DESIGN.md
+  /impeccable document     → Design context (design system, UX patterns, components) → PRODUCT.md + DESIGN.md
 
   Exit: All three dimensions covered. Team has shared product understanding.
   Skip if already done (context files exist from a prior session).
@@ -1006,7 +1022,7 @@ SPEC SKILLS (Phase 6 - per Feature Set)
 /pm-business-rule-governance → RULE-C: Governance / Policy / UX Rules
 /architecture-designer      → System Design Blueprint, ADRs
 /api-designer               → API contracts, OpenAPI spec
-/impeccable-teach           → PRODUCT.md + DESIGN.md [run once at Phase 6 start]
+/impeccable document           → PRODUCT.md + DESIGN.md [run once at Phase 6 start]
 /impeccable-shape           → UX/UI shape brief per feature
 /feature-forge              → Feature Card per feature
 
@@ -1261,7 +1277,7 @@ pureinn-workspace/ holds spec artifacts for Claude context.
   /pm-business-rule-governance → RULE-C: Governance / Policy / UX Rules
   /architecture-designer       → System Design Blueprint, ADRs
   /api-designer                → API contracts, OpenAPI spec
-  /impeccable-teach   [once]   → PRODUCT.md, DESIGN.md
+  /impeccable document   [once]   → PRODUCT.md, DESIGN.md
   /impeccable-shape   [per feature] → UX/UI shape brief
   /feature-forge      [per feature] → Feature Card (acceptance criteria, tasks)
 
@@ -1348,7 +1364,7 @@ PHASE 6 + 7 - DELIVERY  [repeats per Stripe, 2 weeks each]
   Per Feature Set (before build):
     /pm-feature-set-overview, /pm-brd, /pm-fsd
     /architecture-designer, /api-designer  (if needed)
-    /impeccable-teach [once], /impeccable-shape [per feature]
+    /impeccable document [once], /impeccable-shape [per feature]
     /feature-forge  (AFTER BRD + FSD - hard rule)
   Per feature (build):
     /fullstack-guardian → /impeccable-craft → /test-master → /playwright-expert
@@ -1364,7 +1380,7 @@ Does NOT follow Phase 1-5. Has its own entry sequence.
 MIGRATION PATH  [product built outside the framework - run once]
   /pureinn             → always first: workspace setup, state.json, pureinn-variables.md
   /common-ground       → technical context (stack, APIs, debt) → COMMON-GROUND.md
-  /impeccable-teach    → design context (design system, components) → PRODUCT.md + DESIGN.md
+  /impeccable document    → design context (design system, components) → PRODUCT.md + DESIGN.md
   /pm-glossary         → start domain glossary
   /pm-reverse-extract  → reads existing FSD/BRD/Feature Cards/codebase
                          → extracts feature inventory in FDD format
@@ -1379,7 +1395,7 @@ STANDARD PATH  [onboarding a new feature project]
   PHASE 0 - CONTEXT SETUP  [once per project onboarding]
   /pureinn           → Product context (users, roadmap, problems, workarounds)
   /common-ground     → Technical context → COMMON-GROUND.md
-  /impeccable-teach  → Design context → PRODUCT.md + DESIGN.md
+  /impeccable document  → Design context → PRODUCT.md + DESIGN.md
 
   FEATURE VIABILITY ASSESSMENT  [per feature, before spec]
   Feature Target Profile:
