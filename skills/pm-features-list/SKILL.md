@@ -65,7 +65,16 @@ Apply the standard skill interaction pattern (CLAUDE.md).
 
 ## Step 1: Gather inputs
 
-Ask all questions at once:
+First, ask this scoping question:
+
+What is the goal for this session?
+
+  A) Full extraction - map all features across the entire product scope, prioritize with KANO + V×C (Recommended for first run)
+  B) Focused area - extract and prioritize features for one specific functional area only
+  C) Refresh - update an existing list with new features or re-run prioritization
+  D) Quick scan - extract a rough feature list without full KANO + V×C scoring
+
+Then ask the remaining inputs as plain text:
 
 ```
 I need inputs for the Features List, Dependency Map, and KANO + V×C prioritization.

@@ -65,32 +65,69 @@ Apply the standard skill interaction pattern (CLAUDE.md).
 
 ## Step 1: Gather inputs
 
+Ask questions in 2 groups. Group 1 drives strategic alignment - Claude shows a preliminary MVP cut after it. Group 2 sets execution parameters.
+
+---
+
+### Group 1 of 2 - Strategic alignment
+
+Ask all as plain text:
+
+What is the single most important thing the MVP must prove? Complete this sentence: "We will consider MVP successful if we prove that..." (e.g., "hosts will pay for automated property management", "users can complete a booking end-to-end without human intervention")
+
+Are there any features that must be in MVP regardless of KANO/V×C scoring? Why are they non-negotiable? (technical dependency, contractual requirement, customer commitment, other)
+
+Are there any features that must NOT be in MVP - features explicitly excluded for technical, strategic, or resource reasons?
+
+After receiving Group 1 answers, Claude does the following before asking Group 2:
+
+1. Read the KANO + V×C output from pm-features-list in context
+2. Apply the MVP hypothesis and non-negotiables to the prioritized feature list
+3. Show a preliminary MVP cut:
+
 ```
-I need a few inputs to define MVP scope, Feature Sets, and Delivery Stripes.
-I'll read the KANO + V×C + Dependency artifacts from pm-features-list in context.
+Based on your hypothesis and the KANO/V×C data, here is my initial reading of MVP scope:
 
-1. TEAM AND VELOCITY
-   How many developers will work on this? (approximate)
-   Rough velocity? (e.g., "2 devs, ~3 features per 2-week stripe")
-   If unknown: I'll use a conservative assumption (2-3 features per stripe per developer).
+IN - Must-be features (KANO: M) that are Quick Wins or Big Bets (V×C):
+  - [feature] - [reason]
+  - [feature] - [reason]
 
-2. MVP TIMELINE CONSTRAINT
-   Do you have a target date or runway constraint for MVP?
-   (e.g., "must launch in 3 months", "6 months runway", "no hard deadline")
+BORDERLINE - Performance features with high value, low complexity:
+  - [feature] - [reason why it's borderline]
 
-3. MVP HYPOTHESIS
-   What is the single most important thing the MVP must prove?
-   (e.g., "that hosts will pay for property management",
-    "that guests will book through us without a human in the loop")
+OUT - Deferred to post-MVP:
+  - [feature] - [reason]
 
-4. NON-NEGOTIABLES
-   Any features that must be in MVP regardless of priority?
-   Any features that cannot be in MVP (technical or strategic constraint)?
-
-5. NOTION
-   Are Notion Feature entries already created from pm-features-list push?
-   (yes / no - if yes, I'll update existing entries; if no, Notion update is skipped)
+Does this initial cut match your thinking? Anything you'd move in or out before we finalize?
 ```
+
+Wait for response. Adjust the cut if needed. Then proceed to Group 2.
+
+---
+
+### Group 2 of 2 - Execution parameters
+
+Ask these two together:
+
+What is the approximate team size for development?
+
+  A) Solo developer
+  B) 2 developers
+  C) 3-4 developers
+  D) 5+ developers
+
+What is the MVP timeline constraint?
+
+  A) Hard deadline - specific date or event (describe)
+  B) Runway-constrained - must launch before runway runs out (how many months?)
+  C) Milestone-driven - launch when PMF signal is achieved, no fixed date
+  D) No constraint - launch when it's ready
+
+Then ask as plain text:
+
+Are Notion Feature entries already created from pm-features-list? (yes / no - if yes, I'll update existing entries; if no, Notion update is skipped)
+
+After answers, show the finalized MVP scope proposal combining Group 1 alignment + Group 2 constraints. Ask for final confirmation before generating the full MVP Scope artifact with Feature Sets and Delivery Stripes.
 
 ---
 
