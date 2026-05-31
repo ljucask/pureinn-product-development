@@ -1,6 +1,6 @@
 {
   "name": "pureinn-product-development",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "AI-native product development framework. 34 skills covering the full product lifecycle: discovery, validation, domain modeling, feature planning, and FDD delivery. Three playbooks: Greenfield, Feature Implementation, Rebuild. From zero to launch.",
   "author": {
     "name": "ljucask",

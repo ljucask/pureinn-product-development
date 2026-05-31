@@ -51,7 +51,16 @@ Apply the standard skill interaction pattern (CLAUDE.md).
 
 ## Step 1: Gather inputs
 
-Ask the user all questions at once:
+First, ask:
+
+Do you have domain or regulatory research to work with?
+
+  A) Yes - I have Perplexity/ChatGPT research output or legal/domain expert notes to paste
+  B) No - I'll share what I know about the domain and regulatory environment
+
+---
+
+### Path A - Research available
 
 ```
 I need inputs for the Domain Analysis + Legal Requirements.
@@ -78,6 +87,67 @@ I need inputs for the Domain Analysis + Legal Requirements.
    What are the biggest regulatory risks you already know about?
    Have any showstoppers been identified?
 ```
+
+---
+
+### Path B - No research (guided elicitation)
+
+Guide the user through 2 rounds to reconstruct the domain and regulatory picture from what they know. Output marked as assumption-based, with explicit flags on areas requiring legal or domain expert validation.
+
+**Group 1 of 2 - Domain and market**
+
+Ask these two questions together:
+
+What industry or domain does this product operate in?
+
+  A) B2B SaaS - general business software
+  B) Fintech - payments, lending, investing, insurance
+  C) Healthtech - medical, wellness, patient data
+  D) Real estate, marketplace, or regulated professional services
+
+Which markets are you launching in first?
+
+  A) Slovakia / Czech Republic only
+  B) Central and Eastern Europe (multiple CEE countries)
+  C) EU-wide from launch
+  D) US or global from launch
+
+Then ask as plain text:
+
+What does the product do in 1-2 sentences? What industry or domain does it operate in - describe it as a practitioner in that field would?
+
+What are the main types of data the product handles? (personal data, financial data, health data, location data, minors' data)
+
+After answers, confirm and proceed.
+
+---
+
+**Group 2 of 2 - Compliance and risks**
+
+Ask these two questions together:
+
+Does the product handle financial transactions or payments?
+
+  A) Yes - directly processes or holds funds (PSD2, payment service license relevant)
+  B) Yes - initiates or facilitates payments but via licensed third party (Stripe, etc.)
+  C) No - no financial transactions
+
+Are there licensing or certification requirements in this industry?
+
+  A) Yes - known specific license or certification required
+  B) Possibly - not yet researched
+  C) No - no known licensing requirements
+  D) Depends on market - varies by country
+
+Then ask as plain text:
+
+What regulatory risks are you already aware of? (e.g., GDPR data processing obligations, industry-specific rules, age verification, content moderation requirements, AI Act implications if AI-powered)
+
+Have any potential showstoppers been identified? (requirements that could block launch or significantly increase cost/complexity)
+
+After answers, show complete summary. Flag explicitly which regulatory areas have zero research and must be validated with a lawyer or domain expert before launch.
+
+Note at the top of every generated artifact: `> Assumption-based - built from founder knowledge, not legal or domain expert analysis. Items marked [NEEDS LEGAL REVIEW] must be verified with a qualified professional before treating as reliable for business decisions.`
 
 ---
 

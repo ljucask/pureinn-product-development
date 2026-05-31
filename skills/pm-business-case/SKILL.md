@@ -56,40 +56,51 @@ Apply the standard skill interaction pattern (CLAUDE.md).
 
 ## Step 1: Gather inputs
 
-Ask the user all questions at once:
+Ask questions in 2 groups. After each group show a summary and wait for confirmation before continuing.
 
-```
-I need inputs for the Business Case.
+---
 
-1. REVENUE ASSUMPTIONS
-   What is your target ARPU? (monthly, per paying customer)
-   What is your expected free → paid conversion rate? (or trial → paid if no freemium)
-   What monthly churn rate are you targeting?
-   What growth rate do you expect month-over-month in Year 1? Year 2?
+### Group 1 of 2 - Revenue and volume assumptions
 
-2. CUSTOMER VOLUME ASSUMPTIONS
-   How many paying customers do you target by end of Month 6?
-   By end of Year 1?
-   By end of Year 3?
-   What is the basis for these numbers? (bottom-up from channel capacity, top-down from SOM, both?)
+Ask these two together:
 
-3. COST ASSUMPTIONS
-   What is the expected team size for launch? (founders + first hires)
-   What is the monthly burn rate estimate? (all-in: salaries, infrastructure, tools, sales)
-   What are the primary cost drivers? (team salaries, AI API costs, hosting, marketing...)
-   If AI-powered: what is estimated AI cost per active user per month?
+What is the funding situation?
 
-4. INVESTMENT
-   How much runway do you need to reach the key milestones? (first 10 customers, PMF signal, break-even...)
-   Are you self-funded, raising external capital, or seeking a grant?
-   If raising: what amount, what use of funds?
-   What is the target milestone before raising next round (or break-even if bootstrapped)?
+  A) Bootstrapped - self-funded, no external investors
+  B) Pre-seed / seed - raising or recently closed a round
+  C) Series A or later - significant capital, scaling
+  D) Grant or accelerator funding
 
-5. GO/NO-GO CRITERIA
-   What would make you stop? (specific conditions that would invalidate the business case)
-   What is the minimum success signal that justifies continuing past Month 3?
-   What is the single biggest risk to the financial model?
-```
+What is the basis for your customer volume targets?
+
+  A) Bottom-up - derived from channel capacity and conversion rates
+  B) Top-down - percentage of TAM/SAM
+  C) Both - cross-validated with bottom-up and top-down
+  D) Intuition / comparable benchmarks only
+
+Then ask as plain text:
+
+What are your revenue assumptions? State: target ARPU (monthly, per paying customer), expected conversion rate (free to paid, or trial to paid), and target monthly churn rate.
+
+What is your customer volume target? How many paying customers by end of Month 6, Year 1, and Year 3?
+
+What growth rate do you expect month-over-month in Year 1 and Year 2?
+
+After answers, confirm: "Do these revenue and volume numbers feel realistic based on your channel and market assumptions?"
+
+---
+
+### Group 2 of 2 - Costs, investment, and go/no-go
+
+Ask all as plain text:
+
+What is the expected team size at launch and monthly burn rate all-in? (salaries, infrastructure, tools, sales, marketing) What are the top 3 cost drivers? If AI-powered: what is the estimated AI cost per active user per month?
+
+How much runway do you need to reach the key milestones? (first 10 customers, PMF signal, break-even) What is the target milestone before the next funding event or break-even if bootstrapped?
+
+What would make you stop? What is the minimum success signal that justifies continuing past Month 3? What is the single biggest risk to this financial model?
+
+After answers, show complete Business Case inputs summary. Ask for final confirmation before generating projections and investment rationale.
 
 ---
 

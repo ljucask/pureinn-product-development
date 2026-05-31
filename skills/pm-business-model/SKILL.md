@@ -55,53 +55,81 @@ Apply the standard skill interaction pattern (CLAUDE.md).
 
 ## Step 1: Gather inputs
 
-Ask the user all questions at once:
+Ask questions in 3 groups. After each group show a summary and wait for confirmation before continuing.
 
-```
-I need inputs for the Business Model Canvas.
+---
 
-1. VALUE PROPOSITION
-   What is the core value you deliver? What pain do you solve, and how?
-   What is the primary outcome the customer gets? (not features - outcomes)
-   Why would a customer choose you over alternatives?
+### Group 1 of 3 - Value, customer, revenue
 
-2. CUSTOMER SEGMENTS
-   Who is the primary paying customer? (confirm or refine from Phase 2)
-   Are there secondary segments worth modeling separately?
-   B2B or B2C or both? If B2B: who is the buyer vs. who is the user?
+Ask these two questions together:
 
-3. REVENUE MODEL
-   How will the product make money? (subscription, usage-based, marketplace cut, freemium + upgrade, one-time, hybrid...)
-   What is the pricing model? (per seat, per property, flat monthly, tiered, usage...)
-   What is the target price point? (what does your research or competitor analysis suggest?)
-   Is there a free tier planned? If yes, what is the upgrade trigger?
+Who is the primary paying customer?
 
-4. CHANNELS
-   How will customers find you? (inbound SEO, outbound, partnerships, community, referral, paid ads...)
-   How will you acquire the first 10-50 customers specifically?
-   What is the primary onboarding path? (self-serve / assisted / sales-led)
+  A) Individual consumer (B2C)
+  B) Small business owner or solo professional (B2SMB)
+  C) Mid-market company - buyer and user are often the same person (B2B)
+  D) Enterprise - buyer and user are different (B2B, sales-led)
 
-5. CUSTOMER RELATIONSHIPS
-   What type of relationship do customers expect? (self-serve tool, managed service, community, white-glove...)
-   What does retention look like? (network effects, switching costs, habit formation, contracts...)
+What is the primary revenue model?
 
-6. KEY RESOURCES
-   What is essential to deliver the value proposition? (technology, data, brand, team, IP...)
-   What is hardest to replicate? (your defensible core)
+  A) Subscription - flat monthly or annual fee
+  B) Usage-based - pay per action, transaction, or volume
+  C) Freemium - free tier with paid upgrade
+  D) One-time purchase or marketplace cut
 
-7. KEY ACTIVITIES
-   What must you do continuously to deliver value? (product development, content, community, sales, ops...)
-   What would break if you stopped doing it?
+Then ask as plain text:
 
-8. KEY PARTNERS
-   Who do you depend on to operate? (APIs, payment processors, data providers, channel partners...)
-   Are any of these partners also potential competitors?
+What is the core value you deliver? Describe the primary outcome the customer gets - not features, but what changes in their work or life.
 
-9. COST STRUCTURE
-   What are the primary cost drivers? (team, infrastructure, AI API costs, sales, support, compliance...)
-   What is the expected unit economics direction? (does COGS go up or down as you scale?)
-   If AI-powered: what is the estimated AI cost per active user / per transaction?
-```
+What is the pricing model and target price point? (per seat, per property, flat monthly, tiered - and what number are you targeting based on research or competitor benchmarks?)
+
+Is there a free tier planned? If yes, what is the trigger that makes a free user upgrade to paid?
+
+After answers, confirm: "Does this commercial logic make sense as a starting point?"
+
+---
+
+### Group 2 of 3 - Channels, relationships, resources
+
+Ask these two questions together:
+
+What is the primary customer acquisition motion?
+
+  A) Product-led - product itself drives acquisition and conversion (self-serve, viral loops)
+  B) Content / inbound - SEO, community, thought leadership drives leads
+  C) Outbound / sales-led - direct outreach, demos, relationship selling
+  D) Partnership or channel - resellers, integrations, ecosystem distribution
+
+What type of relationship do customers expect with this product?
+
+  A) Self-serve tool - they figure it out themselves, low-touch
+  B) Assisted onboarding - guided setup, then self-serve
+  C) Ongoing managed relationship - CSM, regular check-ins, high-touch
+  D) Community-led - peer support and network is the core relationship
+
+Then ask as plain text:
+
+How will you acquire the first 10 to 50 customers specifically? Name the channel and the action.
+
+What is hardest to replicate about your business? What is the defensible core - technology, data, brand, domain expertise, network effects, regulatory position?
+
+After answers, confirm: "Does this match your go-to-market thinking?"
+
+---
+
+### Group 3 of 3 - Operations and economics
+
+Ask all as plain text:
+
+What must you do continuously to deliver value? What are the 2-3 key activities that the business breaks without?
+
+Who do you depend on to operate? Name key partners, APIs, data providers, or integrations that are essential. Are any of these also potential competitors?
+
+What are the primary cost drivers? (team salaries, AI/infrastructure costs, sales, support, compliance) Does the cost per unit go up or down as you scale?
+
+If AI-powered: what is your estimate for AI cost per active user or per transaction per month?
+
+After answers, show complete Business Model summary across all 3 groups. Ask for final confirmation before proceeding to artifact generation.
 
 ---
 

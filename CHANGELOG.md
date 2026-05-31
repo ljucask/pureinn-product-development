@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0] - 2026-05-31
+
+### Add grouped questions to decision skills; Path A/B to tech-feasibility and domain-analysis; Path C Octagon MCP to market-analysis
+
+---
+
+
 ## [1.1.0] - 2026-05-31
 
 ### Add guided elicitation mode (Path B) to 5 research-dependent skills: pm-personas, jtbd-building, pm-market-analysis, pm-problem-validation, design-thinking

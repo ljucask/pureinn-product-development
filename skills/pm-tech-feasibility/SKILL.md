@@ -50,7 +50,16 @@ Apply the standard skill interaction pattern (CLAUDE.md).
 
 ## Step 1: Gather inputs
 
-Ask the user all questions at once:
+First, ask:
+
+Do you have technical research or analysis to work with?
+
+  A) Yes - I have Perplexity/ChatGPT research output or tech lead analysis to paste
+  B) No - I'll share what I know about the technical requirements and constraints
+
+---
+
+### Path A - Research available
 
 ```
 I need inputs for the Tech Feasibility Report.
@@ -75,6 +84,68 @@ I need inputs for the Tech Feasibility Report.
    What are the biggest technical risks / unknowns?
    What don't we know yet and need to validate?
 ```
+
+---
+
+### Path B - No research (guided elicitation)
+
+Guide the user through 2 rounds to reconstruct the technical picture from what they know. Output marked as assumption-based, with explicit flags on unknowns requiring validation.
+
+**Group 1 of 2 - Product and requirements**
+
+Ask these two questions together:
+
+What best describes the core technical challenge?
+
+  A) Standard CRUD + business logic - no unusual technical requirements
+  B) Real-time features - live updates, collaboration, synchronization
+  C) Data-intensive - large volumes, analytics, ML/AI, complex queries
+  D) Integration-heavy - connects multiple external systems or APIs
+
+What are the scale requirements at launch and within 12 months?
+
+  A) Small - under 1,000 users, no unusual load
+  B) Medium - 1,000 to 50,000 users, moderate concurrent usage
+  C) Large - 50,000+ users or high-frequency transactions
+  D) Unknown - not yet estimated
+
+Then ask as plain text:
+
+What are you building? Describe the core functionality in 2-3 sentences, focusing on what the system needs to do technically.
+
+What are the key technical requirements? List any real-time needs, offline requirements, AI/ML components, or external system integrations. Do you have stack or infrastructure preferences?
+
+After answers, confirm and proceed.
+
+---
+
+**Group 2 of 2 - Constraints, compliance, and unknowns**
+
+Ask these two questions together:
+
+Are there security or compliance requirements?
+
+  A) GDPR only - standard EU data protection
+  B) GDPR + industry-specific (fintech, healthtech, legaltech)
+  C) Enterprise security standards required (SOC2, ISO 27001)
+  D) None identified yet
+
+How experienced is the team with the core technical challenges?
+
+  A) Strong - team has built this type of system before
+  B) Moderate - relevant experience, some new territory
+  C) Limited - significant learning curve expected
+  D) Unknown - technical team not yet in place
+
+Then ask as plain text:
+
+What external APIs, platforms, or data sources must the product integrate with? Are any integrations with existing systems required?
+
+What are the biggest technical risks or unknowns? What could break the product concept if the assumption turns out wrong? What needs a technical spike or prototype to validate?
+
+After answers, show complete summary. Flag unvalidated risks explicitly.
+
+Note at the top of every generated artifact: `> Assumption-based - built from founder knowledge, not technical research. Items marked [NEEDS VALIDATION] require verification with a technical lead or prototype before committing to architecture.`
 
 ---
 

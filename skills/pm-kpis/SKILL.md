@@ -57,36 +57,51 @@ Apply the standard skill interaction pattern (CLAUDE.md).
 
 ## Step 1: Gather inputs
 
-Ask the user all questions at once:
+Ask questions in 2 groups. After each group show a summary and wait for confirmation before continuing.
 
-```
-I need inputs for the KPIs & Metrics Framework.
+---
 
-1. BUSINESS MODEL CONTEXT
-   What is the revenue model? (subscription / usage-based / marketplace / freemium+upgrade)
-   What does "active use" look like for your product? (daily? weekly? per booking? per property?)
-   What is the core action that creates value for the customer? (the thing they come back to do)
+### Group 1 of 2 - Business model and growth
 
-2. GROWTH MODEL
-   What is the primary growth motion? (product-led / sales-led / marketing-led / community-led)
-   Is there a viral or referral component built in?
-   What does the acquisition funnel look like end-to-end? (from awareness to paying customer)
+Ask these two questions together:
 
-3. RETENTION & ENGAGEMENT
-   What does "retained" mean for your product? (logged in weekly? processed X bookings? synced calendar?)
-   What is a realistic target for monthly churn? (do you have industry benchmarks?)
-   What is the first "aha moment" - when does a new user first get real value?
+What is the revenue model?
 
-4. BUSINESS GOALS (NEXT 6-12 MONTHS)
-   What are the 2-3 most important outcomes for the business in the next 2 quarters?
-   What does success look like at end of Q1 post-launch? Q2?
-   Are there any external commitments (investor, pilot partner) that create hard targets?
+  A) Subscription - flat monthly or annual fee
+  B) Usage-based - pay per action, transaction, or volume
+  C) Freemium - free tier with paid upgrade
+  D) Marketplace cut or one-time purchase
 
-5. CURRENT HYPOTHESES
-   What conversion rates are you assuming? (visitor → signup, trial → paid, free → paid)
-   What ARPU / LTV are you targeting?
-   Do you have any data points from competitors or industry reports on benchmarks?
-```
+What is the primary growth motion?
+
+  A) Product-led - product itself drives acquisition and conversion
+  B) Sales-led - outbound, demos, relationship selling
+  C) Marketing-led - content, SEO, paid ads drive inbound leads
+  D) Community-led - peer network and ecosystem drive growth
+
+Then ask as plain text:
+
+What does "active use" look like for your product? What is the core action a user comes back to do - the thing that creates real value for them?
+
+What does the acquisition funnel look like end-to-end? Walk from awareness to paying customer. Is there a viral or referral loop built in?
+
+After answers, confirm: "Does this business and growth model match what you have in your Business Model Canvas?"
+
+---
+
+### Group 2 of 2 - Retention, goals, benchmarks
+
+Ask all as plain text:
+
+What does "retained" mean for your product? Define the specific behavior that signals a user is getting ongoing value. (e.g., "logged in weekly," "processed at least 1 booking," "synced calendar this week")
+
+What is the first "aha moment"? When does a new user first feel that this product is worth using? How quickly after signup does that happen?
+
+What are the 2-3 most important business outcomes for the next 2 quarters? What does success look like at end of Q1 post-launch? Are there hard targets from investors, pilot partners, or board commitments?
+
+What conversion rates and unit economics are you assuming? (visitor to signup, trial to paid, free to paid, ARPU, LTV) Do you have any industry benchmarks or competitor data points to calibrate against?
+
+After answers, show complete inputs summary. Ask for final confirmation before generating the KPI framework.
 
 ---
 

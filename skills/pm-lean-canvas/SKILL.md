@@ -55,59 +55,63 @@ Apply the standard skill interaction pattern (CLAUDE.md).
 
 ## Step 1: Gather inputs
 
-Ask all questions at once. Group by canvas block:
+Ask questions in 3 groups. After each group show a summary and wait for confirmation before continuing.
 
-```
-I need your inputs to build the Lean Canvas.
+---
 
-1. PROBLEM
-   What are the top 3 problems your product solves?
-   Rank them by severity for the customer.
-   What are the existing alternatives customers use today for each problem?
-   (competitors, workarounds, manual processes, doing nothing)
+### Group 1 of 3 - Problem, customer, solution
 
-2. CUSTOMER SEGMENTS
-   Who is your primary target customer? Be specific - not "SMBs", but "ops managers at 10-50 person SaaS companies"
-   Who are the early adopters within this segment?
-   What makes early adopters different from the broader segment?
-   (more pain, more budget, earlier tech adoption, specific trigger event?)
+Ask all as plain text:
 
-3. UNIQUE VALUE PROPOSITION
-   In one sentence: what is the single most compelling reason your target customer should use this product?
-   What is the high-level concept? (the X for Y formula, or the clear category claim)
-   What outcome do you promise?
+What are the top 3 problems your product solves? Rank them by severity for the customer. For each, name what customers use today as an alternative (competitor, workaround, manual process, or nothing).
 
-4. SOLUTION
-   What are the top 3 features or capabilities that directly address the top 3 problems?
-   Match each solution to the problem it solves.
+Who is your primary target customer? Be specific - not "SMBs" but "ops managers at 10-50 person logistics companies." Who are the early adopters within that segment, and what makes them different from the broader segment? (more pain, more budget, earlier tech adoption, specific trigger event?)
 
-5. CHANNELS
-   How will you reach your early adopters?
-   Which channel is the primary one for first 100 customers?
-   Paid acquisition / content / outbound sales / partnerships / product-led / community?
-   What is the cost-to-acquire estimate for the primary channel?
+In one sentence: what is the single most compelling reason your target customer should use this product? What outcome do you promise?
 
-6. REVENUE STREAMS
-   How does the product make money?
-   What is the pricing model? (subscription / usage-based / one-time / freemium + paid / other)
-   What is the expected price point for the primary tier?
-   What is the revenue per customer per year at target scale?
+What are the top 3 features or capabilities that directly address the top 3 problems? Match each solution to the problem it solves.
 
-7. COST STRUCTURE
-   What are the top 3 cost drivers?
-   (team salaries / AI/infrastructure costs / sales & marketing / other)
-   What is the estimated monthly burn at launch?
-   What is the key cost that scales with usage? (if any)
+After answers, confirm: "Is this problem-solution fit clear and specific enough to build on?"
 
-8. KEY METRICS
-   What is the one metric that best indicates you are on track? (North Star)
-   What are 2-3 leading indicators you will track weekly in the first 6 months?
+---
 
-9. UNFAIR ADVANTAGE
-   What do you have that cannot be easily copied or bought?
-   Examples: proprietary data, domain expertise, regulatory relationships, exclusive partnerships, network effects, brand, unique technology
-   Be honest - if you have nothing yet, say "not yet established" rather than listing generic claims.
-```
+### Group 2 of 3 - Channels, revenue, costs
+
+Ask these two questions together:
+
+What is the primary channel to reach your early adopters?
+
+  A) Product-led - product itself drives acquisition (self-serve, viral, free tier)
+  B) Content / inbound - SEO, community, thought leadership
+  C) Outbound / sales - direct outreach, demos, relationship selling
+  D) Partnership or ecosystem - integrations, resellers, platform distribution
+
+What is the revenue model?
+
+  A) Subscription - flat monthly or annual
+  B) Usage-based - pay per action, transaction, or volume
+  C) Freemium - free tier with paid upgrade trigger
+  D) One-time or marketplace cut
+
+Then ask as plain text:
+
+What is the expected price point for the primary tier and revenue per customer per year at target scale?
+
+What are the top 3 cost drivers and the estimated monthly burn at launch? What cost scales with usage?
+
+After answers, confirm: "Does this revenue and cost model hold together?"
+
+---
+
+### Group 3 of 3 - Metrics and advantage
+
+Ask all as plain text:
+
+What is the one metric that best indicates you are on track? (North Star) What are 2-3 leading indicators you will track weekly in the first 6 months?
+
+What do you have that cannot be easily copied or bought? (proprietary data, domain expertise, regulatory relationships, exclusive partnerships, network effects, brand, unique technology) If nothing yet, say so honestly - "not yet established" is a valid answer that flags a risk to address.
+
+After answers, show complete Lean Canvas summary across all 3 groups. Ask for final confirmation before generating the artifact.
 
 ---
 

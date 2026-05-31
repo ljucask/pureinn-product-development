@@ -56,35 +56,49 @@ Apply the standard skill interaction pattern (CLAUDE.md).
 
 ## Step 1: Gather inputs
 
-Ask all questions at once:
+Ask questions in 2 groups. After each group show a summary and wait for confirmation before continuing.
 
-```
-I need your product knowledge to build Kotler's Five Levels.
+---
 
-1. CORE BENEFIT (Level 1 - the fundamental job being done)
-   What is the single most important outcome the customer gets from this product?
-   Not the feature - the outcome. What changes in their work or life?
-   Example: "save time", "avoid risk", "feel confident", "close more deals"
+### Group 1 of 2 - Core to expected (Levels 1-3)
 
-2. BASIC PRODUCT (Level 2 - the minimum that delivers the core benefit)
-   What is the bare minimum version of this product that could deliver that outcome?
-   Which 2-3 features are absolutely non-negotiable for the product to work at all?
+Ask all as plain text:
 
-3. EXPECTED PRODUCT (Level 3 - what customers assume is included)
-   What would a customer be surprised NOT to find in this type of product?
-   Think about your segment: what do they consider "standard" based on what they use today?
-   List 4-6 attributes customers expect by default.
+What is the single most important outcome the customer gets from this product? Not the feature - the outcome. What changes in their work or life? (e.g., "save time," "avoid risk," "feel confident," "close more deals")
 
-4. AUGMENTED PRODUCT (Level 4 - what differentiates you)
-   What does your product offer that competitors do not, or do worse?
-   What would make a customer choose you specifically over alternatives?
-   List 2-4 differentiators. Be honest - are these real or aspirational?
+What is the bare minimum version of this product that could deliver that outcome? Which 2-3 features are absolutely non-negotiable for the product to work at all?
 
-5. POTENTIAL PRODUCT (Level 5 - future evolution)
-   Where could this product go in 2-3 years?
-   What new capabilities, integrations, or use cases could it unlock?
-   These are not commitments - they are signals for long-term product vision.
-```
+What would a customer be surprised NOT to find in this type of product? Think about what your segment considers "standard" based on what they use today. List 4-6 attributes they expect by default.
+
+After answers, confirm: "Do Levels 1-3 accurately reflect the core product and its category expectations?"
+
+---
+
+### Group 2 of 2 - Differentiation and future (Levels 4-5)
+
+Ask these two together:
+
+How confident are you in your stated differentiators?
+
+  A) Real and validated - confirmed by customer feedback or competitive testing
+  B) Directionally right - based on market knowledge, not yet formally tested
+  C) Aspirational - where we want to be, not yet delivered
+  D) Mixed - some real, some aspirational
+
+How far out is your product vision for Level 5 (potential product)?
+
+  A) 1 year - near-term roadmap extensions
+  B) 2-3 years - medium-term platform evolution
+  C) 3-5 years - long-term vision, category expansion
+  D) Not yet defined
+
+Then ask as plain text:
+
+What does your product offer that competitors do not, or do worse? List 2-4 differentiators and be honest about whether each is real or aspirational.
+
+Where could this product go in 2-3 years? What new capabilities, integrations, or use cases could it unlock? These are not commitments - signals for long-term vision.
+
+After answers, show complete Five Levels summary. Ask for final confirmation before generating the artifact.
 
 ---
 
