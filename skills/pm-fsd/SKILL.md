@@ -57,7 +57,7 @@ One FSD = One Feature Set. If a Feature Set is too large, split it.
 - `pm-mvp-scope` - delivery stripe context (what's in scope for current stripe)
 
 **Produces artifacts used by:**
-- `feature-forge` - Feature Cards are derived from FSD acceptance criteria
+- `pm-feature-card` - Feature Cards are derived from FSD acceptance criteria (one per F-ID)
 - Phase 7 build - developers implement what FSD specifies
 - QA - acceptance criteria are the test basis
 

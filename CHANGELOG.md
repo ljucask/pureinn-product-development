@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.7.0] - 2026-06-01
+
+### Add pm-feature-card skill; replace feature-forge references throughout
+
+- New skill `pm-feature-card`: bridges FDD spec layer (FSD) to individual feature delivery
+- Combines pureinn context (F-ID, FS-ID, RULE-ID traceability, FSD AC derivation, Stripe context) with feature-forge strengths (EARS requirements, implementation checklist)
+- Template: Section 0 Feature Meta (F-ID, FS-ID, Stripe, flag name, BRD/FSD references), Section 1 Purpose & User Value, Section 2 EARS Functional Requirements (derived from FSD, includes feature flag FR), Section 3 State Interactions, Section 4 Acceptance Criteria (derived from FSD AC-XX, includes flag OFF scenario), Section 5 Error Handling (business-level only - no HTTP codes), Section 6 NFRs (feature-scoped + feature flag ON/OFF/kill switch/rollout), Section 7 Implementation Checklist (Backend/Frontend/Feature Flag/Testing/Post-launch monitoring), Section 8 Dependencies (depends on / blocks), Section 9 Definition of Done, Section 10 Open Questions
+- Feature flag mandatory: default OFF, gradual rollout Internal→5%→25%→50%→100%, kill switch if error rate >5%, 4-week post-launch monitoring
+- Definition of Done includes all ACs numbered, flag verified, regression test, monitoring active
+- Notion push: updates Feature entry in Feature Backlog DB (Status→Ready for Dev, flag name, references) and pushes Feature Card as page body
+- All `feature-forge` references in pm-stripe, pm-fsd, pm-feature-set-overview, COMMAND.md, FRAMEWORK_GUIDE.md updated to `pm-feature-card`
+- COMMAND.md: artifact path updated to `[f-id]-feature-card.md` in `phase-6/feature-cards/`
+
+---
+
+
 ## [1.6.0] - 2026-06-01
 
 ### pm-fsd: rewrite template to match reference FSD structure (11 sections)

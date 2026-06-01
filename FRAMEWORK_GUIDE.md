@@ -142,7 +142,7 @@ Four tracks run in parallel. Converge at the end.
 | `/pm-fsd` | Functional Specification (flows, validations, acceptance criteria) |
 | `/impeccable document` [once at Phase 6 start] | PRODUCT.md + DESIGN.md (design system context for Claude) |
 | `/impeccable-shape` [per feature] | UX/UI shape brief - defines layout, interactions, and visual intent before implementation |
-| `/feature-forge` [per feature, AFTER BRD + FSD] | Feature Card (acceptance criteria, tasks) |
+| `/pm-feature-card` [per feature, AFTER BRD + FSD] | Feature Card (acceptance criteria, tasks) |
 
 **Build (per feature, after spec gate):**
 
@@ -253,7 +253,7 @@ Feature Set decision:
 |---|---|
 | `/pm-brd` | Business Rules (new or extend) |
 | `/pm-fsd` | Functional Specification (new or extend, includes backward compat analysis) |
-| `/feature-forge` | Feature Card (AFTER BRD + FSD complete - hard rule) |
+| `/pm-feature-card` | Feature Card (AFTER BRD + FSD complete - hard rule) |
 
 ---
 

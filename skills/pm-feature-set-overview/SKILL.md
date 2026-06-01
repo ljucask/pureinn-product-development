@@ -39,7 +39,7 @@ If an FSD exists, the overview is extracted from it. If not, it is generated fro
 **Produces artifacts used by:**
 - `pm-brd` (Phase 6 detail) - team uses overview to understand scope before writing rules
 - `pm-fsd` - team uses overview as orientation before reading the full spec
-- `feature-forge` - Feature Cards reference the Feature Set context
+- `pm-feature-card` - Feature Cards reference the Feature Set context
 - Phase 7 build team - developers use overview to understand what they're building
 
 ---
