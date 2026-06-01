@@ -10,7 +10,7 @@ metadata:
   role: specialist
   scope: compliance
   output-format: document
-  related-skills: pm-domain-model, pm-domain-analysis, pm-brd
+  related-skills: pm-domain-model, pm-domain-analysis, pm-entity-registry, pm-business-rules-library
 ---
 
 # PM - Privacy Requirements
@@ -37,8 +37,8 @@ This is a PM-level analysis, not a legal opinion. Validate with legal counsel be
 - `pm-domain-analysis` - legal requirements from Phase 2 provide the regulatory baseline
 
 **Produces artifacts used by:**
-- `pm-brd` - privacy rules become RULE-A and RULE-C entries in the BRD
-- `pm-fsd` - consent flows, data export, deletion - all specified at feature level in FSD
+- `pm-business-rules-library` - privacy rules become RULE-A and RULE-C entries in the BRD
+- `pm-feature-design` - consent flows, data export, deletion - all specified at feature level in FSD
 - Phase 6 build - developers need privacy requirements before implementing user-facing features
 
 ---

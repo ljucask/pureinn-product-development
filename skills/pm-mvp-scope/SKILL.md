@@ -160,8 +160,8 @@ After answers, show the finalized MVP scope proposal combining Group 1 alignment
 
 | Feature | ID | KANO | V×C | Delivery Stripe |
 |---|---|---|---|---|
-| [Feature name] | F-001 | Must-be | Quick Win | Stripe 1 |
-| [Feature name] | F-011 | Must-be | Big Bet | Stripe 2 |
+| [Feature name] | FEAT-[DOMAIN]-001 | Must-be | Quick Win | Stripe 1 |
+| [Feature name] | FEAT-[DOMAIN]-011 | Must-be | Big Bet | Stripe 2 |
 
 **MVP total:** [X] features across [Y] stripes ([Z] weeks)
 
@@ -171,8 +171,8 @@ After answers, show the finalized MVP scope proposal combining Group 1 alignment
 
 | Feature | ID | KANO | Reason deferred | Target phase |
 |---|---|---|---|---|
-| [Feature name] | F-006 | Performance | Not blocking core value | MVP+ |
-| [Feature name] | F-040 | Performance | Nice-to-have | Phase 2 |
+| [Feature name] | FEAT-[DOMAIN]-006 | Performance | Not blocking core value | MVP+ |
+| [Feature name] | FEAT-[DOMAIN]-040 | Performance | Nice-to-have | Phase 2 |
 
 ---
 

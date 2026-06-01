@@ -1,6 +1,6 @@
 ---
 name: pm-feature-set-overview
-description: Generate a Feature Set Overview - a compact orientation document for the delivery team. Covers purpose, business role, responsibilities, boundaries, and risk. Not a requirements doc - the document someone reads before reading the FSD to understand context and scope. Phase 6 skill.
+description: "[DEPRECATED in FDD+SDD v2.0] Feature Set Overview is replaced by Feature Cards + Initiative PRD. Feature Cards (pm-feature-card) define each feature unit. Initiative PRD (pm-prd Initiative mode) covers larger domain scoping. This skill is preserved for legacy projects only."
 license: MIT
 metadata:
   author: https://github.com/ljucask
@@ -10,12 +10,24 @@ metadata:
   role: specialist
   scope: specification
   output-format: document
-  related-skills: pm-brd, pm-fsd, pm-mvp-scope, pm-stripe
+  related-skills: pm-feature-card, pm-prd, pm-stripe
 ---
 
 # PM - Feature Set Overview
 
-## What this skill does
+> **DEPRECATED in FDD+SDD Framework v2.0**
+>
+> Feature Set is no longer a spec unit. Replaced by:
+> - **Feature Card** (`pm-feature-card`) - one card per feature, covers Biznis Mantinely, ACs, sequence diagram
+> - **Initiative PRD** (`pm-prd` Initiative mode) - domain-level scoping for large new initiatives
+> - **Domain registers** (`entities.md`, `business_rules.md`) - the living source of truth for what each domain owns
+>
+> **For new projects:** Use `pm-feature-design` + `pm-feature-card`.
+> **For legacy projects using the old Feature Set model:** This skill is preserved below for continuity.
+
+---
+
+## What this skill does (legacy)
 
 Produces a compact, team-facing orientation document for a single Feature Set. It answers in plain language:
 - What is this Feature Set and why does it exist?

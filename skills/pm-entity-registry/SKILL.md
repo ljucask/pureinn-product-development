@@ -65,21 +65,11 @@ Check for existing artifacts:
 | `entities.md` does NOT exist | Create mode | Generate full register from scratch |
 | `entities.md` EXISTS | Append mode | Add new domain entities, preserve existing |
 
-**If append mode detected**, inform user:
-
-```
-entities.md already exists with [N] entities.
-
-This session will APPEND new entities for the new domain/initiative.
-Existing entities will not be modified.
-
-Which domain/initiative is being added?
-e.g., "ONB - Employee Onboarding" for initiative ai-onboarding
-
-Input source:
-  A) Initiative PRD at initiatives/[slug]/prd.md - Business Capabilities section
-  B) Paste capabilities directly
-```
+**If append mode detected**, inform user with state table (N existing entities), then use AskUserQuestion:
+- Question 1: "Which domain/initiative is being added?" (free text answer - user describes it)
+- Question 2: "Input source for Business Capabilities?" with options:
+  - Option A: "Initiative PRD at initiatives/[slug]/prd.md - Business Capabilities section (Recommended)"
+  - Option B: "Paste capabilities directly"
 
 Also check: does a PRD or Initiative PRD with a Business Capabilities section exist? Without it, entity extraction is guesswork.
 

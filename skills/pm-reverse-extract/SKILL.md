@@ -1,39 +1,36 @@
 ---
 name: pm-reverse-extract
-description: Sync the current state of an existing product to Notion as the operational interface. Reads existing FSD/BRD/Feature Cards/codebase (Claude has direct access), extracts the feature inventory, maps it to the MFS → FS → Feature hierarchy with accurate statuses, and pushes the full structure to Notion so the team can see where the product stands. Secondarily generates local Phase 5 artifacts as Claude context for future sessions. Can be run at any point during the project, not just at onboarding.
+description: Migration path skill for products built outside the framework. Reads existing codebase, docs, and Feature Cards (if any) to extract the full feature inventory. Outputs feature_list.md (Live Register 4, FEAT-[DOMAIN]-NNN IDs) + stub Feature Cards in features/cards/ + Notion push. Run after pm-entity-registry and pm-business-rules-library have initialized the domain registers. Run instead of pm-features-list + pm-mvp-scope for existing products.
 license: MIT
 metadata:
   author: https://github.com/ljucask
-  version: "1.0.0"
+  version: "2.0.0"
   domain: product-management
   triggers: reverse extract, existing product, feature inventory, migration path, feature implementation onboarding, sync Notion
   role: specialist
   scope: extraction
   output-format: document
-  related-skills: pm-features-list, pm-mvp-scope, pm-fsd, pm-brd
+  related-skills: pm-entity-registry, pm-business-rules-library, pm-feature-design, pm-stripe
 ---
 
 # PM - Reverse Extract (Existing Product Sync)
 
 ## What this skill does
 
-Syncs the current state of an existing product into Notion as the team's operational interface.
+Extracts the full feature inventory from an existing product and formalizes it into the FDD+SDD framework.
 
-**Primary goal:** Notion push - the team gets a clear, accurate view of the full feature inventory: what is live, what is in progress, what is backlog, and how features are organized into Feature Sets.
-
-**Secondary goal:** Local artifacts - features-list.md, feature-sets.md, delivery-stripes.md written to pureinn-workspace as Claude context for future sessions where the codebase or docs are not in scope.
-
-Claude reads the existing documents and codebase directly - it already has the context. This skill structures and externalizes that context into Notion and local files.
+**Run order for migration path:**
+1. `/pm-entity-registry` - extracts entities and state machines → `domain/entities.md`
+2. `/pm-business-rules-library` - extracts business rules → `domain/business_rules.md` + `domain/decision_models.md`
+3. `/pm-reverse-extract` (this skill) - extracts feature inventory → `features/feature_list.md` + stub Feature Cards
 
 **Produces:**
-1. **Feature Inventory** - all features in FDD format, with status (Done / In Progress / Planned) and spec coverage
-2. **Feature Set Map** - MFS → FS → Feature hierarchy derived from existing domain groupings (BRD/FSD structure)
-3. **Delivery Baseline** - current state snapshot: live, in progress, backlog, plus next stripe recommendation
-4. **Notion push** - full MFS/FS/Feature hierarchy with content:
-   - FS entries include Feature Set Overview as page body
-   - Feature entries include Feature Card content as page body (inferred from FSD/code for Done features; stub for Planned)
-   - BRD/FSD/Domain Model pushed as Notion pages with full content; FS entries linked via FSD URL and BRD URL properties
-5. **Local artifacts** - features-list.md, feature-sets.md, delivery-stripes.md for Claude context in future sessions
+1. `feature_list.md` (Live Register 4) - full feature inventory in FDD format with FEAT-[DOMAIN]-NNN IDs
+2. Stub Feature Cards in `features/cards/` - one per feature, status: `1_Walkthrough`
+3. Delivery Stripe assignment - which features go into which domain stripe
+4. Notion push - Feature hierarchy pushed to Product Features database
+
+**Claude reads directly:** codebase, existing docs, API specs, route files, controller files. This skill structures what Claude already knows - it does not hallucinate features.
 
 Can be re-run at any point to re-sync Notion after significant state changes.
 
@@ -41,621 +38,280 @@ Can be re-run at any point to re-sync Notion after significant state changes.
 
 ## What this skill does NOT do
 
-- Add context Claude does not already have - it reads and structures what exists in the docs and codebase
-- Rewrite or validate BRD/FSD content - reads and maps, does not regenerate
+- Initialize domain registers - run pm-entity-registry and pm-business-rules-library first
 - Run KANO Analysis or Value vs. Complexity - not applicable to features already built
+- Write Feature Card Sections 1-3 (JIT design) - that is pm-feature-design, run just before build
 - Run discovery or validation - this is a sync operation, not a new product workflow
 
 ---
 
 ## Dependencies
 
-**Required:**
-- `/pureinn` already run - workspace, state.json, and pureinn-variables.md must exist before this skill runs
-- Existing docs or codebase accessible to Claude (at least one of: FSD, BRD, Feature Cards, Domain Model, route/controller files)
+**Required before running:**
+- `/pureinn` already run - workspace, state.json, and pureinn-variables.md must exist
+- `domain/entities.md` - pm-entity-registry must have run (entities define domain codes for FEAT-IDs)
+- At least one source accessible: existing docs (old FSD/BRD/specs), Feature Cards, codebase route/controller files
 
 **Produces artifacts used by:**
-- Notion Product Features database - primary output: team operational view
-- `pm-brd` / `pm-fsd` / `pm-stripe` - can reference feature-sets.md and delivery-stripes.md as Claude context
-- Future Claude sessions - local artifacts serve as quick-load context without full codebase scan
+- `pm-feature-design` - JIT design reads feature_list.md for feature context
+- `pm-stripe` - stripe dashboard reads feature_list.md and Feature Card frontmatter
+- Notion Product Features database - primary operational view for the team
 
 ---
 
 ## Step 0: Current state check
 
-Check for existing pureinn-workspace artifacts for this project:
-- `state.json` - does a project already exist?
-- `artifacts/phase-5-planning/features-list.md` - was this skill already run?
-- `artifacts/phase-5-planning/feature-sets.md`
-- `artifacts/phase-5-planning/delivery-stripes.md`
+Check for existing artifacts:
+- `domain/entities.md` - needed for domain code assignment
+- `features/feature_list.md` - was this skill already run?
+- `features/cards/` - any existing Feature Cards?
 
-Also check: do any of the following exist in the conversation context or project directory?
-- BRD documents
-- FSD documents
-- Feature Cards
-- Domain Model / Entity Catalogue
-- Codebase (check for route files, controller files, API spec, schema files as alternative sources)
+Also check what source material is available:
+- Old spec documents (any format: FSD, BRD, PRD, user stories, Confluence pages)
+- Existing Feature Cards
+- Codebase: route files, controller files, API spec, schema files, test files
 
-Show state table:
-
-| Source | Status | Detail |
-|---|---|---|
-| BRD documents | ✅ / ⚠️ / ❌ | [found / partial / not found] |
-| FSD documents | ✅ / ⚠️ / ❌ | [found / partial / not found] |
-| Feature Cards | ✅ / ⚠️ / ❌ | [X found / partial / not found] |
-| Domain Model | ✅ / ⚠️ / ❌ | [found / not found] |
-| Codebase | ✅ / ⚠️ / ❌ | [accessible / not accessible] |
-| pureinn-workspace | ✅ / ❌ | [project exists / new project] |
+Show state table. Use AskUserQuestion to confirm mode and scope before proceeding.
 
 Apply the standard skill interaction pattern (CLAUDE.md).
-
-**Options:**
-
-```
-What do you want to do in this session?
-  A) Full migration - extract features, build hierarchy, push to Notion, generate Phase 5 artifacts (Recommended if starting fresh)
-  B) Re-extract only - re-run extraction from docs/code, overwrite local artifacts (if docs changed)
-  C) Notion push only - local artifacts already exist, push to Notion
-  D) Partial or something specific - describe what you need
-```
 
 ---
 
 ## Step 1: Gather inputs
 
-Ask questions in 2 groups. After each group show a summary and wait for confirmation before continuing.
+Use AskUserQuestion for structured choices. Gather via text prompt:
 
----
+```
+Migration path setup - I need a few inputs before extracting the feature inventory.
 
-### Group 1 of 2 - Setup and documents
+1. PRODUCT AND PROJECT
+   Product name and project slug (lowercase, hyphens, e.g., acme-rentals):
+   [answer]
 
-Ask as plain text:
+2. SOURCE MATERIAL
+   What should I read to extract features? Confirm which is accessible:
+   - Existing spec docs (FSD/BRD/PRD/Confluence/Notion) - paste paths or "in context"
+   - Codebase - confirm accessible and key directories (e.g., src/features/, app/controllers/)
+   - Existing Feature Cards - confirm accessible
+   [answer]
 
-What is the product name and project slug? (slug: lowercase, hyphens, used for folder name - e.g., acme-rentals)
+3. CURRENT STATE
+   Which features are live in production?
+   Which are in progress?
+   Which are planned but not started?
+   (rough description is fine - I will map to statuses)
+   [answer]
 
-Paste or confirm in context the existing documents I should read:
-- BRD: [paste path or content, or "in context"]
-- FSD: [paste path or content, or "in context"]
-- Feature Cards: [paste paths or content, or "in context"]
-- Domain Model / Entity Catalogue: [paste or "in context"]
+4. NEXT PRIORITY
+   What do you want to build next?
+   This determines which features/domains get JIT design first.
+   [answer]
 
-Is the codebase accessible to Claude (same project directory)? If yes: what are the key directories for features? (e.g., src/features/, app/controllers/) If no: skip codebase scan.
-
-Do you already have a named Feature Set structure (FS-01, FS-02...)? If yes: paste it. If no: I will derive Feature Sets from the BRD/FSD domain groupings.
-
-After answers, confirm: "I have enough to read the documents and extract features. Before I start - anything else I should know about the codebase structure?"
-
----
-
-### Group 2 of 2 - Current state and planning
-
-Ask as plain text:
-
-Which features are currently live in production? Describe or paste a rough list. (e.g., "booking flow is live, payments not yet")
-
-What is the next feature or Feature Set you plan to build? This determines which FS gets a BRD/FSD first in Phase 6.
-
-Notion setup: Read pureinn-variables.md key "Feature Backlog". Skip if URL is present. If blank: do you have a Notion Product Features database? If yes: paste the URL. If no: migration runs as Markdown only.
-
-After answers, show complete migration setup summary. Ask for final confirmation before starting extraction.
+5. NOTION
+   Do you have a Notion Product Features database?
+   URL (or "skip - markdown only"):
+   [answer]
+```
 
 ---
 
 ## Step 2: Extract feature inventory
 
-### 2a. Read existing documents
+### 2a. Read source material
 
-Read in this priority order:
-1. FSD documents - flow step tables and acceptance criteria sections are the richest feature source
-2. BRD documents - business rules sections reveal what the system does
-3. Feature Cards - direct feature list with acceptance criteria and status
-4. Domain Model / Entity Catalogue - entities and operations suggest missing features
-5. Codebase - route files, controller files, API spec as fallback source
+Read in priority order:
+1. Existing Feature Cards - richest source, already in FDD format
+2. Spec docs (FSD/BRD/PRD) - flow step tables and acceptance criteria reveal features
+3. Codebase route/controller files - define what the system actually does
+4. API spec or schema files - complement for data-layer features
+5. Test files - test descriptions often enumerate features precisely
 
-### 2b. Extract features
+### 2b. Extract and format features
 
 For each feature found:
-- Rename to FDD format: `<action> <result> <object>` (e.g., "User can book a listing" → "Submit booking request")
-- Assign an ID: F-001, F-002... (sequential)
+- Rename to FDD format: `<Verb> <object>` (e.g., "booking creation" → "Submit booking request")
+- Assign domain code from entities.md: which entity does this feature primarily affect?
+  - Domain code comes from entity domain (e.g., Order entity → ORD, Payment → PAY, User → USR)
+  - New domain with no entity → assign a descriptive code (e.g., NTF for notifications, SRC for search)
+- Assign FEAT-[DOMAIN]-NNN ID (sequential per domain, start from 001)
 - Determine status: Done / In Progress / Planned / Unclear
-- Identify actor: who initiates or benefits
-- Identify which BRD/FSD section covers it (if any)
-- Flag if no BRD/FSD coverage exists (spec gap)
+- Identify actor: who initiates or benefits from this feature
+- Note spec coverage: does a Feature Card exist? Any spec doc section?
 
-### 2c. Derive Feature Sets
+### 2c. Derive Delivery Stripe assignment
 
-If Feature Sets are provided: use them.
+Group features into domain-focused Delivery Stripes:
+- Each stripe = one primary domain (e.g., "Order Flow", "Payment", "User Auth")
+- Features from the same domain go into the same stripe
+- Cross-domain features go to the stripe that owns the primary entity
 
-If not: derive from BRD/FSD domain groupings:
-- Each BRD/FSD document = one Feature Set (or split if scope is too large)
-- Name each Feature Set as the domain it represents (e.g., "Booking Flow", "Property Management")
-- Group into MFS clusters by domain (e.g., "Listings" MFS contains "Property Management" FS and "Pricing & Availability" FS)
+Done features: assign to their natural stripe with status = Promoted
+In Progress features: assign as Active in their stripe
+Planned features: assign to Queue in their stripe
 
-Apply FDD Feature Set sizing rules:
-- Max ~8-10 features per FS
-- If a BRD/FSD covers more: split and note the split
+### 2d. Identify what needs JIT design before next build
 
-### 2d. Determine BRD/FSD coverage status per Feature Set
+Flag features that are:
+- Status: In Progress or Planned AND
+- No Feature Card Sections 1-3 exist
 
-| Coverage | Meaning |
-|---|---|
-| Full | BRD + FSD both exist and cover all features in this FS |
-| Partial | One exists, or exists but does not cover all features |
-| Missing | Neither BRD nor FSD exists for this FS |
+These are the highest-priority candidates for pm-feature-design before the next stripe starts.
 
 ---
 
-## Step 3: Generate Phase 5 artifacts
+## Step 3: Generate artifacts
 
 Generate in English.
 
 ---
 
-### ARTIFACT 1: Features List (migration edition)
+### ARTIFACT 1: Feature List (Live Register 4)
+
+Save to: `pureinn-workspace/[project-slug]/features/feature_list.md`
 
 ```markdown
-# Features List - [Product Name]
+# FDD Feature List - [Product Name]
+# Live Register 4 of 4 - FDD+SDD Framework
 
-> **Phase:** 5 - Feature Planning (Migration)
-> **Date:** [date]
-> **Source:** Extracted from [BRD / FSD / Feature Cards / Codebase] - [date of source docs]
-> **Format:** FDD - action + result + object
-
----
-
-## Feature Inventory
-
-### [Functional Area / Feature Set name]
-
-| ID | Feature | Actor | Status | Spec coverage | Notes |
-|---|---|---|---|---|---|
-| F-001 | [FDD-formatted feature name] | [Host/Guest/System] | Done / In Progress / Planned | BRD + FSD / FSD only / None | [e.g., "Covered in FSD-02 Section 2.1"] |
-| F-002 | | | | | |
+> **Product:** [Product Name]
+> **Version:** 1.0 (migration extract)
+> **Last updated:** [date]
+> **Source:** Reverse extract from existing product
+> **Maintained by:** pm-reverse-extract (init) + pm-features-list FI Append (new initiatives)
 
 ---
 
-### [Functional Area 2]
-
-[same structure]
-
----
-
-## Status Summary
-
-| Status | Count |
-|---|---|
-| Done (live in production) | [X] |
-| In Progress | [X] |
-| Planned (backlog) | [X] |
-| Unclear (needs review) | [X] |
-| **Total** | **[X]** |
+> **How to read this register:**
+> - FEAT-[DOMAIN]-NNN format: domain code matches entity domain in entities.md
+> - Status: Done = live in production | In Progress = being built | Planned = backlog | Unclear = needs investigation
+> - Spec coverage: Feature Card exists? Sections 1-3 complete? (needed before build)
 
 ---
 
-## Spec Coverage Summary
+## [Domain Name] (FEAT-[DOMAIN]-*)
 
-| Coverage | Feature Sets | Features affected |
-|---|---|---|
-| Full (BRD + FSD exist) | [X FSs] | [X features] |
-| Partial (one doc missing) | [X FSs] | [X features] |
-| Missing (no spec) | [X FSs] | [X features] |
+### FEAT-[DOMAIN]-001: [Feature Name]
+**Actor:** [User / Host / Admin / System]
+**Status:** Done / In Progress / Planned / Unclear
+**Delivery Stripe:** [Stripe name]
+**Spec coverage:** [Feature Card exists: Yes/No | Sections 1-3: Complete/Partial/None]
+**Notes:** [any relevant context]
 
 ---
 
-## Spec Gaps (priority write list)
+## Delivery Stripe Overview
 
-Features or Feature Sets with no BRD or FSD, ordered by delivery proximity:
-
-| Feature Set | Missing | Priority | Reason |
+| Stripe | Domain | Features | Next priority |
 |---|---|---|---|
-| [FS-03: Booking Flow] | BRD | High | Next stripe |
-| [FS-04: Payments] | BRD + FSD | High | Next stripe |
-| [FS-06: Admin Panel] | BRD + FSD | Low | Post-MVP |
+| [Stripe name] | [Domain] | FEAT-ORD-001, FEAT-ORD-002, FEAT-ORD-003 | FEAT-ORD-004 |
+| [Stripe name] | [Domain] | FEAT-PAY-001, FEAT-PAY-002 | FEAT-PAY-003 |
 
 ---
 
-## Features Not Mapped
+## JIT Design Queue (features needing pm-feature-design before build)
 
-Features found in codebase or docs that could not be mapped to a clear Feature Set:
+| Feature | Status | Priority | Reason |
+|---|---|---|---|
+| FEAT-[DOMAIN]-NNN | Planned | High | Next in stripe, no Feature Card |
 
-| Feature | Source | Note |
-|---|---|---|
-| [Feature description] | [codebase: src/...] | [Possible FS assignment] |
+---
+
+## Changelog
+
+| Version | Date | Change | Triggered by |
+|---|---|---|---|
+| 1.0 | [date] | Initial extraction from existing product | Migration path |
 ```
 
 ---
 
-### ARTIFACT 2: Feature Sets (migration edition)
+### ARTIFACT 2: Stub Feature Cards
+
+For each feature with Status = In Progress or Planned (and no existing Feature Card):
+
+Create `features/cards/FEAT-[DOMAIN]-NNN.md` with stub frontmatter:
 
 ```markdown
-# Feature Sets - [Product Name]
-
-> **Phase:** 5 - Feature Planning (Migration)
-> **Date:** [date]
-> **Source:** Derived from [BRD / FSD / Domain Model] - existing product state
-
+---
+id: FEAT-[DOMAIN]-NNN
+title: [Feature Name]
+stripe: [Stripe name]
+status: 1_Walkthrough
+actor: [User / Host / Admin / System]
+prd_ref: "[product/PRD_master.md or initiatives/[slug]/prd.md - section TBD]"
+feature_flag: "[kebab-case-feature-name]"
 ---
 
-## Feature Set Overview
+# FEAT-[DOMAIN]-NNN: [Feature Name]
 
-| MFS | FS ID | Feature Set | Feature count | Status | BRD | FSD |
-|---|---|---|---|---|---|---|
-| [Domain A] | FS-01 | [Feature Set name] | [X] | Done / In Progress / Planned | Exists / Missing | Exists / Missing |
-| [Domain A] | FS-02 | [Feature Set name] | [X] | | | |
-| [Domain B] | FS-03 | [Feature Set name] | [X] | | | |
+> **Status:** 1_Walkthrough - stub created by pm-reverse-extract
+> **Next step:** Run /pm-feature-design FEAT-[DOMAIN]-NNN to complete Sections 1-3 before build
 
----
+## Section 1: Biznis Mantinely
+*TBD - run pm-feature-design*
 
-## Feature Set Details
+## Section 2: Acceptance Criteria
+*TBD - run pm-feature-design*
 
-### [Domain A - MFS name]
+## Section 3: Technical Design
+*TBD - run pm-feature-design*
 
-#### FS-01: [Name]
-
-**Purpose:** [What this FS enables]
-**Primary actor:** [Host / Guest / Admin / System]
-**Status:** Done / In Progress / Planned
-**BRD status:** Exists (path: [path]) / Missing
-**FSD status:** Exists (path: [path]) / Missing
-
-**Features in this set:**
-
-| ID | Feature | Status |
-|---|---|---|
-| F-001 | [Feature name] | Done |
-| F-006 | [Feature name] | Planned |
-
-**Spec action required:**
-- [ ] BRD: [write from scratch / extend with F-XXX / already complete]
-- [ ] FSD: [write from scratch / extend with F-XXX / already complete]
-
----
-
-[repeat per FS]
+## Section 4: Realizacny Protokol
+*TBD - filled after build and code inspection*
 ```
 
----
-
-### ARTIFACT 3: Delivery Baseline (replaces Delivery Stripes for migration)
-
-```markdown
-# Delivery Baseline - [Product Name]
-
-> **Phase:** 5 - Feature Planning (Migration)
-> **Date:** [date]
-> **Purpose:** Defines the current delivery state as baseline for Phase 6 forward planning.
->             Replaces the Delivery Stripes plan for products migrating into the framework.
-
----
-
-## Production Baseline (Done)
-
-Features currently live:
-
-| FS | Feature | ID | Notes |
-|---|---|---|---|
-| FS-01 | [Feature] | F-001 | |
-| FS-03 | [Feature] | F-010 | |
-
----
-
-## In Progress
-
-| FS | Feature | ID | Expected completion |
-|---|---|---|---|
-| FS-03 | [Feature] | F-012 | [date or "unknown"] |
-
----
-
-## Planned Backlog (upcoming Phase 6 work)
-
-Ordered by delivery priority (dependency + next-up logic from user input):
-
-| Priority | FS | Feature | ID | Blocking? |
-|---|---|---|---|---|
-| 1 | FS-03 | [Next feature to build] | F-013 | Depends on F-012 |
-| 2 | FS-04 | [Feature] | F-015 | Depends on F-013 |
-
----
-
-## Next Stripe Recommendation
-
-Based on current state and user-specified next work:
-
-**Stripe 1 (next sprint):**
-- Features: [F-013, F-015]
-- Feature Sets: [FS-03, FS-04]
-- Spec gate: BRD + FSD must exist for FS-03 and FS-04 before Stripe 1 starts
-- Spec status: [FS-03 FSD exists, BRD missing / FS-04 both missing]
-- Action before starting: [run pm-brd + pm-fsd for FS-03 and FS-04]
-
----
-
-## Spec Writing Schedule
-
-| When | Activity |
-|---|---|
-| Before Stripe 1 | Write BRD + FSD for [FS-03, FS-04] |
-| During Stripe 1 | Write BRD + FSD for [FS-05] (if Stripe 2 includes it) |
-```
+For features with Status = Done that have no Feature Card: create a minimal stub with status `6_Promoted_to_Build` and a note that the feature is live - no JIT design needed.
 
 ---
 
 ## Step 4: Notion push
 
-**Runs after user approves all three artifacts.**
+Read `pureinn-variables.md` key `Feature Backlog URL`.
 
-If no Notion database is configured: skip to Step 5. Output Markdown only.
+If URL is blank: skip Notion push, generate markdown only. Remind user to paste the URL once they have it.
 
-### 4a. Get data source ID
+If URL is present: push feature entries to Notion Product Features database:
 
-1. Read `pureinn-variables.md` key "Feature Backlog" → get URL
-2. Check `state.json notion_ids.feature_backlog` → if set, use it directly
-3. If not cached: call `mcp__claude_ai_Notion__notion-fetch` with the URL, extract data source ID from `<data-source url="collection://...">`, save to `state.json notion_ids.feature_backlog`
-4. If URL blank in pureinn-variables.md: ask user, save URL, then proceed with step 3
+For each FEAT-[DOMAIN]-NNN:
+- Title: `FEAT-[DOMAIN]-NNN: [Feature Name]`
+- Status property: Done / In Progress / Backlog (maps from extraction status)
+- Domain property: [DOMAIN]
+- Stripe property: [Stripe name]
+- Feature Flag property: [kebab-case-feature-name]
 
-### 4b. Create MFS entries
-
-For each MFS cluster from Artifact 2: call `mcp__claude_ai_Notion__notion-create-pages` with:
-- `parent.type` = `"data_source_id"`
-- `parent.data_source_id` = from 4a
-- Per MFS entry: `Artefact Name` = MFS name, `Artefact Type` = `"MFS"`, `Status` = `"Backlog"`
-
-Collect returned page URLs - needed for FS parent relations.
-
-### 4c. Create FS entries with Feature Set Overview content
-
-For each Feature Set from Artifact 2: call `mcp__claude_ai_Notion__notion-create-pages` with:
-- Per FS entry: `Artefact Name` = FS name, `Artefact Type` = `"FS"`, `Status` = appropriate to FS status (Done FSs → `"Done"`, others → `"Backlog"`), `Parent` = URL of corresponding MFS from 4b
-- **Page body** - include Feature Set Overview as Notion page content:
-
-```
-## [FS-XX]: [Feature Set Name]
-
-**Purpose:** [What this FS enables - user value]
-**Primary actor:** [Host / Guest / Admin / System]
-**Status:** Done / In Progress / Planned
-**BRD:** Exists / Missing
-**FSD:** Exists / Missing
-
-### Features in this set
-
-| ID | Feature | Status |
-|---|---|---|
-| F-001 | [Feature name] | Done |
-| F-006 | [Feature name] | Planned |
-
-### Spec action required
-[write from scratch / extend / already complete - per BRD and FSD]
-
-### Dependencies
-[None / depends on FS-XX / enables FS-XX]
-```
-
-Collect returned page URLs - needed for Feature parent relations and BRD/FSD URL update in step 4e.
-
-### 4d. Create Feature entries with Feature Card content
-
-For each feature from Artifact 1: call `mcp__claude_ai_Notion__notion-create-pages` with:
-- `parent.type` = `"data_source_id"`
-- `parent.data_source_id` = from 4a
-
-Per feature properties:
-
-| Notion property | Value | Source |
-|---|---|---|
-| `Artefact Name` | Feature name (FDD format) | Artifact 1 |
-| `Artefact Type` | `"Feature"` | Fixed |
-| `Short Description` | 1-sentence description of what the feature does | Extracted from FSD/Feature Card |
-| `Status` | `"Done"` / `"In Progress"` / `"Backlog"` | Artifact 1 status |
-| `Parent` | URL of corresponding FS page from 4c | Artifact 2 FS assignment |
-| `template_id` | Feature Template ID from database schema | From notion-fetch result |
-
-Status mapping: Done (live) → `"Done"`, In Progress → `"In Progress"`, Planned/Unclear → `"Backlog"`
-
-**Page body** - include Feature Card content as Notion page content:
-
-For **Done / In Progress** features (infer from FSD sections and codebase):
-```
-## Feature Card: [Feature name]
-
-**Actor:** [who performs this]
-**Status:** Done / In Progress
-**Feature Set:** [FS-XX name]
-
-### What it does
-[1-2 sentences describing the feature behaviour]
-
-### Acceptance criteria
-- [ ] [AC inferred from FSD flow step or business rule]
-- [ ] [AC inferred from FSD or codebase]
-- [ ] [Edge case or error state if visible in code]
-
-### Notes
-[Any implementation notes, known edge cases, or constraints from the code]
-```
-
-For **Planned** features (stub only):
-```
-## Feature Card: [Feature name]
-
-**Actor:** [who performs this]
-**Status:** Backlog
-**Feature Set:** [FS-XX name]
-
-### What it does
-[1-sentence description based on context]
-
-### Acceptance criteria
-[To be written before feature enters build - run /feature-forge]
-```
-
-Push features in batches of up to 100 per call.
-
-### 4e. Push BRD / FSD / Domain Model to Notion
-
-Runs after 4c and 4d. For each doc type, check pureinn-variables.md for the parent page URL.
-
-**BRD (per Feature Set):**
-1. Read pureinn-variables.md key "BRD" → get parent page URL
-2. For each FS where a local BRD file exists: call `mcp__claude_ai_Notion__notion-create-pages` with the parent page URL and the full BRD markdown content as page body
-3. Collect the returned page URL
-4. Update the FS Notion entry (from 4c) with the BRD page URL via `mcp__claude_ai_Notion__notion-update-page`
-
-**FSD (per Feature Set):**
-1. Read pureinn-variables.md key "FSD" → get parent page URL
-2. For each FS where a local FSD file exists: call `mcp__claude_ai_Notion__notion-create-pages` with the parent page URL and the full FSD markdown content as page body
-3. Collect the returned page URL
-4. Update the FS Notion entry (from 4c) with the FSD page URL via `mcp__claude_ai_Notion__notion-update-page` (property: `FSD URL`)
-
-**Domain Model:**
-1. Read pureinn-variables.md key "Domain Model" → get parent page URL
-2. If a local Domain Model file exists: call `mcp__claude_ai_Notion__notion-create-pages` with the parent page URL and full Domain Model markdown content
-3. Save returned URL to pureinn-variables.md key "Domain Model" (overwrites the parent reference with the actual created page)
-
-If BRD, FSD, or Domain Model parent URL is blank in pureinn-variables.md: skip that doc type and note it in the summary. Do not ask the user mid-step.
-
-### 4f. Confirm
-
-After all steps complete: report counts (MFS created, FS created, Features created, BRD pages pushed, FSD pages pushed, Domain Model pushed, errors). Note any doc types skipped due to missing parent URL in pureinn-variables.md.
+After push, confirm count: "Pushed [N] features to Notion."
 
 ---
 
-## Step 5: Update framework state
+## Step 5: Post-extract summary
 
-Read existing `pureinn-workspace/[slug]/state.json` (created by `/pureinn` during onboarding). Update the following fields - do not overwrite the full file:
-
-```json
-{
-  "migration": true,
-  "migration_date": "[date]",
-  "current_phase_index": 6,
-  "current_phase_name": "Design by Feature",
-  "phases_completed": [1, 2, 3, 4, 5],
-  "phase_5_source": "reverse-extract"
-}
-```
-
-If Notion was connected in Step 4, also update:
-```json
-{
-  "notion_ids": {
-    "feature_backlog": "[data_source_id from Step 4a]"
-  }
-}
-```
-
-All other fields written by `/pureinn` (guidance_mode, product_shape, team_structure, assessment_file, etc.) are preserved as-is.
-
-`migration: true` signals to `/pureinn` that phases 1-5 were not run through the framework. Phase exit gates for those phases are skipped on resume.
-
-Write pureinn-workspace/[slug]/artifacts/phase-5-planning/ artifacts:
-- `features-list.md` - from Artifact 1
-- `feature-sets.md` - from Artifact 2
-- `delivery-stripes.md` - from Artifact 3 (Delivery Baseline)
-
----
-
-## Step 6: Migration summary and next actions
-
-After all steps complete, output:
+After all artifacts are generated, output:
 
 ```
-Migration complete.
+EXTRACTION COMPLETE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Features extracted:  [N total] ([X Done] / [Y In Progress] / [Z Planned])
+Stub Feature Cards:  [N created in features/cards/]
+Delivery Stripes:    [N stripes]
+Notion:              [N pushed / skipped]
 
-[Product Name] is now registered in the Feature Implementation playbook.
+JIT DESIGN NEEDED BEFORE NEXT BUILD
+  FEAT-[DOMAIN]-NNN - [Feature Name] (In Progress - no Section 1-3)
+  FEAT-[DOMAIN]-NNN - [Feature Name] (Planned - highest priority in stripe)
 
-PRODUCTION BASELINE
-  [X] features live
-  [X] features in progress
-  [X] features in backlog
-
-SPEC COVERAGE
-  [X] Feature Sets - spec complete (BRD + FSD exist and pushed to Notion)
-  [X] Feature Sets - spec partial
-  [X] Feature Sets - spec missing
-
-NOTION
-  [X] MFS created
-  [X] FS created (with Feature Set Overview content)
-  [X] Features created (with Feature Card content)
-  [X] BRD pages pushed ([X] linked to FS entries, [X] skipped - parent URL missing)
-  [X] FSD pages pushed ([X] linked to FS entries, [X] skipped - parent URL missing)
-  [X] Domain Model pushed / skipped
-
-NEXT ACTIONS (in order)
-  1. Run /pureinn to confirm project state and see Phase 6 dashboard
-  2. Write missing BRD for [FS-XX] - run /pm-brd before Stripe 1 starts
-  3. Write missing FSD for [FS-XX] - run /pm-fsd before Stripe 1 starts
-  4. Start Stripe 1 - run /pm-stripe kickoff
+NEXT STEPS
+  1. /pm-feature-design FEAT-[DOMAIN]-NNN  → design first in-progress feature
+  2. /pm-stripe                             → stripe dashboard and routing
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
-
----
-
-## Internal completeness checklist
-
-<!-- Claude reference only - not shown to user.
-     Use in Step 0 to identify gaps. Use in Step 3 to verify output before finalizing. -->
-
-**Feature extraction must cover:**
-- [ ] All FSD sections scanned for flow steps (each step = candidate feature)
-- [ ] All BRD sections scanned for rules that imply a user-facing action
-- [ ] All Feature Cards read directly where they exist
-- [ ] Codebase scanned if docs alone do not cover full feature set (routes, controllers, models as signal)
-- [ ] Every feature in FDD format: `<action> <result> <object>` - no capability-style names
-- [ ] Every feature has a status (Done / In Progress / Planned / Unclear)
-- [ ] Spec coverage determined per feature (which BRD/FSD section covers it, or "none")
-
-**Feature Set map must cover:**
-- [ ] MFS → FS → Feature hierarchy complete - no features without a FS
-- [ ] No FS has more than ~10 features (split if needed)
-- [ ] BRD/FSD coverage status per FS determined and stated
-- [ ] Spec gaps listed and ordered by delivery proximity
-- [ ] Spec action required clearly stated per FS (write from scratch / extend / already complete)
-
-**Delivery Baseline must cover:**
-- [ ] Done features listed (with FS assignment)
-- [ ] In Progress features listed
-- [ ] Planned backlog listed and ordered
-- [ ] Next Stripe recommendation includes spec gate check (what spec must be written before stripe starts)
-- [ ] Spec writing schedule defined (rolling - ahead of build)
-
-**Notion push must cover:**
-- [ ] Status accurately reflects production state (Done = live, not just "built")
-- [ ] Parent relations correct (Feature → FS → MFS)
-- [ ] No duplicate entries (check if MFS/FS names already exist before creating)
-- [ ] FS entries include Feature Set Overview as page body
-- [ ] Feature entries include Feature Card content as page body (full for Done/In Progress, stub for Planned)
-- [ ] BRD pushed as Notion page and FS entry updated with URL (where local BRD exists)
-- [ ] FSD pushed as Notion page and FS entry updated with FSD URL property (where local FSD exists)
-- [ ] Domain Model pushed as Notion page (where local file exists)
-- [ ] Skipped docs noted in summary with reason (missing parent URL in pureinn-variables.md)
-
-**state.json must:**
-- [ ] Set playbook to "feature-implementation"
-- [ ] Set current_phase to 6
-- [ ] Set migration: true, current_phase_index: 6, phases_completed: [1,2,3,4,5]
-- [ ] List completed_phases [1, 2, 3, 4, 5] so /pureinn skips their exit gates
-
----
-
-## Notion
-
-Keys read from `pureinn-variables.md`:
-- `Feature Backlog` (DB) - used in Step 4a for MFS/FS/Feature push
-- `BRD` (Page) - parent page for BRD subpages created in Step 4e
-- `FSD` (Page) - parent page for FSD subpages created in Step 4e
-- `Domain Model` (Page) - parent page for Domain Model push in Step 4e
-
-If any of these URLs are blank: that step is skipped and noted in the migration summary. User can fill in the URL and re-run with Option C (Notion push only) to complete the push.
 
 ---
 
 ## Save to
 
 ```
-pureinn-workspace/[project-slug]/state.json          ← UPDATE only (fields listed in Step 5)
-pureinn-workspace/[project-slug]/artifacts/phase-5-planning/features-list.md
-pureinn-workspace/[project-slug]/artifacts/phase-5-planning/feature-sets.md
-pureinn-workspace/[project-slug]/artifacts/phase-5-planning/delivery-stripes.md
+pureinn-workspace/[project-slug]/features/feature_list.md          (Live Register 4)
+pureinn-workspace/[project-slug]/features/cards/FEAT-[DOMAIN]-NNN.md  (one stub per In Progress / Planned feature)
 ```
+
+State update → `state.json`: set `registers.feature_list_initialized` to `true`. Set `current_phase_index` to 6 (ready for JIT delivery cycle).

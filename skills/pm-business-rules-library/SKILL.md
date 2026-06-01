@@ -69,20 +69,11 @@ Check for existing artifacts:
 | Neither file exists | Create mode | Generate full registers from scratch |
 | Files exist | Append mode | Add new domain rules, preserve existing |
 
-**If append mode detected**, inform user:
-
-```
-business_rules.md and decision_models.md already exist.
-
-This session will APPEND new rules for the new domain/initiative.
-Existing rules (BR-PAY-*, BR-ORD-*, etc.) will not be modified.
-
-Which domain/initiative is being added?
-Domain code for new rules (e.g., ONB for onboarding):
-Input source:
-  A) Initiative PRD at initiatives/[slug]/prd.md
-  B) Paste capabilities/constraints directly
-```
+**If append mode detected**, inform user with existing rule count and domain list, then use AskUserQuestion:
+- Question 1: "Which domain/initiative is being added, and what domain code? (e.g., ONB for onboarding)" (free text)
+- Question 2: "Input source for business constraints?" with options:
+  - Option A: "Initiative PRD at initiatives/[slug]/prd.md - Business Capabilities section (Recommended)"
+  - Option B: "Paste constraints and regulatory requirements directly"
 
 Also check: does entities.md exist and include the new domain entities? Rules need entity context.
 

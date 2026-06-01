@@ -10,7 +10,7 @@ metadata:
   role: specialist
   scope: documentation
   output-format: document
-  related-skills: pm-domain-model, pm-brd, pm-fsd
+  related-skills: pm-domain-model, pm-entity-registry, pm-business-rules-library, pm-feature-design
 ---
 
 # PM - Project Glossary
@@ -35,7 +35,7 @@ The glossary is additive: each run merges new entries with existing ones. Existi
 **Best used after:**
 - `pm-project-charter` - captures initial product and business terminology
 - `pm-domain-model` - generates the richest set of domain entities and relationships
-- `pm-brd`, `pm-fsd` - introduces business rules and functional terms
+- `pm-brd`, `pm-feature-design` - introduces business rules and functional terms
 - Any phase completion - new terms surface naturally as phases complete
 
 ---

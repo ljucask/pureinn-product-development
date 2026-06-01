@@ -68,22 +68,11 @@ Check for existing artifacts:
 | `feature_list.md` EXISTS + `initiatives/[slug]/` exists | FI Append mode | Add new initiative features, preserve existing list |
 | `feature_list.md` EXISTS, no initiatives | Update mode | Refresh or extend the existing list (use Step 1 option C) |
 
-**If FI Append mode detected**, inform user:
-
-```
-feature_list.md already exists with [N] features from the original product scope.
-
-This session will APPEND new features for a new initiative.
-Existing FEAT-* IDs will not be modified or renumbered.
-
-Which initiative and domain code?
-  Initiative: [e.g., ai-onboarding]
-  Domain code: [e.g., ONB] → new features will be FEAT-ONB-001, FEAT-ONB-002, ...
-
-Input source:
-  A) Initiative PRD at initiatives/[slug]/prd.md (recommended)
-  B) Paste Business Capabilities directly
-```
+**If FI Append mode detected**, show existing feature count and domain list, then use AskUserQuestion:
+- Question 1: "Which initiative slug and domain code? (e.g., initiative: ai-onboarding, domain code: ONB → features will be FEAT-ONB-001...)" (free text)
+- Question 2: "Input source for the new initiative features?" with options:
+  - Option A: "Initiative PRD at initiatives/[slug]/prd.md - Business Capabilities section (Recommended)"
+  - Option B: "Paste Business Capabilities directly"
 
 Also check: does entities.md include the new domain entities? Without domain entities for the new initiative, feature-entity alignment will be guesswork.
 
@@ -285,9 +274,9 @@ A feature is a **blocker** if other features depend on it.
 
 | Feature | Depends on | Blocks | Dependency type |
 |---|---|---|---|
-| [F-011: Submit booking request] | [F-001: Create property listing] | [F-012: Approve booking request] | Hard - cannot test without it |
-| [F-015: Process booking payment] | [F-011, F-012] | [F-016: Issue refund] | Hard - payment depends on confirmed booking |
-| [F-020: Send booking confirmation] | [F-012, F-015] | None | Soft - can stub notification for testing |
+| [FEAT-BKG-011: Submit booking request] | [FEAT-LST-001: Create property listing] | [FEAT-BKG-012: Approve booking request] | Hard - cannot test without it |
+| [FEAT-PAY-015: Process booking payment] | [FEAT-BKG-011, FEAT-BKG-012] | [FEAT-PAY-016: Issue refund] | Hard - payment depends on confirmed booking |
+| [FEAT-NTF-020: Send booking confirmation] | [FEAT-BKG-012, FEAT-PAY-015] | None | Soft - can stub notification for testing |
 
 ---
 
@@ -296,11 +285,11 @@ A feature is a **blocker** if other features depend on it.
 The longest sequence of hard dependencies that determines minimum delivery timeline.
 
 ```
-[F-001] Create listing
-  → [F-011] Submit booking request
-    → [F-012] Approve booking request
-      → [F-015] Process payment
-        → [F-020] Send confirmation
+[FEAT-LST-001] Create listing
+  → [FEAT-BKG-011] Submit booking request
+    → [FEAT-BKG-012] Approve booking request
+      → [FEAT-PAY-015] Process payment
+        → [FEAT-NTF-020] Send confirmation
 ```
 
 **Critical path length:** [X features - estimated [Y] weeks]
@@ -311,9 +300,9 @@ The longest sequence of hard dependencies that determines minimum delivery timel
 
 | Track | Features | No dependency on |
 |---|---|---|
-| [Track A: Property management] | [F-001, F-002, F-003] | Track B, C |
-| [Track B: Search] | [F-010] | Track A (partial) |
-| [Track C: Messaging] | [F-030, F-031] | Track A + B complete |
+| [Track A: Property management] | [FEAT-LST-001, FEAT-LST-002, FEAT-LST-003] | Track B, C |
+| [Track B: Search] | [FEAT-SRC-010] | Track A (partial) |
+| [Track C: Messaging] | [FEAT-MSG-030, FEAT-MSG-031] | Track A + B complete |
 ```
 
 ---
@@ -349,11 +338,11 @@ After Dependency Map is approved.
 
 | Feature | KANO Category | Rationale |
 |---|---|---|
-| [F-001: Create property listing] | Must-be | Without this, hosts cannot use the product |
-| [F-010: Search available properties] | Must-be | Without this, guests cannot book |
-| [F-006: Configure seasonal pricing] | Performance | Better pricing = more host revenue, but basic pricing works |
-| [F-025: AI-generated listing description] | Delighter | Unexpected value-add |
-| [F-050: Multi-currency display] | Indifferent (for MVP market) | Single-market MVP |
+| [FEAT-LST-001: Create property listing] | Must-be | Without this, hosts cannot use the product |
+| [FEAT-SRC-010: Search available properties] | Must-be | Without this, guests cannot book |
+| [FEAT-LST-006: Configure seasonal pricing] | Performance | Better pricing = more host revenue, but basic pricing works |
+| [FEAT-LST-025: AI-generated listing description] | Delighter | Unexpected value-add |
+| [FEAT-PAY-050: Multi-currency display] | Indifferent (for MVP market) | Single-market MVP |
 
 ---
 
@@ -395,12 +384,12 @@ After Dependency Map is approved.
 
 | Feature | Value (1-5) | Complexity (1-5) | Quadrant | Notion Priority |
 |---|---|---|---|---|
-| [F-001: Create property listing] | 5 | 3 | Big Bet | P1 - Critical |
-| [F-010: Search available properties] | 5 | 2 | Quick Win | P1 - Critical |
-| [F-004: Set base nightly price] | 4 | 1 | Quick Win | P1 - Critical |
-| [F-025: AI listing description] | 4 | 2 | Quick Win | P2 - High |
-| [F-006: Configure seasonal pricing] | 3 | 2 | Fill-in | P3 - Medium |
-| [F-040: Analytics dashboard] | 2 | 4 | Time Waster | P4 - Low |
+| [FEAT-LST-001: Create property listing] | 5 | 3 | Big Bet | P1 - Critical |
+| [FEAT-SRC-010: Search available properties] | 5 | 2 | Quick Win | P1 - Critical |
+| [FEAT-LST-004: Set base nightly price] | 4 | 1 | Quick Win | P1 - Critical |
+| [FEAT-LST-025: AI listing description] | 4 | 2 | Quick Win | P2 - High |
+| [FEAT-LST-006: Configure seasonal pricing] | 3 | 2 | Fill-in | P3 - Medium |
+| [FEAT-ANL-040: Analytics dashboard] | 2 | 4 | Time Waster | P4 - Low |
 
 **Notion Priority mapping:**
 - Must-be (KANO) → P1 - Critical

@@ -1,58 +1,58 @@
 ---
 name: pm-business-rule-critical
-description: Define a RULE-A - Critical / Hard Business Invariant. Non-negotiable constraints that protect financial integrity, legal rights, or system consistency. Output is a single structured rule entry ready to add to the BRD Rules Library.
+description: JIT helper - add a single Critical priority rule (hard invariant) to domain/business_rules.md. For rules where violation causes financial loss, legal exposure, or irreversible system damage. No exceptions allowed. Use during pm-feature-design when a missing invariant is identified, or anytime a new hard constraint needs to be formalized.
 license: MIT
 metadata:
   author: https://github.com/ljucask
-  version: "1.0.0"
+  version: "2.0.0"
   domain: product-management
-  triggers: critical invariants, RULE-A, non-negotiable rules, hard constraints
+  triggers: critical invariants, hard constraints, financial integrity rules, legal constraints, non-negotiable rules
   role: specialist
   scope: specification
   output-format: document
-  related-skills: pm-brd, pm-business-rule-core, pm-business-rule-governance, pm-fsd
+  related-skills: pm-business-rules-library, pm-entity-registry, pm-feature-design
 ---
 
-# PM - Business Rule: RULE-A (Critical Invariant)
+# PM - Business Rule: Critical Invariant (JIT Helper)
 
 ## What this skill does
 
-Defines a single RULE-A entry - a Critical / Hard Business Invariant - for the BRD Rules Library.
+Adds a single **Critical priority rule** to `domain/business_rules.md`.
 
-RULE-A rules are **non-negotiable system constraints**. They define what the system MUST or MUST NEVER do to protect:
-- Financial integrity (money cannot be lost, double-paid, or released incorrectly)
-- Legal rights (user data, contractual obligations, regulatory compliance)
-- System consistency (data cannot be left in a corrupt or unrecoverable state)
-
-A rule belongs in RULE-A when:
-- Violation causes financial loss, legal exposure, or irreversible damage
+A rule belongs here when:
+- Violation causes financial loss, legal exposure, or irreversible system damage
 - It must hold in ALL circumstances - no exceptions, no admin overrides
 - Breaching it is a system failure, not a policy deviation
 
-If the rule has exceptions or context-dependent variations → it belongs in RULE-B, not RULE-A.
+If the rule has exceptions or context-dependent variations → use `pm-business-rule-core` (High priority).
+If it is a compliance or policy rule → use `pm-business-rule-governance`.
+
+**When to run:** During `pm-feature-design` when the JIT design reveals a missing invariant that must be captured before build. Or standalone when a business decision introduces a new hard constraint.
 
 ---
 
 ## Dependencies
 
 **Required before running:**
-- `pm-brd` - rules are added to the BRD Rules Library. BRD skeleton must exist.
-- `pm-domain-model` - entity and lifecycle context needed to scope the rule correctly
+- `pm-business-rules-library` - `domain/business_rules.md` must exist (initialized in Phase 4)
+- `pm-entity-registry` - entity and lifecycle context needed to scope the rule correctly
 
 **Produces artifacts used by:**
-- `pm-fsd` - FSD references rule IDs when applying them in execution flows
-- Phase 7 build - developers implement invariant enforcement
+- `pm-feature-design` - JIT design reads BR-IDs when defining Feature Card Section 1 (Biznis Mantinely)
+- Build phase - developers implement invariant enforcement as guard conditions
 
 ---
 
 ## Step 0: Current state check
 
-Check for existing artifacts:
-- BRD Rules Library (RULE-A section)
+Read `domain/business_rules.md`.
 
-List existing RULE-A entries and their IDs. Identify the next available ID (RULE-A-XXX).
+List existing Critical rules and their IDs. Identify the next available BR-[DOMAIN]-NNN for the relevant domain.
 
 Check if a similar invariant already exists - prevent duplicates or conflicting definitions.
+Check: is the rule truly critical (no exceptions) or does it have edge cases? If edge cases exist, this is a High priority rule, not Critical.
+
+Use AskUserQuestion tool to confirm scope and mode before proceeding.
 
 Apply the standard skill interaction pattern (CLAUDE.md).
 
@@ -60,149 +60,86 @@ Apply the standard skill interaction pattern (CLAUDE.md).
 
 ## Step 1: Gather inputs
 
+Use AskUserQuestion for structured choices. Gather via text prompt:
+
 ```
-I need inputs to define a RULE-A - Critical Invariant.
+I need inputs to define a Critical Invariant rule for business_rules.md.
 
 1. WHAT IS THE RULE?
    Describe the constraint in plain language.
-   (e.g., "Payment must never be released to the host without a delivery confirmation",
+   (e.g., "Payment must never be released to the provider without delivery confirmation",
     "A booking cannot be confirmed if the listing is not in Active state",
     "User personal data must be fully deleted within 30 days of an erasure request")
 
 2. WHAT DOES IT PROTECT?
    What would happen if this rule was violated?
-   (financial loss / legal exposure / data corruption / safety risk)
+   (financial loss / legal exposure / data corruption / safety risk / regulatory penalty)
 
-3. SCOPE
-   Which entities and lifecycles does this invariant affect?
-   At what point in the flow must it be enforced?
+3. DOMAIN AND ENTITY
+   Which domain does this rule belong to?
+   (PAY / ORD / USR / REG / BKG / LST / Other: [specify])
+   Which entity from entities.md does it apply to?
 
-4. ENFORCEMENT MECHANISM
-   How should the system enforce it?
-   (block the action / freeze the record / trigger incident alert / require manual review)
+4. WHEN IS IT ENFORCED?
+   At what point in the flow must it be checked?
+   (before state transition / on API call / at payment capture / on data deletion / other)
 
-5. EDGE CASES
-   Are there any known edge cases where this rule is tested?
-   (e.g., concurrent requests, race conditions, admin override attempts)
-   What should happen in those cases?
-
-6. REGULATORY BASIS (if applicable)
-   Is this rule required by regulation? (GDPR, PSD2, local law, financial regulation)
+5. EXCEPTIONS
+   Are there ANY exceptions or admin overrides?
+   If yes → this is a High priority rule, not Critical. Use pm-business-rule-core.
+   If no → confirm this is the right skill.
 ```
 
 ---
 
 ## Step 2: Generate rule entry
 
-Generate in English. Output is a formatted rule block ready to paste into the BRD Rules Library.
+Generate the BR-[DOMAIN]-NNN ID as the next available number in that domain section of business_rules.md.
+
+Generate in English.
 
 ---
 
-### OUTPUT: RULE-A Entry
+### OUTPUT: business_rules.md entry
 
 ```markdown
-## RULE-A-[ID] - [Canonical Rule Name]
+### BR-[DOMAIN]-[NNN]: [Rule Name]
+**Category:** [Payment / Order / User / Compliance / Booking / Listing / other]
+**Affected entity:** [Entity name] (entities.md#[entity])
+**Priority:** Critical
+**Status:** Final
 
-**Category:** A - Critical / Hard Business Invariant
-**Status:** [Draft / Approved]
-**Added:** [date]
-**Applies to Feature Sets:** [FS-IDs where this rule is enforced]
+**Rule:**
+[Description of the invariant in business language. Precise enough to implement. No implementation details.]
+Example: "Payment must not be released to the provider until the Order transitions to Confirmed state AND delivery.confirmed == true."
 
----
+**Formula/Condition:**
+[Exact logical condition or guard expression]
+Example: `release_payment = true ONLY IF order.status == Confirmed AND delivery.confirmed == true`
 
-### Intent
-
-[One sentence: what this rule protects and why it must exist.]
-
-Protection of: [Financial integrity / Legal rights / Data consistency / System integrity]
-
----
-
-### Scope
-
-- **Entities:** [ENT-XXX Name, ENT-XXX Name]
-- **Lifecycles:** [Which state machine this applies to]
-- **Trigger point:** [At which step / transition / action this invariant is checked]
-
----
-
-### Invariant Statement
-
-The precise formulation. Must be unambiguous.
-
-> "The system MUST NOT [X]."
-> "The system MUST [Y] before [Z]."
-
----
-
-### Enforcement
-
-**Mechanism:** [Block action / Freeze record / Trigger incident / Require manual review]
-
-**On violation attempt:**
-1. [What the system does - specific actions, not vague "handle it"]
-2. [Who is notified - actor, ops team, alert system]
-3. [What state the affected entities are left in]
-
----
-
-### Edge Cases
-
-| Scenario | Handling |
-|---|---|
-| [Race condition / concurrent request] | [How system detects and handles] |
-| [Admin attempts to override] | [System blocks - no exceptions for RULE-A] |
-| [External system failure mid-transaction] | [Rollback / compensation approach] |
-
----
-
-### Regulatory Basis (if applicable)
-
-[GDPR Article X / PSD2 / Local law / Financial regulation / None]
-
----
-
-### Violation Severity
-
-**Impact if breached:** [What specifically would happen - financial, legal, data]
-**Detection:** [How would a violation be detected - audit log, alert, customer complaint]
-**Recovery:** [Is recovery possible? If yes, how? If no, what is the consequence?]
+**Enforcement point:** [When in the flow this must be checked]
+**Exceptions:** None - this is a hard invariant
+**Applies to features:** [TBD - filled JIT by pm-feature-design]
+**Source:** [Business decision / legal requirement / financial integrity / regulatory]
 ```
 
 ---
-
-## Internal completeness checklist
-
-<!-- Claude reference only - not shown to user.
-     Use in Step 0 to identify gaps in existing artifacts.
-     Use in Step 2 to verify full coverage before finalizing output. -->
-
-**RULE-A qualification:**
-- [ ] Rule protects: financial integrity, legal rights, data consistency, or system integrity
-- [ ] No exceptions exist (if exceptions exist → should be RULE-B)
-- [ ] Violation causes irreversible harm or legal exposure (not just degraded quality)
-
-**Rule entry completeness:**
-- [ ] Intent: one sentence, clear protection statement
-- [ ] Invariant: precise "MUST NOT" or "MUST" formulation - not vague
-- [ ] Scope: entities and trigger point specific
-- [ ] Enforcement: mechanism named, violation handling step-by-step
-- [ ] Edge cases: at least one concurrent/race condition scenario addressed
-- [ ] Violation severity: impact, detection, and recoverability assessed
-
-**For SaaS/AI products:**
-- [ ] Multi-tenant isolation: "Tenant A MUST NOT access Tenant B's data" is RULE-A
-- [ ] Payment invariants: double-charge, failed refund, incorrect payout are RULE-A
-- [ ] Data deletion: GDPR erasure within required timeframe is RULE-A (legal obligation)
-- [ ] AI output: if AI makes a financial or legal decision without human review → RULE-A if unacceptable
 
 ## Save to
 
-Add this rule entry to the relevant BRD file:
+Append the new rule under the correct domain section in:
 ```
-pureinn-workspace/[project-slug]/artifacts/phase-6/[fs-id]-brd.md
+pureinn-workspace/[project-slug]/domain/business_rules.md
 ```
-Or to the BRD skeleton if adding before Phase 6:
+
+If the domain section does not yet exist, create it as:
 ```
-pureinn-workspace/[project-slug]/artifacts/phase-4-domain/brd-skeleton.md
+## [Domain] Rules
+
+### BR-[DOMAIN]-[NNN]: [Rule Name]
 ```
+
+Update the Rule Coverage Map at the bottom of the file.
+Update the Changelog with: `| [new version] | [date] | BR-[DOMAIN]-[NNN] added | pm-business-rule-critical |`
+
+State update: no state.json change needed (business_rules_initialized already true).

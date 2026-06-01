@@ -1,5 +1,48 @@
 # Changelog
 
+## [2.2.0] - 2026-06-01
+
+### Comprehensive framework consistency pass + full-stack builder role
+
+**AskUserQuestion - guided input collection:**
+- Global CLAUDE.md skill interaction pattern updated: all decision points in Step 0 and Step 1 must use AskUserQuestion tool (not plain text prompts). Recommended option goes first.
+- pm-prd, pm-entity-registry, pm-business-rules-library, pm-features-list: Step 0 mode detection updated to explicitly call for AskUserQuestion at key branch points.
+
+**Full-stack builder role definition (CLAUDE.md):**
+- New "Claude's role in this framework" section before skill interaction pattern.
+- Defines Claude as PM + architect + developer + orchestrator.
+- Instructs: reason like an implementer, proactively flag architectural implications, always close with next step + risk of skipping.
+
+**pm-business-rule-core/critical/governance - repurposed as JIT helpers:**
+- Complete rewrite of all 3 skills. Old RULE-A/B/C → BRD model removed.
+- New: JIT helpers that add a single BR-[DOMAIN]-NNN rule to existing `domain/business_rules.md`.
+- pm-business-rule-critical: Critical priority, hard invariants, no exceptions
+- pm-business-rule-core: High/Medium priority, operational rules, may have exceptions
+- pm-business-rule-governance: Compliance/Regulatory/Policy rules (GDPR, admin constraints)
+- All 3 append to business_rules.md with correct format, domain section, and Changelog update.
+
+**pm-feature-set-overview - deprecated:**
+- Replaced by Feature Cards (pm-feature-card) + Initiative PRD (pm-prd Initiative mode).
+- Deprecation notice added. Legacy content preserved.
+
+**pm-reverse-extract - full rewrite (v1.x → v2.0.0):**
+- Removed: BRD/FSD references, F-001 IDs, feature-sets.md artifact, MFS/FS hierarchy.
+- Added: FEAT-[DOMAIN]-NNN IDs (domain code from entities.md), feature_list.md (Live Register 4), stub Feature Cards in features/cards/, Delivery Stripe assignment, post-extract JIT design queue.
+- Run order documented: pm-entity-registry → pm-business-rules-library → pm-reverse-extract.
+- State update: sets `registers.feature_list_initialized: true`, `current_phase_index: 6`.
+
+**Feature ID examples updated:**
+- pm-features-list: dependency matrix, critical path, KANO table, V×C table: F-001 → FEAT-[DOMAIN]-NNN
+- pm-mvp-scope: MVP table, Post-MVP table: F-001 → FEAT-[DOMAIN]-NNN
+
+**Metadata cleanup (related-skills):**
+- pm-domain-analysis, pm-privacy-requirements, pm-domain-model, pm-glossary: pm-brd/pm-fsd references replaced with pm-entity-registry, pm-business-rules-library, pm-feature-design.
+- pm-feature-set-overview: related-skills updated to pm-feature-card, pm-prd, pm-stripe.
+- pm-business-rule-core/critical/governance: related-skills updated to pm-business-rules-library, pm-entity-registry, pm-feature-design.
+- pm-reverse-extract: related-skills updated to pm-entity-registry, pm-business-rules-library, pm-feature-design, pm-stripe.
+
+---
+
 ## [2.1.0] - 2026-06-01
 
 ### Phase folder naming, PRD_master, initiatives/ folder, universal append mode

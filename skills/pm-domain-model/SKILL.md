@@ -36,8 +36,8 @@ Output is the foundation for BRD (business behavior), FSD (feature specification
 
 **Produces artifacts used by:**
 - `pm-privacy-requirements` - entities and attributes are the PII inventory input
-- `pm-brd` - domain model is the reference for state machines and business rules
-- `pm-fsd` - entities and their attributes are referenced in functional specs
+- `pm-business-rules-library` - domain model is the reference for state machines and business rules
+- `pm-feature-design` - entities and their attributes are referenced in functional specs
 - `pm-features-list` - domain structure informs feature derivation
 - Phase 6 skills - all spec work references this document
 

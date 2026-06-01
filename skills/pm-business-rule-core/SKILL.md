@@ -1,57 +1,58 @@
 ---
 name: pm-business-rule-core
-description: Define a RULE-B - Core Business Rule. Governs standard system behavior - matching logic, pricing, trust, fulfillment, SLAs. May have exceptions. Output is a single structured rule entry ready to add to the BRD Rules Library.
+description: JIT helper - add a single High priority operational rule to domain/business_rules.md. For standard business logic that governs normal system behavior (matching, pricing, SLAs, fulfillment). May have exceptions or context-dependent variations. Use during pm-feature-design or standalone when operational logic needs to be formalized.
 license: MIT
 metadata:
   author: https://github.com/ljucask
-  version: "1.0.0"
+  version: "2.0.0"
   domain: product-management
-  triggers: business rules, RULE-B, core rules, operational rules
+  triggers: business rules, operational rules, pricing rules, SLA rules, fulfillment rules, matching logic
   role: specialist
   scope: specification
   output-format: document
-  related-skills: pm-brd, pm-business-rule-critical, pm-business-rule-governance, pm-fsd
+  related-skills: pm-business-rules-library, pm-entity-registry, pm-feature-design
 ---
 
-# PM - Business Rule: RULE-B (Core Business Rule)
+# PM - Business Rule: Core Operational Rule (JIT Helper)
 
 ## What this skill does
 
-Defines a single RULE-B entry - a Core Business Rule - for the BRD Rules Library.
+Adds a single **High or Medium priority operational rule** to `domain/business_rules.md`.
 
-RULE-B rules define **how the system optimizes and governs standard operations**. They encode the core product logic - the rules that make the product work the way it's supposed to in normal conditions.
-
-A rule belongs in RULE-B when:
+A rule belongs here when:
 - It governs regular system behavior in a specific domain (matching, pricing, trust, fulfillment, SLA)
-- It can have exceptions or context-dependent variations (unlike RULE-A)
+- It CAN have exceptions or context-dependent variations (unlike Critical invariants)
 - Violating it degrades quality or fairness but does not cause immediate irreversible damage
-- It is referenced by FSD flows and other rules
+- It is referenced by feature designs when implementing the business logic
 
-Typical RULE-B domains: matching/search ranking, pricing and discount logic, trust and fraud signals, fulfillment windows and SLAs, booking policies, cancellation logic.
+If the rule has NO exceptions and violation causes financial/legal harm → use `pm-business-rule-critical`.
+If it is a compliance, regulatory, or policy rule → use `pm-business-rule-governance`.
+
+**When to run:** During `pm-feature-design` when the JIT design reveals business logic that should be centralized. Or standalone when operational rules need to be formalized before a feature enters build.
 
 ---
 
 ## Dependencies
 
 **Required before running:**
-- `pm-brd` - rules are added to the BRD Rules Library. BRD skeleton must exist.
-- `pm-domain-model` - entity context needed to scope the rule correctly
+- `pm-business-rules-library` - `domain/business_rules.md` must exist (initialized in Phase 4)
+- `pm-entity-registry` - entity context for scoping the rule
 
 **Produces artifacts used by:**
-- `pm-fsd` - FSD references rule IDs when applying business logic in flows
-- `pm-business-rule-critical` - RULE-B rules may reference RULE-A invariants they interact with
-- Phase 7 build - developers implement the rule logic
+- `pm-feature-design` - JIT design reads BR-IDs when defining Feature Card Section 1 (Biznis Mantinely)
+- Build phase - developers implement the business logic
 
 ---
 
 ## Step 0: Current state check
 
-Check for existing artifacts:
-- BRD Rules Library (RULE-B section)
+Read `domain/business_rules.md`.
 
-List existing RULE-B entries and their IDs. Identify the next available ID.
+List existing rules in the relevant domain. Identify the next available BR-[DOMAIN]-NNN.
 
-Check if a similar rule exists - prevent duplicates. Check if this is really RULE-A (no exceptions possible) or RULE-C (governance/policy, not operational logic).
+Check if a similar rule already exists. Check if this should actually be Critical (no exceptions → pm-business-rule-critical) or a decision table (multiple conditions → add to decision_models.md via pm-business-rules-library).
+
+Use AskUserQuestion tool to confirm scope and mode before proceeding.
 
 Apply the standard skill interaction pattern (CLAUDE.md).
 
@@ -59,8 +60,10 @@ Apply the standard skill interaction pattern (CLAUDE.md).
 
 ## Step 1: Gather inputs
 
+Use AskUserQuestion for structured choices. Gather via text prompt:
+
 ```
-I need inputs to define a RULE-B - Core Business Rule.
+I need inputs to define a Core Operational Rule for business_rules.md.
 
 1. WHAT IS THE RULE?
    Describe the business logic in plain language.
@@ -70,146 +73,79 @@ I need inputs to define a RULE-B - Core Business Rule.
 
 2. WHICH DOMAIN?
    Which business domain does this rule belong to?
-   (Matching / Search ranking / Pricing / Trust / Fulfillment / SLA / Booking policy /
-    Cancellation / Payouts / Notifications / Other: [describe])
+   (PAY / ORD / USR / BKG / LST / SRC / SLA / DISC / Other: [specify])
 
 3. LOGIC
    Can you express it as "If [condition], then [outcome]"?
-   What are the inputs to the rule? What does it produce or decide?
+   What are the inputs? What does it produce or decide?
+   (If multiple conditions produce different outputs → this needs a decision table, not a single rule)
 
 4. EDGE CASES AND EXCEPTIONS
    Are there known exceptions?
    (e.g., "except for premium hosts who have a 72-hour window",
-    "unless the listing has instant booking enabled",
-    "except during a declared force majeure period")
+    "unless the listing has instant booking enabled")
 
-5. RELATED RULES
-   Does this rule depend on or interact with other rules?
-   (e.g., "this rule is overridden by RULE-A-001 if payment is already captured")
-
-6. BUSINESS IMPACT
-   What happens in practice if this rule is consistently violated or broken?
-   (quality degradation, unfairness, customer churn, revenue impact)
+5. PRIORITY
+   High - affects core user experience, must be addressed before launch
+   Medium - operational optimization, can be added before scale
 ```
 
 ---
 
 ## Step 2: Generate rule entry
 
-Generate in English. Output is a formatted rule block ready to paste into the BRD Rules Library.
+Generate the BR-[DOMAIN]-NNN ID as the next available number in that domain section of business_rules.md.
+
+Generate in English. If exceptions exist, document them explicitly.
+If the logic has multiple input conditions producing different outputs → also note that a decision table (TBL-[DOMAIN]-NNN) should be added to decision_models.md.
 
 ---
 
-### OUTPUT: RULE-B Entry
+### OUTPUT: business_rules.md entry
 
 ```markdown
-## RULE-B-[ID] - [Canonical Rule Name]
+### BR-[DOMAIN]-[NNN]: [Rule Name]
+**Category:** [Matching / Pricing / SLA / Fulfillment / Booking / Cancellation / Other]
+**Affected entity:** [Entity name] (entities.md#[entity])
+**Priority:** High / Medium
+**Status:** Draft / Final
 
-**Category:** B - Core Business Rule
-**Domain:** [Matching / Pricing / Trust / Fulfillment / SLA / Booking / Cancellation / Other]
-**Status:** [Draft / Approved]
-**Added:** [date]
-**Applies to Feature Sets:** [FS-IDs where this rule is enforced]
+**Rule:**
+[Description of the rule in business language. No implementation details.]
+Example: "Hosts have 48 hours to respond to a booking request. If no response, the request expires automatically."
 
----
+**Formula/Condition:**
+[Exact logical condition. Mark TBD if not yet finalized - will be finalized JIT by pm-feature-design.]
+Example: `request.status = Expired IF (now - request.created_at) > 48h AND host.response_received == false`
 
-### Intent
+**Exceptions:**
+[List known exceptions, or "None"]
+Example: "Premium hosts (host.tier == Premium) have a 72-hour window instead of 48."
 
-[1-2 sentences: what business problem this rule solves or optimizes. Why this behavior is correct.]
-
----
-
-### Applies To
-
-- **Entities:** [ENT-XXX Name, ENT-XXX Name]
-- **Processes / Lifecycles:** [Which flows and state transitions this rule governs]
-
----
-
-### Rule Logic
-
-Human-language description of the rule. Precise enough to implement, readable by non-engineers.
-
-> "If [condition], then [outcome / system action]."
-
-**Parameters (if rule has configurable values):**
-
-| Parameter | Default value | Who can change | Notes |
-|---|---|---|---|
-| [e.g., Response window] | [48 hours] | [Ops team via config] | [May vary by market] |
-
----
-
-### Decision Table (if logic is multi-condition)
-
-| Condition 1 | Condition 2 | Condition N | Outcome |
-|---|---|---|---|
-| [Value A] | [Value X] | [...] | [Result] |
-| [Value B] | [Value Y] | [...] | [Result] |
-
----
-
-### Edge Cases and Exceptions
-
-| Scenario | Exception / Handling |
-|---|---|
-| [e.g., Instant booking enabled] | [Host approval step skipped - booking auto-confirms] |
-| [e.g., Listing in dispute state] | [Response window suspended until dispute resolved] |
-| [e.g., First-time host] | [Window extended to 72h - lower pressure on new hosts] |
-
----
-
-### Related Rules
-
-| Rule | Relationship |
-|---|---|
-| [RULE-A-XXX] | [This rule is subordinate to RULE-A-XXX - invariant takes precedence] |
-| [RULE-B-XXX] | [This rule interacts with RULE-B-XXX in the following way: ...] |
-| [RULE-C-XXX] | [This rule is implemented via policy RULE-C-XXX] |
-
----
-
-### Business Impact
-
-**Expected outcome when rule is followed:** [What good looks like]
-
-**Degradation when rule is violated consistently:**
-[What goes wrong over time - customer experience, fairness, revenue, trust]
-
-**Metric to monitor:** [The metric that indicates this rule is working - e.g., "Host response rate > 90%"]
+**Applies to features:** [TBD - filled JIT by pm-feature-design]
+**Source:** [Business decision / operational requirement / market standard]
 ```
 
 ---
-
-## Internal completeness checklist
-
-<!-- Claude reference only - not shown to user.
-     Use in Step 0 to identify gaps in existing artifacts.
-     Use in Step 2 to verify full coverage before finalizing output. -->
-
-**RULE-B qualification:**
-- [ ] Rule governs operational/optimization behavior (not a hard invariant → RULE-A)
-- [ ] Rule is specific to a domain (matching, pricing, trust, fulfillment, SLA, etc.)
-- [ ] Exceptions are possible and documented
-
-**Rule entry completeness:**
-- [ ] Intent: what it optimizes and why this behavior is correct
-- [ ] Logic: "If / then" formulation clear enough to implement
-- [ ] Parameters: configurable values identified with defaults
-- [ ] Decision table included if logic has multiple conditions
-- [ ] Edge cases: at least 2 known exception scenarios documented
-- [ ] Related rules: interactions and precedence noted
-
-**For SaaS/AI products:**
-- [ ] AI ranking/scoring rules (search, recommendations) belong in RULE-B with explicit logic
-- [ ] Rate limiting and quota rules belong in RULE-B (with RULE-A override for financial protection)
-- [ ] Retry logic for AI API calls: belongs in RULE-B (max retries, backoff, fallback)
-- [ ] Freemium limits (what free users can/cannot do) are RULE-B entries
-- [ ] Subscription tier capability rules are RULE-B entries
 
 ## Save to
 
-Add this rule entry to the relevant BRD file:
+Append the new rule under the correct domain section in:
 ```
-pureinn-workspace/[project-slug]/artifacts/phase-6/[fs-id]-brd.md
+pureinn-workspace/[project-slug]/domain/business_rules.md
 ```
+
+If the domain section does not yet exist, create it as:
+```
+## [Domain] Rules
+
+### BR-[DOMAIN]-[NNN]: [Rule Name]
+```
+
+If the rule logic implies a decision table, note it:
+```
+> Note: This rule has multiple condition combinations. Consider adding TBL-[DOMAIN]-NNN
+> to decision_models.md via pm-business-rules-library.
+```
+
+Update the Rule Coverage Map. Update the Changelog.

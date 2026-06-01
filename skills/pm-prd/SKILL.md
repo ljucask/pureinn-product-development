@@ -88,16 +88,13 @@ No new research. Pure synthesis.
 **Mode detection (run first):**
 
 1. Does `product/PRD_master.md` already exist?
-   - Yes → **Product PRD already created.** Offer: A) view it, B) switch to Initiative PRD mode if this is FI context, C) done.
+   - Yes → **Product PRD already created.** Use AskUserQuestion: A) view it, B) switch to Initiative PRD mode (FI context), C) done.
 
 2. Does `initiatives/` directory exist in the project workspace?
-   - Yes → **Feature Implementation context detected.** Ask:
-     ```
-     I see this is a Feature Implementation project with active initiatives.
-     Which PRD do you want to generate?
-       A) Initiative PRD - for a new domain/initiative after Track B discovery (saves to initiatives/[slug]/prd.md)
-       B) Product PRD - the full Phase 3 consolidation (saves to product/PRD_master.md)
-     ```
+   - Yes → **Feature Implementation context detected.**
+   - Use AskUserQuestion tool:
+     - Option A: "Initiative PRD - new domain/initiative after Track B discovery (saves to initiatives/[slug]/prd.md)" (Recommended for FI)
+     - Option B: "Product PRD - full Phase 3 consolidation (saves to product/PRD_master.md)" (Greenfield only)
    - No → **Greenfield context.** Proceed to Product PRD mode below.
 
 3. If Initiative PRD mode selected → skip to **INITIATIVE PRD MODE** section at bottom of this skill.
