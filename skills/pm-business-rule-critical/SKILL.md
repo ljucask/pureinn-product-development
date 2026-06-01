@@ -204,5 +204,5 @@ pureinn-workspace/[project-slug]/artifacts/phase-6/[fs-id]-brd.md
 ```
 Or to the BRD skeleton if adding before Phase 6:
 ```
-pureinn-workspace/[project-slug]/artifacts/phase-4/brd-skeleton.md
+pureinn-workspace/[project-slug]/artifacts/phase-4-domain/brd-skeleton.md
 ```

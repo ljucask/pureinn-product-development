@@ -383,5 +383,5 @@ Generate in English.
 ## Save to
 
 ```
-pureinn-workspace/[project-slug]/artifacts/phase-3/business-case.md
+pureinn-workspace/[project-slug]/artifacts/phase-3-define/business-case.md
 ```

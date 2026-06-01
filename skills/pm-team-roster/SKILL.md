@@ -240,7 +240,7 @@ Generate all documents in English.
 ## Save to
 
 ```
-pureinn-workspace/[project-slug]/artifacts/phase-1/team-roster.md
-pureinn-workspace/[project-slug]/artifacts/phase-1/decision-rights-matrix.md
-pureinn-workspace/[project-slug]/artifacts/phase-1/skill-gap-assessment.md
+pureinn-workspace/[project-slug]/artifacts/phase-1-foundation/team-roster.md
+pureinn-workspace/[project-slug]/artifacts/phase-1-foundation/decision-rights-matrix.md
+pureinn-workspace/[project-slug]/artifacts/phase-1-foundation/skill-gap-assessment.md
 ```

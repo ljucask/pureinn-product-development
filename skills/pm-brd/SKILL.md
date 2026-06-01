@@ -229,9 +229,9 @@ Search tip: every rule is tagged RULE-A/B/C-[ID]. Every entity is tagged ENT-[ID
 
 | Document | Location | Notes |
 |---|---|---|
-| Domain Model | pureinn-workspace/[slug]/artifacts/phase-4/domain-model.md | Entities, attributes, relationships |
-| PRD | pureinn-workspace/[slug]/artifacts/phase-3/prd.md | Product definition, scope, metrics |
-| Feature Sets | pureinn-workspace/[slug]/artifacts/phase-5/feature-sets.md | Feature Set list and scope |
+| Domain Model | pureinn-workspace/[slug]/artifacts/phase-4-domain/domain-model.md | Entities, attributes, relationships |
+| PRD | pureinn-workspace/[slug]/artifacts/phase-3-define/prd.md | Product definition, scope, metrics |
+| Feature Sets | pureinn-workspace/[slug]/artifacts/phase-5-planning/feature-sets.md | Feature Set list and scope |
 
 ### 0.7 Glossary & Notation
 
@@ -795,6 +795,6 @@ After all pushes: report counts per target (BRD page updated, Business Rules cre
 ## Save to
 
 ```
-pureinn-workspace/[project-slug]/artifacts/phase-4/brd-skeleton.md
+pureinn-workspace/[project-slug]/artifacts/phase-4-domain/brd-skeleton.md
 pureinn-workspace/[project-slug]/artifacts/phase-6/[fs-id]-brd.md
 ```

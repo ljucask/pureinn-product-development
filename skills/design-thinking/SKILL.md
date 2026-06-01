@@ -374,5 +374,5 @@ How this Define + Ideate output connects to what comes next:
 ## Save to
 
 ```
-pureinn-workspace/[project-slug]/artifacts/phase-3/design-thinking-synthesis.md
+pureinn-workspace/[project-slug]/artifacts/phase-3-define/design-thinking-synthesis.md
 ```

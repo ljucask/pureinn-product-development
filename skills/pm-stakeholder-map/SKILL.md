@@ -232,7 +232,7 @@ Generate all documents in English.
 ## Save to
 
 ```
-pureinn-workspace/[project-slug]/artifacts/phase-1/stakeholder-map.md
-pureinn-workspace/[project-slug]/artifacts/phase-1/raci-matrix.md
-pureinn-workspace/[project-slug]/artifacts/phase-1/escalation-tree.md
+pureinn-workspace/[project-slug]/artifacts/phase-1-foundation/stakeholder-map.md
+pureinn-workspace/[project-slug]/artifacts/phase-1-foundation/raci-matrix.md
+pureinn-workspace/[project-slug]/artifacts/phase-1-foundation/escalation-tree.md
 ```

@@ -43,7 +43,7 @@ No invented market data or assumptions. Claude structures the canvas; user provi
 ## Step 0: Current state check
 
 Check for existing artifact:
-- `pureinn-workspace/[slug]/artifacts/phase-3/lean-canvas.md`
+- `pureinn-workspace/[slug]/artifacts/phase-3-define/lean-canvas.md`
 
 Also check: Go/No-Go verdict. If PIVOT or STOP, flag before proceeding - canvas assumptions may need to change.
 
@@ -282,5 +282,5 @@ Read `pureinn-variables.md` key "Lean Canvas" → if URL present, remind user af
 ## Save to
 
 ```
-pureinn-workspace/[project-slug]/artifacts/phase-3/lean-canvas.md
+pureinn-workspace/[project-slug]/artifacts/phase-3-define/lean-canvas.md
 ```

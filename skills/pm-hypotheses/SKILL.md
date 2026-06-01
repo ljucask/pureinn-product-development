@@ -73,7 +73,7 @@ Stage 2 (Qualitative) feeds from Phase 2 outputs - `pm-personas`, `jtbd-building
 
 ## Step 0: Current state check
 
-Check for an existing Hypothesis Register at `pureinn-workspace/[project-slug]/artifacts/phase-3/hypothesis-register.md`.
+Check for an existing Hypothesis Register at `pureinn-workspace/[project-slug]/artifacts/phase-3-define/hypothesis-register.md`.
 
 Show state table:
 
@@ -386,6 +386,6 @@ Read `pureinn-variables.md` key "Open Questions" → if DB URL present, check `s
 ## Save to
 
 ```
-pureinn-workspace/[project-slug]/artifacts/phase-3/hypothesis-register.md
-pureinn-workspace/[project-slug]/artifacts/phase-3/go-no-go.md
+pureinn-workspace/[project-slug]/artifacts/phase-3-define/hypothesis-register.md
+pureinn-workspace/[project-slug]/artifacts/phase-3-define/go-no-go.md
 ```

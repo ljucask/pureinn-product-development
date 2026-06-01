@@ -347,7 +347,7 @@ Read `pureinn-variables.md` key "Product Roadmap" → if URL present, remind use
 ## Save to
 
 ```
-pureinn-workspace/[project-slug]/artifacts/phase-3/product-roadmap-v1.md
-pureinn-workspace/[project-slug]/artifacts/phase-4/product-roadmap-v2.md
-pureinn-workspace/[project-slug]/artifacts/phase-5/product-roadmap-v3.md
+pureinn-workspace/[project-slug]/artifacts/phase-3-define/product-roadmap-v1.md
+pureinn-workspace/[project-slug]/artifacts/phase-4-domain/product-roadmap-v2.md
+pureinn-workspace/[project-slug]/artifacts/phase-5-planning/product-roadmap-v3.md
 ```

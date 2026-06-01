@@ -378,5 +378,5 @@ When [situation], I want to [motivation], so I can [expected outcome].
 ## Save to
 
 ```
-pureinn-workspace/[project-slug]/artifacts/phase-2/problem-validation-summary.md
+pureinn-workspace/[project-slug]/artifacts/phase-2-discovery/problem-validation-summary.md
 ```

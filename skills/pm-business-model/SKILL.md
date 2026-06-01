@@ -405,5 +405,5 @@ Generate in English.
 ## Save to
 
 ```
-pureinn-workspace/[project-slug]/artifacts/phase-3/business-model-canvas.md
+pureinn-workspace/[project-slug]/artifacts/phase-3-define/business-model-canvas.md
 ```

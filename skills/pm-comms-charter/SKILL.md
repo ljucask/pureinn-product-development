@@ -274,6 +274,6 @@ Time: by [9:00] every business day
 ## Save to
 
 ```
-pureinn-workspace/[project-slug]/artifacts/phase-1/communication-charter.md
-pureinn-workspace/[project-slug]/artifacts/phase-1/meeting-rhythm.md
+pureinn-workspace/[project-slug]/artifacts/phase-1-foundation/communication-charter.md
+pureinn-workspace/[project-slug]/artifacts/phase-1-foundation/meeting-rhythm.md
 ```

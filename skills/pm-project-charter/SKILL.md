@@ -245,6 +245,6 @@ Generate both documents in English.
 ## Save to
 
 ```
-pureinn-workspace/[project-slug]/artifacts/phase-1/project-charter.md
-pureinn-workspace/[project-slug]/artifacts/phase-1/assumptions-risks-register.md
+pureinn-workspace/[project-slug]/artifacts/phase-1-foundation/project-charter.md
+pureinn-workspace/[project-slug]/artifacts/phase-1-foundation/assumptions-risks-register.md
 ```

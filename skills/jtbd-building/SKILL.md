@@ -370,5 +370,5 @@ So I can [expected outcome].
 ## Save to
 
 ```
-pureinn-workspace/[project-slug]/artifacts/phase-2/jtbd-analysis.md
+pureinn-workspace/[project-slug]/artifacts/phase-2-discovery/jtbd-analysis.md
 ```

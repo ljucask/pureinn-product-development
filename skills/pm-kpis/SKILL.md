@@ -405,7 +405,7 @@ OKRs artifact saved locally. Paste content into Notion: [OKRs URL]
 ## Save to
 
 ```
-pureinn-workspace/[project-slug]/artifacts/phase-3/north-star-metric.md
-pureinn-workspace/[project-slug]/artifacts/phase-3/aarrr-metrics.md
-pureinn-workspace/[project-slug]/artifacts/phase-3/okrs.md
+pureinn-workspace/[project-slug]/artifacts/phase-3-define/north-star-metric.md
+pureinn-workspace/[project-slug]/artifacts/phase-3-define/aarrr-metrics.md
+pureinn-workspace/[project-slug]/artifacts/phase-3-define/okrs.md
 ```

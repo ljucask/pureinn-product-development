@@ -299,5 +299,5 @@ Generate in English.
 ## Save to
 
 ```
-pureinn-workspace/[project-slug]/artifacts/phase-2/tech-feasibility-report.md
+pureinn-workspace/[project-slug]/artifacts/phase-2-discovery/tech-feasibility-report.md
 ```

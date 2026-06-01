@@ -557,9 +557,9 @@ After push: report how many entries were created, how many stub Feature Cards we
 ```
 pureinn-workspace/[project-slug]/features/feature_list.md          (Live Register 4 - created)
 pureinn-workspace/[project-slug]/features/cards/FEAT-[DOMAIN]-[NUMBER].md  (one stub per feature)
-pureinn-workspace/[project-slug]/artifacts/phase-5/feature-dependency-map.md
-pureinn-workspace/[project-slug]/artifacts/phase-5/kano-analysis.md
-pureinn-workspace/[project-slug]/artifacts/phase-5/value-complexity-matrix.md
+pureinn-workspace/[project-slug]/artifacts/phase-5-planning/feature-dependency-map.md
+pureinn-workspace/[project-slug]/artifacts/phase-5-planning/kano-analysis.md
+pureinn-workspace/[project-slug]/artifacts/phase-5-planning/value-complexity-matrix.md
 ```
 
 **FI Append mode (new initiative):**

@@ -397,5 +397,5 @@ After push: report counts per DB (created, errors).
 ## Save to
 
 ```
-pureinn-workspace/[project-slug]/artifacts/phase-4/domain-model.md
+pureinn-workspace/[project-slug]/artifacts/phase-4-domain/domain-model.md
 ```

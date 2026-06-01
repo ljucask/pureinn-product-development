@@ -624,34 +624,34 @@ When a skill needs a Notion URL, it:
 
 | Skill | Artifact | Path |
 |---|---|---|
-| pm-stakeholder-map | stakeholder-map.md, raci-matrix.md, escalation-tree.md | artifacts/phase-1/ |
-| pm-project-charter | project-charter.md, assumptions-risks-register.md | artifacts/phase-1/ |
-| pm-team-roster | team-roster.md, decision-rights-matrix.md, skill-gap-assessment.md | artifacts/phase-1/ |
-| pm-comms-charter | communication-charter.md, meeting-rhythm.md | artifacts/phase-1/ |
-| pm-tech-feasibility | tech-feasibility-report.md | artifacts/phase-2/ |
-| pm-domain-analysis | domain-analysis-report.md, legal-regulatory-requirements.md | artifacts/phase-2/ |
-| pm-market-analysis | market-size-analysis.md, competitor-analysis.md, swot-analysis.md, market-timing-rationale.md | artifacts/phase-2/ |
-| pm-personas | customer-segments.md, personas.md, early-adopters-profile.md | artifacts/phase-2/ |
-| jtbd-building | jtbd-analysis.md | artifacts/phase-2/ |
-| pm-problem-validation | problem-validation-summary.md | artifacts/phase-2/ |
-| design-thinking | design-thinking-synthesis.md | artifacts/phase-3/ |
-| pm-hypotheses | hypothesis-register.md, go-no-go.md | artifacts/phase-3/ |
-| pm-kotler | kotler-five-levels.md | artifacts/phase-3/ |
-| pm-lean-canvas | lean-canvas.md | artifacts/phase-3/ |
-| pm-kpis | north-star-metric.md, aarrr-metrics.md, okrs.md | artifacts/phase-3/ |
-| pm-business-case | business-case.md | artifacts/phase-3/ |
-| pm-prd | PRD.md (or PRD_[Domain].md for modular) | product/ |
-| pm-product-roadmap | product-roadmap-v1.md | artifacts/phase-3/ |
-| pm-pitch-deck | pitch-deck-brief.md | artifacts/phase-3/ |
-| pm-domain-model | domain-model.md | artifacts/phase-4/ |
+| pm-stakeholder-map | stakeholder-map.md, raci-matrix.md, escalation-tree.md | artifacts/phase-1-foundation/ |
+| pm-project-charter | project-charter.md, assumptions-risks-register.md | artifacts/phase-1-foundation/ |
+| pm-team-roster | team-roster.md, decision-rights-matrix.md, skill-gap-assessment.md | artifacts/phase-1-foundation/ |
+| pm-comms-charter | communication-charter.md, meeting-rhythm.md | artifacts/phase-1-foundation/ |
+| pm-tech-feasibility | tech-feasibility-report.md | artifacts/phase-2-discovery/ |
+| pm-domain-analysis | domain-analysis-report.md, legal-regulatory-requirements.md | artifacts/phase-2-discovery/ |
+| pm-market-analysis | market-size-analysis.md, competitor-analysis.md, swot-analysis.md, market-timing-rationale.md | artifacts/phase-2-discovery/ |
+| pm-personas | customer-segments.md, personas.md, early-adopters-profile.md | artifacts/phase-2-discovery/ |
+| jtbd-building | jtbd-analysis.md | artifacts/phase-2-discovery/ |
+| pm-problem-validation | problem-validation-summary.md | artifacts/phase-2-discovery/ |
+| design-thinking | design-thinking-synthesis.md | artifacts/phase-3-define/ |
+| pm-hypotheses | hypothesis-register.md, go-no-go.md | artifacts/phase-3-define/ |
+| pm-kotler | kotler-five-levels.md | artifacts/phase-3-define/ |
+| pm-lean-canvas | lean-canvas.md | artifacts/phase-3-define/ |
+| pm-kpis | north-star-metric.md, aarrr-metrics.md, okrs.md | artifacts/phase-3-define/ |
+| pm-business-case | business-case.md | artifacts/phase-3-define/ |
+| pm-prd | PRD_master.md (Greenfield, frozen) / initiatives/[slug]/prd.md (FI Initiative mode) | product/ or initiatives/[slug]/ |
+| pm-product-roadmap | product-roadmap-v1.md | artifacts/phase-3-define/ |
+| pm-pitch-deck | pitch-deck-brief.md | artifacts/phase-3-define/ |
+| pm-domain-model | domain-model.md | artifacts/phase-4-domain/ |
 | pm-entity-registry | entities.md | domain/ (Live Register 1) |
 | pm-business-rules-library | business_rules.md, decision_models.md | domain/ (Live Registers 2+3) |
-| pm-privacy-requirements | pii-inventory.md, privacy-requirements.md, gdpr-action-plan.md | artifacts/phase-4/ |
-| pm-product-roadmap | product-roadmap-v2.md | artifacts/phase-4/ |
+| pm-privacy-requirements | pii-inventory.md, privacy-requirements.md, gdpr-action-plan.md | artifacts/phase-4-domain/ |
+| pm-product-roadmap | product-roadmap-v2.md | artifacts/phase-4-domain/ |
 | pm-features-list | feature_list.md + stub FEAT-*.md cards | features/ + features/cards/ (Live Register 4) |
-| pm-mvp-scope | mvp-scope.md, delivery-stripes.md | artifacts/phase-5/ |
+| pm-mvp-scope | mvp-scope.md, delivery-stripes.md | artifacts/phase-5-planning/ |
 | pm-reverse-extract | feature_list.md, delivery-stripes.md | features/ (migration path - updates root state.json) |
-| pm-product-roadmap | product-roadmap-v3.md | artifacts/phase-5/ |
+| pm-product-roadmap | product-roadmap-v3.md | artifacts/phase-5-planning/ |
 | pm-feature-design | (updates Feature Card Sections 1-3 + domain registers in place) | features/cards/ + domain/ |
 | pm-feature-card | FEAT-[DOMAIN]-[NUMBER].md | features/cards/ |
 | pm-stripe | (orchestration only - updates Feature Card frontmatter status) | features/cards/ |
@@ -1012,6 +1012,8 @@ TRACK A - KNOW WHAT WE WANT  [skip Track B if here]
 
 TRACK B - KNOW THE AREA, NOT THE SOLUTION  [discovery needed, output → Track A]
 
+  Save all discovery outputs to: initiatives/[initiative-slug]/discovery/
+
   [👤 Human] User research (5-10 interviews, target segment only)
   [👤 Human] Competitive analysis (if solution direction unclear)
   [👤 Human] Tech feasibility (with existing stack)
@@ -1019,7 +1021,14 @@ TRACK B - KNOW THE AREA, NOT THE SOLUTION  [discovery needed, output → Track A
   /pm-business-case   → Feature Business Case (revenue/retention impact, ROI, Go/No-Go)
   /pm-kpis            → Feature Success Metrics (depth / behavior / business impact)
 
-  After discovery: apply KANO + V×C to defined feature → enter Track A.
+  After discovery - if new domain is involved (new entities, new business rules):
+  /pm-prd [Initiative mode] → initiatives/[slug]/prd.md (Business Capabilities for this domain)
+  /pm-entity-registry       → domain/entities.md (append mode - new domain entities)
+  /pm-business-rules-library → domain/business_rules.md + decision_models.md (append mode)
+  /pm-features-list [FI append] → features/feature_list.md (append) + stubs in features/cards/
+                                   KANO + V×C saved to initiatives/[slug]/
+
+  Apply KANO + V×C to defined features → enter Track A.
 
 ─────────────────────────────────────────────
 
@@ -1316,7 +1325,7 @@ Goal: Define the feature inventory, prioritize, assign to Delivery Stripes.
     Output: MVP Scope (IN/POST-MVP/CUT), Delivery Stripes (domain-focused channels)
             Feature-to-Stripe assignment + dependency sequencing per stripe
             Updates stripe: field in Feature Card frontmatter
-    Saves:  artifacts/phase-5/mvp-scope.md, artifacts/phase-5/delivery-stripes.md
+    Saves:  artifacts/phase-5-planning/mvp-scope.md, artifacts/phase-5-planning/delivery-stripes.md
     Notion: enrich Features with Phase/Stripe
 
   /pm-product-roadmap  [v3 update]

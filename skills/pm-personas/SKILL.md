@@ -466,7 +466,7 @@ Read `pureinn-variables.md` key "Customer Interviews" → if DB URL present, che
 ## Save to
 
 ```
-pureinn-workspace/[project-slug]/artifacts/phase-2/customer-segments.md
-pureinn-workspace/[project-slug]/artifacts/phase-2/personas.md
-pureinn-workspace/[project-slug]/artifacts/phase-2/early-adopters-profile.md
+pureinn-workspace/[project-slug]/artifacts/phase-2-discovery/customer-segments.md
+pureinn-workspace/[project-slug]/artifacts/phase-2-discovery/personas.md
+pureinn-workspace/[project-slug]/artifacts/phase-2-discovery/early-adopters-profile.md
 ```

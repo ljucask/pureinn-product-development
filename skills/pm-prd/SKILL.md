@@ -50,7 +50,7 @@ The PRD is not a requirements spec and it does NOT contain User Stories. User St
 **Critical PRD rule in FDD+SDD framework:** The PRD must include a **Business Capabilities** section - a list of what the product must enable, written in business language. This section is the direct input for Phase 4 (pm-entity-registry extracts entities from it) and Phase 5 (pm-features-list decomposes capabilities into FDD features). Without Business Capabilities, the AI decomposition into entities and features is guesswork.
 
 **Modular PRD for large products:** If the product covers multiple distinct business domains, split the PRD into domain-specific files to prevent context window overload during Phase 4-5:
-- `product/PRD.md` - high-level router: goals, personas, KPIs, links to sub-PRDs
+- `product/PRD_master.md` - high-level router: goals, personas, KPIs, links to domain sub-PRDs (this IS the frozen master)
 - `product/PRD_[Domain].md` - Business Capabilities per domain (e.g., PRD_Billing.md, PRD_Auth.md)
 
 Feature Cards reference specific PRD sections via `prd_ref` frontmatter field - Claude Code reads only the referenced section during JIT design, not the full PRD.

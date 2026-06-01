@@ -368,6 +368,6 @@ This document is based on PM and desk research. It does not constitute legal adv
 ## Save to
 
 ```
-pureinn-workspace/[project-slug]/artifacts/phase-2/domain-analysis-report.md
-pureinn-workspace/[project-slug]/artifacts/phase-2/legal-regulatory-requirements.md
+pureinn-workspace/[project-slug]/artifacts/phase-2-discovery/domain-analysis-report.md
+pureinn-workspace/[project-slug]/artifacts/phase-2-discovery/legal-regulatory-requirements.md
 ```

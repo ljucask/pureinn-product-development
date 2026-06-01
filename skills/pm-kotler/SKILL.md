@@ -44,7 +44,7 @@ No invented product facts. Claude structures the framework; user provides the pr
 ## Step 0: Current state check
 
 Check for existing artifact:
-- `pureinn-workspace/[slug]/artifacts/phase-3/kotler-five-levels.md`
+- `pureinn-workspace/[slug]/artifacts/phase-3-define/kotler-five-levels.md`
 
 Also check: did Go/No-Go verdict produce a GO? If the hypothesis register shows PIVOT or STOP, flag it before proceeding.
 
@@ -216,5 +216,5 @@ Read `pureinn-variables.md` key "Kotler Five Levels" → if URL present, remind 
 ## Save to
 
 ```
-pureinn-workspace/[project-slug]/artifacts/phase-3/kotler-five-levels.md
+pureinn-workspace/[project-slug]/artifacts/phase-3-define/kotler-five-levels.md
 ```

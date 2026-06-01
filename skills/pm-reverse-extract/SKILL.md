@@ -65,9 +65,9 @@ Can be re-run at any point to re-sync Notion after significant state changes.
 
 Check for existing pureinn-workspace artifacts for this project:
 - `state.json` - does a project already exist?
-- `artifacts/phase-5/features-list.md` - was this skill already run?
-- `artifacts/phase-5/feature-sets.md`
-- `artifacts/phase-5/delivery-stripes.md`
+- `artifacts/phase-5-planning/features-list.md` - was this skill already run?
+- `artifacts/phase-5-planning/feature-sets.md`
+- `artifacts/phase-5-planning/delivery-stripes.md`
 
 Also check: do any of the following exist in the conversation context or project directory?
 - BRD documents
@@ -549,7 +549,7 @@ All other fields written by `/pureinn` (guidance_mode, product_shape, team_struc
 
 `migration: true` signals to `/pureinn` that phases 1-5 were not run through the framework. Phase exit gates for those phases are skipped on resume.
 
-Write pureinn-workspace/[slug]/artifacts/phase-5/ artifacts:
+Write pureinn-workspace/[slug]/artifacts/phase-5-planning/ artifacts:
 - `features-list.md` - from Artifact 1
 - `feature-sets.md` - from Artifact 2
 - `delivery-stripes.md` - from Artifact 3 (Delivery Baseline)
@@ -655,7 +655,7 @@ If any of these URLs are blank: that step is skipped and noted in the migration 
 
 ```
 pureinn-workspace/[project-slug]/state.json          ← UPDATE only (fields listed in Step 5)
-pureinn-workspace/[project-slug]/artifacts/phase-5/features-list.md
-pureinn-workspace/[project-slug]/artifacts/phase-5/feature-sets.md
-pureinn-workspace/[project-slug]/artifacts/phase-5/delivery-stripes.md
+pureinn-workspace/[project-slug]/artifacts/phase-5-planning/features-list.md
+pureinn-workspace/[project-slug]/artifacts/phase-5-planning/feature-sets.md
+pureinn-workspace/[project-slug]/artifacts/phase-5-planning/delivery-stripes.md
 ```

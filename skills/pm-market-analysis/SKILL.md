@@ -518,8 +518,8 @@ Read `pureinn-variables.md` for keys "Competitor Analysis" and "SWOT Analysis" â
 ## Save to
 
 ```
-pureinn-workspace/[project-slug]/artifacts/phase-2/market-size-analysis.md
-pureinn-workspace/[project-slug]/artifacts/phase-2/competitor-analysis.md
-pureinn-workspace/[project-slug]/artifacts/phase-2/swot-analysis.md
-pureinn-workspace/[project-slug]/artifacts/phase-2/market-timing-rationale.md
+pureinn-workspace/[project-slug]/artifacts/phase-2-discovery/market-size-analysis.md
+pureinn-workspace/[project-slug]/artifacts/phase-2-discovery/competitor-analysis.md
+pureinn-workspace/[project-slug]/artifacts/phase-2-discovery/swot-analysis.md
+pureinn-workspace/[project-slug]/artifacts/phase-2-discovery/market-timing-rationale.md
 ```

@@ -323,8 +323,8 @@ After all updates: report counts (Features enriched, errors). Remind user that p
 ## Save to
 
 ```
-pureinn-workspace/[project-slug]/artifacts/phase-5/mvp-scope.md
-pureinn-workspace/[project-slug]/artifacts/phase-5/delivery-stripes.md
+pureinn-workspace/[project-slug]/artifacts/phase-5-planning/mvp-scope.md
+pureinn-workspace/[project-slug]/artifacts/phase-5-planning/delivery-stripes.md
 pureinn-workspace/[project-slug]/features/feature_list.md         (updated: MVP + stripe columns)
 pureinn-workspace/[project-slug]/features/cards/FEAT-*.md         (updated: stripe field in frontmatter)
 ```

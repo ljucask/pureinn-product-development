@@ -396,7 +396,7 @@ After push: report counts (created, errors).
 ## Save to
 
 ```
-pureinn-workspace/[project-slug]/artifacts/phase-4/pii-inventory.md
-pureinn-workspace/[project-slug]/artifacts/phase-4/privacy-requirements.md
-pureinn-workspace/[project-slug]/artifacts/phase-4/gdpr-action-plan.md
+pureinn-workspace/[project-slug]/artifacts/phase-4-domain/pii-inventory.md
+pureinn-workspace/[project-slug]/artifacts/phase-4-domain/privacy-requirements.md
+pureinn-workspace/[project-slug]/artifacts/phase-4-domain/gdpr-action-plan.md
 ```

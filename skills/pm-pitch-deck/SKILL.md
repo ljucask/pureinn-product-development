@@ -49,7 +49,7 @@ Quality rules are derived from analysis of 82 reviewed pre-seed/seed pitch decks
 ## Step 0: Current state check
 
 Check for existing artifact:
-- `pureinn-workspace/[slug]/artifacts/phase-3/pitch-deck-brief.md`
+- `pureinn-workspace/[slug]/artifacts/phase-3-define/pitch-deck-brief.md`
 
 Check which Pureinn artifacts exist (these will be pulled into slides):
 - Lean Canvas, Problem Validation, Personas, Market Analysis, Business Case, Hypothesis Register, Kotler Five Levels
@@ -518,5 +518,5 @@ Read `pureinn-variables.md` key "Investor Pitch" → if URL present, remind user
 ## Save to
 
 ```
-pureinn-workspace/[project-slug]/artifacts/phase-3/pitch-deck-brief.md
+pureinn-workspace/[project-slug]/artifacts/phase-3-define/pitch-deck-brief.md
 ```
