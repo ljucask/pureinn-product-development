@@ -1,5 +1,29 @@
 # Changelog
 
+## [2.3.0] - 2026-06-01
+
+### Examples folder - realistic output showcase
+
+**New: `examples/` folder in plugin repo:**
+- Purpose: set correct user expectations with realistic output artifacts from an ideal FDD+SDD workflow run.
+- First example: `examples/saas-subscription/` - Feature Implementation, subscription billing domain.
+- Covers: Initiative PRD, full domain register set (entities, business rules, feature list), two Feature Cards at different lifecycle stages.
+
+**FEAT-SUB-001.md (6_Promoted_to_Build - complete):**
+- All 4 sections present: Biznis Mantinely, ACs, Technical Design, Realizacny Protokol.
+- Section 3 includes full Mermaid sequenceDiagram (8 participants: Admin, FE, API, SubscriptionService, InvoiceService, Stripe, WebhookController, EmailService).
+- Section 4 includes 7 commits with hashes, 10 test results, feature flag verification, Code Inspection sign-off.
+
+**FEAT-SUB-003.md (3_Design_Inspection_Passed - pre-build):**
+- Sections 1-3 complete. Section 4 empty (written just before build).
+- Shows contrast with FEAT-SUB-001 to illustrate the 6-state Feature Card lifecycle.
+- Covers two-direction flow: cancellation + reactivation path (BR-SUB-003 + BR-SUB-004).
+
+**README.md updated:**
+- Examples section added to plugin README with a reference table.
+
+---
+
 ## [2.2.0] - 2026-06-01
 
 ### Comprehensive framework consistency pass + full-stack builder role

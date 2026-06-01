@@ -173,6 +173,18 @@ pureinn-workspace/
 
 ---
 
+## Examples
+
+The `examples/` folder contains realistic output samples showing what the framework produces in a real project scenario. Use them to calibrate expectations before running skills for the first time.
+
+**Available examples:**
+
+| Example | Playbook | Domain | What it shows |
+|---|---|---|---|
+| [saas-subscription/](examples/saas-subscription/) | Feature Implementation | Subscription Billing (Stripe) | Initiative PRD, full domain registers (entities, business rules, feature list), two Feature Cards at different lifecycle stages (6_Promoted_to_Build + 3_Design_Inspection_Passed) |
+
+---
+
 ## Core principles
 
 - **Impact over activity.** Decisions measured by outcome, not output.
