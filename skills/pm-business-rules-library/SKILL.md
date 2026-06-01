@@ -56,15 +56,37 @@ These registers replace the BRD as standalone documents. Business rules are no l
 
 ---
 
-## Step 0: Current state check
+## Step 0: Current state check + mode detection
 
 Check for existing artifacts:
-- `/domain/business_rules.md`
-- `/domain/decision_models.md`
+- `domain/business_rules.md`
+- `domain/decision_models.md`
 
-Also check: does entities.md exist? Rules need entity context to be meaningful.
+**Mode detection:**
 
-Look for: rules without unique IDs (cannot be referenced), rules with implementation details (those belong in Feature Cards), duplicate rules under different names, missing compliance rules for regulated domains (payments, healthcare, GDPR).
+| Condition | Mode | Behavior |
+|---|---|---|
+| Neither file exists | Create mode | Generate full registers from scratch |
+| Files exist | Append mode | Add new domain rules, preserve existing |
+
+**If append mode detected**, inform user:
+
+```
+business_rules.md and decision_models.md already exist.
+
+This session will APPEND new rules for the new domain/initiative.
+Existing rules (BR-PAY-*, BR-ORD-*, etc.) will not be modified.
+
+Which domain/initiative is being added?
+Domain code for new rules (e.g., ONB for onboarding):
+Input source:
+  A) Initiative PRD at initiatives/[slug]/prd.md
+  B) Paste capabilities/constraints directly
+```
+
+Also check: does entities.md exist and include the new domain entities? Rules need entity context.
+
+Look for: rules without unique IDs (cannot be referenced), rules with implementation details (those belong in Feature Cards), duplicate rules under different names, missing compliance rules for regulated domains.
 
 Apply the standard skill interaction pattern (CLAUDE.md).
 
@@ -319,9 +341,24 @@ Save to: `pureinn-workspace/[project-slug]/domain/decision_models.md`
 
 ## Save to
 
+**Create mode (first run):**
 ```
 pureinn-workspace/[project-slug]/domain/business_rules.md
 pureinn-workspace/[project-slug]/domain/decision_models.md
 ```
+State update → `state.json`: set `registers.business_rules_initialized` and `registers.decision_models_initialized` to `true`.
 
-State update → `pureinn-workspace/[project-slug]/state.json`: set `registers.business_rules` and `registers.decision_models` to `done`.
+**Append mode (new domain/initiative):**
+- Open existing `domain/business_rules.md`
+- Add new domain section with `## [Domain] Rules (BR-[DOMAIN]-*)` header
+- Append new BR-[DOMAIN]-* rules under that section
+- Update the Changelog at bottom of file
+- Same pattern for `domain/decision_models.md` if new decision tables are added
+- Do NOT modify existing rule IDs, rule text, or status of existing rules
+
+**Append checklist:**
+- [ ] Existing rules preserved exactly (ID, text, status unchanged)
+- [ ] New domain section added with clear domain header
+- [ ] No ID collisions (new domain code is distinct: BR-ONB-* vs. existing BR-PAY-*, BR-ORD-*)
+- [ ] Changelog in both files updated
+- [ ] New rules cross-reference existing entities from entities.md (append mode entities must exist)

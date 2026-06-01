@@ -147,7 +147,7 @@ pureinn-workspace/
     pureinn-variables.md    - Notion URLs per project (fill in once)
     glossary.md
     product/
-      PRD.md                - pm-prd output (or PRD_[Domain].md for modular)
+      PRD_master.md         - pm-prd Phase 3 output (frozen after creation, never overwritten)
     domain/                 - Living registers (source of truth for AI during Phase 6-7)
       entities.md           - Entity states + Mermaid state machines (Live Register 1)
       business_rules.md     - Business Rules Library (Live Register 2)
@@ -157,8 +157,18 @@ pureinn-workspace/
       cards/
         FEAT-ORD-001.md     - Feature Cards (one per feature, 6-state lifecycle)
         FEAT-PAY-001.md
+    initiatives/
+      [initiative-slug]/    - One folder per major new initiative (FI Track B or scoped launch)
+        discovery/          - Track B discovery outputs
+        prd.md              - Initiative PRD (scoped, living)
+        kano-analysis.md
+        value-complexity-matrix.md
     artifacts/
-      phase-1/ ... phase-5/
+      phase-1-foundation/
+      phase-2-discovery/
+      phase-3-define/
+      phase-4-domain/
+      phase-5-planning/
 ```
 
 ---

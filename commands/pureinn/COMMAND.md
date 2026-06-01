@@ -438,22 +438,28 @@ If no state.json exists yet:
 pureinn-workspace/[slug]/
   state.json
   assessment.md
-  glossary.md                            ← pm-glossary (cross-phase)
-  product/                               ← PRD and product-level artifacts
-    PRD.md                               ← pm-prd (or PRD_[Domain].md for modular)
-  domain/                                ← 4 living registers (source of truth for AI)
-    entities.md                          ← pm-entity-registry (Entity & State Registry)
-    business_rules.md                    ← pm-business-rules-library (Business Rules Library)
-    decision_models.md                   ← pm-business-rules-library (Decision Models Matrix)
-  features/                              ← feature inventory and cards
-    feature_list.md                      ← pm-features-list (FDD Feature List - Live Register 4)
-    cards/                               ← Feature Cards (one per feature, created by pm-features-list)
+  glossary.md                                    ← pm-glossary (cross-phase)
+  product/
+    PRD_master.md                                ← pm-prd [Product PRD - frozen after Phase 3]
+  domain/                                        ← 4 living registers (append per initiative)
+    entities.md                                  ← pm-entity-registry (Live Register 1)
+    business_rules.md                            ← pm-business-rules-library (Live Register 2)
+    decision_models.md                           ← pm-business-rules-library (Live Register 3)
+  features/
+    feature_list.md                              ← pm-features-list (Live Register 4 - append per initiative)
+    cards/                                       ← Feature Cards (one per feature)
+  initiatives/                                   ← one subfolder per major domain initiative
+    [initiative-slug]/                           ← e.g., ai-onboarding
+      discovery/                                 ← Track B outputs for this initiative
+      prd.md                                     ← pm-prd [Initiative PRD, scoped to this domain]
+      kano-analysis.md                           ← pm-features-list (initiative-scoped)
+      value-complexity-matrix.md                 ← pm-features-list (initiative-scoped)
   artifacts/
-    phase-1/_index.md                    ← Foundation & Collaboration Setup
-    phase-2/_index.md                    ← Ideation & Discovery
-    phase-3/_index.md                    ← Define & Validation
-    phase-4/_index.md                    ← Domain Modeling
-    phase-5/_index.md                    ← Feature Planning
+    phase-1-foundation/_index.md                 ← Foundation & Collaboration Setup
+    phase-2-discovery/_index.md                  ← Ideation & Discovery
+    phase-3-define/_index.md                     ← Define & Validation
+    phase-4-domain/_index.md                     ← Domain Modeling + Register Setup
+    phase-5-planning/_index.md                   ← Feature Planning
 ```
 
 **Feature Implementation:**
@@ -461,14 +467,20 @@ pureinn-workspace/[slug]/
 pureinn-workspace/[slug]/
   state.json
   assessment.md
-  glossary.md                            ← pm-glossary (cross-phase)
+  glossary.md
   domain/
-    entities.md
-    business_rules.md
-    decision_models.md
+    entities.md                                  ← append per initiative
+    business_rules.md                            ← append per initiative
+    decision_models.md                           ← append per initiative
   features/
-    feature_list.md
+    feature_list.md                              ← append per initiative
     cards/
+  initiatives/
+    [initiative-slug]/
+      discovery/
+      prd.md
+      kano-analysis.md
+      value-complexity-matrix.md
 ```
 
 Each `_index.md` is a one-line placeholder: `# [Phase Name] - artifacts will appear here.`

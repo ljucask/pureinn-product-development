@@ -1,6 +1,6 @@
 ---
 name: pm-prd
-description: Generate the Product Requirements Document (PRD) - the Phase 3 consolidation artifact. Synthesizes all Phase 2 and Phase 3 outputs into one coherent product-level document. Most complex skill - requires all predecessor artifacts. Run at end of Phase 3.
+description: Two modes. (1) Product PRD - Phase 3 consolidation artifact synthesizing all Phase 2+3 outputs. Saves to product/PRD_master.md. Frozen after creation. (2) Initiative PRD - Feature Implementation context, after Track B discovery for a large new domain. Leaner document focused on Business Capabilities for that domain only. Saves to initiatives/[slug]/prd.md.
 license: MIT
 metadata:
   author: https://github.com/ljucask
@@ -17,7 +17,20 @@ metadata:
 
 ## What this skill does
 
-Synthesizes all Phase 2 and Phase 3 outputs into a single coherent product-level document:
+**Two modes - detected automatically in Step 0:**
+
+| Mode | Context | Inputs | Output | Frozen? |
+|---|---|---|---|---|
+| **Product PRD** | Greenfield Phase 3 | All Phase 2+3 outputs | `product/PRD_master.md` | Yes - frozen after creation |
+| **Initiative PRD** | Feature Implementation after Track B | `initiatives/[slug]/discovery/` | `initiatives/[slug]/prd.md` | No - living for that initiative |
+
+**Product PRD_master** is the original product scope document. It does NOT change after creation. New scope, new functionality, changed assumptions → new Initiative PRD for that initiative. PRD_master remains as the stable historical record.
+
+**Initiative PRD** is a leaner document scoped to one domain/initiative. It contains Business Capabilities for that domain only - the entry point for pm-entity-registry (append mode), pm-business-rules-library (append mode), and pm-features-list (FI append mode) for this initiative.
+
+---
+
+**Product PRD** synthesizes all Phase 2 and Phase 3 outputs into a single coherent product-level document:
 
 **Phase 2 inputs:**
 - Tech Feasibility Report (Track A)
@@ -70,10 +83,28 @@ No new research. Pure synthesis.
 
 ---
 
-## Step 0: Current state check
+## Step 0: Current state check + mode detection
 
-Check for existing artifacts:
-- PRD
+**Mode detection (run first):**
+
+1. Does `product/PRD_master.md` already exist?
+   - Yes → **Product PRD already created.** Offer: A) view it, B) switch to Initiative PRD mode if this is FI context, C) done.
+
+2. Does `initiatives/` directory exist in the project workspace?
+   - Yes → **Feature Implementation context detected.** Ask:
+     ```
+     I see this is a Feature Implementation project with active initiatives.
+     Which PRD do you want to generate?
+       A) Initiative PRD - for a new domain/initiative after Track B discovery (saves to initiatives/[slug]/prd.md)
+       B) Product PRD - the full Phase 3 consolidation (saves to product/PRD_master.md)
+     ```
+   - No → **Greenfield context.** Proceed to Product PRD mode below.
+
+3. If Initiative PRD mode selected → skip to **INITIATIVE PRD MODE** section at bottom of this skill.
+
+---
+
+**Product PRD mode - check inputs:**
 
 Then map which inputs are available:
 
@@ -523,8 +554,175 @@ This PRD synthesizes the following Phase 2 and Phase 3 artifacts:
 - [ ] Freemium strategy clarified (free tier, upgrade trigger, cost of free users)
 - [ ] SaaS-specific retention risks: single-user risk in B2B (what happens if champion leaves?), multi-seat expansion path
 
-## Save to
+## Save to (Product PRD mode)
 
 ```
-pureinn-workspace/[project-slug]/artifacts/phase-3/prd.md
+pureinn-workspace/[project-slug]/product/PRD_master.md
 ```
+
+**PRD_master is frozen after creation.** Do not update it for new initiatives. New domain/feature scope → Initiative PRD in `initiatives/[slug]/prd.md`.
+
+State update → `state.json`: set `registers.prd_master` to `done`.
+
+---
+
+## INITIATIVE PRD MODE
+
+> Triggered when: Feature Implementation context + Track B discovery complete for a new domain.
+> Inputs: `initiatives/[slug]/discovery/` + Viability Assessment outputs.
+> Purpose: crystallize discovery for this domain into Business Capabilities → feeds pm-entity-registry (append), pm-business-rules-library (append), pm-features-list (FI append).
+
+### Step 0 (Initiative mode): identify initiative
+
+```
+Which initiative is this PRD for?
+
+  Initiative slug: [e.g., ai-onboarding]
+  (This determines the save path: initiatives/[slug]/prd.md)
+
+  Does the discovery folder exist at initiatives/[slug]/discovery/?
+    A) Yes - I'll read the outputs from there
+    B) No / different location - paste or describe discovery outputs below
+```
+
+### Step 1 (Initiative mode): gather inputs
+
+```
+I need the following for the Initiative PRD:
+
+1. DISCOVERY OUTPUTS
+   What did Track B discovery produce? (paste summaries or confirm in context)
+   - User interview insights: [paste or "in context"]
+   - Competitive analysis: [paste or "none"]
+   - Tech feasibility for this domain: [paste or "none"]
+
+2. VIABILITY ASSESSMENT
+   From the Feature Viability Assessment, confirm:
+   - Target segment / persona for this initiative: [answer]
+   - KANO classification: [Must-be / Performance / Delighter]
+   - Success metrics (defined before build): [answer]
+
+3. DOMAIN SCOPE
+   Which business domain does this initiative cover?
+   e.g., "AI-assisted employee onboarding (ONB domain)"
+
+4. EXISTING PRODUCT CONTEXT
+   Confirm that product/PRD_master.md exists and is in context.
+   This initiative PRD references but does not replace the master.
+```
+
+### Step 2 (Initiative mode): generate artifact
+
+Generate a focused PRD for this domain only. No market sizing sections. No full persona rebuild - reference existing personas from PRD_master.
+
+### ARTIFACT: Initiative PRD
+
+Save to: `pureinn-workspace/[project-slug]/initiatives/[slug]/prd.md`
+
+```markdown
+# Initiative PRD - [Initiative Name]
+
+> **Initiative:** [slug]
+> **Domain:** [e.g., ONB - Employee Onboarding]
+> **Date:** [date]
+> **Version:** 1.0
+> **Status:** Draft
+> **Parent PRD:** product/PRD_master.md
+> **Discovery source:** initiatives/[slug]/discovery/
+
+---
+
+## 1. Initiative Context
+
+**Why this initiative:**
+[2-3 sentences: what customer/business problem prompted this? What changed or was validated?]
+
+**Relationship to existing product:**
+[Which existing domains does this touch? What new domain does it introduce?]
+
+**Target users:**
+[Reference personas from PRD_master. Note if this initiative serves a different sub-segment.]
+
+---
+
+## 2. Business Capabilities (FDD+SDD input)
+
+What this initiative must enable. Primary input for pm-entity-registry (append), pm-business-rules-library (append), and pm-features-list (FI append).
+
+**Format:** "The system must enable [actor] to [business outcome]." No User Stories.
+
+**[Domain: e.g., Employee Onboarding]**
+- The system must enable HR Admins to create role-based onboarding templates with task lists.
+- The system must enable the system to generate a personalized onboarding plan for each new employee based on their role.
+- The system must enable employees to track their onboarding progress and complete assigned tasks.
+- The system must enable line managers to monitor the onboarding status of their direct reports.
+- The system must integrate with the HRIS system to receive new hire data automatically.
+
+> Section anchors here - Feature Cards will link to specific capabilities via prd_ref.
+
+---
+
+## 3. Success Metrics
+
+Defined in Viability Assessment - reproduced here for traceability.
+
+| Metric | Target | Measurement method |
+|---|---|---|
+| [e.g., Time-to-productivity] | [Reduced by X%] | [How measured] |
+| [e.g., Onboarding completion rate] | [>X%] | [How measured] |
+| [e.g., HR admin time per hire] | [Reduced by X h] | [How measured] |
+
+---
+
+## 4. Scope
+
+### In Scope (MVP for this initiative)
+
+[High-level: which capabilities from Section 2 are in MVP]
+
+### Out of Scope (MVP)
+
+| Item | Reason | Reconsider when |
+|---|---|---|
+| [capability excluded] | [reason] | [condition] |
+
+---
+
+## 5. Constraints
+
+**Technical constraints specific to this domain:**
+[e.g., AI API cost per onboarding plan, HRIS integration limitations]
+
+**Dependencies on existing product:**
+[Which existing entities, APIs, or Feature Sets this initiative depends on]
+
+**Regulatory / compliance:**
+[Any new compliance requirements introduced by this domain - e.g., data retention for employee data]
+
+---
+
+## 6. Open Questions
+
+| Question | Priority | Owner | Target date |
+|---|---|---|---|
+| [unresolved] | High / Med | [who] | [when] |
+
+---
+
+## 7. Revision History
+
+| Version | Date | Change |
+|---|---|---|
+| 1.0 | [date] | Initial - after Track B discovery |
+```
+
+### Save to (Initiative mode)
+
+```
+pureinn-workspace/[project-slug]/initiatives/[slug]/prd.md
+```
+
+**Next steps after Initiative PRD:**
+1. `/pm-entity-registry` - append mode: extract ONB entities from Business Capabilities, append to domain/entities.md
+2. `/pm-business-rules-library` - append mode: extract ONB rules, append to domain/business_rules.md + decision_models.md
+3. `/pm-features-list` - FI append mode: extract FEAT-ONB-* features, append to features/feature_list.md

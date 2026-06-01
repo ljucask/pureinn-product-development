@@ -51,18 +51,43 @@ This is the direct input for `pm-mvp-scope`, which makes the MVP cut per feature
 
 ---
 
-## Step 0: Current state check
+## Step 0: Current state check + mode detection
 
 Check for existing artifacts:
 - `features/feature_list.md` (Live Register 4)
 - Dependency Map
 - KANO Analysis
 - Value vs. Complexity Matrix
-- Stub Feature Cards in `/features/cards/`
+- Stub Feature Cards in `features/cards/`
 
-Also check: does a PRD with a Business Capabilities section exist? Does entities.md exist? Without PRD Business Capabilities, feature extraction is guesswork. Without entities.md, features may not align with the domain.
+**Mode detection:**
 
-Look for: features named as capabilities ("messaging system") rather than actions ("Send message to guest"), features too large for 14-day delivery (split needed), missing user role attribution, duplicates across functional areas, KANO classification without rationale. Subject Areas and Feature Sets are GROUPING only - all execution logic is per feature.
+| Condition | Mode | Behavior |
+|---|---|---|
+| `feature_list.md` does NOT exist | Create mode | Generate full feature list from PRD_master Business Capabilities |
+| `feature_list.md` EXISTS + `initiatives/[slug]/` exists | FI Append mode | Add new initiative features, preserve existing list |
+| `feature_list.md` EXISTS, no initiatives | Update mode | Refresh or extend the existing list (use Step 1 option C) |
+
+**If FI Append mode detected**, inform user:
+
+```
+feature_list.md already exists with [N] features from the original product scope.
+
+This session will APPEND new features for a new initiative.
+Existing FEAT-* IDs will not be modified or renumbered.
+
+Which initiative and domain code?
+  Initiative: [e.g., ai-onboarding]
+  Domain code: [e.g., ONB] → new features will be FEAT-ONB-001, FEAT-ONB-002, ...
+
+Input source:
+  A) Initiative PRD at initiatives/[slug]/prd.md (recommended)
+  B) Paste Business Capabilities directly
+```
+
+Also check: does entities.md include the new domain entities? Without domain entities for the new initiative, feature-entity alignment will be guesswork.
+
+Look for: features named as capabilities rather than actions, features too large for a single delivery cycle (split needed), missing user role attribution, duplicates, KANO classification without rationale. Subject Areas and Feature Sets are GROUPING ONLY.
 
 Apply the standard skill interaction pattern (CLAUDE.md).
 
@@ -528,10 +553,26 @@ After push: report how many entries were created, how many stub Feature Cards we
 
 ## Save to
 
+**Create mode (first run - Greenfield):**
 ```
-pureinn-workspace/[project-slug]/features/feature_list.md          (Live Register 4)
+pureinn-workspace/[project-slug]/features/feature_list.md          (Live Register 4 - created)
 pureinn-workspace/[project-slug]/features/cards/FEAT-[DOMAIN]-[NUMBER].md  (one stub per feature)
 pureinn-workspace/[project-slug]/artifacts/phase-5/feature-dependency-map.md
 pureinn-workspace/[project-slug]/artifacts/phase-5/kano-analysis.md
 pureinn-workspace/[project-slug]/artifacts/phase-5/value-complexity-matrix.md
 ```
+
+**FI Append mode (new initiative):**
+```
+pureinn-workspace/[project-slug]/features/feature_list.md          (APPENDED - new domain section added)
+pureinn-workspace/[project-slug]/features/cards/FEAT-[NEW-DOMAIN]-[NUMBER].md  (stub cards for new features only)
+pureinn-workspace/[project-slug]/initiatives/[slug]/kano-analysis.md  (initiative-scoped KANO)
+pureinn-workspace/[project-slug]/initiatives/[slug]/value-complexity-matrix.md  (initiative-scoped V×C)
+```
+
+**FI Append rules:**
+- Existing FEAT-* entries in feature_list.md are not modified, renumbered, or removed
+- New initiative features are appended as a new Subject Area section at the bottom
+- Stub Feature Cards created only for new FEAT-[NEW-DOMAIN]-* features
+- KANO + V×C saved to initiative folder (not overwriting master phase-5/ analysis)
+- Dependency map section in feature_list.md updated with cross-initiative dependencies (if any)

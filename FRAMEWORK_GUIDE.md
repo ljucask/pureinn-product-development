@@ -370,17 +370,27 @@ pureinn-workspace/
     pureinn-variables.md          - Notion URLs per project (fill in once)
     glossary.md
     product/
-      PRD.md                      - pm-prd (or PRD_[Domain].md for modular)
+      PRD_master.md               - pm-prd Phase 3 output (frozen after creation, never overwritten)
     domain/                       - 4 living registers (source of truth for AI in Phase 6-7)
-      entities.md                 - pm-entity-registry (Live Register 1)
-      business_rules.md           - pm-business-rules-library (Live Register 2)
-      decision_models.md          - pm-business-rules-library (Live Register 3)
+      entities.md                 - pm-entity-registry (Live Register 1, append per initiative)
+      business_rules.md           - pm-business-rules-library (Live Register 2, append per initiative)
+      decision_models.md          - pm-business-rules-library (Live Register 3, append per initiative)
     features/
-      feature_list.md             - pm-features-list (Live Register 4)
+      feature_list.md             - pm-features-list (Live Register 4, append per initiative)
       cards/
         FEAT-[DOMAIN]-[NUMBER].md - Feature Cards (one per feature)
+    initiatives/
+      [initiative-slug]/          - Separate folder per new major initiative (FI Track B or scoped launch)
+        discovery/                - Track B discovery outputs (interviews, research)
+        prd.md                    - Initiative PRD (scoped, living - separate from PRD_master)
+        kano-analysis.md          - KANO scoped to this initiative
+        value-complexity-matrix.md
     artifacts/
-      phase-1/ ... phase-5/
+      phase-1-foundation/
+      phase-2-discovery/
+      phase-3-define/
+      phase-4-domain/
+      phase-5-planning/
 ```
 
 `pureinn-variables.md` is human-editable. Fill in the Notion URLs once - skills read the file automatically and cache IDs in `state.json` so each Notion DB is fetched at most once per project.

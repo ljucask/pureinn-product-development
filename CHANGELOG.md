@@ -1,5 +1,30 @@
 # Changelog
 
+## [2.1.0] - 2026-06-01
+
+### Phase folder naming, PRD_master, initiatives/ folder, universal append mode
+
+**Workspace structure improvements:**
+- Phase artifact folders renamed from `phase-N/` to `phase-N-name/` (e.g., `phase-3-define/`, `phase-4-domain/`, `phase-5-planning/`) for immediate context at a glance.
+- New `initiatives/[slug]/` folder per project: separates discovery artifacts, Initiative PRD, and scoped KANO/V×C per initiative from the product-level workspace. Returning to a product after months with a new feature no longer pollutes the existing artifact structure.
+
+**PRD dual mode (pm-prd updated):**
+- Greenfield Phase 3 PRD renamed `PRD_master.md` (saved to `product/PRD_master.md`). Frozen after creation - never overwritten.
+- New Initiative PRD mode: scope-limited document saved to `initiatives/[slug]/prd.md`. Living, updatable per initiative. Separate from PRD_master. Drives append mode for all 4 living registers.
+- Mode detection in pm-prd Step 0: checks whether PRD_master exists to determine which mode to apply.
+
+**Universal append mode for all 4 living registers:**
+- `pm-entity-registry`: Create mode (first run) vs. Append mode (subsequent initiatives). New domain entities appended as new sections; existing entities untouched.
+- `pm-business-rules-library`: Create mode vs. Append mode. New domain section added with `## [Domain] Rules (BR-[NEW-DOMAIN]-*)` header; no existing rule IDs modified.
+- `pm-features-list`: Create mode vs. FI Append mode (Feature Implementation, per initiative). New FEAT-[NEW-DOMAIN]-* features appended; KANO + V×C saved to `initiatives/[slug]/` instead of overwriting Phase 5 master analysis.
+- `decision_models.md`: same append pattern as business_rules.md (managed by pm-business-rules-library).
+
+**Updated artifact paths:**
+- pureinn-resume artifact expectation map updated to use named phase folders.
+- FRAMEWORK_GUIDE.md and README.md workspace structure sections updated.
+
+---
+
 ## [2.0.0] - 2026-06-01
 
 ### FDD+SDD hybrid redesign: 4 living registers, JIT per-feature design, atomic commit protocol

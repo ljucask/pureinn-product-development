@@ -53,12 +53,35 @@ This register is the architectural foundation of the FDD+SDD framework. It defin
 
 ---
 
-## Step 0: Current state check
+## Step 0: Current state check + mode detection
 
 Check for existing artifacts:
-- `/domain/entities.md` in current project workspace
+- `domain/entities.md` in current project workspace
 
-Also check: does a PRD with a Business Capabilities section exist? Without it, entity extraction is guesswork.
+**Mode detection:**
+
+| Condition | Mode | Behavior |
+|---|---|---|
+| `entities.md` does NOT exist | Create mode | Generate full register from scratch |
+| `entities.md` EXISTS | Append mode | Add new domain entities, preserve existing |
+
+**If append mode detected**, inform user:
+
+```
+entities.md already exists with [N] entities.
+
+This session will APPEND new entities for the new domain/initiative.
+Existing entities will not be modified.
+
+Which domain/initiative is being added?
+e.g., "ONB - Employee Onboarding" for initiative ai-onboarding
+
+Input source:
+  A) Initiative PRD at initiatives/[slug]/prd.md - Business Capabilities section
+  B) Paste capabilities directly
+```
+
+Also check: does a PRD or Initiative PRD with a Business Capabilities section exist? Without it, entity extraction is guesswork.
 
 Look for: entities defined as technical components (not business objects), states that are technical statuses (not business lifecycle states), missing state machines for entities with complex lifecycles, transitions without triggers.
 
@@ -72,8 +95,10 @@ Apply the standard skill interaction pattern (CLAUDE.md).
 I need inputs for the Entity & State Registry.
 
 1. PRD BUSINESS CAPABILITIES
-   Paste the Business Capabilities section from the PRD, or confirm it is in context.
+   Paste the Business Capabilities section from the PRD or Initiative PRD,
+   or confirm it is in context.
    This is the primary source for entity extraction.
+   (For append mode: paste only the capabilities for the new domain/initiative)
    [paste or "in context"]
 
 2. TEAM MODE
@@ -87,7 +112,7 @@ I need inputs for the Entity & State Registry.
 
 4. DOMAIN OVERVIEW DIAGRAM
    Do you want a high-level domain overview diagram in Excalidraw?
-     A) Yes - generate after entities.md is complete
+     A) Yes - generate after entities are complete (append mode: full diagram including existing entities)
      B) No - entities.md only
 ```
 
@@ -270,8 +295,23 @@ After Excalidraw generation, save the checkpoint for future updates.
 
 ## Save to
 
+**Create mode (first run):**
 ```
 pureinn-workspace/[project-slug]/domain/entities.md
 ```
+State update → `state.json`: set `registers.entities_initialized` to `true`.
 
-State update → `pureinn-workspace/[project-slug]/state.json`: set `registers.entities` to `done`.
+**Append mode (new domain/initiative):**
+- Open existing `domain/entities.md`
+- Add new domain section(s) after last existing entity
+- Update the Changelog section with the new entry:
+  `| 1.X | [date] | Added [Domain] entities for [initiative-slug] initiative | Initiative PRD |`
+- Update `> Last updated:` in the file header
+- Do NOT modify any existing entity sections
+
+**Append checklist:**
+- [ ] Existing entities preserved exactly as-is
+- [ ] New domain entities added as new sections
+- [ ] Entity Relationship Overview table updated with new cross-domain relationships (if any)
+- [ ] Changelog updated
+- [ ] File header `Last updated` updated
