@@ -109,10 +109,10 @@ Wait for user choice before proceeding.
 |---|---|
 | Phase 1 | project-charter.md (solo); + team-roster.md, comms-charter.md (small team); + stakeholder-map.md (full team/corporate) |
 | Phase 2 | tech-feasibility.md, domain-analysis.md, market-analysis.md, personas.md, jtbd-analysis.md, problem-validation.md |
-| Phase 3 | design-thinking-synthesis.md, business-model-canvas.md, north-star-metric.md, aarrr-metrics.md, okrs.md, business-case.md, product-roadmap-v1.md, prd.md |
-| Phase 4 | domain-model.md, pii-inventory.md, privacy-requirements.md, gdpr-action-plan.md, brd-skeleton.md, product-roadmap-v2.md |
-| Phase 5 | features-list.md, dependency-map.md, kano-analysis.md, mvp-scope.md, feature-sets.md, delivery-stripes.md, product-roadmap-v3.md |
-| Phase 6 (per FS) | [fs-id]-overview.md, [fs-id]-brd.md, [fs-id]-fsd.md, feature cards |
+| Phase 3 | design-thinking-synthesis.md, north-star-metric.md, aarrr-metrics.md, okrs.md, business-case.md, product-roadmap-v1.md + product/PRD.md |
+| Phase 4 | artifacts/phase-4/domain-model.md, pii-inventory.md, privacy-requirements.md, gdpr-action-plan.md, product-roadmap-v2.md + domain/entities.md, domain/business_rules.md, domain/decision_models.md |
+| Phase 5 | artifacts/phase-5/mvp-scope.md, delivery-stripes.md, product-roadmap-v3.md + features/feature_list.md + features/cards/FEAT-*.md (stub cards) |
+| Phase 6+7 (per Feature) | Feature Card Sections 1-3 complete (features/cards/FEAT-*.md status: 3_Design_Inspection_Passed or higher) |
 
 ---
 
@@ -126,13 +126,12 @@ PROJECT: [product name]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 PHASE STATUS
-  Phase 1 - Foundation & Collaboration   [✅ Done / ⏭ Skipped / 🔲 To do / ⚠️ Incomplete]
-  Phase 2 - Ideation & Discovery         [...]
-  Phase 3 - Define & Validation          [...]
-  Phase 4 - Domain Modeling              [...]
-  Phase 5 - Feature Planning             [...]
-  Phase 6 - Design by Feature            [...]
-  Phase 7 - Build by Feature             [...]
+  Phase 1 - Foundation & Collaboration        [✅ Done / ⏭ Skipped / 🔲 To do / ⚠️ Incomplete]
+  Phase 2 - Ideation & Discovery              [...]
+  Phase 3 - Define & Validation               [...]
+  Phase 4 - Domain Modeling + Register Setup  [...]
+  Phase 5 - Feature Planning                  [...]
+  Phase 6 + 7 - Delivery Cycle (JIT)         [...]
 
 CURRENT: Phase [N] - [Phase Name]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -277,35 +276,44 @@ On GO or FORCE:
 
 ---
 
-## Phase 6-7 Handling (FDD mode)
+## Phase 6-7 Handling (JIT Delivery mode)
 
 When `current_phase_index` is 6 or 7, show a Stripe-level view instead of a generic phase list.
 
-Read `current_stripe` and `delivery_stripes` from state.json.
+Read `current_stripes` array from state.json. Read `features/feature_list.md` for feature status.
 
-**If a Stripe is active:**
+**If stripes are active:**
+
+Scan `features/cards/` directory. Group Feature Cards by stripe. Show status from frontmatter.
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-PROJECT: [product name]    STRIPE: [Stripe name]
-Goal: [stripe goal]
+PROJECT: [product name]    PHASE 6+7 - JIT DELIVERY
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-SPEC STATUS (Claude context - from pureinn-workspace/)
-  FS-[ID] [Name]    Overview [✅/⚠️/❌]  BRD [✅/⚠️/❌]  FSD [✅/⚠️/❌]  Cards [✅/⚠️/❌]
-  FS-[ID] [Name]    ...
+STRIPE STATUS (from features/cards/ frontmatter)
+  [stripe-name]
+    Active:  FEAT-[ID] - [title]  [status]
+    Queue:   FEAT-[ID] - [title], FEAT-[ID] - [title]
+    Done:    [N] features Promoted
 
-BUILD STATUS → check Notion for current feature status.
-  Tell me which feature to work on next.
+  [stripe-name]
+    Active:  FEAT-[ID] - [title]  [status]
+    Queue:   FEAT-[ID] - [title]
+
+REGISTERS (from domain/)
+  entities.md           [✅ initialized / ❌ missing]
+  business_rules.md     [✅ initialized / ❌ missing]
+  decision_models.md    [✅ initialized / ❌ missing]
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Run /pm-stripe for full Stripe dashboard and routing.
+Run /pm-stripe for full Stripe dashboard and feature routing.
 ```
 
-**If no Stripe is active yet:**
+**If no stripes are active yet:**
 ```
-You're in Phase [6/7] but no active Stripe is set.
-Run /pm-stripe to kick off a new Stripe.
+You're in Phase 6+7 but no active Stripe is set.
+Run /pm-stripe to see the stripe dashboard and advance the first feature.
 ```
 
 ---
@@ -318,4 +326,4 @@ Run /pm-stripe to kick off a new Stripe.
 - Guidance is restored from state.json - do not ask again unless user requests toggle.
 - For Phase 6-7: show Stripe-level view (above). Individual feature status lives in Notion, not in state.json.
 - Always persist state changes to state.json immediately - never defer writes.
-- If state.json is outdated (missing fields like `product_shape` or `delivery_stripes`): fill with defaults and continue without blocking.
+- If state.json is outdated (missing fields like `product_shape`, `current_stripes`, or `registers`): fill with defaults and continue without blocking.

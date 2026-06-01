@@ -1,63 +1,68 @@
 ---
 name: pm-features-list
-description: Generate the complete Features List in FDD format, then run Dependency Map, KANO Analysis, and Value vs. Complexity Matrix. After user approval, push all features to Notion as the initial backlog. Output is the prioritized, dependency-mapped feature inventory ready for MVP scoping in pm-mvp-scope.
+description: Generate the complete Features List in FDD format, organized into the 3-level hierarchy (Subject Area > Feature Set > Feature). Runs Dependency Map, KANO Analysis, and Value vs. Complexity Matrix. Creates stub Feature Cards in /features/cards/ for each feature. After user approval, pushes features to Notion as the initial backlog. Output is the prioritized, dependency-mapped feature inventory and Live Register 4 ready for MVP scoping in pm-mvp-scope.
 license: MIT
 metadata:
   author: https://github.com/ljucask
-  version: "1.0.0"
+  version: "2.0.0"
   domain: product-management
-  triggers: features list, FDD format, KANO analysis, value complexity matrix, feature prioritization, Phase 5
+  triggers: features list, FDD format, feature list, KANO analysis, value complexity matrix, feature prioritization, Phase 5, feature hierarchy
   role: specialist
   scope: planning
   output-format: document
-  related-skills: pm-mvp-scope, pm-domain-model, pm-prd, pm-product-roadmap
+  related-skills: pm-mvp-scope, pm-entity-registry, pm-business-rules-library, pm-prd, pm-product-roadmap
 ---
 
 # PM - Features List
 
 ## What this skill does
 
-Phase 5 / Step 1-3. Takes the product scope from the PRD and produces:
+Phase 5 / Step 1-3. Takes the product scope from PRD Business Capabilities and produces:
 
-1. **Features List** - all features in FDD format (`<action> <result> <object>`), grouped by functional area, with actor and rough scope
+1. **FDD Feature List** (`features/feature_list.md`) - Live Register 4. All features in FDD format (`[Action] [Result] [Object]`), organized in 3-level hierarchy: Subject Area -> Feature Set -> Feature. With actor, priority, dependencies, MVP flag, and stripe assignment.
 2. **Dependency Map** - which features block which, critical path, parallelizable tracks
 3. **KANO Analysis** - must-be / performance / delighter / indifferent classification per feature
 4. **Value vs. Complexity Matrix** - Quick Win / Big Bet / Fill-in / Time Waster scoring per feature
+5. **Stub Feature Cards** - one per feature, created automatically in `/features/cards/FEAT-[DOMAIN]-[NUMBER].md` with status `1_Walkthrough`
 
-After user approval of all four artifacts: push the complete feature inventory to Notion as the initial product backlog (flat list of Feature entries, Status = Backlog, Priority derived from KANO + V×C).
+After user approval: push the complete feature inventory to Notion as the initial product backlog.
 
-This is the direct input for `pm-mvp-scope`, which takes the prioritized list and makes the MVP cut, groups into Feature Sets, and sequences into Delivery Stripes.
+This is the direct input for `pm-mvp-scope`, which makes the MVP cut per feature and assigns features to Delivery Stripes.
 
 ---
 
 ## Dependencies
 
 **Required before running:**
-- `pm-prd` - product scope (in-scope functional areas) is the primary input
-- `pm-domain-model` - entities inform what operations are needed per domain
+- `pm-prd` - PRD Business Capabilities section is the primary input for feature extraction
+- `pm-entity-registry` - entities.md informs what operations are needed per domain
 
 **Recommended before running:**
 - `pm-personas` - user roles drive which features belong to which actor
 - `pm-problem-validation` - validated pains confirm which features address real needs
+- `pm-business-rules-library` - known compliance rules may constrain feature scope
 
 **Produces artifacts used by:**
-- `pm-mvp-scope` - prioritized feature inventory is the direct input for MVP cut + Feature Sets + Stripes
+- `features/feature_list.md` - Live Register 4 of 4 (FDD Feature List)
+- `/features/cards/FEAT-*.md` - stub Feature Cards (one per feature, status: 1_Walkthrough)
+- `pm-mvp-scope` - feature list is the direct input for MVP cut + stripe assignment
 - `pm-product-roadmap` v3 - features populate the delivery view
-- Phase 6 skills - each feature eventually gets a Feature Card, BRD entry, and FSD section
+- Phase 6 skills - pm-feature-design reads Feature Cards JIT before each feature enters build
 
 ---
 
 ## Step 0: Current state check
 
 Check for existing artifacts:
-- Features List
+- `features/feature_list.md` (Live Register 4)
 - Dependency Map
 - KANO Analysis
 - Value vs. Complexity Matrix
+- Stub Feature Cards in `/features/cards/`
 
-Also check: does a PRD exist? A Domain Model? Without the PRD, the feature scope will be undefined. Without the Domain Model, features may not align with the data structure.
+Also check: does a PRD with a Business Capabilities section exist? Does entities.md exist? Without PRD Business Capabilities, feature extraction is guesswork. Without entities.md, features may not align with the domain.
 
-Look for: features named as capabilities ("messaging system") rather than actions ("Send message to guest"), features too large for 2-week delivery (split needed), missing user role attribution, duplicates across functional areas, KANO classification without rationale.
+Look for: features named as capabilities ("messaging system") rather than actions ("Send message to guest"), features too large for 14-day delivery (split needed), missing user role attribution, duplicates across functional areas, KANO classification without rationale. Subject Areas and Feature Sets are GROUPING only - all execution logic is per feature.
 
 Apply the standard skill interaction pattern (CLAUDE.md).
 
@@ -77,25 +82,25 @@ What is the goal for this session?
 Then ask the remaining inputs as plain text:
 
 ```
-I need inputs for the Features List, Dependency Map, and KANO + V×C prioritization.
+I need inputs for the FDD Feature List (Live Register 4), Dependency Map, and KANO + V×C prioritization.
 
-1. PRODUCT SCOPE (from PRD)
-   What are the in-scope functional areas for the product?
-   Paste the "In Scope" section from the PRD, or describe it here.
-   [paste or describe]
+1. PRD BUSINESS CAPABILITIES
+   Paste the Business Capabilities section from the PRD, or confirm it is in context.
+   I will extract features from these capabilities using FDD grammar [Action] [Result] [Object].
+   [paste or "in context"]
 
 2. USER ROLES
    Who are the actors in the system? (e.g., Host, Guest, Admin, Property Manager)
    Which role is primary (most features serve them)?
 
-3. DOMAIN MODEL REFERENCE
-   Are the core entities defined? (paste Entity Catalogue or confirm in context)
-   [paste or "in context"]
+3. ENTITY REGISTRY REFERENCE
+   Is entities.md in context? (informs what operations are needed per domain entity)
+   [confirm or "not yet"]
 
 4. FEATURE IDEAS
    Do you have any feature ideas already written down?
-   (Paste any list, notes, or user stories - even rough, any format)
-   [paste or "nothing yet"]
+   (Paste any list, notes - NO User Stories please, just capabilities or action descriptions)
+   [paste or "nothing yet - extract from PRD only"]
 
 5. KNOWN DEPENDENCIES
    Are there features you know depend on each other?
@@ -105,128 +110,125 @@ I need inputs for the Features List, Dependency Map, and KANO + V×C prioritizat
 6. NOTION SETUP
    Read pureinn-variables.md, key "Feature Backlog". Skip this question if URL is present.
    If blank: do you have a Notion Product Features database to push features to after approval?
-   If yes: paste the database URL - save it to pureinn-variables.md under "Feature Backlog".
-   If no: skip - output will be Markdown only. Fill in pureinn-variables.md later to enable push.
+   [yes - paste URL / no - skip]
 ```
 
 ---
 
-## Step 2: Generate Features List
+## Step 2: Generate FDD Feature List (Live Register 4)
 
 Before generating:
-1. Identify all functional areas from the PRD scope
-2. For each area, derive features using the FDD naming convention: `<action> <result> <object>`
-3. Assign each feature a user role (who performs or benefits from it)
-4. Flag features that are likely too large for 2 weeks (mark for splitting)
-5. Every feature gets an ID (F-001, F-002...) - used in Dependency Map and KANO
+1. Read PRD Business Capabilities - extract all nouns as potential Subject Areas and Feature Sets
+2. Decompose each capability into FDD features: `[Action] [Result] [Object]`
+3. Organize into 3-level hierarchy: Subject Area -> Feature Set -> Feature
+4. Assign each feature: unique ID (FEAT-[DOMAIN]-[NUMBER], e.g., FEAT-ORD-001), user role, rough complexity
+5. Flag features that are likely too large for 14 days (mark for atomic split)
+6. Subject Areas and Feature Sets are GROUPING ONLY - no execution logic at those levels
+
+**ID format:** `FEAT-[DOMAIN]-[NUMBER]`
+Domain codes match business_rules.md: ORD (order), PAY (payment), USR (user/auth), INV (inventory), etc.
 
 Generate in English.
 
 ---
 
-### ARTIFACT 1: Features List
+### ARTIFACT 1: FDD Feature List (Live Register 4)
+
+Save to: `pureinn-workspace/[project-slug]/features/feature_list.md`
 
 ```markdown
-# Features List - [Product Name]
+# FDD Feature List
+# Live Register 4 of 4 - FDD+SDD Framework
 
-> **Phase:** 5 - Feature Planning
-> **Date:** [date]
-> **Format:** FDD - action + result + object
-> **Based on:** PRD v[X], Domain Model v[X]
+> **Product:** [Product Name]
+> **Version:** 1.0
+> **Last updated:** [date]
+> **Based on:** PRD Business Capabilities v[X], entities.md v[X]
+
+---
+
+> **How to read this register:**
+> - Subject Areas and Feature Sets are grouping only - no execution logic
+> - All prioritization, dependencies, MVP cut, and stripe assignment is per Feature
+> - Status reflects Feature Card status (updated by pm-stripe during JIT cycle)
 
 ---
 
 ## Feature Naming Convention
 
-Every feature follows: **`<action> <result> <object>`**
+Every feature follows: **`[Action] [Result] [Object]`**
 
-- Action: what happens (Submit, Calculate, Sync, Generate, Send, Approve, Cancel...)
-- Result: the outcome or state change (booking request, pricing update, availability...)
-- Object: the entity or thing being acted on (calendar, listing, invoice, message...)
+- Action: what happens (Submit, Calculate, Validate, Generate, Send, Approve, Cancel...)
+- Result: the outcome or state change (order confirmation, payment status, availability...)
+- Object: the entity being acted on (card, order, booking, invoice, user account...)
 
 Features must be:
-- Independently implementable
-- Deliverable in 2 weeks or less
-- Testable with clear acceptance criteria (defined later in Phase 6)
+- Independently implementable and testable
+- Deliverable in 14 days or less (if larger: split atomically)
+- Expressed from the business/user value perspective (not technical implementation)
+- NO User Stories format ("As a user I want...") - FDD grammar only
 
 ---
 
-## Features by Functional Area
+## [Subject Area 1: e.g., Order Management]
 
-### [Functional Area 1: e.g., Property Management]
+### Feature Set: [e.g., Order Processing]
 
-| ID | Feature | Actor | Notes |
-|---|---|---|---|
-| F-001 | [e.g., Create property listing] | [Host] | |
-| F-002 | [e.g., Edit property details] | [Host] | |
-| F-003 | [e.g., Upload property photos] | [Host] | |
-| F-004 | [e.g., Set base nightly price] | [Host] | |
-| F-005 | [e.g., Define availability rules] | [Host] | |
-| F-006 | [e.g., Configure seasonal pricing] | [Host] | |
+| ID | Feature | Actor | Priority | MVP | Stripe | Status | Dependencies |
+|---|---|---|---|---|---|---|---|
+| FEAT-ORD-001 | [Create] [draft order] [from cart] | [Customer] | P1 | true | TBD | 1_Walkthrough | none |
+| FEAT-ORD-002 | [Confirm] [order] [after payment] | [System] | P1 | true | TBD | 1_Walkthrough | FEAT-ORD-001, FEAT-PAY-001 |
+| FEAT-ORD-003 | [Cancel] [order] [before fulfillment] | [Customer] | P2 | true | TBD | 1_Walkthrough | FEAT-ORD-001 |
 
----
+### Feature Set: [e.g., Order Fulfillment]
 
-### [Functional Area 2: e.g., Booking Flow]
-
-| ID | Feature | Actor | Notes |
-|---|---|---|---|
-| F-010 | [e.g., Search available properties] | [Guest] | |
-| F-011 | [e.g., Submit booking request] | [Guest] | |
-| F-012 | [e.g., Approve booking request] | [Host] | |
-| F-013 | [e.g., Decline booking request] | [Host] | |
-| F-014 | [e.g., Cancel confirmed booking] | [Guest / Host] | Cancellation policy applies |
-| F-015 | [e.g., Process booking payment] | [System] | Via payment provider |
-| F-016 | [e.g., Issue booking refund] | [System] | Triggered by cancellation |
+| ID | Feature | Actor | Priority | MVP | Stripe | Status | Dependencies |
+|---|---|---|---|---|---|---|---|
+| FEAT-ORD-010 | [Track] [fulfillment status] [for order] | [Customer] | P2 | true | TBD | 1_Walkthrough | FEAT-ORD-002 |
 
 ---
 
-### [Functional Area N: ...]
+## [Subject Area 2: e.g., Payments]
 
-[same structure]
+### Feature Set: [e.g., Card Payments]
+
+| ID | Feature | Actor | Priority | MVP | Stripe | Status | Dependencies |
+|---|---|---|---|---|---|---|---|
+| FEAT-PAY-001 | [Validate] [card payment] [for order] | [System] | P1 | true | TBD | 1_Walkthrough | FEAT-ORD-001 |
+| FEAT-PAY-002 | [Process] [refund] [for cancelled order] | [System] | P1 | true | TBD | 1_Walkthrough | FEAT-ORD-003 |
 
 ---
 
 ## Features Flagged for Splitting
 
-| Feature | Reason | Suggested split |
+| Feature ID | Reason | Suggested split |
 |---|---|---|
-| [F-XXX: name] | Too broad - each part is separately deliverable | [F-XXX-a: ..., F-XXX-b: ...] |
+| [FEAT-XXX-001] | Too broad - each part separately deliverable | [FEAT-XXX-001a: ..., FEAT-XXX-001b: ...] |
 
 ---
 
 ## Feature Count Summary
 
-| Functional Area | Feature count |
-|---|---|
-| [Area 1] | [X] |
-| [Area N] | [X] |
-| **Total** | **[X]** |
-
----
-
-## Actor Coverage
-
-| Actor | Feature count | Primary functional areas |
+| Subject Area | Feature Sets | Features |
 |---|---|---|
-| [Host] | [X] | [Property mgmt, pricing] |
-| [Guest] | [X] | [Search, booking, payment] |
-| [System] | [X] | [Automated: notifications, payments] |
+| [Area 1] | [X] | [X] |
+| **Total** | **[X]** | **[X]** |
 
 ---
 
-## Features Not in Scope
+## Features Not in Scope (from PRD)
 
-| Feature idea | Reason excluded | Reconsider when |
+| Capability | Reason excluded | Reconsider when |
 |---|---|---|
 | [e.g., Native mobile app] | Web-first MVP | After PMF proven on web |
 
 ---
 
-## Open Items
+## Changelog
 
-| Item | Decision needed | Owner |
+| Version | Date | Change |
 |---|---|---|
-| [Unclear feature] | [What needs clarification] | [PM / stakeholder] |
+| 1.0 | [date] | Initial extraction from PRD Business Capabilities |
 ```
 
 ---
@@ -396,9 +398,53 @@ Cut: Time Wasters + Indifferent
 
 ---
 
-## Step 5: Notion push
+## Step 5: Create stub Feature Cards
 
-**Runs after user approves all four artifacts.**
+**Runs after user approves all four artifacts (Feature List, Dependency Map, KANO, V×C).**
+
+For every feature in the Feature List, create a stub Feature Card file at:
+`pureinn-workspace/[project-slug]/features/cards/[FEAT-ID].md`
+
+Stub content (frontmatter only, sections as empty placeholders):
+
+```markdown
+---
+id: [FEAT-ID]
+title: "[Action] [Result] [Object]"
+status: 1_Walkthrough
+stripe: TBD
+owner: unassigned
+priority: [P1/P2/P3 from V×C]
+prd_ref: /product/PRD.md#[relevant-section]
+feature_flag: [domain.feature-name]
+flag_default: off
+---
+
+# Feature Card: {{title}}
+
+## 1. Biznis Mantinely (SDD Input)
+*Populated by pm-feature-design (JIT) - not yet.*
+
+## 2. Acceptance Criteria
+*Populated by pm-feature-design (JIT) - not yet.*
+
+## 3. JIT Technical Design (FDD Design)
+*Populated by pm-feature-design (JIT) - not yet.*
+
+## 4. Realizacny Protokol (Build Verification)
+*Populated after build - not yet.*
+```
+
+After creating all stub cards: confirm count and remind user that:
+- Stripe assignment happens in pm-mvp-scope (updates `stripe:` field in each card)
+- JIT design (Sections 1-3) happens in pm-feature-design just before each feature enters build
+- Feature flags follow format: `[product-domain].[feature-name]` (e.g., `orders.draft-order`)
+
+---
+
+## Step 6: Notion push
+
+**Runs after stub Feature Cards are created.**
 
 If no Notion database is configured (state.json `notion.product_features_data_source_id` is null and user did not provide a URL in Step 1): skip this step, output Markdown files only.
 
@@ -408,28 +454,29 @@ If no Notion database is configured (state.json `notion.product_features_data_so
 2. Check `state.json notion_ids.feature_backlog` → if set, use it directly
 3. If not cached: call `mcp__claude_ai_Notion__notion-fetch` with the URL, extract data source ID from `<data-source url="collection://...">`, save to `state.json notion_ids.feature_backlog`
 
-### 5b. Push Feature entries
+### 6b. Push Feature entries
 
 Call `mcp__claude_ai_Notion__notion-create-pages` with:
 - `parent.type` = `"data_source_id"`
-- `parent.data_source_id` = ID from 5a
+- `parent.data_source_id` = ID from 6a
 
 Create one entry per feature with:
 
 | Notion property | Value | Source |
 |---|---|---|
-| `Artefact Name` | Feature name (FDD format) | Features List |
+| `Artefact Name` | Feature name (FDD format) | Feature List |
 | `Artefact Type` | `"Feature"` | Fixed |
-| `Short Description` | 1-sentence description of what the feature does | Features List |
+| `Short Description` | 1-sentence description of what the feature does | Feature List |
 | `Status` | `"Backlog"` | Fixed |
-| `Priority` | P1 / P2 / P3 / P4 | KANO + V×C mapping (see Artifact 4) |
+| `Priority` | P1 / P2 / P3 | KANO + V×C mapping (see Artifact 4) |
+| `Feature ID` | FEAT-[DOMAIN]-[NUMBER] | Feature List |
 | `template_id` | Feature Template ID from database schema | From notion-fetch result |
 
 Push features in batches of up to 100 per call if the list is large.
 
-### 5c. Confirm
+### 6c. Confirm
 
-After push: report how many entries were created and surface any errors. Remind the user that Phase, Dev Stripe, and Feature Set grouping (MFS/FS) will be added after `pm-mvp-scope` completes the MVP cut.
+After push: report how many entries were created, how many stub Feature Cards were written locally, and surface any errors. Remind the user that MVP cut, stripe assignment, and Subject Area / Feature Set grouping will be finalized after `pm-mvp-scope`.
 
 ---
 
@@ -482,7 +529,8 @@ After push: report how many entries were created and surface any errors. Remind 
 ## Save to
 
 ```
-pureinn-workspace/[project-slug]/artifacts/phase-5/features-list.md
+pureinn-workspace/[project-slug]/features/feature_list.md          (Live Register 4)
+pureinn-workspace/[project-slug]/features/cards/FEAT-[DOMAIN]-[NUMBER].md  (one stub per feature)
 pureinn-workspace/[project-slug]/artifacts/phase-5/feature-dependency-map.md
 pureinn-workspace/[project-slug]/artifacts/phase-5/kano-analysis.md
 pureinn-workspace/[project-slug]/artifacts/phase-5/value-complexity-matrix.md

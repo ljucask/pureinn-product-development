@@ -1,419 +1,250 @@
 ---
 name: pm-feature-card
-description: Generate a Feature Card for a single feature (F-ID). Bridges FDD spec layer to delivery - derives EARS functional requirements and acceptance criteria from the FSD, adds pureinn delivery context (feature flag, rollout plan, kill switch), and produces an implementation checklist for backend, frontend, and testing. One Feature Card per feature. Phase 6 skill - run after FSD is complete for the Feature Set.
+description: Create and manage Feature Cards for individual features (FEAT-ID). In the FDD+SDD framework, Feature Cards are the atomic delivery unit - one card per feature, living in /features/cards/. Cards are created as stubs by pm-features-list, populated in Sections 1-3 by pm-feature-design (JIT), and completed in Section 4 after build. This skill manages the card lifecycle and can create cards manually when needed.
 license: MIT
 metadata:
   author: https://github.com/ljucask
-  version: "1.0.0"
+  version: "2.0.0"
   domain: product-management
-  triggers: feature card, feature spec, implementation spec, EARS requirements, acceptance criteria, feature flag, F-ID
+  triggers: feature card, FEAT-ID, feature spec, feature lifecycle, cards
   role: specialist
   scope: specification
   output-format: document
-  related-skills: pm-fsd, pm-brd, pm-feature-set-overview, pm-stripe
+  related-skills: pm-feature-design, pm-features-list, pm-stripe, pm-entity-registry
 ---
 
 # PM - Feature Card
 
 ## What this skill does
 
-Produces the final spec-layer document for a single feature before it enters build. Bridges the FSD (Feature Set level) to individual developer tasks.
+Manages Feature Cards in the FDD+SDD framework. A Feature Card is the atomic delivery unit - one card per feature, progressing through a defined lifecycle from initial walkthrough to immutable post-build history.
 
-**Document stack position:**
+**Card lifecycle:**
 
-| Layer | Answers | Document |
+| Status | Meaning | Who sets it |
 |---|---|---|
-| Business | What must be true and why | BRD |
-| Functional | How the Feature Set behaves | FSD |
-| **Delivery** | **What is built now, exactly** | **Feature Card - this document** |
-| Technical | How it is coded | Tech specs / ADRs |
+| `1_Walkthrough` | Stub created, feature defined | pm-features-list (auto) |
+| `2_Design` | JIT design complete (Sections 1-3 populated) | pm-feature-design |
+| `3_Design_Inspection_Passed` | Human approved design | Human (Delivery Team) / Human solo confirm |
+| `4_Build` | Build in progress | pm-stripe |
+| `5_Code_Inspection` | Code review in progress | Human / AI guardrail |
+| `6_Promoted_to_Build` | Complete - immutable history | pm-stripe after CI pass |
 
-**Feature Card defines:**
-- EARS-format functional requirements for this specific feature (derived from FSD)
-- Acceptance criteria (derived from FSD ACs for this F-ID)
-- Feature flag name, ON/OFF behavior, rollout plan, kill switch trigger
-- Implementation checklist: backend, frontend, testing, post-launch monitoring
-- Definition of Done
-- Dependencies on other features
+**This skill handles:**
+- Creating stub Feature Cards manually (when not created by pm-features-list)
+- Reviewing Feature Card completeness at any status
+- Advancing status after human confirmation
+- Creating the card template reference
 
-**Feature Card does NOT define:**
-- Business rules → BRD (reference RULE-IDs only)
-- Feature Set-level behavior → FSD (reference section numbers)
-- API contracts, payloads → Tech Specs / ADRs
-- UI/UX designs → Design docs (Figma)
-- Infrastructure → ADRs
-
-One Feature Card = One Feature (F-ID). If a feature is too large for one card, split it into sub-features.
+**Section ownership:**
+- Frontmatter: pm-features-list (init) + pm-mvp-scope (stripe assignment) + pm-feature-design (status updates)
+- Section 1 (Biznis Mantinely): pm-feature-design
+- Section 2 (Acceptance Criteria): pm-feature-design
+- Section 3 (JIT Technical Design): pm-feature-design
+- Section 4 (Realizacny Protokol): pm-stripe (after build)
 
 ---
 
 ## Dependencies
 
-**Required before running:**
-- `pm-fsd` - FSD must be complete for this Feature Set. Feature Card derives requirements and ACs from FSD.
-- `pm-brd` (Phase 6 detail) - RULE-IDs referenced in EARS requirements come from BRD.
+**Required before creating a stub:**
+- Feature must exist in `features/feature_list.md`
 
-**Recommended before running:**
-- `pm-feature-set-overview` - team context on what this FS owns
-- `pm-stripe` - confirms this feature is assigned to an active Stripe
+**Required before Sections 1-3 are complete:**
+- `pm-entity-registry` - entities.md must exist
+- `pm-business-rules-library` - business_rules.md and decision_models.md must exist
+- `pm-feature-design` - JIT design skill that populates Sections 1-3
 
 **Produces artifacts used by:**
-- Phase 7 build - developers implement what the Feature Card specifies
-- `test-master` / `playwright-expert` - ACs are the direct test basis
-- QA team - Definition of Done is the verification checklist
-- Notion - Feature entry updated with Feature Card content and status
+- `pm-feature-design` - reads stub, populates Sections 1-3
+- Build skills - read completed Feature Card as implementation spec
+- `pm-stripe` - Impact Analysis reads BR-IDs in Section 1
 
 ---
 
 ## Step 0: Current state check
 
-Check for existing artifacts:
-- Feature Card for this F-ID
+Check for existing Feature Card at `/features/cards/[FEAT-ID].md`.
 
-If Feature Card exists: show version, completeness, which ACs are covered.
+| Item | Status | Detail |
+|---|---|---|
+| Feature Card | [status from frontmatter] | [title] |
+| Section 1 (Biznis Mantinely) | [populated / stub] | |
+| Section 2 (Acceptance Criteria) | [populated / stub] | |
+| Section 3 (JIT Technical Design) | [populated / stub] | |
+| Section 4 (Realizacny Protokol) | [populated / pending] | |
 
-Also check: does a completed FSD exist for the Feature Set this feature belongs to? Feature Card cannot be written without it. Does a BRD Phase 6 section exist?
-
-Look for: requirements without RULE-ID references, ACs that don't trace back to FSD, missing feature flag section, Implementation TODO without testing tasks, Definition of Done missing post-launch monitoring.
+**Verdict:** [One sentence - what stage the card is in, what is next]
 
 Apply the standard skill interaction pattern (CLAUDE.md).
 
 ---
 
-## Step 1: Gather inputs
+## Step 1: Gather inputs (if creating manually)
+
+Used when creating a card that was not auto-created by pm-features-list.
 
 ```
-I need inputs for the Feature Card - Feature: [F-ID: Name]
+Creating Feature Card for: [FEAT-ID]
 
 1. FEATURE REFERENCE
-   Feature ID and name: [F-ID] [Feature Name]
+   Feature ID: [FEAT-ID]
+   Feature title (FDD format): "[Action] [Result] [Object]"
    Feature Set: [FS-ID: Name]
-   Delivery Stripe: [Stripe N]
-   FSD reference: confirm FSD is in context or paste relevant sections
-   [paste FSD sections or "in context"]
+   From feature_list.md: [confirm feature exists]
 
-2. FEATURE SCOPE
-   What specifically does this feature do - in one sentence?
-   (This will become the Feature Card purpose statement)
+2. STRIPE ASSIGNMENT
+   Assigned stripe: [stripe-name]
+   Priority: [P1 / P2 / P3]
+   Dependencies: [FEAT-IDs this depends on, or "none"]
 
-   Which FSD Acceptance Criteria (AC-XX) apply to this specific feature?
-   (List the AC numbers from the FSD - e.g., AC-01, AC-03, AC-05)
-   [list AC numbers]
+3. PRD REFERENCE
+   Which section of PRD covers this feature's business capability?
+   [PRD.md#section or PRD_Domain.md#section]
 
-3. FEATURE FLAG
-   Suggested flag name: [product_name].[feature_name] or [fs_id].[feature_name]
-   Confirm or provide your preferred naming: [flag name]
-
-   What is the OFF behavior? (what happens for users where the flag is OFF - existing behavior, hidden UI, graceful degradation)
-   [describe]
-
-4. IMPLEMENTATION CONTEXT
-   Backend: which services, data models, or jobs are affected?
-   Frontend: which screens, components, or interactions are affected?
-   Any performance target specific to this feature? (if different from FSD Section 8)
-   [describe what you know - leave blank if covered in FSD]
-
-5. DEPENDENCIES
-   Does this feature depend on other features being done first?
-   (List F-IDs that must be complete before this feature can be built)
-   Does this feature block other features?
-   [list or "none"]
-
-6. OPEN QUESTIONS
-   Any unresolved decisions specific to this feature?
-   [list or "none"]
+4. FEATURE FLAG
+   Flag name (format: domain.feature-name): [name]
+   Default: OFF (mandatory in pureinn)
 ```
 
 ---
 
-## Step 2: Generate artifact
+## Feature Card Template
 
-Before generating:
-1. Extract RULE-IDs from BRD that apply to this feature (cross-reference FSD Section 2.1 with feature scope)
-2. Extract relevant ACs from FSD - only those specified in Step 1 (or all if not specified)
-3. Derive EARS requirements from FSD Section 4 (Main Business Flow + Validations) scoped to this feature
-4. Confirm feature flag name follows the pattern: `[product_slug].[feature_slug]`
-
-Generate in English.
-
----
-
-### ARTIFACT: Feature Card
+This is the canonical template for all Feature Cards in the FDD+SDD framework.
 
 ```markdown
-# Feature Card - [F-ID]: [Feature Name]
+---
+id: FEAT-[DOMAIN]-[NUMBER]
+title: "[Action] [Result] [Object]"
+status: 1_Walkthrough
+stripe: [stripe-name]
+owner: unassigned
+priority: P1
+prd_ref: /product/PRD.md#[section]
+feature_flag: [domain.feature-name]
+flag_default: off
+---
+
+# Feature Card: {{title}}
 
 ---
 
-## 0. Feature Meta
+## 1. Biznis Mantinely (SDD Input)
 
-| Field | Value |
-|---|---|
-| Feature ID | F-[ID] |
-| Feature Name | [Feature Name] |
-| Feature Set | FS-[ID]: [Feature Set Name] |
-| Delivery Stripe | Stripe [N] |
-| Status | Ready for Dev |
-| Feature Flag | `[product_name].[feature_name]` |
-| Priority | [KANO tier] - [V×C quadrant: Quick Win / Big Bet / Fill-in] |
-| BRD Reference | [RULE-IDs that apply to this feature] |
-| FSD Reference | [FS-ID] FSD Section [X], AC-[XX], AC-[XX] |
+*Populated by pm-feature-design (JIT). Links to live registers as source of truth.*
 
----
+- **Affected entity:** [Entity Name](/domain/entities.md#entity-name)
+  - State before: [state]
+  - State after: [state]
+  - Transition trigger: [event name]
 
-## 1. Purpose & User Value
+- **Business rules enforced:**
+  - [BR-XXX-001](/domain/business_rules.md#br-xxx-001) - [Rule name: one-line summary]
 
-**What this feature does:**
-[1-2 sentences: what the feature does for the user and what business outcome it enables]
-
-**Who benefits:** [Role] - [how they benefit]
-
-**Business rules enforced:** [RULE-A/B/C-IDs] - [1-line summary of each]
+- **Decision model:** [TBL-XXX-01](/domain/decision_models.md#tbl-xxx-01) - [Table name, if applicable]
 
 ---
 
-## 2. Functional Requirements (EARS)
+## 2. Acceptance Criteria
 
-*Derived from FSD Section 4. EARS format: When / While / Where / The system shall.*
+*Derived from register state + business rules by pm-feature-design. Used for human Black-box testing.*
 
-**FR-001: [Requirement Name]**
-While [precondition - entity state or user context], when [trigger action], the system shall [response].
-*(Enforces [RULE-ID])*
-
-**FR-002: [Requirement Name]**
-When [trigger], the system shall [response] within [constraint if applicable].
-*(Reference: FSD Section [X.X])*
-
-**FR-003: [Requirement Name - Failure handling]**
-While [precondition], when [invalid or failing condition], the system shall [reject / block / return error].
-*(Enforces [RULE-ID])*
-
-**FR-004: [Requirement Name - Feature Flag]**
-Where `[feature_flag_name]` is active, the system shall [behavior specific to this feature].
-Where `[feature_flag_name]` is inactive, the system shall [fallback / existing behavior].
-
----
-
-## 3. State Interactions
-
-*State transitions this feature is responsible for triggering. Reference: FSD Section 6 + BRD Section 2.*
-
-| Entity | From State | To State | Trigger | Rule |
-|---|---|---|---|---|
-| ENT-[Name] | [State A] | [State B] | [This feature's action] | [RULE-ID] |
-
----
-
-## 4. Acceptance Criteria
-
-*Derived from FSD AC-[XX]. Scope: this specific feature only.*
-
-### AC-01 - [Happy Path Name] *(from FSD AC-[XX])*
-
-- **Given** [precondition: who, what state]
+### AC-01: [Happy Path Name]
+- **Given** [precondition: entity state, actor]
 - **When** [action]
-- **Then** [observable outcome - entity state, event emitted, user feedback]
-  - **And** [additional outcome]
+- **Then** [observable outcome: state change, event emitted, user signal]
+  - **And** [secondary outcome]
 
-### AC-02 - [Failure: Guard Name] *(from FSD AC-[XX])*
-
+### AC-02: [Guard Failure Name]
 - **Given** [precondition]
-- **When** [invalid condition or failing action]
-- **Then** [system blocks / rejects / returns error]
-  - **And** [rule enforced, referenced by RULE-ID]
+- **When** [invalid condition]
+- **Then** [system blocks, entity unchanged, error signal]
 
-### AC-03 - [Feature Flag OFF behavior]*
-
-- **Given** flag `[feature_flag_name]` is OFF
-- **When** [same trigger]
-- **Then** [existing behavior unchanged / feature hidden / graceful degradation]
+### AC-03: Feature Flag OFF
+- **Given** flag `[feature_flag]` is OFF
+- **When** [same trigger as AC-01]
+- **Then** [existing behavior unchanged / feature hidden]
 
 ---
 
-## 5. Error Handling (business-level)
+## 3. JIT Technical Design (FDD Design)
 
-*Error conditions and business outcomes. HTTP codes belong in ADRs, not here.*
+*Populated by pm-feature-design just before build. Approved during Design Inspection.*
 
-| Scenario | System behavior | Rule reference | User signal |
-|---|---|---|---|
-| [Guard condition fails] | [System blocks action, entity unchanged] | [RULE-ID] | [Error displayed / notification sent] |
-| [External dependency fails] | [System falls back to / retries / queues] | [RULE-ID if applicable] | [User informed / silent retry] |
-| [Concurrency conflict] | [System rejects duplicate, returns existing] | [RULE-ID] | [Idempotent response] |
+### Data flow and object interaction
 
----
-
-## 6. Non-Functional Requirements
-
-*Feature-scoped NFRs. Inherit from FSD Section 8 unless noted differently here.*
-
-**Performance:**
-- [Specific target for this feature, e.g., "validation response < 200ms during user input"]
-- Inherits from FSD: [yes / see FSD Section 8.2 for details]
-
-**Security:**
-- [Authentication required: yes / no]
-- [Authorization: which roles can trigger this feature]
-- [PII involved: [yes - which fields] / no]
-
-**Feature flag behavior:**
-- **ON:** [Full feature behavior as specified above]
-- **OFF:** [Fallback: existing behavior / feature hidden / graceful degradation]
-- **Kill switch:** disable flag if [error rate > 5% / specific condition]
-- **Rollout:** Internal → 5% → 25% → 50% → 100%
-
----
-
-## 7. Implementation Checklist
-
-### Backend
-- [ ] [Data model change: migration for X table / add Y field to ENT-Z]
-- [ ] [Service: implement X method with guard for RULE-ID]
-- [ ] [Enforce state transition: ENT-X from [State A] to [State B]]
-- [ ] [Emit event: [event.name] when [condition]]
-- [ ] [Idempotency: check for [unique key] before creating new entity]
-- [ ] Register feature flag `[feature_flag_name]` (default: OFF)
-
-### Frontend
-- [ ] [Component: create / update X component]
-- [ ] [State: handle [State A] and [State B] display]
-- [ ] [Validation: client-side check for [field] before submission]
-- [ ] [Error state: display [error message] when [scenario]]
-- [ ] [Loading state: show during [async operation]]
-- [ ] [Feature flag gate: hide / show UI element based on flag]
-
-### Testing
-- [ ] Unit tests: [X service / Y method] with [happy path + failure cases]
-- [ ] Integration test: [flow description covering AC-01]
-- [ ] Integration test: [failure scenario from AC-02]
-- [ ] Feature flag test: AC-03 - OFF state (existing behavior unchanged)
-- [ ] Regression: no >10% latency increase on existing API calls
-- [ ] Idempotency test: duplicate request returns existing entity
-
-### Post-launch monitoring
-- [ ] Monitor [key signal from FSD Section 9.1] for 4 weeks minimum
-- [ ] Set alert for [alert condition from FSD Section 9.3]
-- [ ] Kill switch ready: disable `[feature_flag_name]` if error rate > 5%
-
----
-
-## 8. Dependencies
-
-**This feature depends on:**
-| F-ID | Feature Name | Why |
-|---|---|---|
-| F-[ID] | [Feature Name] | [Must exist before this feature can run / entity must be in State X] |
-
-**This feature blocks:**
-| F-ID | Feature Name | Why |
-|---|---|---|
-| F-[ID] | [Feature Name] | [This feature's output is required input for that feature] |
-
----
-
-## 9. Definition of Done
-
-- [ ] All EARS requirements implemented and passing
-- [ ] All ACs from Section 4 pass (AC-01, AC-02, AC-03)
-- [ ] Feature flag `[feature_flag_name]` implemented, default OFF
-- [ ] OFF state verified: existing behavior unchanged
-- [ ] No regression: existing API calls within +10% latency
-- [ ] Code reviewed
-- [ ] Feature deployed behind flag (not yet enabled)
-- [ ] Post-launch monitoring active (4 weeks minimum per pureinn delivery standard)
-
----
-
-## 10. Open Questions
-
-| # | Question | Owner | Status |
-|---|---|---|---|
-| 1 | [TBD] | [TBD] | Open |
+```mermaid
+sequenceDiagram
+    %% Generated by pm-feature-design
+    %% [FEAT-ID]: [title]
 ```
 
+### Files to modify
+- [TBD - populated by pm-feature-design]
+
 ---
 
-## Internal completeness checklist
+## 4. Realizacny Protokol (Build Verification)
 
-<!-- Claude reference only - not shown to user.
-     Use in Step 0 to identify gaps in existing artifacts.
-     Use in Step 2 to verify full coverage before finalizing output. -->
+*Populated after successful build and Code Inspection. After 6_Promoted_to_Build: immutable.*
 
-**Section 0 - Feature Meta must cover:**
-- [ ] F-ID, FS-ID, Stripe, Status, Feature Flag name all filled
-- [ ] BRD RULE-IDs referenced
-- [ ] FSD AC numbers referenced (traceability)
+- **Production code commits:**
+  - `[feat: description](commit_hash_link)`
 
-**Section 2 - EARS Requirements:**
-- [ ] At least 3 requirements: happy path, failure/guard, feature flag behavior
-- [ ] Each requirement traces to FSD section or BRD rule
-- [ ] Feature flag ON/OFF behavior explicitly stated as FR
+- **Test files:**
+  - `tests/unit/[ServiceName]_[FEAT-ID]_spec.[ext]`
 
-**Section 3 - State Interactions:**
-- [ ] All state transitions this feature triggers are listed
-- [ ] Each transition has entity + from/to state + trigger + rule reference
+- **Feature flag OFF verification:** [yes / no]
 
-**Section 4 - Acceptance Criteria:**
-- [ ] ACs derived from FSD - AC numbers cited
-- [ ] At minimum: happy path + at least one guard failure + feature flag OFF behavior
-- [ ] Given/When/Then format strictly followed
-- [ ] "Then" is observable and testable without knowledge of internals
-
-**Section 5 - Error Handling:**
-- [ ] No HTTP codes (those belong in ADRs)
-- [ ] Each scenario: system behavior + rule reference + user signal
-
-**Section 6 - Feature Flag:**
-- [ ] Flag name defined (format: product.feature)
-- [ ] ON behavior stated
-- [ ] OFF behavior stated (what existing behavior is preserved)
-- [ ] Kill switch trigger defined
-- [ ] Rollout sequence: Internal → 5% → 25% → 50% → 100%
-
-**Section 7 - Implementation Checklist:**
-- [ ] Backend: data model change, service logic, state transition, event emission, idempotency, flag registration
-- [ ] Frontend: component, state display, validation, error/loading states, flag gate
-- [ ] Testing: unit, integration (happy + failure), flag OFF test, regression, idempotency
-- [ ] Post-launch: monitoring signal, alert condition, kill switch ready
-
-**Section 9 - Definition of Done:**
-- [ ] All ACs listed by number
-- [ ] Feature flag requirement explicit
-- [ ] OFF state verification explicit
-- [ ] Regression test explicit
-- [ ] 4-week monitoring explicit
-
-**Does NOT duplicate:**
-- [ ] No business rule text repeated from BRD (reference RULE-ID only)
-- [ ] No entity attribute definitions (reference Domain Model)
-- [ ] No API endpoints or payloads (reference Tech Specs / ADRs)
-- [ ] No UI/UX designs (reference Figma / Design docs)
+- **Code Inspection:** [Approved by [reviewer] on YYYY-MM-DD / AI guardrail passed on YYYY-MM-DD]
+```
 
 ---
 
 ## Notion push
 
-**Runs after user approves the Feature Card.**
+**Runs after Feature Card Section 4 is complete (status: 6_Promoted_to_Build).**
 
-Read `pureinn-variables.md` key "Feature Backlog" → get DB URL. Find the existing Feature entry for F-[ID] (search by feature name or F-ID property).
+Read `pureinn-variables.md` key "Feature Backlog" → get DB URL. Find the existing Feature entry for this FEAT-ID.
 
 Update the Feature entry via `notion-update-page`:
 
 | Notion property | Value |
 |---|---|
-| `Status` | `Ready for Dev` |
-| `Feature Flag` | `[feature_flag_name]` |
-| `Stripe` | `Stripe [N]` |
-| `BRD Reference` | `[RULE-IDs]` |
-| `FSD Reference` | `[FS-ID] AC-[XX], AC-[XX]` |
+| `Status` | `Promoted to Build` |
+| `Feature Flag` | `[feature_flag from frontmatter]` |
+| `Stripe` | `[stripe from frontmatter]` |
 
-Push Feature Card content as the Notion page body (replaces stub if pm-reverse-extract created one earlier).
+Push Feature Card content as the Notion page body.
 
 If Feature Backlog URL is blank in pureinn-variables.md: save locally, remind user to update Notion manually.
+
+---
+
+## Internal completeness checklist
+
+<!-- Claude reference only - not shown to user -->
+
+**Stub (1_Walkthrough) must have:**
+- [ ] All frontmatter fields populated (id, title, status, stripe, owner, priority, prd_ref, feature_flag, flag_default)
+- [ ] Sections 1-4 present as stubs (not filled)
+
+**After pm-feature-design (2_Design) must have:**
+- [ ] Section 1: entity, state before/after, BR-IDs linked
+- [ ] Section 2: at minimum AC-01 (happy path), AC-02 (one guard failure), AC-03 (flag OFF)
+- [ ] Section 3: mermaid sequenceDiagram (not empty), files to modify listed
+
+**After build (6_Promoted_to_Build) must have:**
+- [ ] Section 4: at least one commit link, at least one test file path
+- [ ] Section 4: flag OFF verification stated
+- [ ] Section 4: Code Inspection result with date
+- [ ] Status: 6_Promoted_to_Build
 
 ---
 
 ## Save to
 
 ```
-pureinn-workspace/[project-slug]/artifacts/phase-6/[f-id]-feature-card.md
+pureinn-workspace/[project-slug]/features/cards/[FEAT-ID].md
 ```

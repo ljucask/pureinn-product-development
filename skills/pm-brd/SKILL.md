@@ -1,6 +1,6 @@
 ---
 name: pm-brd
-description: Generate or update a Business Requirements Document (BRD). Living document - skeleton created in Phase 4 (system boundary, state machine overview), full detail written in Phase 6 per Feature Set. Defines how the system behaves from a business perspective - rules, state machines, processes, events. Never duplicates Domain Model content.
+description: "[DEPRECATED in FDD+SDD v2.0] BRD content is now distributed across the 4 Live Registers. Use pm-entity-registry (entities + state machines), pm-business-rules-library (business rules + decision models). The pm-brd skill is preserved for legacy projects only."
 license: MIT
 metadata:
   author: https://github.com/ljucask
@@ -15,7 +15,19 @@ metadata:
 
 # PM - Business Requirements Document (BRD)
 
-## What this skill does
+> **DEPRECATED in FDD+SDD Framework v2.0**
+>
+> BRD content is now distributed across the 4 Live Registers:
+> - Entity state machines + relationships → `pm-entity-registry` → `/domain/entities.md`
+> - Business rules catalog (BR-IDs) → `pm-business-rules-library` → `/domain/business_rules.md`
+> - Decision models + tables → `pm-business-rules-library` → `/domain/decision_models.md`
+>
+> **For new projects:** Use `pm-entity-registry` and `pm-business-rules-library` instead.
+> **For legacy projects using the old BRD format:** This skill is preserved below for continuity.
+
+---
+
+## What this skill does (legacy)
 
 Defines how the system behaves from a business perspective. The BRD is the authoritative source for:
 - Business rules (RULE-A/B/C library)

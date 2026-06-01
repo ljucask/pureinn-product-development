@@ -1,7 +1,7 @@
 {
   "name": "pureinn-product-development",
-  "version": "1.7.0",
-  "description": "AI-native product development framework. 34 skills covering the full product lifecycle: discovery, validation, domain modeling, feature planning, and FDD delivery. Three playbooks: Greenfield, Feature Implementation, Rebuild. From zero to launch.",
+  "version": "2.0.0",
+  "description": "AI-native product development framework. 37 skills covering the full product lifecycle. FDD+SDD hybrid: 4 living registers, JIT design per feature, atomic commit protocol, Impact Analysis. Three playbooks: Greenfield, Feature Implementation, Rebuild. From zero to launch.",
   "author": {
     "name": "ljucask",
     "email": "lukas.kianka@gmail.com"
@@ -17,7 +17,12 @@
     "validation",
     "domain-modeling",
     "fdd",
+    "sdd",
     "feature-driven-development",
+    "spec-driven-development",
+    "jit",
+    "feature-card",
+    "living-registers",
     "personas",
     "jtbd",
     "lean-canvas",

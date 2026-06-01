@@ -1,5 +1,40 @@
 # Changelog
 
+## [2.0.0] - 2026-06-01
+
+### FDD+SDD hybrid redesign: 4 living registers, JIT per-feature design, atomic commit protocol
+
+**Breaking changes:**
+- `pm-brd` and `pm-fsd` are deprecated. Replaced by `pm-entity-registry`, `pm-business-rules-library`, and `pm-feature-design` (JIT).
+- Feature Sets are no longer spec units. BRD and FSD per Feature Set are removed from Phase 6.
+- Delivery Stripes are no longer time-boxes. They are domain-focused parallel channels.
+- Feature IDs changed from `F-001` to `FEAT-[DOMAIN]-[NUMBER]` (e.g., FEAT-ORD-001).
+- Workspace structure changed: `artifacts/phase-6/` replaced by `domain/`, `features/`, `features/cards/`.
+
+**New skills:**
+- `pm-entity-registry`: Live Register 1. Extracts entities from PRD Business Capabilities. Generates Mermaid stateDiagram-v2 per entity. Guard conditions left TBD for JIT finalization by pm-feature-design.
+- `pm-business-rules-library`: Live Registers 2+3. Manages business_rules.md (BR-[DOMAIN]-[NUMBER]) and decision_models.md (TBL-[DOMAIN]-[NUMBER]). Draft mode in Phase 4, rules finalized JIT in Phase 6.
+- `pm-feature-design`: JIT Design by Feature. Replaces pm-fsd. Per feature, per stripe, just before build. Two atomic commits: (1) register updates (guard conditions, rule finalization), (2) Feature Card Sections 1-3 (Biznis Mantinely, ACs, Mermaid sequenceDiagram + files to modify). Feature Implementation mode: scans real codebase before generating sequence diagram.
+
+**Updated skills:**
+- `pm-feature-card`: Complete rewrite. New 4-section template. Frontmatter: FEAT-[DOMAIN]-[NUMBER] ID, stripe, prd_ref, feature_flag. Section 1: Biznis Mantinely (BR-IDs, entity guard conditions). Section 2: Acceptance Criteria (happy path, guard failure, flag OFF). Section 3: JIT Technical Design (Mermaid sequenceDiagram, files to modify). Section 4: Realizacny Protokol (commits, tests, flag verification, Code Inspection - immutable after 6_Promoted_to_Build). 6-state lifecycle: 1_Walkthrough -> 2_Design -> 3_Design_Inspection_Passed -> 4_Build -> 5_Code_Inspection -> 6_Promoted_to_Build.
+- `pm-features-list`: ID format FEAT-[DOMAIN]-[NUMBER]. Creates stub Feature Cards (status: 1_Walkthrough) automatically. Saves to features/feature_list.md (Live Register 4) + features/cards/.
+- `pm-mvp-scope`: MVP Cut per Feature. Delivery Stripes = domain-focused channels. Feature-to-Stripe assignment. Updates stripe: field in Feature Card frontmatter. Removed feature-sets.md artifact.
+- `pm-stripe`: Complete rewrite. JIT orchestrator. Step 0: Stripe Dashboard. Step 1A: advance next feature (READY = status 1_Walkthrough + all deps Promoted + one at a time per stripe). Step 1B: mark Design Inspection passed. Step 1C: mark feature Promoted (fills Section 4). Step 1D: Impact Analysis when BR-ID changes. Atomic commit protocol enforced.
+- `pm-prd`: No User Stories (incompatible with FDD). Business Capabilities section mandatory (drives entity extraction and feature decomposition). Modular PRD option for large products: PRD.md + PRD_[Domain].md. prd_ref in Feature Card links to specific section.
+- `pm-diagrams`: Mermaid.js as primary tool for Claude Code (state machines in entities.md, sequence diagrams in Feature Card Section 3). Excalidraw remains secondary for human communication.
+
+**Deprecated skills (content preserved for legacy projects):**
+- `pm-brd`: Deprecated. Content split into pm-entity-registry (state machines, entities) and pm-business-rules-library (rules, decision models).
+- `pm-fsd`: Deprecated. Replaced by pm-feature-design (JIT per Feature).
+
+**Documentation updated:**
+- COMMAND.md: Phase 4-7 flow, dashboard, workspace structure, artifact paths, state.json, Framework Map.
+- FRAMEWORK_GUIDE.md: Phase 4+5+6+7 sections, artifact chain, Feature Set vs Stripe vs Feature Card, workspace structure, migration path.
+- README.md: Skill map Phase 4+5+6+7, project output structure, MCP table.
+
+---
+
 ## [1.7.0] - 2026-06-01
 
 ### Add pm-feature-card skill; replace feature-forge references throughout

@@ -32,7 +32,15 @@ Synthesizes all Phase 2 and Phase 3 outputs into a single coherent product-level
 - Business Case
 - Product Roadmap v1
 
-The PRD is not a requirements spec. It is a product-level document that answers: who is this for, what problem does it solve, why does it matter, what does success look like, what are the commercial assumptions. Phase 4+ uses it as the stable reference.
+The PRD is not a requirements spec and it does NOT contain User Stories. User Stories belong to Scrum/XP methodology and are incompatible with FDD. The PRD is a product-level document that answers: who is this for, what problem does it solve, why does it matter, what does success look like, what are the commercial assumptions.
+
+**Critical PRD rule in FDD+SDD framework:** The PRD must include a **Business Capabilities** section - a list of what the product must enable, written in business language. This section is the direct input for Phase 4 (pm-entity-registry extracts entities from it) and Phase 5 (pm-features-list decomposes capabilities into FDD features). Without Business Capabilities, the AI decomposition into entities and features is guesswork.
+
+**Modular PRD for large products:** If the product covers multiple distinct business domains, split the PRD into domain-specific files to prevent context window overload during Phase 4-5:
+- `product/PRD.md` - high-level router: goals, personas, KPIs, links to sub-PRDs
+- `product/PRD_[Domain].md` - Business Capabilities per domain (e.g., PRD_Billing.md, PRD_Auth.md)
+
+Feature Cards reference specific PRD sections via `prd_ref` frontmatter field - Claude Code reads only the referenced section during JIT design, not the full PRD.
 
 No new research. Pure synthesis.
 
@@ -54,9 +62,10 @@ No new research. Pure synthesis.
 - `pm-tech-feasibility` - technical context
 
 **Produces artifacts used by:**
-- Phase 4 domain modeling (`pm-domain-model`, `pm-brd`)
-- Phase 5 feature planning (`pm-features-list`, `pm-mvp-scope`)
-- Phase 6 design and spec work (all skills)
+- Phase 4 entity extraction (`pm-entity-registry` reads Business Capabilities → entities.md)
+- Phase 5 feature decomposition (`pm-features-list` reads Business Capabilities → feature_list.md)
+- Phase 5 rules init (`pm-business-rules-library` reads known constraints from Domain Analysis)
+- Feature Cards (`prd_ref` field points to specific PRD sections for JIT context)
 - External stakeholders, investors, team onboarding
 
 ---
@@ -308,15 +317,34 @@ It is NOT a feature spec. Feature specifications are generated per Feature Set i
 
 ## 7. Product Scope
 
+### Business Capabilities (FDD+SDD input)
+
+What the product must enable, written as business capabilities. This section is the primary input for entity extraction (Phase 4) and feature decomposition (Phase 5).
+
+**Format:** "The system must enable [actor] to [business outcome]." No User Stories. No technical implementation. No "As a user I want..." format.
+
+**[Domain 1: e.g., Order Management]**
+- The system must enable customers to create, confirm, and manage orders.
+- The system must enable customers to track order fulfillment status in real time.
+- The system must enforce payment validation before any order is confirmed.
+
+**[Domain 2: e.g., Payments]**
+- The system must enable secure card payment processing for orders.
+- The system must enable automated refund processing for cancelled orders within 5 business days.
+
+**[Domain N: ...]**
+- [capability]
+
+> This section is referenced by Feature Cards via `prd_ref` - write with section anchors so individual capabilities can be linked directly.
+
 ### In Scope (MVP)
 
-[High-level description of what the product does - functional areas, not feature list]
+[High-level summary of which capability domains are in MVP]
 
-1. [Functional area 1: e.g., Property listing management]
-2. [Functional area 2: e.g., Booking calendar sync]
-3. [Functional area 3: e.g., Guest communication automation]
+1. [Domain 1: e.g., Order Management - full capability set]
+2. [Domain 2: e.g., Payments - card processing only, no crypto]
 
-> Feature-level detail is defined in Phase 6 BRD + FSD per Feature Set.
+> Feature-level detail defined in Phase 5 (pm-features-list) and Phase 6 JIT design (pm-feature-design).
 
 ### Out of Scope (MVP)
 
@@ -448,11 +476,18 @@ This PRD synthesizes the following Phase 2 and Phase 3 artifacts:
 - [ ] Early adopter profile - who specifically are the first 10-50 customers
 - [ ] B2B: buyer vs. user distinction
 
+**Business Capabilities must cover:**
+- [ ] Capabilities written in business language ("The system must enable X to do Y")
+- [ ] NO User Stories format ("As a user I want...") - incompatible with FDD
+- [ ] Capabilities grouped by domain (each domain = potential Subject Area in feature_list.md)
+- [ ] Capabilities specific enough for AI to extract entities and features from them
+- [ ] Section anchors present so Feature Cards can link to specific capabilities via prd_ref
+
 **Product Scope must cover:**
-- [ ] In-scope functional areas (MVP) - clear statement of what the product does
+- [ ] In-scope capability domains (MVP) - which domains are in MVP
 - [ ] Out of scope explicitly listed (strategic decision, not omission)
 - [ ] Deferred items with trigger conditions
-- [ ] No feature-level detail in scope (that belongs in Phase 6 BRD/FSD)
+- [ ] No feature-level detail in scope (that belongs in Phase 5-6)
 
 **Business Model must cover:**
 - [ ] Revenue model type stated

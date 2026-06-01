@@ -1,31 +1,31 @@
 ---
 name: pm-mvp-scope
-description: Define MVP scope from the prioritized Features List. Makes the IN/POST-MVP/CUT decision, groups features into Feature Sets (MFS/FS hierarchy), and sequences them into Delivery Stripes. After user approval, creates MFS and FS entries in Notion and enriches existing Feature entries with Phase, Dev Stripe, and parent grouping. Phase 5 exit artifact. Required input for all Phase 6 skills.
+description: Define MVP scope and delivery plan from the prioritized FDD Feature List. Makes the IN/POST-MVP/CUT decision per feature, assigns each feature to a Delivery Stripe. Updates feature_list.md and stub Feature Card frontmatter (stripe field). After user approval, updates Notion Feature entries with MVP flag and stripe assignment. Phase 5 exit artifact. Required input for pm-stripe JIT cycle.
 license: MIT
 metadata:
   author: https://github.com/ljucask
-  version: "1.0.0"
+  version: "2.0.0"
   domain: product-management
-  triggers: MVP scope, feature sets, delivery stripes, MFS, prioritization, in scope post MVP cut
+  triggers: MVP scope, delivery stripes, MVP cut, feature prioritization, stripe assignment, Phase 5
   role: specialist
   scope: planning
   output-format: document
-  related-skills: pm-features-list, pm-product-roadmap, pm-stripe, pm-brd
+  related-skills: pm-features-list, pm-product-roadmap, pm-stripe, pm-entity-registry
 ---
 
 # PM - MVP Scope
 
 ## What this skill does
 
-Phase 5 / Steps 4-5. Takes the prioritized, dependency-mapped Features List (output of `pm-features-list`) and produces the delivery structure:
+Phase 5 / Steps 4-5. Takes the prioritized, dependency-mapped FDD Feature List (Live Register 4, output of `pm-features-list`) and produces the delivery structure:
 
-1. **MVP Scope Decision** - what is IN (MVP), what is POST-MVP, what is CUT, with rationale
-2. **Feature Sets** - logical domain groupings (MFS → FS hierarchy). One BRD + one FSD per Feature Set.
-3. **Delivery Stripes** - 2-week time-boxed delivery blocks, sequenced by dependency + V×C priority
+1. **MVP Scope Decision** - what is IN (MVP), what is POST-MVP, what is CUT. Decision is **per Feature** - not per Feature Set. Feature Sets are grouping only and do not affect the MVP cut.
+2. **Delivery Stripes** - parallel development tracks (not time-boxed sprints). Each stripe is an isolated channel for a coherent domain slice (e.g., stripe-checkout, stripe-auth). Features are assigned to stripes based on domain affinity and dependencies.
+3. **Stripe assignment** - updates `stripe:` field in each Feature Card frontmatter and in feature_list.md.
 
-After user approval: update Notion with the full structure - create MFS and FS entries, assign Parent relations, enrich Feature entries with Phase and Dev Stripe.
+After user approval: update Notion Feature entries with MVP flag and stripe assignment.
 
-This is the Phase 5 exit artifact. Everything in Phase 6 (spec, build) operates on Feature Sets and Delivery Stripes defined here.
+This is the Phase 5 exit artifact. pm-stripe uses this structure to orchestrate the JIT cycle - picking the next ready feature in each stripe and routing to pm-feature-design + build.
 
 ---
 
@@ -40,24 +40,23 @@ This is the Phase 5 exit artifact. Everything in Phase 6 (spec, build) operates 
 - `pm-business-case` - revenue model and runway inform how aggressive the MVP cut should be
 
 **Produces artifacts used by:**
-- `pm-product-roadmap` v3 - Delivery Stripes populate the delivery view
-- `pm-brd` - one BRD per Feature Set
-- `pm-fsd` - one FSD per Feature Set
-- All Phase 6 skills - Feature Sets are the unit of design and specification
-- Notion - MFS/FS entries created, Feature entries enriched
+- `features/feature_list.md` - updated with MVP flag and stripe per feature
+- `/features/cards/FEAT-*.md` - `stripe:` field updated in each stub Feature Card
+- `pm-product-roadmap` v3 - delivery view populated
+- `pm-stripe` - uses stripe assignments to orchestrate JIT cycle per feature
+- Notion - Feature entries enriched with MVP flag and stripe assignment
 
 ---
 
 ## Step 0: Current state check
 
 Check for existing artifacts:
-- MVP Scope
-- Feature Sets definition
-- Delivery Stripes plan
+- MVP Scope decision (in feature_list.md MVP column)
+- Delivery Stripe assignments (in feature_list.md and Feature Card frontmatter)
 
-Also check: does a complete Features List exist with KANO and V×C? This skill cannot run without it. Is state.json available with Notion connection details?
+Also check: does `features/feature_list.md` exist with KANO and V×C? Stub Feature Cards created? This skill cannot run without them.
 
-Look for: MVP scope that's too large (more than 3-4 months of work), no explicit out-of-scope list, Feature Sets that are too broad (BRD would be unmanageable), Delivery Stripes longer than 2 weeks, critical path not respected in stripe sequencing.
+Look for: MVP scope that's too large (more than 3-4 months of work), no explicit out-of-scope list, features assigned to stripes that violate dependencies (blocked feature in Stripe 1, blocker in Stripe 2), domain boundary confusion across stripes (mixing unrelated domains in one stripe creates parallel conflict risk).
 
 Apply the standard skill interaction pattern (CLAUDE.md).
 
@@ -186,166 +185,109 @@ After answers, show the finalized MVP scope proposal combining Group 1 alignment
 
 ---
 
-## Step 3: Generate Feature Sets
+---
+
+## Step 3: Generate Delivery Stripes + Stripe Assignment
 
 ---
 
-### ARTIFACT 2: Feature Sets
-
-```markdown
-# Feature Sets - [Product Name]
-
-> **Phase:** 5 - Feature Planning
-> **Date:** [date]
-> **Definition:** A Feature Set is a logical domain grouping of related features.
->                One BRD + One FSD per Feature Set.
->                Feature Sets are the spec unit. Delivery Stripes are the delivery unit.
-
----
-
-## Feature Set Overview
-
-| MFS | FS ID | Feature Set | Features (all, incl. post-MVP) | BRD/FSD status |
-|---|---|---|---|---|
-| [Domain A] | FS-01 | [e.g., Property Listing Management] | F-001, F-002, F-003, F-004, F-005, F-006 | To be written |
-| [Domain A] | FS-02 | [e.g., Pricing & Availability] | F-007, F-008, F-009 | To be written |
-| [Domain B] | FS-03 | [e.g., Booking Flow] | F-010, F-011, F-012, F-013, F-014 | To be written |
-| [Domain B] | FS-04 | [e.g., Payment Processing] | F-015, F-016 | To be written |
-| [Domain C] | FS-05 | [e.g., Guest-Host Messaging] | F-030, F-031, F-032 | To be written |
-| [Domain C] | FS-06 | [e.g., Notifications] | F-020, F-021, F-022 | To be written |
-
----
-
-## Feature Set Details
-
-### [Domain A - MFS name]
-
-#### FS-01: [Name]
-
-**Purpose:** [What this FS enables - user value]
-**Primary actor:** [Host / Guest / Admin / System]
-**Domain(s):** [From Domain Model]
-**All features in this set (MVP + post-MVP):**
-
-| ID | Feature | Phase |
-|---|---|---|
-| F-001 | [Feature name] | MVP |
-| F-006 | [Feature name] | MVP+ |
-
-**Dependencies:** Needs: [None / FS-XX partial]. Enables: [FS-XX]
-**Spec requirement:** BRD + FSD written before Stripe [X] starts.
-
----
-
-[repeat per FS]
-```
-
----
-
-## Step 4: Generate Delivery Stripes
-
----
-
-### ARTIFACT 3: Delivery Stripes
+### ARTIFACT 2: Delivery Stripes
 
 ```markdown
 # Delivery Stripes - [Product Name]
 
 > **Phase:** 5 - Feature Planning
 > **Date:** [date]
-> **Definition:** A Delivery Stripe is a 2-week time-boxed delivery block.
->                Contains MVP features from one or more Feature Sets.
->                BRD + FSD must be complete before stripe build starts.
+> **Definition:** A Delivery Stripe is an isolated development channel for a coherent domain slice.
+>                MVP cut and stripe assignment are per Feature - not per Feature Set.
+>                Feature Sets are grouping only. JIT design and build operate at Feature level.
 
 ---
 
-## Stripe Plan
+## Stripe Overview
 
-| Stripe | Duration | MVP Features | Feature Sets | Goal | Spec ready by |
-|---|---|---|---|---|---|
-| Stripe 1 | Week 1-2 | F-001, F-002, F-003 | FS-01 (partial) | [Host can create and manage a listing] | Before Stripe 1 |
-| Stripe 2 | Week 3-4 | F-010, F-011 | FS-03 (partial) | [Guest can search and request a booking] | During Stripe 1 |
-| Stripe 3 | Week 5-6 | F-012, F-013, F-015 | FS-03 (done), FS-04 | [Full booking + payment flow] | During Stripe 2 |
-| Stripe 4 | Week 7-8 | F-020, F-030, F-031 | FS-05, FS-06 | [Notifications and messaging] | During Stripe 3 |
-| Stripe 5 | Week 9-10 | [Buffer: edge cases, polish] | All | [MVP ready for first users] | - |
+| Stripe ID | Name | Domain focus | MVP Features | Goal |
+|---|---|---|---|---|
+| stripe-checkout | Checkout | Order + Payment | FEAT-ORD-001, FEAT-ORD-002, FEAT-PAY-001 | [Customer can place and pay for an order] |
+| stripe-auth | Authentication | User / Auth | FEAT-USR-001, FEAT-USR-002 | [User can register and log in] |
+| stripe-[name] | [Name] | [Domain] | [FEAT-IDs] | [Goal] |
 
-**MVP completion:** Stripe [X] - estimated [date or week range]
-
----
-
-## Spec Writing Schedule
-
-Spec is written rolling - always ahead of build:
-
-| When | Activity |
-|---|---|
-| Before Stripe 1 | Write BRD + FSD for FS-01 |
-| During Stripe 1 | Write BRD + FSD for FS-03, FS-04 |
-| During Stripe 2 | Write BRD + FSD for FS-05, FS-06 |
+**MVP features total:** [X] across [Y] stripes
+**Post-MVP backlog:** [X] features (stripe TBD)
 
 ---
 
 ## Stripe Design Rules
 
-- Max 2 weeks per stripe
-- BRD + FSD complete before stripe build starts (spec-first)
-- Each stripe has a named goal (testable outcome, not a feature list)
-- Buffer stripe at end is mandatory for MVP
-- Features span stripes only if intermediate state is testable
+- Each stripe covers a coherent domain slice (minimizes register conflicts between parallel agents)
+- No feature is assigned to a stripe if its dependencies are in a different stripe that hasn't started
+- Feature Sets span multiple stripes - that is expected and correct
+- JIT design (pm-feature-design) runs per feature, per stripe, just before build
+- Stripes can run in parallel (different Claude agents / Class Owners per stripe)
+
+---
+
+## Feature-to-Stripe Assignment
+
+| FEAT-ID | Feature | MVP | Stripe | Dependency on |
+|---|---|---|---|---|
+| FEAT-ORD-001 | [Create] [draft order] [from cart] | true | stripe-checkout | none |
+| FEAT-ORD-002 | [Confirm] [order] [after payment] | true | stripe-checkout | FEAT-ORD-001, FEAT-PAY-001 |
+| FEAT-PAY-001 | [Validate] [card payment] [for order] | true | stripe-checkout | FEAT-ORD-001 |
+| FEAT-USR-001 | [Register] [new account] [with email] | true | stripe-auth | none |
+
+---
+
+## Dependency Sequencing per Stripe
+
+For each stripe, list the execution order based on dependencies:
+
+**stripe-checkout:**
+1. FEAT-ORD-001 (no deps)
+2. FEAT-PAY-001 (needs FEAT-ORD-001)
+3. FEAT-ORD-002 (needs FEAT-ORD-001 + FEAT-PAY-001)
+
+**stripe-auth:**
+1. FEAT-USR-001 (no deps)
+2. FEAT-USR-002 (needs FEAT-USR-001)
 ```
+
+---
+
+## Step 4: Update Feature Cards and feature_list.md
+
+After user approves the MVP Scope and Stripe assignment:
+
+1. For each feature, update the `stripe:` field in the Feature Card frontmatter at `/features/cards/[FEAT-ID].md`
+2. Update `features/feature_list.md` - fill in the Stripe column per feature, mark MVP column true/false
 
 ---
 
 ## Step 5: Notion update
 
-**Runs after user approves all three artifacts.**
+**Runs after user approves both artifacts.**
 
-If user confirmed no Notion entries exist (Step 1, question 5 = "no"): skip this step.
-
-If Notion Feature entries were created by pm-features-list:
+If no Notion Feature entries exist (pm-features-list was not pushed to Notion): skip this step.
 
 ### 5a. Get Notion connection
 
 1. Read `pureinn-variables.md` key "Feature Backlog" → get URL
 2. Check `state.json notion_ids.feature_backlog` → if set, use it directly
 3. If not cached: call `mcp__claude_ai_Notion__notion-fetch` with the URL, extract data source ID, save to `state.json notion_ids.feature_backlog`
-4. If URL blank in pureinn-variables.md: ask user, save URL to pureinn-variables.md, then proceed with 3
 
-### 5b. Create MFS entries
+### 5b. Enrich Feature entries
 
-For each MFS (domain cluster) from Artifact 2: call `mcp__claude_ai_Notion__notion-create-pages` with:
-- `parent.type` = `"data_source_id"`
-- `parent.data_source_id` = from 5a
-- Per MFS entry: `Artefact Name` = MFS name, `Artefact Type` = `"MFS"`, `Status` = `"Backlog"`
-- Use MFS Template ID from the database schema if available
-
-Collect the returned page URLs (one per MFS) - needed for FS parent relations.
-
-### 5c. Create FS entries
-
-For each Feature Set from Artifact 2: call `mcp__claude_ai_Notion__notion-create-pages` with:
-- Per FS entry: `Artefact Name` = FS name, `Artefact Type` = `"FS"`, `Status` = `"Backlog"`, `Parent` = URL of the corresponding MFS page from 5b
-- Use FS Template ID from the database schema if available
-
-Collect the returned page URLs (one per FS) - needed for Feature parent relations.
-
-### 5d. Enrich Feature entries
-
-For each Feature in Artifact 1 (MVP Scope - IN + POST-MVP + CUT), update the existing Notion entry:
-
-Call `mcp__claude_ai_Notion__notion-update-page` with `command: "update_properties"` per feature:
+For each Feature, update the existing Notion entry via `mcp__claude_ai_Notion__notion-update-page`:
 
 | Property | Value | Source |
 |---|---|---|
-| `Phase` | `"MVP"` / `"MVP+"` / `"Phase 2"` / `"Enterprise"` | Artifact 1 scope decision |
-| `Dev Stripe` | `"Stripe 1"` ... `"Stripe 7"` (MVP features only) | Artifact 3 stripe assignment |
-| `Parent` | URL of the corresponding FS page from 5c | Artifact 2 feature set assignment |
+| `Phase` | `"MVP"` / `"MVP+"` / `"CUT"` | Artifact 1 MVP decision |
+| `Dev Stripe` | `"stripe-[name]"` (MVP features only) | Artifact 2 stripe assignment |
+| `Feature ID` | `FEAT-[DOMAIN]-[NUMBER]` | feature_list.md |
 
-Features marked CUT: update `Phase` to reflect cut status (use lowest phase option or leave blank); do not assign Dev Stripe.
+### 5c. Confirm
 
-### 5e. Confirm
-
-After all updates: report counts (MFS created, FS created, Features enriched, errors). Remind user that BRD + FSD will be linked via FSD URL property as spec is written in Phase 6.
+After all updates: report counts (Features enriched, errors). Remind user that pm-stripe will orchestrate the JIT cycle - picking the next ready feature per stripe when build starts.
 
 ---
 
@@ -361,21 +303,12 @@ After all updates: report counts (MFS created, FS created, Features enriched, er
 - [ ] Cut list with rationale
 - [ ] MVP size is realistic vs. team and timeline
 
-**Feature Sets must cover:**
-- [ ] Logical/functional groupings (not too large - max ~8-10 features per FS)
-- [ ] MFS → FS hierarchy clear
-- [ ] Each FS has a purpose and primary actor
-- [ ] All features (MVP + post-MVP) assigned to a FS
-- [ ] Dependencies between FSs stated
-- [ ] Spec requirement (BRD + FSD) noted per FS
-
 **Delivery Stripes must cover:**
-- [ ] Each stripe is max 2 weeks
-- [ ] Each stripe has a named goal
-- [ ] Spec-ready-by date specified per stripe
-- [ ] Buffer stripe included at end
-- [ ] Stripes sequenced by dependency (critical path respected)
-- [ ] Spec-writing schedule defined
+- [ ] Each stripe has a coherent domain focus (minimizes register conflicts)
+- [ ] Each stripe has a named goal (testable outcome)
+- [ ] No feature assigned to a stripe that violates its dependency order
+- [ ] Dependency sequencing per stripe is explicit
+- [ ] Stripes can run in parallel without register conflicts
 
 **For SaaS/AI products:**
 - [ ] Onboarding flow is in Stripe 1 or 2
@@ -391,6 +324,7 @@ After all updates: report counts (MFS created, FS created, Features enriched, er
 
 ```
 pureinn-workspace/[project-slug]/artifacts/phase-5/mvp-scope.md
-pureinn-workspace/[project-slug]/artifacts/phase-5/feature-sets.md
 pureinn-workspace/[project-slug]/artifacts/phase-5/delivery-stripes.md
+pureinn-workspace/[project-slug]/features/feature_list.md         (updated: MVP + stripe columns)
+pureinn-workspace/[project-slug]/features/cards/FEAT-*.md         (updated: stripe field in frontmatter)
 ```

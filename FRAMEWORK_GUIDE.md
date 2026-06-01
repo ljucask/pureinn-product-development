@@ -96,14 +96,20 @@ Four tracks run in parallel. Converge at the end.
 
 ---
 
-### Phase 4 - Domain Modeling (3-5 days)
+### Phase 4 - Domain Modeling + Register Setup (3-5 days)
 
 | Skill | Output |
 |---|---|
 | `/pm-domain-model` | Domain Model, ERD (+ Excalidraw diagram if MCP connected) |
+| `/pm-entity-registry` | entities.md - entity list + Mermaid state machines per entity (guard conditions added JIT) |
+| `/pm-business-rules-library` | business_rules.md + decision_models.md in Draft mode (finalized JIT per feature) |
 | `/pm-privacy-requirements` | PII Inventory, Privacy Requirements, GDPR Action Plan |
-| `/pm-brd` [skeleton] | BRD structure outline per Feature Set |
 | `/pm-product-roadmap` | Product Roadmap v2 (+ domain constraints) |
+
+**Living registers initialized here, enriched continuously during Phase 6-7.**
+- entities.md (Live Register 1): entity states + Mermaid stateDiagram-v2; guard conditions left TBD until JIT design
+- business_rules.md (Live Register 2): BR-[DOMAIN]-[NUMBER] format; Draft status until pm-feature-design finalizes JIT
+- decision_models.md (Live Register 3): TBL-[DOMAIN]-[NUMBER] format; decision tables in Draft mode
 
 ---
 
@@ -111,8 +117,8 @@ Four tracks run in parallel. Converge at the end.
 
 | Skill | Output | Notion |
 |---|---|---|
-| `/pm-features-list` | Features List (FDD format), Dependency Map, KANO Analysis, V×C Matrix | Feature entries pushed (Status = Backlog, Priority from KANO+V×C) |
-| `/pm-mvp-scope` | MVP Scope (IN / POST-MVP / CUT), Feature Sets (MFS→FS), Delivery Stripes | MFS/FS entries created; Features enriched with Phase, Dev Stripe, Parent |
+| `/pm-features-list` | feature_list.md (FDD Feature List, FEAT-[DOMAIN]-[NUMBER] IDs), KANO Analysis, V×C Matrix + stub Feature Cards in features/cards/ | Feature entries pushed (Status = Backlog, Priority from KANO+V×C) |
+| `/pm-mvp-scope` | MVP Scope (IN/POST-MVP/CUT), Delivery Stripes (domain-focused channels), Feature-to-Stripe assignment | Features enriched with Phase/Stripe |
 | `/pm-product-roadmap` | Product Roadmap v3 (+ feature and delivery view) | - |
 
 ---
@@ -127,29 +133,29 @@ Four tracks run in parallel. Converge at the end.
 
 ---
 
-### Phase 6 + 7 - FDD Delivery (repeats per Stripe, ~2 weeks each)
+### Phase 6 + 7 - FDD Delivery (JIT per Feature, Stripe-based)
 
-**Spec (per Feature Set, before build starts):**
+Phase 6 and 7 are integrated into a JIT cycle - spec happens per Feature, not per Feature Set. Domain registers (entities.md, business_rules.md, decision_models.md) are the living source of truth.
 
-| Skill | Output |
-|---|---|
-| `/pm-stripe kickoff` | Stripe plan, spec gate check, routing per feature |
-| `/pm-feature-set-overview` | Feature Set scope |
-| `/pm-brd` | Business Rules, state machines, event model |
-| `/pm-business-rule-critical` | RULE-A: Critical Invariants |
-| `/pm-business-rule-core` | RULE-B: Core Business Rules |
-| `/pm-business-rule-governance` | RULE-C: Governance / Policy / UX Rules |
-| `/pm-fsd` | Functional Specification (flows, validations, acceptance criteria) |
-| `/impeccable document` [once at Phase 6 start] | PRODUCT.md + DESIGN.md (design system context for Claude) |
-| `/impeccable-shape` [per feature] | UX/UI shape brief - defines layout, interactions, and visual intent before implementation |
-| `/pm-feature-card` [per feature, AFTER BRD + FSD] | Feature Card (acceptance criteria, tasks) |
+**JIT cycle per feature (orchestrated by `/pm-stripe`):**
+
+| Step | Skill | Output |
+|---|---|---|
+| 1 | `/pm-feature-design [FEAT-ID]` | Commit 1: register finalization (guard conditions, BR-IDs to Final); Commit 2: Feature Card Sections 1-3 (Biznis Mantinely, ACs, Mermaid sequence diagram) |
+| 2 | Design Inspection | Team: review Sections 1-3; Solo: confirm; → status: 3_Design_Inspection_Passed |
+| 3 | Build skills (see below) | Code + tests, reads Feature Card Section 3 as build spec |
+| 4 | Section 4 filled | Commits, tests, flag verification, Code Inspection; → status: 6_Promoted_to_Build |
+
+**Spec gate (hard rule):** Feature Card Sections 1-3 complete + status 3_Design_Inspection_Passed before any feature enters build.
+
+**Atomic commit protocol:** Register updates (domain/*.md) committed before code. One feature per stripe in active design/build at any time.
 
 **Build (per feature, after spec gate):**
 
 | Skill | From | Purpose |
 |---|---|---|
-| `/fullstack-guardian` | fullstack-dev-skills | Full-stack implementation |
-| `/impeccable-craft` | impeccable | Frontend UI implementation from shape brief |
+| `/fullstack-guardian` | fullstack-dev-skills | Full-stack implementation (reads Feature Card Section 3) |
+| `/impeccable-craft` | impeccable | Frontend UI implementation |
 | `/test-master` | fullstack-dev-skills | Unit + integration tests |
 | `/playwright-expert` | fullstack-dev-skills | E2E tests |
 | `/code-reviewer` | fullstack-dev-skills | Code review |
@@ -158,11 +164,16 @@ Four tracks run in parallel. Converge at the end.
 | `/devops-engineer` | fullstack-dev-skills | CI/CD, deployment |
 | `/monitoring-expert` | fullstack-dev-skills | Observability, alerting |
 
-Not every skill applies to every feature. Choose what fits the scope of each feature.
+Not every skill applies to every feature. Choose what fits.
 
-**Stripe close:** `/pm-stripe close` → Stripe retrospective, learnings, next Stripe prep
+**Optional spec support (not per feature - run when needed):**
 
-**Spec gate (hard rule):** BRD + FSD + Feature Card must all be complete before any feature enters build. No exceptions.
+| Skill | Purpose |
+|---|---|
+| `/architecture-designer` | System Design Blueprint, ADRs |
+| `/api-designer` | API contracts, OpenAPI spec |
+| `/impeccable document` [once] | PRODUCT.md + DESIGN.md |
+| `/impeccable-shape` [per feature] | UX/UI shape brief |
 
 ---
 
@@ -188,10 +199,12 @@ Run once to sync current state into Notion and generate Claude context:
 | `/pureinn` | Workspace setup, state.json, pureinn-variables.md | Pureinn |
 | `/common-ground` | Technical context: stack, APIs, domain model, debt → COMMON-GROUND.md | fullstack-dev-skills |
 | `/impeccable document` | Design context: design system, UX patterns → PRODUCT.md + DESIGN.md | impeccable |
-| `/pm-glossary` | Domain glossary |
-| `/pm-reverse-extract` | Feature inventory (FDD format) with status (Done/In Progress/Planned); MFS → FS → Feature hierarchy pushed to Notion; local Phase 5 artifacts for Claude context |
+| `/pm-glossary` | Domain glossary | Pureinn |
+| `/pm-entity-registry` | entities.md (extracted from existing codebase/docs) | Pureinn |
+| `/pm-business-rules-library` | business_rules.md + decision_models.md (extracted existing rules) | Pureinn |
+| `/pm-reverse-extract` | feature_list.md + Feature hierarchy pushed to Notion; delivery-stripes.md for Claude context | Pureinn |
 
-Then proceed directly to Phase 6 + 7.
+Then proceed directly to Phase 6 + 7 (JIT per feature).
 
 ---
 
@@ -245,15 +258,17 @@ Answer before writing a single line of spec:
 
 ### Track A - Spec
 
-Feature Set decision:
-- Feature fits existing FS → extend BRD + FSD additively (add sections, never rewrite)
-- New domain, no existing FS → write full BRD + FSD from scratch
+Feature Set assignment (grouping only - no longer a spec unit):
+- Feature fits existing domain → assign to existing stripe, feature is ready for JIT design
+- New domain → run `/pm-entity-registry` + `/pm-business-rules-library` (Draft mode) for that domain first
+
+JIT design per feature (one at a time, per stripe):
 
 | Skill | Output |
 |---|---|
-| `/pm-brd` | Business Rules (new or extend) |
-| `/pm-fsd` | Functional Specification (new or extend, includes backward compat analysis) |
-| `/pm-feature-card` | Feature Card (AFTER BRD + FSD complete - hard rule) |
+| `/pm-feature-design [FEAT-ID]` | Feature Card Sections 1-3 + register finalization (pre-step: scans existing codebase before generating sequence diagram) |
+| Design Inspection | Team review or solo confirm → status: 3_Design_Inspection_Passed |
+| Build skills | Read Feature Card Section 3 as build spec |
 
 ---
 
@@ -283,21 +298,24 @@ Phase 2 outputs (JTBD, Personas, Market Analysis, Problem Validation)
   ↓
 Phase 3 outputs (Design Thinking, Go/No-Go, Lean Canvas, KPIs, Business Case)
   ↓
-PRD - consolidation of Phase 2+3, primary reference for Phase 4+
+PRD - consolidation of Phase 2+3, Business Capabilities section drives Phase 4+
   ↓
 Product Roadmap v1 (vision + segments + business model)
   ↓
-Domain Model + ERD, BRD Skeleton, PII Inventory, Privacy Requirements
+Domain Model + ERD
+entities.md (Live Register 1) + business_rules.md (Live Register 2) + decision_models.md (Live Register 3)
+PII Inventory, Privacy Requirements
   ↓
 Product Roadmap v2 (+ domain context)
   ↓
-Features List + KANO + V×C → Notion: Feature entries
-MVP Scope + Feature Sets + Delivery Stripes → Notion: MFS/FS + enriched Features
+feature_list.md (Live Register 4) + KANO + V×C → Notion: Feature entries
+Stub Feature Cards (status: 1_Walkthrough) + MVP Scope + Delivery Stripes → Notion: enriched
   ↓
-Product Roadmap v3 (+ Feature Sets + Delivery Stripes view)
+Product Roadmap v3 (+ Feature and Delivery view)
   ↓
-[Per Stripe - repeats until MVP complete]
-  BRD + FSD per Feature Set → Feature Cards per feature → Build → Test → Deploy
+[Per Stripe, per Feature - JIT cycle]
+  pm-feature-design → Feature Card Sections 1-3 + register finalization
+  Design Inspection → Build → Test → Deploy → Feature Card Section 4 → Promoted
   ↓
 Alpha → Beta → V1.0 Launch → Scale
 ```
@@ -308,13 +326,13 @@ Alpha → Beta → V1.0 Launch → Scale
 
 Three distinct concepts. Do not conflate.
 
-| Concept | What it is | Written when |
+| Concept | What it is | Role |
 |---|---|---|
-| **Feature Set** | Logical domain grouping (e.g., "User Auth", "Booking Flow"). BRD + FSD cover the full FS scope. | Once, before the first Stripe that includes any feature from that FS |
-| **Delivery Stripe** | 2-week time-box. Contains specific features from one or more Feature Sets. | Each Stripe kickoff |
-| **Feature Card** | Spec for one individual feature. Acceptance criteria + task breakdown. | Just before that feature enters build |
+| **Feature Set** | Logical domain grouping (e.g., "User Auth", "Booking Flow"). Grouping only - not a spec unit. | Organizing principle. Features are assigned to Feature Sets. No BRD or FSD per FS. |
+| **Delivery Stripe** | Domain-focused parallel channel (e.g., stripe-checkout, stripe-auth). Not a time-box. | One stripe = one isolated development channel. Features are processed one at a time per stripe in dependency order. |
+| **Feature Card** | Atomic delivery unit. 6-state lifecycle (1_Walkthrough → 6_Promoted_to_Build). Sections 1-3 written JIT by pm-feature-design; Section 4 filled after build. | Single deliverable feature. Build spec = Feature Card Section 3. Immutable after Promoted. |
 
-Example: 150 total features across 25 Feature Sets → 50 MVP features across 7 Feature Sets → delivered in 5 Delivery Stripes of ~10 features each.
+Example: 50 MVP features across 25 Feature Sets → assigned to 3 parallel Delivery Stripes → each feature designed JIT just before build.
 
 ---
 
@@ -347,15 +365,27 @@ Every project gets a workspace folder created at `/pureinn`:
 ```
 pureinn-workspace/
   [project-slug]/
-    state.json              - Phase, playbook, completed phases, Notion IDs
-    assessment.md           - Initial product assessment (read by /pureinn-resume)
-    pureinn-variables.md    - Notion URLs per project (fill in once)
+    state.json                    - Phase, playbook, completed phases, register init flags, Notion IDs
+    assessment.md                 - Initial product assessment (read by /pureinn-resume)
+    pureinn-variables.md          - Notion URLs per project (fill in once)
     glossary.md
+    product/
+      PRD.md                      - pm-prd (or PRD_[Domain].md for modular)
+    domain/                       - 4 living registers (source of truth for AI in Phase 6-7)
+      entities.md                 - pm-entity-registry (Live Register 1)
+      business_rules.md           - pm-business-rules-library (Live Register 2)
+      decision_models.md          - pm-business-rules-library (Live Register 3)
+    features/
+      feature_list.md             - pm-features-list (Live Register 4)
+      cards/
+        FEAT-[DOMAIN]-[NUMBER].md - Feature Cards (one per feature)
     artifacts/
-      phase-1/ ... phase-7/
+      phase-1/ ... phase-5/
 ```
 
 `pureinn-variables.md` is human-editable. Fill in the Notion URLs once - skills read the file automatically and cache IDs in `state.json` so each Notion DB is fetched at most once per project.
+
+The `domain/` folder is the living source of truth during Phase 6-7. Every pm-feature-design run updates these files before writing Feature Card Sections 1-3.
 
 The fastest way to fill it in: duplicate the Pureinn Notion template to your workspace, then paste the URLs. See [NOTION_TEMPLATE.md](NOTION_TEMPLATE.md) for the template link and setup guide.
 

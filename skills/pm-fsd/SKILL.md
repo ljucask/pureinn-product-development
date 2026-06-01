@@ -1,6 +1,6 @@
 ---
 name: pm-fsd
-description: Generate a Functional Specification Document (FSD) for a single Feature Set. Defines how the Feature Set implements the BRD - execution flows, validations, state transitions, acceptance criteria (Given/When/Then), and observability. One FSD per Feature Set. Phase 6 skill.
+description: "[DEPRECATED in FDD+SDD v2.0] FSD is replaced by JIT Design per Feature. Use pm-feature-design to generate the JIT technical design (sequence diagram, register updates, ACs) for a single feature just before it enters build. The pm-fsd skill is preserved for legacy projects only."
 license: MIT
 metadata:
   author: https://github.com/ljucask
@@ -10,12 +10,24 @@ metadata:
   role: specialist
   scope: specification
   output-format: document
-  related-skills: pm-brd, pm-feature-set-overview, pm-domain-model, pm-stripe
+  related-skills: pm-feature-design, pm-entity-registry, pm-business-rules-library, pm-stripe
 ---
 
 # PM - Functional Specification Document (FSD)
 
-## What this skill does
+> **DEPRECATED in FDD+SDD Framework v2.0**
+>
+> The FSD (Feature Set level, written upfront) is replaced by JIT Design per Feature:
+> - Technical design (sequence diagram, guard conditions, ACs) → `pm-feature-design` → Feature Card Sections 1-3
+> - Functional behavior is specified just before build, not upfront for the entire Feature Set
+> - Business rules and state machines → Live Registers (`entities.md`, `business_rules.md`)
+>
+> **For new projects:** Use `pm-feature-design` (JIT) instead of pm-fsd.
+> **For legacy projects using the old FSD format:** This skill is preserved below for continuity.
+
+---
+
+## What this skill does (legacy)
 
 Describes how a specific Feature Set behaves - the bridge between business rules (BRD) and implementation (Feature Cards, code).
 
