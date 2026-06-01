@@ -1,7 +1,5 @@
 # Example: SaaS Subscription Billing
 
-**Workflow diagram:** [View on Excalidraw](https://excalidraw.com/#json=9qmQbUdyAoxvAZSoUoG2l,KZrO_YJXIdcl7KWKE9tnPw)
-
 ---
 
 This example shows a complete FDD+SDD workflow run for a subscription billing initiative added to an existing SaaS product (ProjectFlow). It is a realistic representation of what the framework produces - not a template, not a simplified stub.
