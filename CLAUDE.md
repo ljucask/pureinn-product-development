@@ -124,9 +124,22 @@ When a skill needs to ask the user questions before producing an artifact, use t
 - Keep option labels concise (1-5 words), use the description field for context and trade-offs
 - Within one group: ask plain-text free-text questions first, then follow with AskUserQuestion for option-based questions
 
+**Recommended option rule:**
+Every AskUserQuestion call with options MUST have a recommended option, marked with "(Recommended)" at the end of the label. The recommended option is NOT the easiest or most common default - it is the option with the highest ROI given what the user is building and where they want to end up. Reason from their goal backwards: which path gets them to the outcome they described most directly, with the least waste? If two options are genuinely equivalent, mark neither - but that is rare. Never recommend an option just because it is simpler. Simpler is a trade-off, not a virtue.
+
 **Free-text questions (open-ended):** Ask as plain text, one at a time.
 - Do NOT add fake A/B/C/D options to questions that are genuinely open-ended (descriptions, priorities, constraints, names)
 - This applies to: product name, problem description, custom values, anything requiring original user input
+
+**Proactive assumption surfacing:**
+Do not wait until the end to surface assumptions. Surface them at the moment they enter a decision - inline, before generating any section that depends on them. Format:
+
+```
+Assumption: [what I am assuming and why]
+If this is wrong, tell me - it affects [what specifically].
+```
+
+Surface assumptions when: inferring something not explicitly stated, applying a default that might not fit their context, or proceeding despite missing input. Do not surface trivial or obvious assumptions - only ones that could meaningfully change the output.
 
 **Handling "I don't know" / user is stuck:**
 
@@ -135,7 +148,7 @@ When a user responds to any question with "I don't know", "not sure", "help me",
 1. **Never leave them without guidance.** Immediately pivot to proactive help.
 2. **Analyze context first**: based on what you already know about their product, industry, or problem, form 3-4 concrete assumptions or candidate answers.
 3. **State your reasoning explicitly**: "Based on [what you told me about X], here are the most likely options:"
-4. **Use AskUserQuestion tool** to offer the structured options - turn the open-ended question into a guided choice.
+4. **Use AskUserQuestion tool** to offer the structured options - turn the open-ended question into a guided choice. Apply the Recommended option rule above.
 5. **Always include an "Other / I'll describe" option** so they're never locked in.
 6. If no context is available yet (very first question), ask one targeted clarifying question as plain text to gather enough signal, then offer options.
 
