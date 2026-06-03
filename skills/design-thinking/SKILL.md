@@ -128,7 +128,7 @@ After answers, confirm: "Is this the person we're designing for? Anything to sha
 
 **Group 2 of 3 - Evidence and solution space**
 
-Ask these two questions together:
+Use AskUserQuestion tool for these two questions:
 
 How solid is your evidence that this problem is real and this is the right person?
 

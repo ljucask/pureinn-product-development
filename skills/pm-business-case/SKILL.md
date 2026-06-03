@@ -62,7 +62,7 @@ Ask questions in 2 groups. After each group show a summary and wait for confirma
 
 ### Group 1 of 2 - Revenue and volume assumptions
 
-Ask these two together:
+Use AskUserQuestion tool for these two questions:
 
 What is the funding situation?
 

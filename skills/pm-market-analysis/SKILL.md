@@ -110,7 +110,7 @@ Guide the user through 3 rounds to reconstruct a market picture from domain know
 
 **Group 1 of 3 - Market definition**
 
-Ask these two questions together:
+Use AskUserQuestion tool for these two questions:
 
 What is the target geography for this product?
 
@@ -154,7 +154,7 @@ After answers, confirm: "Does this match your understanding of the market?"
 
 **Group 3 of 3 - Positioning and defensibility**
 
-Ask these two questions together:
+Use AskUserQuestion tool for these two questions:
 
 How defensible is your position in this market once you launch?
 

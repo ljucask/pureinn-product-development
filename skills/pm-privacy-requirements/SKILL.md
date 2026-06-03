@@ -66,7 +66,7 @@ Ask questions in 2 groups. After each group show a summary and wait for confirma
 
 ### Group 1 of 2 - Data context
 
-Ask these two questions together:
+Use AskUserQuestion tool for these two questions:
 
 Which markets / jurisdictions does this product launch in?
 
@@ -94,7 +94,7 @@ After answers, confirm: "Is this the correct data context?"
 
 ### Group 2 of 2 - Data flows and sensitive data
 
-Ask these two questions together - select all that apply for sensitive data:
+Use AskUserQuestion tool for these two questions - select all that apply for sensitive data:
 
 Does the product handle any sensitive data categories?
 

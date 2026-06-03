@@ -55,7 +55,7 @@ Ask questions in 2 groups. After each group show a summary and wait for confirma
 
 ### Group 1 of 2 - Team setup and tools
 
-Ask these three questions together:
+Use AskUserQuestion tool for these three questions:
 
 What is the team's working arrangement?
 
@@ -88,7 +88,7 @@ After answers, confirm: "Is this the correct toolset and setup?"
 
 ### Group 2 of 2 - Working style and communication moments
 
-Ask these two questions together:
+Use AskUserQuestion tool for these two questions:
 
 What best describes the team's natural working style?
 

@@ -84,7 +84,7 @@ Apply the standard skill interaction pattern (CLAUDE.md).
 
 ## Step 1: Gather inputs
 
-First, ask this scoping question:
+Use AskUserQuestion tool for this scoping question:
 
 What is the goal for this session?
 

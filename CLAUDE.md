@@ -117,10 +117,29 @@ When a skill needs to ask the user questions before producing an artifact, use t
 - 1-2 questions: ask directly, no grouping needed
 
 **How to ask questions within a group:**
-- Questions with predefined answer options (A/B/C/D): ask all of them together in one interactive call - max 4 per call
-- Questions that require free-text input: ask as plain text, one at a time
-- Do NOT add fake A/B/C/D options to questions that are genuinely open-ended (descriptions, priorities, constraints) - that limits the user unnecessarily
-- Within one group: ask free-text questions first, then ask option-based questions together
+
+**Option-based questions (A/B/C/D choices): ALWAYS use the `AskUserQuestion` tool - never output them as plain text.**
+- Max 4 options per question, max 4 questions per AskUserQuestion call
+- Use `multiSelect: true` only when the user can legitimately pick multiple options (e.g. "which phases apply?")
+- Keep option labels concise (1-5 words), use the description field for context and trade-offs
+- Within one group: ask plain-text free-text questions first, then follow with AskUserQuestion for option-based questions
+
+**Free-text questions (open-ended):** Ask as plain text, one at a time.
+- Do NOT add fake A/B/C/D options to questions that are genuinely open-ended (descriptions, priorities, constraints, names)
+- This applies to: product name, problem description, custom values, anything requiring original user input
+
+**Handling "I don't know" / user is stuck:**
+
+When a user responds to any question with "I don't know", "not sure", "help me", "you decide", "I have no idea", or any signal that they're stuck or uncertain:
+
+1. **Never leave them without guidance.** Immediately pivot to proactive help.
+2. **Analyze context first**: based on what you already know about their product, industry, or problem, form 3-4 concrete assumptions or candidate answers.
+3. **State your reasoning explicitly**: "Based on [what you told me about X], here are the most likely options:"
+4. **Use AskUserQuestion tool** to offer the structured options - turn the open-ended question into a guided choice.
+5. **Always include an "Other / I'll describe" option** so they're never locked in.
+6. If no context is available yet (very first question), ask one targeted clarifying question as plain text to gather enough signal, then offer options.
+
+This applies universally at any point in any skill - not just formal intake questions. If a user hesitates, is vague, or asks for a recommendation, stop and help them think it through before continuing.
 
 **Summary block format:**
 ```

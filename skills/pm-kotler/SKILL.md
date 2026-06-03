@@ -76,7 +76,7 @@ After answers, confirm: "Do Levels 1-3 accurately reflect the core product and i
 
 ### Group 2 of 2 - Differentiation and future (Levels 4-5)
 
-Ask these two together:
+Use AskUserQuestion tool for these two questions:
 
 How confident are you in your stated differentiators?
 

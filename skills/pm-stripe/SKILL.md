@@ -70,7 +70,7 @@ Blocked features (dependencies not met):
   - FEAT-ORD-002: waiting for FEAT-ORD-001 (stripe-checkout, in build)
 ```
 
-**Options:**
+Use AskUserQuestion tool for this question:
 
 ```
 What do you want to do?

@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.0] - 2026-06-03
+
+### Updated all skills to use AskUserQuestion tool for option-based questions; added proactive I-dont-know handler to CLAUDE.md skill question pattern
+
+---
+
+
 ## [2.3.0] - 2026-06-01
 
 ### Examples folder - realistic output showcase

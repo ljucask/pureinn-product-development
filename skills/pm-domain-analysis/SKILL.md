@@ -96,7 +96,7 @@ Guide the user through 2 rounds to reconstruct the domain and regulatory picture
 
 **Group 1 of 2 - Domain and market**
 
-Ask these two questions together:
+Use AskUserQuestion tool for these two questions:
 
 What industry or domain does this product operate in?
 
@@ -124,7 +124,7 @@ After answers, confirm and proceed.
 
 **Group 2 of 2 - Compliance and risks**
 
-Ask these two questions together:
+Use AskUserQuestion tool for these two questions:
 
 Does the product handle financial transactions or payments?
 

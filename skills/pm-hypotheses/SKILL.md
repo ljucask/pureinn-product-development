@@ -85,7 +85,7 @@ Show state table:
 
 Apply the standard skill interaction pattern (CLAUDE.md).
 
-**Options:**
+Use AskUserQuestion tool for this question:
 
 ```
 What do you want to do in this session?

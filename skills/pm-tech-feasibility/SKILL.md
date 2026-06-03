@@ -93,7 +93,7 @@ Guide the user through 2 rounds to reconstruct the technical picture from what t
 
 **Group 1 of 2 - Product and requirements**
 
-Ask these two questions together:
+Use AskUserQuestion tool for these two questions:
 
 What best describes the core technical challenge?
 
@@ -121,7 +121,7 @@ After answers, confirm and proceed.
 
 **Group 2 of 2 - Constraints, compliance, and unknowns**
 
-Ask these two questions together:
+Use AskUserQuestion tool for these two questions:
 
 Are there security or compliance requirements?
 

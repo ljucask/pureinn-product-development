@@ -77,7 +77,7 @@ After answers, confirm: "Is this problem-solution fit clear and specific enough 
 
 ### Group 2 of 3 - Channels, revenue, costs
 
-Ask these two questions together:
+Use AskUserQuestion tool for these two questions:
 
 What is the primary channel to reach your early adopters?
 

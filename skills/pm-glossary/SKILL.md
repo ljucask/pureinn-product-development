@@ -54,7 +54,7 @@ If glossary exists: show a summary - how many terms, which domains are covered, 
 
 Apply the standard skill interaction pattern (CLAUDE.md).
 
-**Options:**
+Use AskUserQuestion tool for this question:
 
 ```
 What do you want to do in this session?

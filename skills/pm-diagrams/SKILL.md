@@ -68,7 +68,7 @@ If no checkpoint: proceed to Step 1.
 
 Apply the standard skill interaction pattern (CLAUDE.md).
 
-**Options:**
+Use AskUserQuestion tool for this question:
 
 ```
 What diagram do you want to create?

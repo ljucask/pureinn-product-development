@@ -63,7 +63,7 @@ Ask questions in 2 groups. After each group show a summary and wait for confirma
 
 ### Group 1 of 2 - Business model and growth
 
-Ask these two questions together:
+Use AskUserQuestion tool for these two questions:
 
 What is the revenue model?
 

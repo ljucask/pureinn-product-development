@@ -70,7 +70,7 @@ Do not proceed without answers to Group 1 questions 1-4. Group 2 questions have 
 
 ### Group 1 of 2 - What you're creating
 
-Ask these two questions together (both have options):
+Use AskUserQuestion tool for these two questions:
 
 What type of presentation is this?
 

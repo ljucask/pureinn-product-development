@@ -61,7 +61,7 @@ Ask questions in 3 groups. After each group show a summary and wait for confirma
 
 ### Group 1 of 3 - Value, customer, revenue
 
-Ask these two questions together:
+Use AskUserQuestion tool for these two questions:
 
 Who is the primary paying customer?
 
@@ -91,7 +91,7 @@ After answers, confirm: "Does this commercial logic make sense as a starting poi
 
 ### Group 2 of 3 - Channels, relationships, resources
 
-Ask these two questions together:
+Use AskUserQuestion tool for these two questions:
 
 What is the primary customer acquisition motion?
 

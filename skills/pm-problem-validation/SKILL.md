@@ -111,7 +111,7 @@ No Phase 2 artifacts exist. Guide the user through 3 rounds to reconstruct the v
 
 **Group 1 of 3 - The problem and the customer**
 
-Ask these two questions together:
+Use AskUserQuestion tool for these two questions:
 
 How confident are you that this problem is real and significant for your target customer?
 
@@ -155,7 +155,7 @@ After answers, confirm: "Is this a fair summary of what you know about the marke
 
 **Group 3 of 3 - Confidence and gaps**
 
-Ask these two questions together:
+Use AskUserQuestion tool for these two questions:
 
 What is your biggest uncertainty right now?
 

@@ -106,7 +106,7 @@ Wait for response. Adjust the cut if needed. Then proceed to Group 2.
 
 ### Group 2 of 2 - Execution parameters
 
-Ask these two together:
+Use AskUserQuestion tool for these two questions:
 
 What is the approximate team size for development?
 

@@ -88,7 +88,7 @@ No new research. Pure synthesis.
 **Mode detection (run first):**
 
 1. Does `product/PRD_master.md` already exist?
-   - Yes → **Product PRD already created.** Use AskUserQuestion: A) view it, B) switch to Initiative PRD mode (FI context), C) done.
+   - Yes → **Product PRD already created.** Use AskUserQuestion tool: A) view it, B) switch to Initiative PRD mode (FI context), C) done.
 
 2. Does `initiatives/` directory exist in the project workspace?
    - Yes → **Feature Implementation context detected.**
@@ -156,7 +156,7 @@ After receiving artifact status, show a coverage table and note which sections o
 
 ### Step 1b - Follow-up questions
 
-Ask these two questions together:
+Use AskUserQuestion tool for these two questions:
 
 Is this PRD for internal use only, or will it be shared externally?
 

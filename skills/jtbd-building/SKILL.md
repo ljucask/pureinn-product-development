@@ -109,7 +109,7 @@ Guide the user through 3 rounds of questions to reconstruct the JTBD picture fro
 
 **Group 1 of 3 - The person and the job**
 
-Ask these two questions together:
+Use AskUserQuestion tool for these two questions:
 
 Which persona are we analyzing? (name from pm-personas, or describe briefly if personas don't exist yet)
 
@@ -146,7 +146,7 @@ After answers, confirm: "Does this match what you'd expect from this type of per
 
 **Group 3 of 3 - Switching forces**
 
-Ask these two questions together:
+Use AskUserQuestion tool for these two questions:
 
 What is their biggest anxiety about switching to something new?
 

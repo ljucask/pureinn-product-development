@@ -70,7 +70,7 @@ Do you have research data to work with?
 
 ### Path A - Research data available
 
-Ask the user all questions at once:
+Use AskUserQuestion tool for all questions at once:
 
 ```
 I need VOC data for Customer Segments + Personas.
@@ -109,7 +109,7 @@ No research data yet. Guide the user through 3 rounds of questions to extract ma
 
 **Group 1 of 3 - Who is this person?**
 
-Ask these two questions together:
+Use AskUserQuestion tool for these two questions:
 
 What is their organization or context size?
 
@@ -153,7 +153,7 @@ After receiving answers, show summary and ask: "Does this match what you've obse
 
 **Group 3 of 3 - Behavior and adoption**
 
-Ask these two questions together:
+Use AskUserQuestion tool for these two questions:
 
 How do people like this typically discover and adopt new tools?
 
