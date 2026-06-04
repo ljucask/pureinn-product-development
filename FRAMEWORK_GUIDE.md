@@ -157,7 +157,7 @@ Phase 6 and 7 are integrated into a JIT cycle - spec happens per Feature, not pe
 |---|---|---|---|
 | 1 | → 2_Design | `/pm-feature-design [FEAT-ID]` | Commit 1: register finalization (guard conditions, BR-IDs to Final); Commit 2: Feature Card Sections 1-3 (Biznis Mantinely, ACs, Mermaid sequence diagram) |
 | 2 | → 3_Design_Inspection_Passed | Design Inspection | Team: review Sections 1-3; Solo: confirm |
-| 3 | → 4_In_Build | Build skills (see below) | Code + tests, reads Feature Card Section 3 as build spec |
+| 3 | → 4_Build | Build skills (see below) | Code + tests, reads Feature Card Section 3 as build spec |
 | 4 | → 5_Code_Inspection | Section 4 filled | Commits, tests, flag verification recorded in Section 4 |
 | 5 | → 6_Promoted_to_Build | Code Inspection complete | Final review done; Feature Card immutable after this |
 
@@ -347,7 +347,7 @@ Three distinct concepts. Do not conflate.
 |---|---|---|
 | **Feature Set** | Logical domain grouping (e.g., "User Auth", "Booking Flow"). Grouping only - not a spec unit. | Organizing principle. Features are assigned to Feature Sets. No BRD or FSD per FS. |
 | **Delivery Stripe** | Domain-focused parallel channel (e.g., stripe-checkout, stripe-auth). Not a time-box. | One stripe = one isolated development channel. Features are processed one at a time per stripe in dependency order. |
-| **Feature Card** | Atomic delivery unit. 6-state lifecycle: 1_Walkthrough → 2_Design → 3_Design_Inspection_Passed → 4_In_Build → 5_Code_Inspection → 6_Promoted_to_Build. Sections 1-3 written JIT by pm-feature-design; Section 4 filled after build. | Single deliverable feature. Build spec = Feature Card Section 3. Immutable after 6_Promoted_to_Build. |
+| **Feature Card** | Atomic delivery unit. 6-state lifecycle: 1_Walkthrough → 2_Design → 3_Design_Inspection_Passed → 4_Build → 5_Code_Inspection → 6_Promoted_to_Build. Sections 1-3 written JIT by pm-feature-design; Section 4 filled after build. | Single deliverable feature. Build spec = Feature Card Section 3. Immutable after 6_Promoted_to_Build. |
 
 Example: 50 MVP features across 25 Feature Sets → assigned to 3 parallel Delivery Stripes → each feature designed JIT just before build.
 

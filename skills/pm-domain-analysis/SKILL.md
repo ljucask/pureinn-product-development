@@ -30,7 +30,7 @@ This is a "bring your data" skill - Claude structures and formalizes. Legal anal
 
 **Produces artifacts used by:**
 - `pm-problem-validation` - domain analysis is Track B input
-- `pm-brd` (skeleton + detail) - domain constraints shape business rules
+- `pm-business-rules-library` - domain constraints shape business rules and decision models
 - `pm-privacy-requirements` - legal requirements feed directly into privacy planning
 
 ---

@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.1] - 2026-06-04
+
+### Fix all audit findings: 4_Build state naming, skill counts 37→35, deprecated refs in pm-domain-model/pm-domain-analysis/pm-glossary/pm-prd, Subject Area removed from pm-prd checklist
+
+---
+
+
 ## [3.1.0] - 2026-06-04
 
 ### Feature Card lifecycle complete (4_In_Build, 5_Code_Inspection), PIVOT escalation rule, gate types documented, KANO+VxC explained, deprecated skills moved, Feature Set clarified as grouping label, Subject Area removed

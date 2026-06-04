@@ -1108,7 +1108,7 @@ Step 2: Design Inspection [Team mode: human review of Sections 1-3]
           [Solo mode: AI generates, human confirms - same gate, lighter ritual]
 
 Step 3: BUILD SKILLS (Phase 7)
-          → Status: 4_In_Build (set when build skills start)
+          → Status: 4_Build (set when build skills start)
 /fullstack-guardian    → BE implementation (reads Feature Card Section 3)
 /impeccable-craft      → FE implementation (reads Feature Card Section 3)
 /test-master           → Unit + integration tests

@@ -35,7 +35,7 @@ The glossary is additive: each run merges new entries with existing ones. Existi
 **Best used after:**
 - `pm-project-charter` - captures initial product and business terminology
 - `pm-domain-model` - generates the richest set of domain entities and relationships
-- `pm-brd`, `pm-feature-design` - introduces business rules and functional terms
+- `pm-business-rules-library`, `pm-feature-design` - introduces business rules and functional terms
 - Any phase completion - new terms surface naturally as phases complete
 
 ---

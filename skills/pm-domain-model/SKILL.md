@@ -1,6 +1,6 @@
 ---
 name: pm-domain-model
-description: Generate a Domain Model - domain boundaries, entity catalogue, relationships, and ERD diagrams. Phase 4 foundational artifact. All other Phase 4-6 documents (BRD, FSD, Feature Cards) build on this. Two-stage output - confirm entity catalogue before generating entity definitions.
+description: Generate a Domain Model - domain boundaries, entity catalogue, relationships, and ERD diagrams. Phase 4 foundational artifact. All other Phase 4-6 outputs (entities.md, business_rules.md, Feature Cards) build on this. Two-stage output - confirm entity catalogue before generating entity definitions.
 license: MIT
 metadata:
   author: https://github.com/ljucask
@@ -10,7 +10,7 @@ metadata:
   role: specialist
   scope: modeling
   output-format: document
-  related-skills: pm-brd, pm-privacy-requirements, pm-domain-analysis, pm-features-list
+  related-skills: pm-entity-registry, pm-business-rules-library, pm-privacy-requirements, pm-domain-analysis, pm-features-list
 ---
 
 # PM - Domain Model
@@ -24,7 +24,7 @@ Defines the conceptual data and domain structure of the product:
 
 Two-stage output: Claude generates the Domain Overview + Entity Catalogue first, waits for user confirmation, then generates the full Entity Definitions. This prevents building detailed specs on top of a wrong domain structure.
 
-Output is the foundation for BRD (business behavior), FSD (feature specification), and Feature Cards (delivery). Never duplicate Domain Model content in those documents - reference it.
+Output is the foundation for entities.md (entity state machines), business_rules.md (business behavior), and Feature Cards (delivery). Never duplicate Domain Model content in those documents - reference it.
 
 ---
 

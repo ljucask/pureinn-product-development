@@ -515,7 +515,7 @@ This PRD synthesizes the following Phase 2, Phase 3a, and Phase 3b artifacts:
 **Business Capabilities must cover:**
 - [ ] Capabilities written in business language ("The system must enable X to do Y")
 - [ ] NO User Stories format ("As a user I want...") - incompatible with FDD
-- [ ] Capabilities grouped by domain (each domain = potential Subject Area in feature_list.md)
+- [ ] Capabilities grouped by domain (each domain = one Domain section in feature_list.md)
 - [ ] Capabilities specific enough for AI to extract entities and features from them
 - [ ] Section anchors present so Feature Cards can link to specific capabilities via prd_ref
 
