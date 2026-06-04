@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.2] - 2026-06-04
+
+### Added specific downstream risk callouts to Path B in pm-problem-validation, pm-personas, design-thinking, and pm-hypotheses
+
+---
+
+
 ## [2.4.1] - 2026-06-03
 
 ### Added recommended option rule (ROI-based, not easiest) and proactive assumption surfacing to skill question pattern

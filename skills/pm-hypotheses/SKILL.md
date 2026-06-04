@@ -101,6 +101,16 @@ What do you want to do in this session?
 
 ### Plan mode (Option A)
 
+Before gathering inputs: check whether Phase 2 evidence (items 2-3 below) was generated via Path B (assumption-based) in pm-personas, pm-problem-validation, or design-thinking. If yes, surface this explicitly before structuring hypotheses:
+
+> **If Phase 2 inputs are assumption-based, flag these specific risks before structuring experiments:**
+>
+> - **Persona assumed:** experiment recruitment criteria will target the assumed profile. If the profile is wrong, you will collect validation from the wrong people and the Go/No-Go verdict will reflect their reality, not your actual customer's.
+> - **Problem urgency assumed:** success criteria for problem hypotheses may be calibrated to a pain level the customer does not actually experience. A test that passes against assumed urgency can still fail in the market.
+> - **Design Thinking outputs assumption-based:** HMW questions and solution directions used as hypothesis inputs may have been anchored to founder intuition. Make sure at least one hypothesis is designed to falsify the current direction, not just confirm it.
+>
+> None of this requires stopping. It requires being explicit: which of the 4 input areas below has zero external evidence? Those areas have the highest experiment priority - test them first, not last.
+
 ```
 I need your current assumptions to structure the Hypothesis Register.
 

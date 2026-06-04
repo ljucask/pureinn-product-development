@@ -109,6 +109,17 @@ Additional questions:
 
 No Phase 2 artifacts exist. Guide the user through 3 rounds to reconstruct the validation picture from founder knowledge across all four tracks. Output will be marked as assumption-based and gaps will be flagged explicitly.
 
+> **Path B - specific downstream risks by assumption type**
+>
+> This is the highest-leverage document in Phase 2 - every Phase 3 artifact anchors to it. Knowing which parts are assumption vs. evidence matters more than completing the document.
+>
+> - **Problem urgency assumed (not confirmed by customers):** the Business Case will model conversion rates and pricing based on an urgency level the customer may not share. If real urgency is lower, pricing and CAC assumptions will not hold.
+> - **Customer identity assumed:** if the primary customer turns out to be a different role or segment, the JTBD Analysis, Lean Canvas Customer Segment block, and KPI activation event definition will need to be revisited.
+> - **Competitor landscape incomplete:** missing a key competitor means the positioning in Lean Canvas and PRD may be weaker than it appears - not necessarily fatal, but the team will not see it coming.
+> - **Regulatory/legal gaps not surfaced here:** if Phase 4 Domain Analysis later identifies a compliance constraint (GDPR, licensing, sector-specific regulation), it may constrain technical architecture or MVP scope in ways that affect the roadmap timeline you set in Phase 3.
+>
+> None of these require stopping. What matters: identify the highest-risk assumption before Phase 3 commercial work begins, and design at least one lightweight experiment to stress-test it before the Business Case numbers are locked.
+
 **Group 1 of 3 - The problem and the customer**
 
 Use AskUserQuestion tool for these two questions:

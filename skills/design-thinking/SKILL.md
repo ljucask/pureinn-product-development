@@ -112,6 +112,14 @@ I need inputs for the Design Thinking synthesis.
 
 No Phase 2 artifacts exist. Guide the user through 3 rounds to build the input picture from founder knowledge. The goal is to extract enough to run a meaningful Define + Ideate synthesis. Output marked as assumption-based.
 
+> **Path B - specific downstream risks by assumption type**
+>
+> - **HMW questions built on assumed pain:** HMW questions are the direct input for pm-hypotheses (Plan mode) - they shape which hypotheses get prioritized and which experiments get designed. If the pain is assumed, you risk designing experiments that confirm your framing rather than genuinely test it.
+> - **Solution directions from founder intuition, not customer evidence:** the Ideation Synthesis feeds pm-mvp-scope and pm-features-list. Solution directions that feel obvious to the founder are not always the ones customers care most about. Early commitment to a direction reduces the space for discovery.
+> - **POV built on assumed JTBD:** the Point of View drives the product vision section of the PRD. If the underlying job-to-be-done is inferred rather than observed, the product vision may be solving the wrong outcome - a problem that can persist undetected through Phase 3 and into build.
+>
+> The risk here is anchoring: teams that generate ideation outputs early tend to validate their starting directions rather than stress-test them. When using these outputs in pm-hypotheses, explicitly design at least one experiment that could falsify your current solution direction - not just confirm it.
+
 **Group 1 of 3 - The person and their world**
 
 Ask all as plain text:

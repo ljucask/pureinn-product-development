@@ -107,6 +107,15 @@ I need VOC data for Customer Segments + Personas.
 
 No research data yet. Guide the user through 3 rounds of questions to extract maximum knowledge. The goal is to replace interview and observation work with structured founder knowledge. Output will be marked as assumption-based.
 
+> **Path B - specific downstream risks by assumption type**
+>
+> - **Who the customer is (role, context, org size) assumed:** in pm-hypotheses Plan mode, experiment recruitment criteria will be based on this profile. If the profile is off, you will be interviewing the wrong people and generating false positive validation signals.
+> - **How they discover and adopt tools assumed:** this feeds directly into the Channel block of Lean Canvas and acquisition stage of AARRR (KPIs). A wrong adoption behavior assumption means your go-to-market channel choice is built on an untested premise.
+> - **Pain description from founder perspective, not customer words:** pm-features-list uses the persona to classify features as Must-be, Performance, or Delighter. A feature that feels Must-be from your perspective may be Indifferent to the actual customer - which affects MVP scope decisions.
+> - **Early adopter profile assumed:** the first 10-50 customers matter disproportionately. If the assumed early adopter profile does not match who actually responds to your outreach, you will spend acquisition budget targeting the wrong person.
+>
+> One real interview with someone matching this profile - before Phase 3 - closes the largest share of this risk at minimal cost.
+
 **Group 1 of 3 - Who is this person?**
 
 Use AskUserQuestion tool for these two questions:
