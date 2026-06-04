@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.1] - 2026-06-04
+
+### Fix all residual Phase 3 references across 15 files after 3.0.0 split
+
+---
+
+
 ## [3.0.0] - 2026-06-04
 
 ### Breaking Changes

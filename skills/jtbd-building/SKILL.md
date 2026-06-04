@@ -22,7 +22,7 @@ Applies Jobs-to-be-Done theory to the validated customer research and personas t
 2. Forces Diagram - what pushes away from the current solution and pulls toward a new one
 3. Switching logic - what triggers the decision to change, and what blocks it
 
-JTBD analysis goes deeper than persona pain points. It explains the causal mechanism behind why someone would switch - the forces operating on their decision. This is the input for design decisions in Phase 3 (Design Thinking).
+JTBD analysis goes deeper than persona pain points. It explains the causal mechanism behind why someone would switch - the forces operating on their decision. This is the input for design decisions in Phase 3a (Design Thinking).
 
 Run this after `pm-personas`. Personas give you who - JTBD gives you why.
 

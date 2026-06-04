@@ -1,6 +1,6 @@
 ---
 name: pm-kpis
-description: Generate AARRR funnel metrics, North Star Metric, and OKRs for Phase 3. Requires Business Model Canvas. Produces the measurement framework for the product.
+description: Generate AARRR funnel metrics, North Star Metric, and OKRs. Phase 3b skill. Requires Lean Canvas. Produces the measurement framework for the product.
 license: MIT
 metadata:
   author: https://github.com/ljucask

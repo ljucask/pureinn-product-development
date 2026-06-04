@@ -1,6 +1,6 @@
 ---
 name: pm-product-roadmap
-description: Generate or update the Product Roadmap. Living document - v1 created in Phase 3 (vision + problem + business model), v2 updated in Phase 4 (domain constraints), v3 updated in Phase 5 (feature and delivery view). Run this skill at each update point.
+description: Generate or update the Product Roadmap. Living document - v1 created in Phase 3b (vision + problem + business model), v2 updated in Phase 4 (domain constraints), v3 updated in Phase 5 (feature and delivery view). Run this skill at each update point.
 license: MIT
 metadata:
   author: https://github.com/ljucask
@@ -19,7 +19,7 @@ metadata:
 
 Creates and maintains the Product Roadmap - a living strategic document that evolves across phases:
 
-- **v1 (Phase 3):** Vision + validated problem + customer segments + business model horizon. No features yet - strategic direction only.
+- **v1 (Phase 3b):** Vision + validated problem + customer segments + business model horizon. No features yet - strategic direction only.
 - **v2 (Phase 4):** Domain constraints and architecture decisions incorporated. Technical realities added. Still no delivery details.
 - **v3 (Phase 5):** Feature view added. Phases aligned with Feature Sets and Delivery Stripes. Delivery timeline visible.
 
@@ -31,7 +31,7 @@ The roadmap is NOT a sprint backlog. It communicates strategic intent and phase 
 
 ## Dependencies
 
-**Recommended before running v1 (Phase 3):**
+**Recommended before running v1 (Phase 3b):**
 - `pm-problem-validation` - validated problem is the strategic foundation
 - `pm-business-model` - revenue model and segments frame the roadmap horizon
 - `pm-kpis` - success metrics anchor each roadmap phase
@@ -60,7 +60,7 @@ Check for existing artifacts:
 
 If a roadmap exists: identify the current version (v1 / v2 / v3) and what phase we are in now. Determine what update is needed.
 
-Also check: what Phase 3 artifacts exist (Business Model Canvas, KPIs, Business Case)? What Phase 4 artifacts exist (Domain Model)? What Phase 5 artifacts exist (Features List, MVP Scope)?
+Also check: what Phase 3b artifacts exist (Business Model Canvas, KPIs, Business Case)? What Phase 4 artifacts exist (Domain Model)? What Phase 5 artifacts exist (Features List, MVP Scope)?
 
 Look for: roadmap that jumps straight to features without strategic context, phases without success criteria, missing "not now" section, timeline without explicit assumptions, v1 being updated with feature detail before Phase 5 is complete.
 
@@ -72,7 +72,7 @@ Apply the standard skill interaction pattern (CLAUDE.md).
 
 The questions differ by version. After Step 0, Claude identifies which version and asks accordingly.
 
-### For v1 (Phase 3 - new roadmap):
+### For v1 (Phase 3b - new roadmap):
 
 Ask questions in 2 groups. After each group show a summary and wait for confirmation before continuing.
 
@@ -248,7 +248,7 @@ The timeline in this roadmap assumes:
 
 | Version | Date | Phase | Key changes |
 |---|---|---|---|
-| v1 | [date] | Phase 3 | Initial - strategic phases, vision, success criteria |
+| v1 | [date] | Phase 3b | Initial - strategic phases, vision, success criteria |
 | v2 | [date] | Phase 4 | Domain constraints added, [X] timeline adjustments |
 | v3 | [date] | Phase 5 | Feature view added, Delivery Stripes defined |
 ```

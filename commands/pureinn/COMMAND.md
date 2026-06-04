@@ -404,7 +404,7 @@ Phase 0 runs once per project onboarding - not per feature. After Phase 0, each 
 If Phase 0 is already done (context exists from a prior session), skip to Feature Viability Assessment.
 
 **Rebuild playbook note:**
-Rebuild starts at Phase 1 (Foundation) but includes two additional Rebuild-only phases: R2 (Legacy Assessment) and R3 (Migration Strategy) before Phase 3. Do not skip these - poor legacy analysis is the primary cause of Rebuild failures.
+Rebuild starts at Phase 1 (Foundation) but includes two additional Rebuild-only phases: R2 (Legacy Assessment) and R3 (Migration Strategy) before Phase 3a. Do not skip these - poor legacy analysis is the primary cause of Rebuild failures.
 
 ---
 
@@ -441,7 +441,7 @@ pureinn-workspace/[slug]/
   assessment.md
   glossary.md                                    ← pm-glossary (cross-phase)
   product/
-    PRD_master.md                                ← pm-prd [Product PRD - frozen after Phase 3]
+    PRD_master.md                                ← pm-prd [Product PRD - frozen after Phase 3b]
   domain/                                        ← 4 living registers (append per initiative)
     entities.md                                  ← pm-entity-registry (Live Register 1)
     business_rules.md                            ← pm-business-rules-library (Live Register 2)
@@ -524,11 +524,16 @@ Create `pureinn-workspace/[project-slug]/pureinn-variables.md` with the followin
 | Customer Interviews | DB | pm-personas | |
 | Research Lab | DB | pm-market-analysis | |
 
-## Validation & Metrics (Phase 3)
+## Validation (Phase 3a)
 
 | Key | Type | Skill | URL |
 |---|---|---|---|
 | Hypothesis Validation | Page | pm-hypotheses | |
+
+## Commercial Definition (Phase 3b)
+
+| Key | Type | Skill | URL |
+|---|---|---|---|
 | OKRs | Page | pm-kpis | |
 | KPIs | DB | pm-kpis | |
 | Investor Pitch | Page | pm-pitch-deck | |

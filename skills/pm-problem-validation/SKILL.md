@@ -23,7 +23,7 @@ Synthesizes all Phase 2 Track outputs into one convergence document:
 - Track C: Market Analysis (TAM/SAM/SOM, Competitor Analysis, SWOT, Market Timing)
 - Track D: Personas + JTBD Analysis
 
-This is the Phase 2 exit artifact. Its output becomes the primary input to Phase 3 (Design Thinking - Define stage).
+This is the Phase 2 exit artifact. Its output becomes the primary input to Phase 3a (Design Thinking - Define stage).
 
 No new research. Claude reads all inputs and synthesizes patterns, validates consistency, and surfaces contradictions.
 
@@ -111,14 +111,14 @@ No Phase 2 artifacts exist. Guide the user through 3 rounds to reconstruct the v
 
 > **Path B - specific downstream risks by assumption type**
 >
-> This is the highest-leverage document in Phase 2 - every Phase 3 artifact anchors to it. Knowing which parts are assumption vs. evidence matters more than completing the document.
+> This is the highest-leverage document in Phase 2 - every Phase 3a and Phase 3b artifact anchors to it. Knowing which parts are assumption vs. evidence matters more than completing the document.
 >
 > - **Problem urgency assumed (not confirmed by customers):** the Business Case will model conversion rates and pricing based on an urgency level the customer may not share. If real urgency is lower, pricing and CAC assumptions will not hold.
 > - **Customer identity assumed:** if the primary customer turns out to be a different role or segment, the JTBD Analysis, Lean Canvas Customer Segment block, and KPI activation event definition will need to be revisited.
 > - **Competitor landscape incomplete:** missing a key competitor means the positioning in Lean Canvas and PRD may be weaker than it appears - not necessarily fatal, but the team will not see it coming.
-> - **Regulatory/legal gaps not surfaced here:** if Phase 4 Domain Analysis later identifies a compliance constraint (GDPR, licensing, sector-specific regulation), it may constrain technical architecture or MVP scope in ways that affect the roadmap timeline you set in Phase 3.
+> - **Regulatory/legal gaps not surfaced here:** if Phase 4 Domain Analysis later identifies a compliance constraint (GDPR, licensing, sector-specific regulation), it may constrain technical architecture or MVP scope in ways that affect the roadmap timeline you set in Phase 3b.
 >
-> None of these require stopping. What matters: identify the highest-risk assumption before Phase 3 commercial work begins, and design at least one lightweight experiment to stress-test it before the Business Case numbers are locked.
+> None of these require stopping. What matters: identify the highest-risk assumption before Phase 3a validation begins, and design at least one lightweight experiment to stress-test it before Phase 3b commercial work locks in the Business Case numbers.
 
 **Group 1 of 3 - The problem and the customer**
 
@@ -223,7 +223,7 @@ Generate in English.
 
 **Overall verdict:** ✅ Validated / ⚠️ Partially validated / ❌ Not validated
 
-[2-3 sentences: clear statement of what was validated, what wasn't, and whether proceeding to Phase 3 is justified]
+[2-3 sentences: clear statement of what was validated, what wasn't, and whether proceeding to Phase 3a is justified]
 
 ---
 
@@ -250,7 +250,7 @@ Generate in English.
 | [Pain 2] | | | | |
 | [Pain 3] | | | | |
 
-**Top validated pain (focus for Phase 3):**
+**Top validated pain (focus for Phase 3a Design Thinking):**
 [The single most validated, most intense pain to solve first]
 
 ---
@@ -314,11 +314,11 @@ When [situation], I want to [motivation], so I can [expected outcome].
 
 ---
 
-## Open Questions Going into Phase 3
+## Open Questions Going into Phase 3a
 
 | Question | Priority | Who resolves |
 |---|---|---|
-| [What we still don't know] | High / Med / Low | [Human research / Phase 3 Design Thinking / next discovery loop] |
+| [What we still don't know] | High / Med / Low | [Human research / Phase 3a Design Thinking / next discovery loop] |
 | ... | | |
 
 ---
@@ -334,13 +334,13 @@ When [situation], I want to [motivation], so I can [expected outcome].
 
 ---
 
-## Phase 2 → Phase 3 Recommendation
+## Phase 2 → Phase 3a Recommendation
 
-**Recommendation:** ✅ Proceed to Phase 3 / ⚠️ Proceed with gaps noted / ❌ Do not proceed - revisit [area]
+**Recommendation:** ✅ Proceed to Phase 3a / ⚠️ Proceed with gaps noted / ❌ Do not proceed - revisit [area]
 
 **Reason:** [1-2 sentences]
 
-**What Phase 3 must answer:**
+**What Phase 3a must answer:**
 1. [Key design/strategy question remaining]
 2. [Second key question]
 3. [Third key question]
@@ -377,8 +377,8 @@ When [situation], I want to [motivation], so I can [expected outcome].
 **Synthesis quality must be verified:**
 - [ ] Assumptions from Phase 1 (Project Charter) confirmed or invalidated - explicitly stated
 - [ ] Contradictions between tracks surfaced and addressed
-- [ ] Open questions going into Phase 3 listed with priority
-- [ ] Phase 2 → Phase 3 recommendation stated with reasoning
+- [ ] Open questions going into Phase 3a listed with priority
+- [ ] Phase 2 → Phase 3a recommendation stated with reasoning
 
 **For SaaS/AI products:**
 - [ ] Would customers trust an AI-based solution for this problem?

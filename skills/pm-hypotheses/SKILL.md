@@ -1,6 +1,6 @@
 ---
 name: pm-hypotheses
-description: Structure validation hypotheses, design low-cost experiments, track results, and produce a Go/No-Go decision. Runs progressively in Phase 3: first to define hypotheses and plan experiments, then to record results and issue the verdict. Based on a 5-stage SaaS validation framework.
+description: Structure validation hypotheses, design low-cost experiments, track results, and produce a Go/No-Go decision. Runs in Phase 3a: Plan mode structures hypotheses and experiments, Results mode records outcomes and issues the Go/No-Go verdict (hard gate before Phase 3b). Based on a 5-stage SaaS validation framework.
 license: MIT
 metadata:
   author: https://github.com/ljucask

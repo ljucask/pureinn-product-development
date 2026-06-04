@@ -1,6 +1,6 @@
 ---
 name: pm-lean-canvas
-description: Generate a Lean Canvas for Phase 3. One-page business model optimized for validation-stage products. Runs after Go/No-Go = GO. Replaces Business Model Canvas for Greenfield and Feature Implementation.
+description: Generate a Lean Canvas. Phase 3b - one-page business model optimized for validation-stage products. Runs after Go/No-Go = GO. Replaces Business Model Canvas for Greenfield and Feature Implementation.
 license: MIT
 metadata:
   author: https://github.com/ljucask
@@ -21,7 +21,7 @@ Produces a one-page business model focused on problem-solution fit and early tra
 
 Unlike the Business Model Canvas (which maps an established business), Lean Canvas maps a hypothesis. Each block is a bet that needs validation.
 
-No invented market data or assumptions. Claude structures the canvas; user provides the business knowledge from Phase 2 research and Phase 3 Go/No-Go outcomes.
+No invented market data or assumptions. Claude structures the canvas; user provides the business knowledge from Phase 2 research and Phase 3a Go/No-Go outcomes.
 
 ---
 
@@ -124,7 +124,7 @@ Generate the canvas in two formats: table view (for quick reference) and expande
 
 **Product:** [product name]
 **Date:** [date]
-**Status:** Phase 3 - Define & Validation (Go/No-Go: GO)
+**Status:** Phase 3b - Commercial Definition (Go/No-Go: GO)
 
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: pm-kotler
-description: Define the product at Kotler's Five Levels of Product for Phase 3. Maps each level to KANO classification as a forward reference for Phase 5 feature planning. Runs after Go/No-Go = GO.
+description: Define the product at Kotler's Five Levels of Product. Phase 3b - first skill after Go/No-Go = GO. Maps each level to KANO classification as a forward reference for Phase 5 feature planning.
 license: MIT
 metadata:
   author: https://github.com/ljucask
@@ -115,7 +115,7 @@ Generate the structured output. For each level, include:
 
 **Product:** [product name]
 **Date:** [date]
-**Status:** Phase 3 - Define & Validation
+**Status:** Phase 3b - Commercial Definition
 
 ---
 

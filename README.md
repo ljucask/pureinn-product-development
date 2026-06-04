@@ -73,17 +73,21 @@ Full framework overview - all playbooks, phases, skills, and artifact chains.
 | `/jtbd-building` | JTBD Analysis, Forces Diagram |
 | `/pm-problem-validation` | Problem Validation Summary (Phase 2 exit) |
 
-### Phase 3 - Define & Validation
+### Phase 3a - Validation
 | Skill | Output |
 |---|---|
 | `/design-thinking` | Problem Statement, POV, HMW, Elevator Pitch, Validation Hypotheses draft |
-| `/pm-hypotheses` | Hypothesis Register + Go/No-Go Decision (hard gate) |
+| `/pm-hypotheses` | Hypothesis Register + Go/No-Go Decision (hard gate - GO required for Phase 3b) |
+
+### Phase 3b - Commercial Definition
+| Skill | Output |
+|---|---|
 | `/pm-kotler` | Product Definition - Kotler's Five Levels |
 | `/pm-lean-canvas` | Lean Canvas |
 | `/pm-kpis` | North Star Metric, AARRR, OKRs |
 | `/pm-business-case` | Business Case (3-year projections, Go/No-Go) |
 | `/pm-product-roadmap` | Product Roadmap v1 |
-| `/pm-prd` | PRD - Phase 3 exit artifact |
+| `/pm-prd` | PRD - Phase 3b exit artifact (frozen after creation) |
 | `/pm-pitch-deck` | Pitch Deck content brief (+ Gamma visual deck if MCP connected) |
 
 ### Phase 4 - Domain Modeling + Register Setup
@@ -147,7 +151,7 @@ pureinn-workspace/
     pureinn-variables.md    - Notion URLs per project (fill in once)
     glossary.md
     product/
-      PRD_master.md         - pm-prd Phase 3 output (frozen after creation, never overwritten)
+      PRD_master.md         - pm-prd Phase 3b output (frozen after creation, never overwritten)
     domain/                 - Living registers (source of truth for AI during Phase 6-7)
       entities.md           - Entity states + Mermaid state machines (Live Register 1)
       business_rules.md     - Business Rules Library (Live Register 2)

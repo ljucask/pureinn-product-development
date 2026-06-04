@@ -114,7 +114,7 @@ No research data yet. Guide the user through 3 rounds of questions to extract ma
 > - **Pain description from founder perspective, not customer words:** pm-features-list uses the persona to classify features as Must-be, Performance, or Delighter. A feature that feels Must-be from your perspective may be Indifferent to the actual customer - which affects MVP scope decisions.
 > - **Early adopter profile assumed:** the first 10-50 customers matter disproportionately. If the assumed early adopter profile does not match who actually responds to your outreach, you will spend acquisition budget targeting the wrong person.
 >
-> One real interview with someone matching this profile - before Phase 3 - closes the largest share of this risk at minimal cost.
+> One real interview with someone matching this profile - before Phase 3a - closes the largest share of this risk at minimal cost.
 
 **Group 1 of 3 - Who is this person?**
 

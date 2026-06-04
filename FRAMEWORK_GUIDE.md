@@ -310,9 +310,11 @@ Artifacts are not independent documents. Each phase feeds the next:
 ```
 Phase 2 outputs (JTBD, Personas, Market Analysis, Problem Validation)
   ↓
-Phase 3 outputs (Design Thinking, Go/No-Go, Lean Canvas, KPIs, Business Case)
+Phase 3a outputs (Design Thinking, Go/No-Go verdict)
   ↓
-PRD - consolidation of Phase 2+3, Business Capabilities section drives Phase 4+
+Phase 3b outputs (Lean Canvas, KPIs, Business Case)
+  ↓
+PRD - consolidation of Phase 2+3a+3b, Business Capabilities section drives Phase 4+
   ↓
 Product Roadmap v1 (vision + segments + business model)
   ↓
@@ -361,14 +363,14 @@ Both methods run in `/pm-features-list`. Both are required - KANO without V×C d
 
 ---
 
-### Hypothesis validation (Phase 3)
+### Hypothesis validation (Phase 3a)
 
 `/pm-hypotheses` is a two-mode skill:
 
 - **Plan mode** - run after `/design-thinking`: structures Validation Hypotheses into a formal register with ICP definition, assumption map, experiment plan, and success criteria defined BEFORE experiments run
 - **Results mode** - run after experiments complete: records results against pre-defined criteria, issues Go/No-Go verdict (Go / Pivot / Stop)
 
-The Go/No-Go verdict is a hard gate. Only GO advances to `/pm-kotler` and the rest of Phase 3. PIVOT loops back to targeted re-validation. STOP terminates the project.
+The Go/No-Go verdict is a hard gate. Only GO advances to Phase 3b (`/pm-kotler` and beyond). PIVOT loops back to targeted re-validation. STOP terminates the project. No FORCE bypass on this gate.
 
 ---
 
@@ -384,7 +386,7 @@ pureinn-workspace/
     pureinn-variables.md          - Notion URLs per project (fill in once)
     glossary.md
     product/
-      PRD_master.md               - pm-prd Phase 3 output (frozen after creation, never overwritten)
+      PRD_master.md               - pm-prd Phase 3b output (frozen after creation, never overwritten)
     domain/                       - 4 living registers (source of truth for AI in Phase 6-7)
       entities.md                 - pm-entity-registry (Live Register 1, append per initiative)
       business_rules.md           - pm-business-rules-library (Live Register 2, append per initiative)

@@ -1,6 +1,6 @@
 ---
 name: design-thinking
-description: Synthesize Phase 2 discovery outputs through Design Thinking (Define + Ideate stages). Produces Problem Statement, POV, HMW questions, and Ideation synthesis. Run in Phase 3 as the first step before business model work. Takes Phase 2 outputs as input - no new research.
+description: Synthesize Phase 2 discovery outputs through Design Thinking (Define + Ideate stages). Produces Problem Statement, POV, HMW questions, and Ideation synthesis. Run in Phase 3a as the first step - feeds directly into pm-hypotheses. Takes Phase 2 outputs as input - no new research.
 license: MIT
 metadata:
   author: https://github.com/ljucask
@@ -25,7 +25,7 @@ Produces:
 3. How Might We (HMW) questions - opportunity reframing
 4. Ideation synthesis - promising solution directions from structured brainstorming
 
-This skill runs once in Phase 3. It is the bridge between discovery (what we learned about the problem) and strategy (what we will build and how).
+This skill runs once in Phase 3a. It is the bridge between discovery (what we learned about the problem) and validation strategy (what we will test before committing to building).
 
 Output informs the Business Model Canvas, PRD framing, and product vision.
 
@@ -116,7 +116,7 @@ No Phase 2 artifacts exist. Guide the user through 3 rounds to build the input p
 >
 > - **HMW questions built on assumed pain:** HMW questions are the direct input for pm-hypotheses (Plan mode) - they shape which hypotheses get prioritized and which experiments get designed. If the pain is assumed, you risk designing experiments that confirm your framing rather than genuinely test it.
 > - **Solution directions from founder intuition, not customer evidence:** the Ideation Synthesis feeds pm-mvp-scope and pm-features-list. Solution directions that feel obvious to the founder are not always the ones customers care most about. Early commitment to a direction reduces the space for discovery.
-> - **POV built on assumed JTBD:** the Point of View drives the product vision section of the PRD. If the underlying job-to-be-done is inferred rather than observed, the product vision may be solving the wrong outcome - a problem that can persist undetected through Phase 3 and into build.
+> - **POV built on assumed JTBD:** the Point of View drives the product vision section of the PRD. If the underlying job-to-be-done is inferred rather than observed, the product vision may be solving the wrong outcome - a problem that can persist undetected through Phase 3a, Phase 3b, and into build.
 >
 > The risk here is anchoring: teams that generate ideation outputs early tend to validate their starting directions rather than stress-test them. When using these outputs in pm-hypotheses, explicitly design at least one experiment that could falsify your current solution direction - not just confirm it.
 
@@ -334,7 +334,7 @@ How this Define + Ideate output connects to what comes next:
 | HMW questions | Product Roadmap - what each phase must answer |
 | Recommended direction | Business Model Canvas - Value Proposition |
 
-**Open questions for Phase 3 strategy work:**
+**Open questions for Phase 3b strategy work:**
 1. [Question the Design Thinking stage couldn't answer - needs business model / financial analysis]
 2. [Question 2]
 ```

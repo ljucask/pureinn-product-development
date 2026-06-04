@@ -1,12 +1,12 @@
 ---
 name: pm-prd
-description: Two modes. (1) Product PRD - Phase 3 consolidation artifact synthesizing all Phase 2+3 outputs. Saves to product/PRD_master.md. Frozen after creation. (2) Initiative PRD - Feature Implementation context, after Track B discovery for a large new domain. Leaner document focused on Business Capabilities for that domain only. Saves to initiatives/[slug]/prd.md.
+description: Two modes. (1) Product PRD - Phase 3b exit artifact synthesizing all Phase 2+3a+3b outputs. Saves to product/PRD_master.md. Frozen after creation. (2) Initiative PRD - Feature Implementation context, after Track B discovery for a large new domain. Leaner document focused on Business Capabilities for that domain only. Saves to initiatives/[slug]/prd.md.
 license: MIT
 metadata:
   author: https://github.com/ljucask
   version: "1.0.0"
   domain: product-management
-  triggers: PRD, product requirements document, Phase 3 exit, product consolidation, product specification
+  triggers: PRD, product requirements document, Phase 3b exit, product consolidation, product specification
   role: specialist
   scope: documentation
   output-format: document
@@ -21,7 +21,7 @@ metadata:
 
 | Mode | Context | Inputs | Output | Frozen? |
 |---|---|---|---|---|
-| **Product PRD** | Greenfield Phase 3 | All Phase 2+3 outputs | `product/PRD_master.md` | Yes - frozen after creation |
+| **Product PRD** | Greenfield Phase 3b | All Phase 2+3a+3b outputs | `product/PRD_master.md` | Yes - frozen after creation |
 | **Initiative PRD** | Feature Implementation after Track B | `initiatives/[slug]/discovery/` | `initiatives/[slug]/prd.md` | No - living for that initiative |
 
 **Product PRD_master** is the original product scope document. It does NOT change after creation. New scope, new functionality, changed assumptions → new Initiative PRD for that initiative. PRD_master remains as the stable historical record.
@@ -30,7 +30,7 @@ metadata:
 
 ---
 
-**Product PRD** synthesizes all Phase 2 and Phase 3 outputs into a single coherent product-level document:
+**Product PRD** synthesizes all Phase 2, Phase 3a, and Phase 3b outputs into a single coherent product-level document:
 
 **Phase 2 inputs:**
 - Tech Feasibility Report (Track A)
@@ -39,7 +39,11 @@ metadata:
 - Customer Segments, Personas, Early Adopters Profile, JTBD Analysis (Track D)
 - Problem Validation Summary (convergence)
 
-**Phase 3 inputs:**
+**Phase 3a inputs:**
+- Design Thinking Synthesis (Problem Statement, POV, HMW, Ideation)
+- Hypothesis Register + Go/No-Go verdict
+
+**Phase 3b inputs:**
 - Business Model Canvas
 - KPIs & Metrics Framework (North Star, AARRR, OKRs)
 - Business Case
@@ -94,7 +98,7 @@ No new research. Pure synthesis.
    - Yes → **Feature Implementation context detected.**
    - Use AskUserQuestion tool:
      - Option A: "Initiative PRD - new domain/initiative after Track B discovery (saves to initiatives/[slug]/prd.md)" (Recommended for FI)
-     - Option B: "Product PRD - full Phase 3 consolidation (saves to product/PRD_master.md)" (Greenfield only)
+     - Option B: "Product PRD - full Phase 3b consolidation (saves to product/PRD_master.md)" (Greenfield only)
    - No → **Greenfield context.** Proceed to Product PRD mode below.
 
 3. If Initiative PRD mode selected → skip to **INITIATIVE PRD MODE** section at bottom of this skill.
@@ -112,10 +116,12 @@ Then map which inputs are available:
 | Phase 2 Track C | Market Analysis | ✅ / ⚠️ / ❌ |
 | Phase 2 Track B | Domain Analysis + Legal | ✅ / ⚠️ / ❌ |
 | Phase 2 Track A | Tech Feasibility | ✅ / ⚠️ / ❌ |
-| Phase 3 | Business Model Canvas | ✅ / ⚠️ / ❌ |
-| Phase 3 | KPIs (NSM, AARRR, OKRs) | ✅ / ⚠️ / ❌ |
-| Phase 3 | Business Case | ✅ / ⚠️ / ❌ |
-| Phase 3 | Product Roadmap v1 | ✅ / ⚠️ / ❌ |
+| Phase 3a | Design Thinking Synthesis | ✅ / ⚠️ / ❌ |
+| Phase 3a | Hypothesis Register + Go/No-Go verdict | ✅ / ⚠️ / ❌ |
+| Phase 3b | Business Model Canvas | ✅ / ⚠️ / ❌ |
+| Phase 3b | KPIs (NSM, AARRR, OKRs) | ✅ / ⚠️ / ❌ |
+| Phase 3b | Business Case | ✅ / ⚠️ / ❌ |
+| Phase 3b | Product Roadmap v1 | ✅ / ⚠️ / ❌ |
 
 If critical inputs are missing (Problem Validation Summary, Business Model Canvas, KPIs), block until resolved. If secondary inputs are missing, inform user and generate with noted gaps.
 
@@ -132,7 +138,7 @@ Apply the standard skill interaction pattern (CLAUDE.md).
 Ask as plain text:
 
 ```
-To generate the PRD I will synthesize your Phase 2 and Phase 3 artifacts.
+To generate the PRD I will synthesize your Phase 2, Phase 3a, and Phase 3b artifacts.
 
 Please confirm which are available in context (or paste them below):
 
@@ -201,7 +207,7 @@ Generate in English.
 ```markdown
 # Product Requirements Document - [Product Name]
 
-> **Phase:** 3 - Define & Validation (Phase 3 exit artifact)
+> **Phase:** 3b - Commercial Definition (Phase 3b exit artifact)
 > **Date:** [date]
 > **Version:** 1.0
 > **Status:** [Draft / Final / Approved]
@@ -212,7 +218,7 @@ Generate in English.
 
 ## Document Purpose
 
-This PRD is the consolidation of Phase 2 (Discovery) and Phase 3 (Define) outputs. It captures the validated product-market fit hypothesis and serves as the stable reference for Phase 4+ execution.
+This PRD is the consolidation of Phase 2 (Discovery), Phase 3a (Validation), and Phase 3b (Commercial Definition) outputs. It captures the validated product-market fit hypothesis and serves as the stable reference for Phase 4+ execution.
 
 It is NOT a feature spec. Feature specifications are generated per Feature Set in Phase 6 (BRD + FSD).
 
@@ -458,20 +464,22 @@ These items are explicitly excluded from the MVP. This is a strategic decision.
 
 ## 11. Artifact Input Map
 
-This PRD synthesizes the following Phase 2 and Phase 3 artifacts:
+This PRD synthesizes the following Phase 2, Phase 3a, and Phase 3b artifacts:
 
-| Artifact | Status | Key contribution to PRD |
-|---|---|---|
-| Problem Validation Summary | ✅ / ⚠️ / ❌ | Problem statement, evidence, validated pains |
-| Customer Segments + Personas | ✅ / ⚠️ / ❌ | Target customer, early adopter profile |
-| JTBD Analysis | ✅ / ⚠️ / ❌ | Customer motivation, switching forces |
-| Market Analysis | ✅ / ⚠️ / ❌ | Market size, competitive position, timing |
-| Domain Analysis + Legal | ✅ / ⚠️ / ❌ | Domain constraints, regulatory requirements |
-| Tech Feasibility Report | ✅ / ⚠️ / ❌ | Technical constraints and risks |
-| Business Model Canvas | ✅ / ⚠️ / ❌ | Revenue model, pricing, channels |
-| KPIs (NSM, AARRR, OKRs) | ✅ / ⚠️ / ❌ | Success metrics |
-| Business Case | ✅ / ⚠️ / ❌ | Financial targets, investment |
-| Product Roadmap v1 | ✅ / ⚠️ / ❌ | Strategic phases |
+| Artifact | Phase | Status | Key contribution to PRD |
+|---|---|---|---|
+| Problem Validation Summary | 2 | ✅ / ⚠️ / ❌ | Problem statement, evidence, validated pains |
+| Customer Segments + Personas | 2 | ✅ / ⚠️ / ❌ | Target customer, early adopter profile |
+| JTBD Analysis | 2 | ✅ / ⚠️ / ❌ | Customer motivation, switching forces |
+| Market Analysis | 2 | ✅ / ⚠️ / ❌ | Market size, competitive position, timing |
+| Domain Analysis + Legal | 2 | ✅ / ⚠️ / ❌ | Domain constraints, regulatory requirements |
+| Tech Feasibility Report | 2 | ✅ / ⚠️ / ❌ | Technical constraints and risks |
+| Design Thinking Synthesis | 3a | ✅ / ⚠️ / ❌ | Problem Statement, POV, solution directions |
+| Hypothesis Register + Go/No-Go | 3a | ✅ / ⚠️ / ❌ | Validated assumptions, experiment evidence |
+| Business Model Canvas | 3b | ✅ / ⚠️ / ❌ | Revenue model, pricing, channels |
+| KPIs (NSM, AARRR, OKRs) | 3b | ✅ / ⚠️ / ❌ | Success metrics |
+| Business Case | 3b | ✅ / ⚠️ / ❌ | Financial targets, investment |
+| Product Roadmap v1 | 3b | ✅ / ⚠️ / ❌ | Strategic phases |
 
 **Gaps noted:** [List any artifacts that were missing or partial and how it affected the PRD]
 
@@ -481,7 +489,7 @@ This PRD synthesizes the following Phase 2 and Phase 3 artifacts:
 
 | Version | Date | Author | Changes |
 |---|---|---|---|
-| 1.0 | [date] | [PM] | Initial - end of Phase 3 |
+| 1.0 | [date] | [PM] | Initial - end of Phase 3b |
 ```
 
 ---

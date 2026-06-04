@@ -1,6 +1,6 @@
 ---
 name: pm-business-case
-description: Generate a Business Case Draft for Phase 3. Synthesizes market size, business model, and KPIs into financial projections and investment rationale. Requires pm-business-model and pm-kpis.
+description: Generate a Business Case. Phase 3b skill. Synthesizes market size, business model, and KPIs into financial projections and investment rationale. Requires pm-lean-canvas and pm-kpis.
 license: MIT
 metadata:
   author: https://github.com/ljucask
@@ -17,7 +17,7 @@ metadata:
 
 ## What this skill does
 
-Translates Phase 2 market data and Phase 3 business model + metrics into a structured business case:
+Translates Phase 2 market data and Phase 3b business model + metrics into a structured business case:
 1. Financial projections (3-year revenue model)
 2. Investment requirements
 3. Go/No-Go recommendation with explicit assumptions and risks

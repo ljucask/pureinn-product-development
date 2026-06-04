@@ -109,7 +109,8 @@ Wait for user choice before proceeding.
 |---|---|
 | Phase 1 | artifacts/phase-1-foundation/project-charter.md (solo); + team-roster.md, comms-charter.md (small team); + stakeholder-map.md (full team/corporate) |
 | Phase 2 | artifacts/phase-2-discovery/: tech-feasibility.md, domain-analysis.md, market-analysis.md, personas.md, jtbd-analysis.md, problem-validation.md |
-| Phase 3 | artifacts/phase-3-define/: design-thinking-synthesis.md, north-star-metric.md, aarrr-metrics.md, okrs.md, business-case.md, product-roadmap-v1.md + product/PRD_master.md |
+| Phase 3a | artifacts/phase-3-define/: design-thinking-synthesis.md, hypothesis-register.md (+ go-no-go verdict) |
+| Phase 3b | artifacts/phase-3-define/: north-star-metric.md, aarrr-metrics.md, okrs.md, business-case.md, product-roadmap-v1.md + product/PRD_master.md (frozen) |
 | Phase 4 | artifacts/phase-4-domain/: domain-model.md, pii-inventory.md, privacy-requirements.md, gdpr-action-plan.md, product-roadmap-v2.md + domain/entities.md, domain/business_rules.md, domain/decision_models.md |
 | Phase 5 | artifacts/phase-5-planning/: mvp-scope.md, delivery-stripes.md, product-roadmap-v3.md + features/feature_list.md + features/cards/FEAT-*.md (stub cards) |
 | Phase 6+7 (per Feature) | Feature Card Sections 1-3 complete (features/cards/FEAT-*.md status: 3_Design_Inspection_Passed or higher) |
@@ -128,7 +129,8 @@ PROJECT: [product name]
 PHASE STATUS
   Phase 1 - Foundation & Collaboration        [✅ Done / ⏭ Skipped / 🔲 To do / ⚠️ Incomplete]
   Phase 2 - Ideation & Discovery              [...]
-  Phase 3 - Define & Validation               [...]
+  Phase 3a - Validation                        [...]
+  Phase 3b - Commercial Definition             [...]
   Phase 4 - Domain Modeling + Register Setup  [...]
   Phase 5 - Feature Planning                  [...]
   Phase 6 + 7 - Delivery Cycle (JIT)         [...]

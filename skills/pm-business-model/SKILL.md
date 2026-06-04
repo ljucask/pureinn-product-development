@@ -1,6 +1,6 @@
 ---
 name: pm-business-model
-description: Generate a Business Model Canvas from Phase 2 discovery outputs and founder knowledge. Use in Phase 3 after Problem Validation Summary. Produces the commercial logic of the product.
+description: Generate a Business Model Canvas from Phase 2 discovery outputs and founder knowledge. Phase 3b skill - runs after Go/No-Go = GO and Problem Validation Summary. Produces the commercial logic of the product.
 license: MIT
 metadata:
   author: https://github.com/ljucask
