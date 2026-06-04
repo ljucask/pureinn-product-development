@@ -1108,6 +1108,7 @@ Step 2: Design Inspection [Team mode: human review of Sections 1-3]
           [Solo mode: AI generates, human confirms - same gate, lighter ritual]
 
 Step 3: BUILD SKILLS (Phase 7)
+          → Status: 4_In_Build (set when build skills start)
 /fullstack-guardian    → BE implementation (reads Feature Card Section 3)
 /impeccable-craft      → FE implementation (reads Feature Card Section 3)
 /test-master           → Unit + integration tests
@@ -1120,7 +1121,9 @@ Step 3: BUILD SKILLS (Phase 7)
 /monitoring-expert     → Observability, alerting
 
 Step 4: Feature Card Section 4 (Realizacny Protokol) filled
-          → Commits, test files, flag OFF verification, Code Inspection result
+          → Commits, test files, flag OFF verification
+          → Status: 5_Code_Inspection (set when build complete, before final review)
+          → Code Inspection result recorded
           → Status: 6_Promoted_to_Build (Feature Card immutable after this)
 
 SPEC GATE (hard rule, enforced by /pm-stripe before routing to build):

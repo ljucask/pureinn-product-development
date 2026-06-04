@@ -153,12 +153,13 @@ Phase 6 and 7 are integrated into a JIT cycle - spec happens per Feature, not pe
 
 **JIT cycle per feature (orchestrated by `/pm-stripe`):**
 
-| Step | Skill | Output |
-|---|---|---|
-| 1 | `/pm-feature-design [FEAT-ID]` | Commit 1: register finalization (guard conditions, BR-IDs to Final); Commit 2: Feature Card Sections 1-3 (Biznis Mantinely, ACs, Mermaid sequence diagram) |
-| 2 | Design Inspection | Team: review Sections 1-3; Solo: confirm; → status: 3_Design_Inspection_Passed |
-| 3 | Build skills (see below) | Code + tests, reads Feature Card Section 3 as build spec |
-| 4 | Section 4 filled | Commits, tests, flag verification, Code Inspection; → status: 6_Promoted_to_Build |
+| Step | Status | Skill | Output |
+|---|---|---|---|
+| 1 | → 2_Design | `/pm-feature-design [FEAT-ID]` | Commit 1: register finalization (guard conditions, BR-IDs to Final); Commit 2: Feature Card Sections 1-3 (Biznis Mantinely, ACs, Mermaid sequence diagram) |
+| 2 | → 3_Design_Inspection_Passed | Design Inspection | Team: review Sections 1-3; Solo: confirm |
+| 3 | → 4_In_Build | Build skills (see below) | Code + tests, reads Feature Card Section 3 as build spec |
+| 4 | → 5_Code_Inspection | Section 4 filled | Commits, tests, flag verification recorded in Section 4 |
+| 5 | → 6_Promoted_to_Build | Code Inspection complete | Final review done; Feature Card immutable after this |
 
 **Spec gate (hard rule):** Feature Card Sections 1-3 complete + status 3_Design_Inspection_Passed before any feature enters build.
 
@@ -346,7 +347,7 @@ Three distinct concepts. Do not conflate.
 |---|---|---|
 | **Feature Set** | Logical domain grouping (e.g., "User Auth", "Booking Flow"). Grouping only - not a spec unit. | Organizing principle. Features are assigned to Feature Sets. No BRD or FSD per FS. |
 | **Delivery Stripe** | Domain-focused parallel channel (e.g., stripe-checkout, stripe-auth). Not a time-box. | One stripe = one isolated development channel. Features are processed one at a time per stripe in dependency order. |
-| **Feature Card** | Atomic delivery unit. 6-state lifecycle (1_Walkthrough → 6_Promoted_to_Build). Sections 1-3 written JIT by pm-feature-design; Section 4 filled after build. | Single deliverable feature. Build spec = Feature Card Section 3. Immutable after Promoted. |
+| **Feature Card** | Atomic delivery unit. 6-state lifecycle: 1_Walkthrough → 2_Design → 3_Design_Inspection_Passed → 4_In_Build → 5_Code_Inspection → 6_Promoted_to_Build. Sections 1-3 written JIT by pm-feature-design; Section 4 filled after build. | Single deliverable feature. Build spec = Feature Card Section 3. Immutable after 6_Promoted_to_Build. |
 
 Example: 50 MVP features across 25 Feature Sets → assigned to 3 parallel Delivery Stripes → each feature designed JIT just before build.
 
@@ -422,6 +423,16 @@ The fastest way to fill it in: duplicate the Pureinn Notion template to your wor
 Every phase requires human approval before advancing. This is intentional - not optional. The engine routes, generates, and structures. The human validates and decides.
 
 Run `/pureinn` after completing a phase to trigger the exit gate. Exit gates have quantitative thresholds (e.g., "≥10 customer interviews complete", "Go/No-Go hypothesis verdict recorded"). Only when criteria are met does the engine advance.
+
+**Gate types - there are three, and they behave differently:**
+
+| Gate type | Phases | Behavior |
+|---|---|---|
+| **Hard gate** | Phase 3a (Go/No-Go), Phase 6 (Design Inspection) | Cannot be bypassed. No FORCE. Missing criteria = blocked until resolved. |
+| **Soft gate + FORCE** | Phase 1, Phase 2, Phase 4, Phase 5 | Criteria checked, gaps named. User can proceed by acknowledging risk (FORCE). Output quality depends on what was skipped. |
+| **Implicit gate** | Phase 3b | Condition-based entry only (requires Phase 3a GO verdict). No checklist - the condition is binary. |
+
+Hard gates exist where proceeding without meeting them causes compounding waste downstream - not just lower quality output, but invalid decisions that cannot be corrected without going back. Soft gates exist where partial inputs produce partial output and the team can consciously decide whether the gap is acceptable. The difference is intentional, not an oversight.
 
 ---
 

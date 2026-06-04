@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.0] - 2026-06-04
+
+### Feature Card lifecycle complete (4_In_Build, 5_Code_Inspection), PIVOT escalation rule, gate types documented, KANO+VxC explained, deprecated skills moved, Feature Set clarified as grouping label, Subject Area removed
+
+---
+
+
 ## [3.0.1] - 2026-06-04
 
 ### Fix all residual Phase 3 references across 15 files after 3.0.0 split

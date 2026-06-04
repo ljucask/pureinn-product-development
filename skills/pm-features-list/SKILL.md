@@ -1,6 +1,6 @@
 ---
 name: pm-features-list
-description: Generate the complete Features List in FDD format, organized into the 3-level hierarchy (Subject Area > Feature Set > Feature). Runs Dependency Map, KANO Analysis, and Value vs. Complexity Matrix. Creates stub Feature Cards in /features/cards/ for each feature. After user approval, pushes features to Notion as the initial backlog. Output is the prioritized, dependency-mapped feature inventory and Live Register 4 ready for MVP scoping in pm-mvp-scope.
+description: Generate the complete Features List in FDD format, organized by Domain > Feature Set (grouping label) > Feature. Runs Dependency Map, KANO Analysis, and Value vs. Complexity Matrix. Creates stub Feature Cards in /features/cards/ for each feature. After user approval, pushes features to Notion as the initial backlog. Output is the prioritized, dependency-mapped feature inventory and Live Register 4 ready for MVP scoping in pm-mvp-scope.
 license: MIT
 metadata:
   author: https://github.com/ljucask
@@ -19,7 +19,7 @@ metadata:
 
 Phase 5 / Step 1-3. Takes the product scope from PRD Business Capabilities and produces:
 
-1. **FDD Feature List** (`features/feature_list.md`) - Live Register 4. All features in FDD format (`[Action] [Result] [Object]`), organized in 3-level hierarchy: Subject Area -> Feature Set -> Feature. With actor, priority, dependencies, MVP flag, and stripe assignment.
+1. **FDD Feature List** (`features/feature_list.md`) - Live Register 4. All features in FDD format (`[Action] [Result] [Object]`), organized in 3-level hierarchy: Domain -> Feature Set -> Feature. With actor, priority, dependencies, MVP flag, and stripe assignment.
 2. **Dependency Map** - which features block which, critical path, parallelizable tracks
 3. **KANO Analysis** - must-be / performance / delighter / indifferent classification per feature
 4. **Value vs. Complexity Matrix** - Quick Win / Big Bet / Fill-in / Time Waster scoring per feature
@@ -28,6 +28,37 @@ Phase 5 / Step 1-3. Takes the product scope from PRD Business Capabilities and p
 After user approval: push the complete feature inventory to Notion as the initial product backlog.
 
 This is the direct input for `pm-mvp-scope`, which makes the MVP cut per feature and assigns features to Delivery Stripes.
+
+---
+
+## Prioritization methods used
+
+### KANO Analysis
+
+Classifies each feature by the **type of value** it delivers to the customer:
+
+| Category | What it means | MVP implication |
+|---|---|---|
+| **Must-be** | Expected baseline - absence causes dissatisfaction, presence is not noticed | Always in MVP. Non-negotiable. |
+| **Performance** | More = better. Customer notices and values improvements linearly. | Core differentiators. Include key ones in MVP. |
+| **Delighter** | Unexpected positive surprise. Not expected but appreciated when present. | Post-MVP. Ship after Must-be and Performance are solid. |
+| **Indifferent** | Customer does not care either way. | Cut. Do not build. |
+
+How to classify: ask "how would you feel if this feature existed?" and "how would you feel if it didn't?" The combination of answers maps to KANO category. When in doubt: what does the customer assume is already there? That's Must-be.
+
+### Value vs. Complexity Matrix (V×C)
+
+Maps each feature on two axes to determine **delivery order**:
+
+| | Low complexity | High complexity |
+|---|---|---|
+| **High value** | Quick Win - build first | Big Bet - plan carefully, de-risk |
+| **Low value** | Fill-in - nice to have, low priority | Time Waster - cut or defer indefinitely |
+
+Value = business impact + customer pain relief (use KANO + validated pains from Problem Validation).
+Complexity = estimated build effort + technical risk + dependency depth.
+
+KANO tells you *what* to include. V×C tells you *in what order* to deliver it. Use both - KANO without V×C gives no delivery order; V×C without KANO can lead to building the wrong things quickly.
 
 ---
 
@@ -76,7 +107,7 @@ Check for existing artifacts:
 
 Also check: does entities.md include the new domain entities? Without domain entities for the new initiative, feature-entity alignment will be guesswork.
 
-Look for: features named as capabilities rather than actions, features too large for a single delivery cycle (split needed), missing user role attribution, duplicates, KANO classification without rationale. Subject Areas and Feature Sets are GROUPING ONLY.
+Look for: features named as capabilities rather than actions, features too large for a single delivery cycle (split needed), missing user role attribution, duplicates, KANO classification without rationale. Domains and Feature Sets are GROUPING ONLY.
 
 Apply the standard skill interaction pattern (CLAUDE.md).
 
@@ -131,13 +162,18 @@ I need inputs for the FDD Feature List (Live Register 4), Dependency Map, and KA
 
 ## Step 2: Generate FDD Feature List (Live Register 4)
 
+**Hierarchy:**
+- **Domain** - business area, determines the feature ID prefix (ORD, PAY, USR...). Corresponds to entity clusters in entities.md.
+- **Feature Set** - optional grouping label within a domain. Use when a domain has 5+ features that naturally cluster (e.g., "Checkout Flow", "Order History"). Grouping only - no spec artifact, no BRD, no FSD.
+- **Feature** - atomic delivery unit. One Feature Card per feature. Spec written JIT by pm-feature-design.
+
 Before generating:
-1. Read PRD Business Capabilities - extract all nouns as potential Subject Areas and Feature Sets
+1. Read PRD Business Capabilities - identify Domains and extract features per domain
 2. Decompose each capability into FDD features: `[Action] [Result] [Object]`
-3. Organize into 3-level hierarchy: Subject Area -> Feature Set -> Feature
+3. Group into Feature Sets where domain has 5+ features (use judgment - don't force grouping)
 4. Assign each feature: unique ID (FEAT-[DOMAIN]-[NUMBER], e.g., FEAT-ORD-001), user role, rough complexity
-5. Flag features that are likely too large for 14 days (mark for atomic split)
-6. Subject Areas and Feature Sets are GROUPING ONLY - no execution logic at those levels
+5. Flag features that are likely too large for one delivery cycle (mark for atomic split)
+6. Domain and Feature Set are GROUPING ONLY - no execution logic at those levels
 
 **ID format:** `FEAT-[DOMAIN]-[NUMBER]`
 Domain codes match business_rules.md: ORD (order), PAY (payment), USR (user/auth), INV (inventory), etc.
@@ -162,7 +198,7 @@ Save to: `pureinn-workspace/[project-slug]/features/feature_list.md`
 ---
 
 > **How to read this register:**
-> - Subject Areas and Feature Sets are grouping only - no execution logic
+> - Domains and Feature Sets are grouping only - no execution logic
 > - All prioritization, dependencies, MVP cut, and stripe assignment is per Feature
 > - Status reflects Feature Card status (updated by pm-stripe during JIT cycle)
 
@@ -184,7 +220,7 @@ Features must be:
 
 ---
 
-## [Subject Area 1: e.g., Order Management]
+## [Domain 1: e.g., Order Management]
 
 ### Feature Set: [e.g., Order Processing]
 
@@ -202,7 +238,7 @@ Features must be:
 
 ---
 
-## [Subject Area 2: e.g., Payments]
+## [Domain 2: e.g., Payments]
 
 ### Feature Set: [e.g., Card Payments]
 
@@ -223,7 +259,7 @@ Features must be:
 
 ## Feature Count Summary
 
-| Subject Area | Feature Sets | Features |
+| Domain | Feature Sets | Features |
 |---|---|---|
 | [Area 1] | [X] | [X] |
 | **Total** | **[X]** | **[X]** |
@@ -490,7 +526,7 @@ Push features in batches of up to 100 per call if the list is large.
 
 ### 6c. Confirm
 
-After push: report how many entries were created, how many stub Feature Cards were written locally, and surface any errors. Remind the user that MVP cut, stripe assignment, and Subject Area / Feature Set grouping will be finalized after `pm-mvp-scope`.
+After push: report how many entries were created, how many stub Feature Cards were written locally, and surface any errors. Remind the user that MVP cut, stripe assignment, and Domain / Feature Set grouping will be finalized after `pm-mvp-scope`.
 
 ---
 
@@ -561,7 +597,7 @@ pureinn-workspace/[project-slug]/initiatives/[slug]/value-complexity-matrix.md  
 
 **FI Append rules:**
 - Existing FEAT-* entries in feature_list.md are not modified, renumbered, or removed
-- New initiative features are appended as a new Subject Area section at the bottom
+- New initiative features are appended as a new Domain section at the bottom
 - Stub Feature Cards created only for new FEAT-[NEW-DOMAIN]-* features
 - KANO + V×C saved to initiative folder (not overwriting master phase-5/ analysis)
 - Dependency map section in feature_list.md updated with cross-initiative dependencies (if any)

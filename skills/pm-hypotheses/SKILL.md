@@ -346,8 +346,32 @@ Something specific is not working but the evidence points at what to change:
 - ICP confirmed but problem is different than assumed → reframe solution, run new Solution hypothesis
 - Strong problem + customer signal but no willingness to pay → reprice, reframe value prop, or reassess market
 
-**What changes:** [Specific assumption being revised]
+**What changes:** [Specific assumption being revised - be explicit: Problem / Customer / Solution / Market]
 **New experiment:** [What runs next and with what success criteria]
+
+---
+
+**PIVOT escalation rule:**
+
+After each PIVOT, record which core element changed:
+
+| PIVOT # | What changed | Problem | Customer | Solution | Market |
+|---|---|---|---|---|---|
+| 1 | [describe] | changed / same | changed / same | changed / same | changed / same |
+| 2 | [describe] | changed / same | changed / same | changed / same | changed / same |
+
+If by PIVOT 2 all four elements have changed at least once across the two PIVOTs, trigger a structured review before running new experiments:
+
+> **Escalation review:** You have revised the core problem, customer, solution, and market at least once. This pattern indicates the original hypothesis was fundamentally wrong, not just misaligned on one dimension.
+>
+> Before continuing: is this still the same product idea or effectively a new one? If the problem, customer, and solution are all different from where you started, you are not iterating - you are starting over. A new project with a clean slate is more efficient than continuing to patch a broken premise.
+>
+> Options:
+> A) Continue with current direction - acknowledge this is iteration 3, set a final deadline and budget ceiling for validation
+> B) Archive this idea, apply learnings to a new hypothesis
+> C) Narrow scope - one of the three (Problem/Customer/Solution) is still solid; rebuild around that anchor
+
+After PIVOT 3 on the same project without a GO, issue STOP unless A) was explicitly chosen and the deadline has not passed.
 
 ---
 
