@@ -17,8 +17,8 @@ These are not templates with placeholders. They are complete, realistic outputs 
 - `domain/entities.md` - Subscription, Invoice, and PaymentMethod entities with full state machines
 - `domain/business_rules.md` - Critical and operational rules with BR-SUB-*, BR-PAY-*, BR-REG-* IDs
 - `features/feature_list.md` - 10 features with FEAT-SUB-NNN IDs, KANO, Stripe assignment
-- `features/cards/FEAT-SUB-001.md` - "Subscribe to a plan" - **complete Feature Card, all 4 sections, status: 6_Promoted_to_Build**
-- `features/cards/FEAT-SUB-003.md` - "Cancel subscription" - **Sections 1-3 complete, status: 3_Design_Inspection_Passed** (pre-build state)
+- `features/cards/FEAT-SUB-001.md` - "Subscribe to a plan" - **complete Feature Card, all 4 sections, status: 6_Shipped**
+- `features/cards/FEAT-SUB-003.md` - "Cancel subscription" - **Sections 1-3 complete, status: 3_Ready_to_Build** (pre-build state)
 
 **Phases illustrated:** Feature Implementation Track B → Initiative PRD → Phase 4 append → Phase 5 append → Phase 6+7 JIT cycle
 
@@ -34,6 +34,6 @@ Each file is structured exactly as the live registers and Feature Cards in real 
 
 **business_rules.md** = Live Register 2 - rules referenced by ID in Feature Cards. BR-IDs appear in Feature Card Section 1 (Biznis Mantinely).
 
-**Feature Card - 6_Promoted_to_Build** = what a feature looks like after the full JIT cycle: design → inspection → build → code inspection → promote. Section 4 (Realizacny Protokol) is filled.
+**Feature Card - 6_Shipped** = what a feature looks like after the full JIT cycle: design → inspection → build → code inspection → promote. Section 4 (Realizacny Protokol) is filled.
 
-**Feature Card - 3_Design_Inspection_Passed** = what a feature looks like just before entering build. Sections 1-3 complete, Section 4 empty.
+**Feature Card - 3_Ready_to_Build** = what a feature looks like just before entering build. Sections 1-3 complete, Section 4 empty.

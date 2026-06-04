@@ -10,7 +10,7 @@ metadata:
   role: orchestrator
   scope: delivery
   output-format: document
-  related-skills: pm-feature-design, pm-feature-card, pm-mvp-scope, pm-entity-registry
+  related-skills: pm-feature-viability, pm-feature-design, pm-feature-card, pm-mvp-scope, pm-entity-registry
 ---
 
 # PM - Delivery Stripe

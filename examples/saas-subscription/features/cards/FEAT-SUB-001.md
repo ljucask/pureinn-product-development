@@ -2,7 +2,7 @@
 id: FEAT-SUB-001
 title: Subscribe to a plan
 stripe: Subscription Billing - Stripe 1
-status: 6_Promoted_to_Build
+status: 6_Shipped
 actor: Workspace Admin
 prd_ref: "initiatives/subscription-billing/prd.md#bc-01-subscription-lifecycle-management"
 feature_flag: billing-subscription-create
@@ -10,7 +10,7 @@ feature_flag: billing-subscription-create
 
 # FEAT-SUB-001: Subscribe to a plan
 
-> **Status:** 6_Promoted_to_Build - immutable after code inspection
+> **Status:** 6_Shipped - immutable after code inspection
 > **Stripe:** Subscription Billing - Stripe 1
 > **Feature flag:** `billing-subscription-create` (OFF by default, flipped after Code Inspection)
 
@@ -190,7 +190,7 @@ sequenceDiagram
 
 ## Section 4: Realizacny Protokol
 
-*Immutable after status reaches 6_Promoted_to_Build.*
+*Immutable after status reaches 6_Shipped.*
 
 **Commits:**
 
@@ -230,6 +230,6 @@ sequenceDiagram
 - Findings: Webhook idempotency key added (missed in initial implementation). Stripe signature verification moved before any DB access. Both resolved before promotion.
 - Status: Passed
 
-**Status:** 6_Promoted_to_Build
+**Status:** 6_Shipped
 **Promoted on:** 2026-06-07
 **Promoted by:** Lukas K.

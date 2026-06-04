@@ -2,7 +2,7 @@
 id: FEAT-SUB-003
 title: Cancel subscription
 stripe: Subscription Billing - Stripe 1
-status: 3_Design_Inspection_Passed
+status: 3_Ready_to_Build
 actor: Workspace Admin
 prd_ref: "initiatives/subscription-billing/prd.md#bc-04-plan-management"
 feature_flag: billing-subscription-cancel
@@ -10,7 +10,7 @@ feature_flag: billing-subscription-cancel
 
 # FEAT-SUB-003: Cancel subscription
 
-> **Status:** 3_Design_Inspection_Passed - ready to enter build after Feature Card Section 4 is written
+> **Status:** 3_Ready_to_Build - ready to enter build after Feature Card Section 4 is written
 > **Stripe:** Subscription Billing - Stripe 1
 > **Feature flag:** `billing-subscription-cancel` (OFF by default)
 
@@ -184,7 +184,7 @@ sequenceDiagram
 
 ## Section 4: Realizacny Protokol
 
-*Written just before build enters. Immutable after status reaches 6_Promoted_to_Build.*
+*Written just before build enters. Immutable after status reaches 6_Shipped.*
 
 **Commits:**
 
@@ -206,4 +206,4 @@ sequenceDiagram
 - Date: -
 - Status: Pending
 
-**Status:** 3_Design_Inspection_Passed
+**Status:** 3_Ready_to_Build

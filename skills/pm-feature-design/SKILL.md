@@ -10,7 +10,7 @@ metadata:
   role: specialist
   scope: specification
   output-format: document
-  related-skills: pm-entity-registry, pm-business-rules-library, pm-feature-card, pm-stripe
+  related-skills: pm-feature-viability, pm-entity-registry, pm-business-rules-library, pm-feature-card, pm-stripe
 ---
 
 # PM - Feature Design (JIT)

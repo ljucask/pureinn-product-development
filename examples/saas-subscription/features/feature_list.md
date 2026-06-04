@@ -10,7 +10,7 @@
 
 > **How to read this register:**
 > - FEAT-[DOMAIN]-NNN: domain code matches entity domain in entities.md
-> - Status: 1_Walkthrough through 6_Promoted_to_Build (Feature Card frontmatter)
+> - Status: 1_Backlog through 6_Shipped (Feature Card frontmatter)
 > - Stripe: which Delivery Stripe this feature is assigned to
 > - KANO: Must-be / Performance / Delighter / Indifferent
 > - V×C: Quick Win / Big Bet / Fill-in / Time Waster
@@ -31,7 +31,7 @@
 **KANO:** Must-be
 **V×C:** Quick Win
 **Delivery Stripe:** Subscription Billing (Stripe 1)
-**Status:** 6_Promoted_to_Build
+**Status:** 6_Shipped
 **Business rules:** BR-SUB-001, BR-PAY-001, BR-INV-001, BR-REG-001, BR-REG-002
 **Feature flag:** `billing-subscription-create`
 **Notes:** Entry point to the entire billing domain. Must be the first feature built.
@@ -43,7 +43,7 @@
 **KANO:** Must-be
 **V×C:** Quick Win
 **Delivery Stripe:** Subscription Billing (Stripe 1)
-**Status:** 6_Promoted_to_Build
+**Status:** 6_Shipped
 **Business rules:** BR-SUB-002 (grace period display), BR-SUB-003 (cancels_at display)
 **Feature flag:** `billing-subscription-view`
 **Notes:** Shows current plan, billing cycle, next renewal date, payment method, cancellation status.
@@ -55,7 +55,7 @@
 **KANO:** Must-be
 **V×C:** Quick Win
 **Delivery Stripe:** Subscription Billing (Stripe 1)
-**Status:** 3_Design_Inspection_Passed
+**Status:** 3_Ready_to_Build
 **Business rules:** BR-SUB-003, BR-SUB-004
 **Feature flag:** `billing-subscription-cancel`
 **Notes:** Cancellation at period_end. Includes reactivation path (BR-SUB-004).
@@ -67,7 +67,7 @@
 **KANO:** Must-be
 **V×C:** Quick Win
 **Delivery Stripe:** Subscription Billing (Stripe 1)
-**Status:** 1_Walkthrough
+**Status:** 1_Backlog
 **Business rules:** BR-PAY-002, BR-REG-002
 **Feature flag:** `billing-payment-method-update`
 **Notes:** Card-only in v1. Must prevent removal of last active card while subscription active.
@@ -79,7 +79,7 @@
 **KANO:** Must-be
 **V×C:** Big Bet
 **Delivery Stripe:** Subscription Billing (Stripe 2)
-**Status:** 1_Walkthrough
+**Status:** 1_Backlog
 **Business rules:** BR-SUB-001, BR-SUB-002, BR-PAY-001
 **Feature flag:** `billing-subscription-renewal`
 **Notes:** Scheduled job runs 3 days before period_end. Handles retry logic and grace period transition. Complex - design carefully.
@@ -91,7 +91,7 @@
 **KANO:** Performance
 **V×C:** Big Bet
 **Delivery Stripe:** Subscription Billing (Stripe 2)
-**Status:** 1_Walkthrough
+**Status:** 1_Backlog
 **Business rules:** BR-PAY-001, BR-INV-001
 **Feature flag:** `billing-plan-upgrade`
 **Notes:** Immediate effect with prorated billing. Proration calculation: (remaining_days / total_days) * price_difference.
@@ -103,7 +103,7 @@
 **KANO:** Must-be
 **V×C:** Quick Win
 **Delivery Stripe:** Subscription Billing (Stripe 2)
-**Status:** 1_Walkthrough
+**Status:** 1_Backlog
 **Business rules:** BR-INV-001, BR-REG-001
 **Feature flag:** `billing-invoice-history`
 **Notes:** List view with status, date, amount. Link to download. Must show Void invoices too.
@@ -115,7 +115,7 @@
 **KANO:** Must-be
 **V×C:** Quick Win
 **Delivery Stripe:** Subscription Billing (Stripe 2)
-**Status:** 1_Walkthrough
+**Status:** 1_Backlog
 **Business rules:** BR-INV-001, BR-REG-001
 **Feature flag:** `billing-invoice-download`
 **Notes:** PDF must include all required VAT fields. Generated server-side, not in browser.
@@ -127,7 +127,7 @@
 **KANO:** Performance
 **V×C:** Fill-in
 **Delivery Stripe:** Subscription Billing (Stripe 3)
-**Status:** 1_Walkthrough
+**Status:** 1_Backlog
 **Business rules:** BR-SUB-001, BR-PAY-001
 **Feature flag:** `billing-subscription-reactivate`
 **Notes:** Creates new subscription Draft from Cancelled state. New payment required.
@@ -139,7 +139,7 @@
 **KANO:** Must-be
 **V×C:** Fill-in
 **Delivery Stripe:** Subscription Billing (Stripe 3)
-**Status:** 1_Walkthrough
+**Status:** 1_Backlog
 **Business rules:** BR-SUB-001, BR-SUB-003, BR-INV-001
 **Feature flag:** `billing-admin-manage`
 **Notes:** Internal tool for support team. Manual plan changes, grace period extension. Audit log required (BR-REG-003 TBD).

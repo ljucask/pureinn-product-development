@@ -23,7 +23,7 @@ The Business Rules Library (Live Register 2) shown in **append mode**. Four new 
 The Feature List (Live Register 4) shown in **append mode**. 10 features (FEAT-SUB-001..010) with KANO classification, V×C matrix placement, Delivery Stripe assignment, current status, business rule references, and feature flags. Includes the dependency map and Delivery Stripe overview showing 3 stripes.
 
 ### `features/cards/FEAT-SUB-001.md`
-**Status: 6_Promoted_to_Build (complete - all 4 sections)**
+**Status: 6_Shipped (complete - all 4 sections)**
 
 The complete lifecycle of a Feature Card, from spec through to promoted build. Shows:
 - Section 1: Business constraints table, entity guard conditions, explicit scope exclusions
@@ -32,7 +32,7 @@ The complete lifecycle of a Feature Card, from spec through to promoted build. S
 - Section 4: Realizacny Protokol - 7 commits with hashes, 10 test results, feature flag verification, Code Inspection sign-off
 
 ### `features/cards/FEAT-SUB-003.md`
-**Status: 3_Design_Inspection_Passed (pre-build - Sections 1-3 complete)**
+**Status: 3_Ready_to_Build (pre-build - Sections 1-3 complete)**
 
 Shows the state of a Feature Card just after Design Inspection, before it enters build. Section 4 is intentionally empty - it is written just before the feature enters build, not upfront. The contrast with FEAT-SUB-001 illustrates the lifecycle progression.
 

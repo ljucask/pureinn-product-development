@@ -1,10 +1,66 @@
 # Changelog
 
+## [4.0.1] - 2026-06-04
+
+### Post-audit fixes: example files state names, CHANGELOG v4.0.0 detail, CLAUDE.md version, pm-feature-viability in related-skills
+
+---
+
+
 ## [4.0.0] - 2026-06-04
 
 ### Breaking Changes
 
-### Feature Card lifecycle renamed (intuitive states), pm-stripe complete rewrite, pm-feature-viability new skill, Figma MCP integration, pm-mvp-scope human-in-the-loop, pm-feature-design UX/UI context
+**Feature Card lifecycle states renamed** - all 6 status values changed. Any project using Feature Card frontmatter `status:` fields must update to new names.
+
+| Old | New |
+|---|---|
+| `1_Walkthrough` | `1_Backlog` |
+| `2_Design` | `2_Spec_Done` |
+| `3_Design_Inspection_Passed` | `3_Ready_to_Build` |
+| `4_Build` | `4_In_Build` |
+| `5_Code_Inspection` | `5_In_Review` |
+| `6_Promoted_to_Build` | `6_Shipped` |
+
+Applied across 9 framework files + all example files.
+
+### New Skills
+
+- **pm-feature-viability** - Feature Viability Assessment for Feature Implementation playbook. Optional Step 0 before JIT design. Produces KANO classification, MDP scope, and pre-defined success metrics. Explicitly skippable when feature is already scoped or committed.
+
+### Skill Updates
+
+**pm-stripe v3.0.0** - Complete rewrite:
+- All 6 lifecycle states now have dedicated steps (was missing 4_In_Build, 5_In_Review, Design Inspection menu entry)
+- Smart context detection on session start: detects mid-cycle features and surfaces next action
+- Re-entry logic for interrupted sessions
+- Explicit stripe closure step (Step 1G)
+- State transition table added to skill overview
+
+**pm-feature-design** - UX/UI context added:
+- Step 1 now asks for UX/UI context for UI features: text description, screenshot, Figma URL, or Figma MCP
+- Section 3b added to Feature Card template: placement in app, user-facing intent, design system reference, Figma link
+- Figma MCP reads from `figma_project_url` in pureinn-variables.md when connected
+
+**pm-mvp-scope** - Human-in-the-loop decision layer:
+- New AskUserQuestion: what matters most for this MVP (UX quality / revenue validation / technical foundation / speed)
+- Preliminary MVP cut now shows explicit trade-offs per feature
+- Override check: user can move features against KANO/V×C recommendation
+- User judgment explicitly overrides framework suggestion
+
+### Integrations
+
+**Figma MCP** - New integration:
+- `pureinn-variables.md` template now includes `figma_project_url` and `figma_design_system_url`
+- README MCP integrations table updated with Figma row
+- pm-feature-design reads from Figma MCP when connected; falls back to URL paste or screenshot
+
+### Documentation
+
+- Skill count updated to 36 (35 + pm-feature-viability)
+- FRAMEWORK_GUIDE Phase 6+7 JIT cycle table updated with Step 0 (optional viability)
+- COMMAND.md Phase 6+7 routing updated
+- Example files updated to new state names
 
 ---
 
