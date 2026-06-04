@@ -310,11 +310,12 @@ What Claude sees, the general picture, what kind of project and stage this appea
 ```
 | Phase | Coverage | Source | Confidence |
 |---|---|---|---|
-| Phase 1 - Foundation | ✅ / ⚠️ / ❌ | [document / intake / none] | High / Med / Low |
-| Phase 2 - Discovery  | ✅ / ⚠️ / ❌ | | |
-| Phase 3 - Define     | ✅ / ⚠️ / ❌ | | |
-| Phase 4 - Domain     | ✅ / ⚠️ / ❌ | | |
-| Phase 5 - Features   | ✅ / ⚠️ / ❌ | | |
+| Phase 1 - Foundation         | ✅ / ⚠️ / ❌ | [document / intake / none] | High / Med / Low |
+| Phase 2 - Discovery          | ✅ / ⚠️ / ❌ | | |
+| Phase 3a - Validation        | ✅ / ⚠️ / ❌ | | |
+| Phase 3b - Commercial Def.   | ✅ / ⚠️ / ❌ | | |
+| Phase 4 - Domain             | ✅ / ⚠️ / ❌ | | |
+| Phase 5 - Features           | ✅ / ⚠️ / ❌ | | |
 ```
 
 **4. What Claude understands about this product**
@@ -671,6 +672,7 @@ When a skill needs a Notion URL, it:
   "current_phase_name": "[name]",
   "phases_completed": [],
   "phases_skipped": [],
+  "phase_3a_verdict": null,
   "input": "[original user input]",
   "product_shape": {
     "type": "[SaaS | Mobile | Marketplace | Internal | API | Other]",
@@ -717,6 +719,8 @@ Fields updated by `/pm-stripe` during Phase 6-7:
 
 Note: individual feature status is tracked in Feature Card frontmatter (`status` field) and `feature_list.md`, not state.json.
 Note: `registers` flags are set to `true` by pm-entity-registry and pm-business-rules-library after first initialization.
+Note: `phases_completed` uses string identifiers - "1", "2", "3a", "3b", "4", "5", "6-7". Phase 3 split is tracked as two separate entries.
+Note: `phase_3a_verdict` stores the Go/No-Go outcome: "GO", "PIVOT", or "STOP". Set by /pm-hypotheses [Results mode] or by "done elsewhere" import. Phase 3b entry is blocked until this field is "GO".
 
 ---
 
@@ -733,12 +737,13 @@ GUIDANCE: [On / Off]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 PHASE STATUS
-  Phase 1 - Foundation & Collaboration   [✅ Done / ⏭ Skipped / 🔲 To do]
-  Phase 2 - Discovery                    [✅ Done / ⚠️ Partial / ⏭ Skipped / 🔲 To do]
-  Phase 3 - Define & Validation          [✅ Done / ⚠️ Partial / ⏭ Skipped / 🔲 To do]
-  Phase 4 - Domain Modeling + Register Setup  [🔲 To do]
-  Phase 5 - Feature Planning              [🔲 To do]
-  Phase 6 + 7 - Delivery Cycle (JIT)     [🔲 To do]
+  Phase 1 - Foundation & Collaboration          [✅ Done / ⏭ Skipped / 🔲 To do]
+  Phase 2 - Discovery                           [✅ Done / ⚠️ Partial / ⏭ Skipped / 🔲 To do]
+  Phase 3a - Validation                         [✅ Done / ⚠️ Partial / ⏭ Skipped / 🔲 To do]
+  Phase 3b - Commercial Definition              [✅ Done / ⚠️ Partial / ⏭ Skipped / 🔲 To do]
+  Phase 4 - Domain Modeling + Register Setup    [🔲 To do]
+  Phase 5 - Feature Planning                    [🔲 To do]
+  Phase 6 + 7 - Delivery Cycle (JIT)            [🔲 To do]
 
 STARTING FROM: Phase [N] - [Phase Name]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -776,14 +781,15 @@ GUIDANCE: [On / Off]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 PHASE STATUS
-  Phase 1 - Foundation & Collaboration   [✅ Done / ⏭ Skipped / 🔲 To do]
-  Phase R2 - Legacy Assessment           [✅ Done / ⚠️ Partial / 🔲 To do]
-  Phase R3 - Migration Strategy          [✅ Done / ⚠️ Partial / 🔲 To do]
-  Phase 3 - Define & Scoping             [🔲 To do]
-  Phase 4 - Domain Modeling + Register Setup  [🔲 To do]
-  Phase 5 - Feature Planning             [🔲 To do]
-  Phase 6 + 7 - Delivery Cycle (JIT)    [🔲 To do]
-  Parallel Run + Cutover                 [🔲 To do]
+  Phase 1 - Foundation & Collaboration          [✅ Done / ⏭ Skipped / 🔲 To do]
+  Phase R2 - Legacy Assessment                  [✅ Done / ⚠️ Partial / 🔲 To do]
+  Phase R3 - Migration Strategy                 [✅ Done / ⚠️ Partial / 🔲 To do]
+  Phase 3a - Validation                         [🔲 To do]
+  Phase 3b - Commercial Definition              [🔲 To do]
+  Phase 4 - Domain Modeling + Register Setup    [🔲 To do]
+  Phase 5 - Feature Planning                    [🔲 To do]
+  Phase 6 + 7 - Delivery Cycle (JIT)            [🔲 To do]
+  Parallel Run + Cutover                        [🔲 To do]
 
 STARTING FROM: Phase [N] - [Phase Name]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -860,8 +866,16 @@ Team with defined roles / Corporate:
                          [Synthesizes all Track A-D outputs - run last in Phase 2]
 ```
 
-### Phase 3 - Define & Validation
+### Phase 3a - Validation
 ```
+Character: externally-paced. AI accelerates structuring, not signal collection.
+Can start: once Problem Validation Summary exists (parallel with late Phase 2 is fine).
+
+"Done elsewhere" path: if Design Thinking + hypothesis validation were done outside
+this framework (Miro, workshop, other tool), run /pureinn and say "Phase 3a done elsewhere."
+The orchestrator will collect: Go/No-Go verdict, key evidence per hypothesis type,
+riskiest assumptions tested. Phase 3a is then marked complete and 3b can start.
+
 /design-thinking       → Problem Statement, POV, HMW, Ideation synthesis, Elevator Pitch
                          [Outputs Validation Hypotheses draft → feeds into /pm-hypotheses]
 /pm-hypotheses         → Hypothesis Register: ICP, assumption map, experiment plan, success criteria
@@ -872,14 +886,27 @@ Team with defined roles / Corporate:
                          [Human activity - execute the experiment plan from /pm-hypotheses]
 /pm-hypotheses         → Go/No-Go Decision (Go / Pivot / Stop)
   [Results mode]         [Run after all assigned experiments complete]
-                         [Hard gate: only GO advances to /pm-kotler and beyond]
+                         [HARD GATE: GO required to enter Phase 3b. PIVOT loops back. STOP ends project.]
+```
+
+### Phase 3b - Commercial Definition
+```
+Character: AI-assisted synthesis sprint. With clean Phase 3a inputs, this is
+hours to a few focused sessions. Quality depends entirely on Phase 3a rigor.
+Condition: only starts after GO verdict from Phase 3a. No FORCE bypass for this gate.
+
+"Done elsewhere" path: if you already have a Lean Canvas, financial model, or
+existing commercial strategy artifacts, bring them via Path A in each skill.
+State "Phase 3b partially done elsewhere" and list which artifacts exist.
+
 /pm-kotler             → Product Definition (5 levels: Core / Basic / Expected / Augmented / Potential)
 /pm-lean-canvas        → Lean Canvas (one-page business model for startups)
                          [Replaces BMC - optimized for validation stage, not established operations]
 /pm-kpis               → North Star Metric, AARRR, OKRs
 /pm-business-case      → Business Case (3-year projections, Go/No-Go)
 /pm-product-roadmap    → Product Roadmap v1
-/pm-prd                → PRD - Phase 3 exit artifact (synthesizes all Phase 2+3)
+/pm-prd                → PRD - Phase 3b exit artifact (synthesizes all Phase 2+3a+3b)
+                         [PRD_master.md is frozen after creation - immutable from this point]
 /pm-pitch-deck         → Pitch Deck content brief (slide-by-slide spec → Gamma visual deck)
                          [Optional - run if raising capital, selling to customers, or pitching partners]
                          [Requires: pm-lean-canvas + pm-business-case + pm-problem-validation]
@@ -1145,6 +1172,23 @@ Options:
 
 On GO or FORCE: update state.json - add phase to `phases_completed`, advance `current_phase_index`.
 
+**Special rule - Phase 3a → 3b transition:**
+This gate cannot be bypassed with FORCE. The Go/No-Go verdict from /pm-hypotheses [Results mode] is the only valid exit from Phase 3a. If the verdict is PIVOT or STOP, Phase 3b cannot start. If user attempts to proceed to Phase 3b without a GO verdict, block with:
+```
+Phase 3b requires a GO verdict from Phase 3a hypothesis validation.
+Current status: [PIVOT / STOP / not run]
+
+Phase 3b is commercial commitment work - business case, roadmap, and PRD.
+Starting it without validated problem-market fit means those documents are built on unconfirmed assumptions.
+
+Options:
+  A) Return to Phase 3a - run /pm-hypotheses [Results mode] with your experiment data
+  B) Phase 3a was done outside this framework - provide Go/No-Go verdict and evidence
+```
+
+**"Done elsewhere" handler (for any phase):**
+If user states a phase was done outside this framework, collect the minimum evidence needed to confirm the phase exit criteria were met, then mark it complete. For Phase 3a specifically: collect Go/No-Go verdict + which hypothesis types were tested + key evidence signal per type. Do not require re-running skills if the work was genuinely done.
+
 ---
 
 ## FRAMEWORK MAP
@@ -1227,9 +1271,11 @@ Four parallel tracks - can run simultaneously.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-PHASE 3 - DEFINE & VALIDATION
-Goal: Define the strategy, validate core assumptions, and produce a Go/No-Go before building.
-Output: PRD (consolidates all Phase 2+3 into one coherent document).
+PHASE 3a - VALIDATION
+Goal: Validate core assumptions about problem, customer, and market before committing to strategy.
+Character: externally-paced - tempo set by market, not by you. Can start parallel with late Phase 2.
+Output: Go/No-Go verdict (hard gate - only GO unlocks Phase 3b).
+"Done elsewhere": accepted - provide Go/No-Go verdict + key evidence to /pureinn directly.
 ─────────────────────────────────────────────
   /design-thinking
     Input:  Problem Validation Summary, Personas
@@ -1248,8 +1294,18 @@ Output: PRD (consolidates all Phase 2+3 into one coherent document).
   /pm-hypotheses  [Results mode]
     Input:  Experiment results vs. pre-defined success criteria
     Output: Hypothesis Register (updated), Go/No-Go Decision (Go / Pivot / Stop)
-    Note:   Hard gate - only GO advances past this point
+    Note:   HARD GATE - GO required to enter Phase 3b. PIVOT loops back. STOP ends project.
+            No FORCE bypass on this gate.
 
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PHASE 3b - COMMERCIAL DEFINITION
+Goal: Translate validated problem-market fit into commercial strategy and product specification.
+Character: AI-assisted synthesis sprint. With clean 3a inputs, hours to a few sessions.
+Condition: Phase 3a GO verdict required. Non-negotiable.
+Output: PRD (frozen after creation) + Business Case + Roadmap v1.
+"Done elsewhere": accepted - bring existing Lean Canvas, financial model, or strategy artifacts via Path A.
+─────────────────────────────────────────────
   /pm-kotler
     Input:  High-level Feature Vision (from design-thinking), JTBD, Personas
     Output: Product Definition - 5 levels (Core Benefit / Basic / Expected / Augmented / Potential)
@@ -1271,9 +1327,9 @@ Output: PRD (consolidates all Phase 2+3 into one coherent document).
     Input:  Problem Validation, Lean Canvas, KPIs
     Output: Product Roadmap v1 (vision + strategic phases)
 
-  /pm-prd  [Phase 3 exit artifact]
-    Input:  All Phase 2 + Phase 3 outputs
-    Output: PRD (full product-level consolidation document)
+  /pm-prd  [Phase 3b exit artifact]
+    Input:  All Phase 2 + Phase 3a + Phase 3b outputs
+    Output: PRD (full product-level consolidation document - frozen after creation)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -1428,7 +1484,7 @@ PHASE 3 - DEFINE & VALIDATION  [2-4 weeks]
   /pm-kpis               → North Star Metric, AARRR, OKRs
   /pm-business-case      → 3-year projections, Go/No-Go
   /pm-product-roadmap    → Roadmap v1
-  /pm-prd                → PRD (Phase 3 exit artifact)
+  /pm-prd                → PRD (Phase 3b exit artifact - frozen after creation)
   /pm-pitch-deck         → Pitch Deck (optional)
   Run /pureinn when done to advance.
 
@@ -1535,10 +1591,11 @@ LEGEND
   🤖 AI Skill - Claude generates the artifact
 
 ARTIFACT CHAIN - GREENFIELD
-  Phase 2 → Problem Validation Summary
-  Phase 3 → PRD (product-level consolidation, Business Capabilities section drives Phase 4+)
-  Phase 4 → Domain Model + entities.md + business_rules.md + decision_models.md (Draft)
-  Phase 5 → feature_list.md + MVP Scope + Delivery Stripes + Stub Feature Cards
+  Phase 2  → Problem Validation Summary
+  Phase 3a → Go/No-Go verdict (hard gate before 3b)
+  Phase 3b → PRD frozen (product-level consolidation, Business Capabilities section drives Phase 4+)
+  Phase 4  → Domain Model + entities.md + business_rules.md + decision_models.md (Draft)
+  Phase 5  → feature_list.md + MVP Scope + Delivery Stripes + Stub Feature Cards
   Phase 6 (JIT) → Feature Card Sections 1-3 + register finalization (per feature, per stripe)
   Phase 7 → Working software + Feature Card Section 4 (per feature, Promoted status)
 

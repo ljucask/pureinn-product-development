@@ -69,20 +69,32 @@ Four tracks run in parallel. Converge at the end.
 
 ---
 
-### Phase 3 - Define & Validation (2-4 weeks)
+### Phase 3a - Validation
 
-**First half: validate before defining strategy.**
+**Character: externally-paced.** Tempo is set by the market, not by you. AI accelerates experiment design and hypothesis structuring, but the signal itself - whether people show up, convert, pre-order, or confirm the pain - comes from the real world on its own schedule.
+
+**Can start in parallel with late Phase 2** once Problem Validation Summary exists. You do not need all Phase 2 tracks complete before beginning design-thinking or structuring hypotheses.
+
+**"Done elsewhere" rule:** If Design Thinking and hypothesis validation were done outside this framework (workshop, Miro, other tool), you can import results directly into /pureinn. The orchestrator will ask for: Go/No-Go verdict, key evidence per hypothesis type, and riskiest assumptions tested. Phase 3a is then marked complete and 3b can start.
 
 | Step | Skill / Activity | Output |
 |---|---|---|
 | 1 | `/design-thinking` | Problem Statement, POV, HMW, Ideation synthesis, Elevator Pitch, Validation Hypotheses draft |
 | 2 | `/pm-hypotheses` [Plan mode] | Hypothesis Register: ICP, assumption map, experiment plan, success criteria |
-| 3 | Human: run experiments | Landing page / smoke test / pre-order / concierge MVP |
+| 3 | 👤 Human: run experiments | Landing page / smoke test / pre-order / concierge MVP - based on experiment plan |
 | 4 | `/pm-hypotheses` [Results mode] | Go/No-Go verdict: GO / PIVOT / STOP |
 
-**Hard gate:** only GO advances. PIVOT loops back to targeted re-validation. STOP ends the project.
+**Hard gate:** only GO advances to Phase 3b. PIVOT loops back to targeted re-validation. STOP ends the project.
 
-**Second half: define strategy after GO.**
+---
+
+### Phase 3b - Commercial Definition
+
+**Character: AI-assisted synthesis sprint.** This is desk work synthesizing validated inputs into commercial strategy. With AI and clean Phase 3a outputs, this is hours to a few focused sessions - not weeks. The bottleneck is not cognitive capacity here; it is the quality of what came out of Phase 3a.
+
+**Condition:** Phase 3b only starts after a GO verdict from Phase 3a. No exceptions.
+
+**"Done elsewhere" rule:** If you already have an existing Lean Canvas, business model, or financial model from another tool or previous iteration, bring it. Skills will accept existing artifacts via Path A (import) rather than generating from scratch.
 
 | Skill | Output |
 |---|---|
@@ -91,8 +103,10 @@ Four tracks run in parallel. Converge at the end.
 | `/pm-kpis` | North Star Metric, AARRR Funnel Metrics, OKRs |
 | `/pm-business-case` | 3-year projections, unit economics, Go/No-Go |
 | `/pm-product-roadmap` | Product Roadmap v1 |
-| `/pm-prd` | PRD - Phase 3 exit artifact (synthesizes all Phase 2+3) |
+| `/pm-prd` | PRD - Phase 3b exit artifact (synthesizes all Phase 2+3a+3b) |
 | `/pm-pitch-deck` | Pitch Deck content brief (optional - if raising capital or pitching) |
+
+**Phase 3b exit:** PRD frozen + Business Case complete + Roadmap v1 complete. PRD_master.md is immutable after this point.
 
 ---
 

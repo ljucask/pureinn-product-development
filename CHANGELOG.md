@@ -1,5 +1,14 @@
 # Changelog
 
+## [3.0.0] - 2026-06-04
+
+### Breaking Changes
+
+### Split Phase 3 into 3a (Validation) and 3b (Commercial Definition) - separate phases with hard gate, done-elsewhere support, and state.json tracking
+
+---
+
+
 ## [2.4.2] - 2026-06-04
 
 ### Added specific downstream risk callouts to Path B in pm-problem-validation, pm-personas, design-thinking, and pm-hypotheses
