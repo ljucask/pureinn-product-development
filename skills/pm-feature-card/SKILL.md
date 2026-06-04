@@ -23,12 +23,12 @@ Manages Feature Cards in the FDD+SDD framework. A Feature Card is the atomic del
 
 | Status | Meaning | Who sets it |
 |---|---|---|
-| `1_Walkthrough` | Stub created, feature defined | pm-features-list (auto) |
-| `2_Design` | JIT design complete (Sections 1-3 populated) | pm-feature-design |
-| `3_Design_Inspection_Passed` | Human approved design | Human (Delivery Team) / Human solo confirm |
-| `4_Build` | Build in progress | pm-stripe |
-| `5_Code_Inspection` | Code review in progress | Human / AI guardrail |
-| `6_Promoted_to_Build` | Complete - immutable history | pm-stripe after CI pass |
+| `1_Backlog` | Stub created, feature defined | pm-features-list (auto) |
+| `2_Spec_Done` | JIT design complete (Sections 1-3 populated) | pm-feature-design |
+| `3_Ready_to_Build` | Human approved design | Human (Delivery Team) / Human solo confirm |
+| `4_In_Build` | Build in progress | pm-stripe |
+| `5_In_Review` | Code review in progress | Human / AI guardrail |
+| `6_Shipped` | Complete - immutable history | pm-stripe after CI pass |
 
 **This skill handles:**
 - Creating stub Feature Cards manually (when not created by pm-features-list)
@@ -117,7 +117,7 @@ This is the canonical template for all Feature Cards in the FDD+SDD framework.
 ---
 id: FEAT-[DOMAIN]-[NUMBER]
 title: "[Action] [Result] [Object]"
-status: 1_Walkthrough
+status: 1_Backlog
 stripe: [stripe-name]
 owner: unassigned
 priority: P1
@@ -187,7 +187,7 @@ sequenceDiagram
 
 ## 4. Realizacny Protokol (Build Verification)
 
-*Populated after successful build and Code Inspection. After 6_Promoted_to_Build: immutable.*
+*Populated after successful build and Code Inspection. After 6_Shipped: immutable.*
 
 - **Production code commits:**
   - `[feat: description](commit_hash_link)`
@@ -204,7 +204,7 @@ sequenceDiagram
 
 ## Notion push
 
-**Runs after Feature Card Section 4 is complete (status: 6_Promoted_to_Build).**
+**Runs after Feature Card Section 4 is complete (status: 6_Shipped).**
 
 Read `pureinn-variables.md` key "Feature Backlog" → get DB URL. Find the existing Feature entry for this FEAT-ID.
 
@@ -226,20 +226,20 @@ If Feature Backlog URL is blank in pureinn-variables.md: save locally, remind us
 
 <!-- Claude reference only - not shown to user -->
 
-**Stub (1_Walkthrough) must have:**
+**Stub (1_Backlog) must have:**
 - [ ] All frontmatter fields populated (id, title, status, stripe, owner, priority, prd_ref, feature_flag, flag_default)
 - [ ] Sections 1-4 present as stubs (not filled)
 
-**After pm-feature-design (2_Design) must have:**
+**After pm-feature-design (2_Spec_Done) must have:**
 - [ ] Section 1: entity, state before/after, BR-IDs linked
 - [ ] Section 2: at minimum AC-01 (happy path), AC-02 (one guard failure), AC-03 (flag OFF)
 - [ ] Section 3: mermaid sequenceDiagram (not empty), files to modify listed
 
-**After build (6_Promoted_to_Build) must have:**
+**After build (6_Shipped) must have:**
 - [ ] Section 4: at least one commit link, at least one test file path
 - [ ] Section 4: flag OFF verification stated
 - [ ] Section 4: Code Inspection result with date
-- [ ] Status: 6_Promoted_to_Build
+- [ ] Status: 6_Shipped
 
 ---
 

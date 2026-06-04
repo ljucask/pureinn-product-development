@@ -26,7 +26,7 @@ Extracts the full feature inventory from an existing product and formalizes it i
 
 **Produces:**
 1. `feature_list.md` (Live Register 4) - full feature inventory in FDD format with FEAT-[DOMAIN]-NNN IDs
-2. Stub Feature Cards in `features/cards/` - one per feature, status: `1_Walkthrough`
+2. Stub Feature Cards in `features/cards/` - one per feature, status: `1_Backlog`
 3. Delivery Stripe assignment - which features go into which domain stripe
 4. Notion push - Feature hierarchy pushed to Product Features database
 
@@ -236,7 +236,7 @@ Create `features/cards/FEAT-[DOMAIN]-NNN.md` with stub frontmatter:
 id: FEAT-[DOMAIN]-NNN
 title: [Feature Name]
 stripe: [Stripe name]
-status: 1_Walkthrough
+status: 1_Backlog
 actor: [User / Host / Admin / System]
 prd_ref: "[product/PRD_master.md or initiatives/[slug]/prd.md - section TBD]"
 feature_flag: "[kebab-case-feature-name]"
@@ -244,7 +244,7 @@ feature_flag: "[kebab-case-feature-name]"
 
 # FEAT-[DOMAIN]-NNN: [Feature Name]
 
-> **Status:** 1_Walkthrough - stub created by pm-reverse-extract
+> **Status:** 1_Backlog - stub created by pm-reverse-extract
 > **Next step:** Run /pm-feature-design FEAT-[DOMAIN]-NNN to complete Sections 1-3 before build
 
 ## Section 1: Biznis Mantinely
@@ -260,7 +260,7 @@ feature_flag: "[kebab-case-feature-name]"
 *TBD - filled after build and code inspection*
 ```
 
-For features with Status = Done that have no Feature Card: create a minimal stub with status `6_Promoted_to_Build` and a note that the feature is live - no JIT design needed.
+For features with Status = Done that have no Feature Card: create a minimal stub with status `6_Shipped` and a note that the feature is live - no JIT design needed.
 
 ---
 

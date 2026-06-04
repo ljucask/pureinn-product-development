@@ -1,5 +1,14 @@
 # Changelog
 
+## [4.0.0] - 2026-06-04
+
+### Breaking Changes
+
+### Feature Card lifecycle renamed (intuitive states), pm-stripe complete rewrite, pm-feature-viability new skill, Figma MCP integration, pm-mvp-scope human-in-the-loop, pm-feature-design UX/UI context
+
+---
+
+
 ## [3.1.1] - 2026-06-04
 
 ### Fix all audit findings: 4_Build state naming, skill counts 37→35, deprecated refs in pm-domain-model/pm-domain-analysis/pm-glossary/pm-prd, Subject Area removed from pm-prd checklist

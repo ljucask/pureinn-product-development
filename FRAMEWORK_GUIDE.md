@@ -155,13 +155,14 @@ Phase 6 and 7 are integrated into a JIT cycle - spec happens per Feature, not pe
 
 | Step | Status | Skill | Output |
 |---|---|---|---|
-| 1 | → 2_Design | `/pm-feature-design [FEAT-ID]` | Commit 1: register finalization (guard conditions, BR-IDs to Final); Commit 2: Feature Card Sections 1-3 (Biznis Mantinely, ACs, Mermaid sequence diagram) |
-| 2 | → 3_Design_Inspection_Passed | Design Inspection | Team: review Sections 1-3; Solo: confirm |
-| 3 | → 4_Build | Build skills (see below) | Code + tests, reads Feature Card Section 3 as build spec |
-| 4 | → 5_Code_Inspection | Section 4 filled | Commits, tests, flag verification recorded in Section 4 |
-| 5 | → 6_Promoted_to_Build | Code Inspection complete | Final review done; Feature Card immutable after this |
+| 0 (optional) | - | `/pm-feature-viability [FEAT-ID]` | KANO, MDP scope, success metrics. Skip if feature already scoped/committed. |
+| 1 | → 2_Spec_Done | `/pm-feature-design [FEAT-ID]` | Commit 1: register finalization; Commit 2: Feature Card Sections 1-3 (Biznis Mantinely, ACs, sequence diagram, UX/UI context) |
+| 2 | → 3_Ready_to_Build | Design Inspection (`/pm-stripe`) | Team: review Sections 1-3; Solo: confirm |
+| 3 | → 4_In_Build | Build skills (`/pm-stripe`) | Code + tests, reads Feature Card Section 3 as build spec |
+| 4 | → 5_In_Review | Build complete (`/pm-stripe`) | Commits, tests, flag verification recorded in Section 4 |
+| 5 | → 6_Shipped | Code Inspection passed (`/pm-stripe`) | Final review done; Feature Card immutable after this |
 
-**Spec gate (hard rule):** Feature Card Sections 1-3 complete + status 3_Design_Inspection_Passed before any feature enters build.
+**Spec gate (hard rule):** Feature Card Sections 1-3 complete + status 3_Ready_to_Build before any feature enters build.
 
 **Atomic commit protocol:** Register updates (domain/*.md) committed before code. One feature per stripe in active design/build at any time.
 
@@ -282,7 +283,7 @@ JIT design per feature (one at a time, per stripe):
 | Skill | Output |
 |---|---|
 | `/pm-feature-design [FEAT-ID]` | Feature Card Sections 1-3 + register finalization (pre-step: scans existing codebase before generating sequence diagram) |
-| Design Inspection | Team review or solo confirm → status: 3_Design_Inspection_Passed |
+| Design Inspection | Team review or solo confirm → status: 3_Ready_to_Build |
 | Build skills | Read Feature Card Section 3 as build spec |
 
 ---
@@ -326,7 +327,7 @@ PII Inventory, Privacy Requirements
 Product Roadmap v2 (+ domain context)
   ↓
 feature_list.md (Live Register 4) + KANO + V×C → Notion: Feature entries
-Stub Feature Cards (status: 1_Walkthrough) + MVP Scope + Delivery Stripes → Notion: enriched
+Stub Feature Cards (status: 1_Backlog) + MVP Scope + Delivery Stripes → Notion: enriched
   ↓
 Product Roadmap v3 (+ Feature and Delivery view)
   ↓
@@ -347,7 +348,7 @@ Three distinct concepts. Do not conflate.
 |---|---|---|
 | **Feature Set** | Logical domain grouping (e.g., "User Auth", "Booking Flow"). Grouping only - not a spec unit. | Organizing principle. Features are assigned to Feature Sets. No BRD or FSD per FS. |
 | **Delivery Stripe** | Domain-focused parallel channel (e.g., stripe-checkout, stripe-auth). Not a time-box. | One stripe = one isolated development channel. Features are processed one at a time per stripe in dependency order. |
-| **Feature Card** | Atomic delivery unit. 6-state lifecycle: 1_Walkthrough → 2_Design → 3_Design_Inspection_Passed → 4_Build → 5_Code_Inspection → 6_Promoted_to_Build. Sections 1-3 written JIT by pm-feature-design; Section 4 filled after build. | Single deliverable feature. Build spec = Feature Card Section 3. Immutable after 6_Promoted_to_Build. |
+| **Feature Card** | Atomic delivery unit. 6-state lifecycle: 1_Backlog → 2_Spec_Done → 3_Ready_to_Build → 4_In_Build → 5_In_Review → 6_Shipped. Sections 1-3 written JIT by pm-feature-design; Section 4 filled after build. | Single deliverable feature. Build spec = Feature Card Section 3. Immutable after 6_Shipped. |
 
 Example: 50 MVP features across 25 Feature Sets → assigned to 3 parallel Delivery Stripes → each feature designed JIT just before build.
 

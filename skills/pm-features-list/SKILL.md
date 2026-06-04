@@ -23,7 +23,7 @@ Phase 5 / Step 1-3. Takes the product scope from PRD Business Capabilities and p
 2. **Dependency Map** - which features block which, critical path, parallelizable tracks
 3. **KANO Analysis** - must-be / performance / delighter / indifferent classification per feature
 4. **Value vs. Complexity Matrix** - Quick Win / Big Bet / Fill-in / Time Waster scoring per feature
-5. **Stub Feature Cards** - one per feature, created automatically in `/features/cards/FEAT-[DOMAIN]-[NUMBER].md` with status `1_Walkthrough`
+5. **Stub Feature Cards** - one per feature, created automatically in `/features/cards/FEAT-[DOMAIN]-[NUMBER].md` with status `1_Backlog`
 
 After user approval: push the complete feature inventory to Notion as the initial product backlog.
 
@@ -75,7 +75,7 @@ KANO tells you *what* to include. V×C tells you *in what order* to deliver it. 
 
 **Produces artifacts used by:**
 - `features/feature_list.md` - Live Register 4 of 4 (FDD Feature List)
-- `/features/cards/FEAT-*.md` - stub Feature Cards (one per feature, status: 1_Walkthrough)
+- `/features/cards/FEAT-*.md` - stub Feature Cards (one per feature, status: 1_Backlog)
 - `pm-mvp-scope` - feature list is the direct input for MVP cut + stripe assignment
 - `pm-product-roadmap` v3 - features populate the delivery view
 - Phase 6 skills - pm-feature-design reads Feature Cards JIT before each feature enters build
@@ -226,15 +226,15 @@ Features must be:
 
 | ID | Feature | Actor | Priority | MVP | Stripe | Status | Dependencies |
 |---|---|---|---|---|---|---|---|
-| FEAT-ORD-001 | [Create] [draft order] [from cart] | [Customer] | P1 | true | TBD | 1_Walkthrough | none |
-| FEAT-ORD-002 | [Confirm] [order] [after payment] | [System] | P1 | true | TBD | 1_Walkthrough | FEAT-ORD-001, FEAT-PAY-001 |
-| FEAT-ORD-003 | [Cancel] [order] [before fulfillment] | [Customer] | P2 | true | TBD | 1_Walkthrough | FEAT-ORD-001 |
+| FEAT-ORD-001 | [Create] [draft order] [from cart] | [Customer] | P1 | true | TBD | 1_Backlog | none |
+| FEAT-ORD-002 | [Confirm] [order] [after payment] | [System] | P1 | true | TBD | 1_Backlog | FEAT-ORD-001, FEAT-PAY-001 |
+| FEAT-ORD-003 | [Cancel] [order] [before fulfillment] | [Customer] | P2 | true | TBD | 1_Backlog | FEAT-ORD-001 |
 
 ### Feature Set: [e.g., Order Fulfillment]
 
 | ID | Feature | Actor | Priority | MVP | Stripe | Status | Dependencies |
 |---|---|---|---|---|---|---|---|
-| FEAT-ORD-010 | [Track] [fulfillment status] [for order] | [Customer] | P2 | true | TBD | 1_Walkthrough | FEAT-ORD-002 |
+| FEAT-ORD-010 | [Track] [fulfillment status] [for order] | [Customer] | P2 | true | TBD | 1_Backlog | FEAT-ORD-002 |
 
 ---
 
@@ -244,8 +244,8 @@ Features must be:
 
 | ID | Feature | Actor | Priority | MVP | Stripe | Status | Dependencies |
 |---|---|---|---|---|---|---|---|
-| FEAT-PAY-001 | [Validate] [card payment] [for order] | [System] | P1 | true | TBD | 1_Walkthrough | FEAT-ORD-001 |
-| FEAT-PAY-002 | [Process] [refund] [for cancelled order] | [System] | P1 | true | TBD | 1_Walkthrough | FEAT-ORD-003 |
+| FEAT-PAY-001 | [Validate] [card payment] [for order] | [System] | P1 | true | TBD | 1_Backlog | FEAT-ORD-001 |
+| FEAT-PAY-002 | [Process] [refund] [for cancelled order] | [System] | P1 | true | TBD | 1_Backlog | FEAT-ORD-003 |
 
 ---
 
@@ -461,7 +461,7 @@ Stub content (frontmatter only, sections as empty placeholders):
 ---
 id: [FEAT-ID]
 title: "[Action] [Result] [Object]"
-status: 1_Walkthrough
+status: 1_Backlog
 stripe: TBD
 owner: unassigned
 priority: [P1/P2/P3 from V×C]

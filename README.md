@@ -19,7 +19,7 @@ A structured methodology for building products - from zero to launch. Implemente
 
 ## What this is
 
-**35 active skills + 2 commands** covering the full product lifecycle: discovery, validation, domain modeling, feature planning, and FDD delivery.
+**36 active skills + 2 commands** covering the full product lifecycle: discovery, validation, domain modeling, feature planning, and FDD delivery.
 
 Three playbooks:
 
@@ -109,8 +109,9 @@ Full framework overview - all playbooks, phases, skills, and artifact chains.
 ### Phase 6 + 7 - FDD Delivery (JIT per Feature)
 | Skill | Output |
 |---|---|
-| `/pm-stripe` | Stripe dashboard, advance next feature, run Impact Analysis, mark Promoted |
-| `/pm-feature-design` | Feature Card Sections 1-3 (JIT, per feature) + register finalization (guard conditions, BR finalization) |
+| `/pm-stripe` | Session orchestrator - stripe dashboard, advance feature through lifecycle (1_Backlog → 6_Shipped), Impact Analysis |
+| `/pm-feature-viability` | Feature Viability Assessment (optional) - KANO, MDP scope, success metrics before JIT design |
+| `/pm-feature-design` | Feature Card Sections 1-3 (JIT, per feature) - Biznis Mantinely, ACs, sequence diagram, UX/UI context |
 
 ### Cross-phase
 | Skill | When |
@@ -132,6 +133,7 @@ Full framework overview - all playbooks, phases, skills, and artifact chains.
 | MCP | Skills | Without MCP |
 |---|---|---|
 | Notion | `pm-features-list`, `pm-mvp-scope`, `pm-glossary`, `pm-domain-model`, `pm-kpis`, `pm-privacy-requirements`, `pm-reverse-extract`, `pm-feature-card` | Markdown artifacts only, Notion push skipped |
+| Figma | `pm-feature-design` | Paste Figma URL or attach screenshot manually |
 | Excalidraw | `pm-diagrams`, `pm-domain-model` | Mermaid.js output only (state machines, sequence diagrams always available) |
 | Gamma | `pm-pitch-deck` | Slide content brief only |
 
@@ -185,7 +187,7 @@ The `examples/` folder contains realistic output samples showing what the framew
 
 | Example | Playbook | Domain | What it shows |
 |---|---|---|---|
-| [saas-subscription/](examples/saas-subscription/) | Feature Implementation | Subscription Billing (Stripe) | Initiative PRD, full domain registers (entities, business rules, feature list), two Feature Cards at different lifecycle stages (6_Promoted_to_Build + 3_Design_Inspection_Passed) |
+| [saas-subscription/](examples/saas-subscription/) | Feature Implementation | Subscription Billing (Stripe) | Initiative PRD, full domain registers (entities, business rules, feature list), two Feature Cards at different lifecycle stages (6_Shipped + 3_Ready_to_Build) |
 
 ---
 

@@ -70,37 +70,48 @@ Ask questions in 2 groups. Group 1 drives strategic alignment - Claude shows a p
 
 ### Group 1 of 2 - Strategic alignment
 
-Ask all as plain text:
+Ask as plain text:
 
 What is the single most important thing the MVP must prove? Complete this sentence: "We will consider MVP successful if we prove that..." (e.g., "hosts will pay for automated property management", "users can complete a booking end-to-end without human intervention")
 
 Are there any features that must be in MVP regardless of KANO/V×C scoring? Why are they non-negotiable? (technical dependency, contractual requirement, customer commitment, other)
 
-Are there any features that must NOT be in MVP - features explicitly excluded for technical, strategic, or resource reasons?
+Are there any features that must NOT be in MVP - explicitly excluded for technical, strategic, or resource reasons?
+
+Then use AskUserQuestion tool:
+
+What matters most for this MVP?
+
+  A) User experience quality - the product must feel polished and intuitive from day one (Recommended if B2C or high-competition market)
+  B) Revenue validation - proving people will pay, even if experience is rough
+  C) Technical foundation - building the right architecture first, even if MVP is lean
+  D) Speed to market - ship as fast as possible, iterate based on real feedback
 
 After receiving Group 1 answers, Claude does the following before asking Group 2:
 
 1. Read the KANO + V×C output from pm-features-list in context
-2. Apply the MVP hypothesis and non-negotiables to the prioritized feature list
-3. Show a preliminary MVP cut:
+2. Apply MVP hypothesis, non-negotiables, exclusions, and priority value to the feature list
+3. Show a preliminary MVP cut with explicit trade-offs:
 
 ```
-Based on your hypothesis and the KANO/V×C data, here is my initial reading of MVP scope:
+Based on your MVP hypothesis and priorities, here is my initial reading:
 
-IN - Must-be features (KANO: M) that are Quick Wins or Big Bets (V×C):
-  - [feature] - [reason]
-  - [feature] - [reason]
+IN (recommended):
+  - [feature] - [KANO: M / V×C: Quick Win] → why it's in
+  - [feature] - [KANO: P / V×C: Big Bet] → worth the complexity because [reason]
 
-BORDERLINE - Performance features with high value, low complexity:
-  - [feature] - [reason why it's borderline]
+BORDERLINE (discuss):
+  - [feature] - [KANO/V×C score] → Trade-off: including this adds ~[X] to scope but [benefit]. Excluding means [cost/risk].
 
-OUT - Deferred to post-MVP:
-  - [feature] - [reason]
+OUT (deferred):
+  - [feature] - [reason: Delighter / Indifferent / too complex / explicit exclusion]
 
-Does this initial cut match your thinking? Anything you'd move in or out before we finalize?
+Override check:
+  Any features in OUT that belong IN for reasons KANO/V×C doesn't capture?
+  (customer commitment, competitive parity, sales dependency, personal priority)
 ```
 
-Wait for response. Adjust the cut if needed. Then proceed to Group 2.
+Wait for response. Adjust the cut if needed - user's judgment overrides the framework's suggestion. Then proceed to Group 2.
 
 ---
 

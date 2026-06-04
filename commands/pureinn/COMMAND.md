@@ -572,6 +572,13 @@ Create `pureinn-workspace/[project-slug]/pureinn-variables.md` with the followin
 | Meetings | DB | pm-comms-charter | |
 | Open Questions | DB | pm-hypotheses | |
 
+## Design (Phase 6-7)
+
+| Key | Description | Value |
+|---|---|---|
+| figma_project_url | Figma project URL - root of the product design file. Read by pm-feature-design when Figma MCP is connected. | |
+| figma_design_system_url | Figma design system / component library URL (if separate from main project file). | |
+
 ## AI Research
 
 | Key | Description | Value |
@@ -1091,6 +1098,10 @@ STRIPE ORCHESTRATION (use for every Stripe)
                           mark feature Promoted, run Impact Analysis when BR changes
 
 JIT CYCLE PER FEATURE (orchestrated by /pm-stripe)
+Step 0 (optional): /pm-feature-viability [FEAT-ID]
+          → KANO classification, MDP scope, success metrics
+          → Skip if feature already scoped, committed, or in validated roadmap
+
 Step 1: /pm-feature-design [FEAT-ID]
           → Pre-step (Feature Implementation mode only): scan real service files
           → Commit 1: spec([FEAT-ID]): guard conditions + rule finalization
@@ -1100,15 +1111,15 @@ Step 1: /pm-feature-design [FEAT-ID]
           → Commit 2: spec([FEAT-ID]): feature design complete
             - Feature Card Section 1 (Biznis Mantinely - BR-IDs, entity guard conditions)
             - Feature Card Section 2 (Acceptance Criteria)
-            - Feature Card Section 3 (Mermaid sequenceDiagram + files to modify)
-          → Status: 2_Design
+            - Feature Card Section 3 (Mermaid sequenceDiagram + files to modify + UX/UI context)
+          → Status: 2_Spec_Done
 
-Step 2: Design Inspection [Team mode: human review of Sections 1-3]
-          → Status: 3_Design_Inspection_Passed
+Step 2: Design Inspection (/pm-stripe) [Team mode: human review of Sections 1-3]
+          → Status: 3_Ready_to_Build
           [Solo mode: AI generates, human confirms - same gate, lighter ritual]
 
-Step 3: BUILD SKILLS (Phase 7)
-          → Status: 4_Build (set when build skills start)
+Step 3: BUILD SKILLS (/pm-stripe → Phase 7)
+          → Status: 4_In_Build (set when build skills start)
 /fullstack-guardian    → BE implementation (reads Feature Card Section 3)
 /impeccable-craft      → FE implementation (reads Feature Card Section 3)
 /test-master           → Unit + integration tests
@@ -1122,13 +1133,13 @@ Step 3: BUILD SKILLS (Phase 7)
 
 Step 4: Feature Card Section 4 (Realizacny Protokol) filled
           → Commits, test files, flag OFF verification
-          → Status: 5_Code_Inspection (set when build complete, before final review)
+          → Status: 5_In_Review (set when build complete, before final review)
           → Code Inspection result recorded
-          → Status: 6_Promoted_to_Build (Feature Card immutable after this)
+          → Status: 6_Shipped (Feature Card immutable after this)
 
 SPEC GATE (hard rule, enforced by /pm-stripe before routing to build):
   Feature Card Sections 1-3 must be complete
-  Status must be 3_Design_Inspection_Passed
+  Status must be 3_Ready_to_Build
 
 ATOMIC COMMIT PROTOCOL (parallel stripe safety):
   Register updates (entities.md, business_rules.md, decision_models.md) committed BEFORE code
@@ -1380,7 +1391,7 @@ Goal: Define the feature inventory, prioritize, assign to Delivery Stripes.
     Input:  PRD Business Capabilities, Domain Model, user research
     Output: feature_list.md - FDD Feature List (FEAT-[DOMAIN]-[NUMBER] IDs)
             KANO Analysis + V×C Matrix
-            Stub Feature Cards (status: 1_Walkthrough) in features/cards/
+            Stub Feature Cards (status: 1_Backlog) in features/cards/
     Saves:  features/feature_list.md (Live Register 4), features/cards/FEAT-*.md
     Notion: Feature entries pushed (Status=Backlog, Priority from KANO+V×C)
 
@@ -1422,14 +1433,14 @@ Domain registers are the living source of truth. Feature Cards are the atomic de
     Pre-step (Feature Implementation mode): scan real service/class files first
     Output: Commit 1 - register updates (guard conditions, rule finalization)
             Commit 2 - Feature Card Sections 1-3 (Biznis Mantinely, ACs, sequence diagram)
-    Status: 2_Design
+    Status: 2_Spec_Done
 
   [Design Inspection]
-    Team: human review of Feature Card Sections 1-3 → 3_Design_Inspection_Passed
-    Solo: human confirm → 3_Design_Inspection_Passed
+    Team: human review of Feature Card Sections 1-3 → 3_Ready_to_Build
+    Solo: human confirm → 3_Ready_to_Build
 
   SPEC GATE (hard rule - /pm-stripe enforces before routing to build):
-    Feature Card Sections 1-3 populated + status: 3_Design_Inspection_Passed
+    Feature Card Sections 1-3 populated + status: 3_Ready_to_Build
 
   BUILD (Phase 7 - per feature, after spec gate)
   /fullstack-guardian    → BE implementation (reads Feature Card Section 3)
@@ -1442,7 +1453,7 @@ Domain registers are the living source of truth. Feature Cards are the atomic de
   /security-reviewer     → Security audit
   /devops-engineer       → CI/CD, deployment
   /monitoring-expert     → Observability, alerting
-                           → Feature Card Section 4 filled, status: 6_Promoted_to_Build
+                           → Feature Card Section 4 filled, status: 6_Shipped
 
   OPTIONAL SPEC SUPPORT (run when needed, not per feature)
   /architecture-designer → System Design Blueprint, ADRs
@@ -1523,11 +1534,11 @@ PHASE 6 + 7 - DELIVERY  [JIT per Feature, repeats per Stripe]
   Per feature (JIT spec):
     /pm-feature-design [FEAT-ID]  → Sections 1-3 of Feature Card + register finalization
     Design Inspection             → human review (team) or confirm (solo)
-    Spec gate: Sections 1-3 complete + status: 3_Design_Inspection_Passed
+    Spec gate: Sections 1-3 complete + status: 3_Ready_to_Build
   Per feature (build):
     /fullstack-guardian → /impeccable-craft → /test-master → /playwright-expert
     → /code-reviewer → /impeccable-harden → /devops-engineer → /monitoring-expert
-    → Feature Card Section 4 filled → status: 6_Promoted_to_Build → next feature
+    → Feature Card Section 4 filled → status: 6_Shipped → next feature
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 

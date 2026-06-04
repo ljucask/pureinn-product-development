@@ -35,7 +35,7 @@ Produces the Just-In-Time technical design for a single feature immediately befo
 5. Writes Feature Card Section 2 (Acceptance Criteria) - derived from register state + business rules
 6. Generates Mermaid.js sequence diagram - writes to Feature Card Section 3
 7. Lists files to modify - writes to Feature Card Section 3
-8. Sets Feature Card status to `2_Design`
+8. Sets Feature Card status to `2_Spec_Done`
 
 **Atomic commit protocol (parallel Stripe safety):**
 All register updates (steps 2-3) are committed BEFORE any code generation begins. This prevents merge conflicts when multiple Stripes run in parallel.
@@ -48,7 +48,7 @@ Commit 1: "spec([FEAT-ID]): guard conditions + rule finalization"
 
 Commit 2: "spec([FEAT-ID]): feature design complete"
   → Feature Card Sections 1-3 populated
-  → status: 2_Design
+  → status: 2_Spec_Done
 ```
 
 **Existing codebase mode (Feature Implementation playbook):**
@@ -87,7 +87,7 @@ Read the Feature Card at `/features/cards/[FEAT-ID].md`.
 
 **Verdict:** [One sentence - ready to design or what is blocking]
 
-If Feature Card status is already `3_Design_Inspection_Passed` or later: stop. Design is already approved. Do not overwrite.
+If Feature Card status is already `3_Ready_to_Build` or later: stop. Design is already approved. Do not overwrite.
 
 Apply the standard skill interaction pattern (CLAUDE.md).
 
@@ -119,7 +119,19 @@ JIT Design for: [FEAT-ID]: [Feature title]
    Delivery Team: Design goes to Design Inspection after this step.
    [A - Solo / B - Delivery Team]
 
-5. OPEN QUESTIONS
+5. UX/UI CONTEXT (skip if backend/API-only feature)
+   Does this feature have a user interface component?
+   If yes, provide one of the following:
+     A) Text description - where does this feature live in the app? What does the user see and do?
+     B) Attach a screenshot or mockup directly in this message
+     C) Figma URL - paste the screen URL (requires Figma MCP connected)
+     D) Figma MCP connected - I will read the referenced screen automatically from pureinn-variables.md
+   [describe / attach / paste URL / "backend only - skip"]
+
+   If the overall design system was established by Impeccable: reference which component or pattern
+   this feature should follow. [component name or "new pattern needed"]
+
+6. OPEN QUESTIONS
    Any known edge cases or constraints specific to this feature not yet in the registers?
    [list or "none"]
 ```
@@ -269,10 +281,30 @@ sequenceDiagram
 - `[src/validators/ValidatorName.ts]` - [guard condition implementation]
 ```
 
+**4c-UX. Section 3b - UX/UI Context** (include only if feature has a UI component)
+
+```markdown
+## 3b. UX/UI Context
+
+**Placement:** [Where in the app - screen name, route, component location]
+
+**User-facing intent:** [What the user sees and what action they take - 1-2 sentences]
+
+**Design system reference:** [Component or pattern from Impeccable design system / "new pattern - see Figma"]
+
+**Figma reference:** [URL to specific screen / frame / component - or "N/A"]
+
+**Visual notes:** [Any specific behavior: empty states, loading state, error state, responsive breakpoints]
+```
+
+If no Figma URL was provided and Figma MCP is connected: check `figma_project_url` in `pureinn-variables.md` and read the relevant screen if identifiable. If not identifiable, ask the user for the Figma frame URL or accept a screenshot.
+
+If feature is backend/API-only: omit Section 3b entirely.
+
 **4d. Update Feature Card frontmatter status**
 
 ```yaml
-status: 2_Design
+status: 2_Spec_Done
 ```
 
 **4e. Commit**
@@ -308,7 +340,7 @@ Any corrections before build starts?
 ```
 Design package ready for Design Inspection - [FEAT-ID]: [title]
 
-Feature Card is at status: 2_Design
+Feature Card is at status: 2_Spec_Done
 Location: /features/cards/[FEAT-ID].md
 
 Design Inspection checklist:
@@ -318,7 +350,7 @@ Design Inspection checklist:
   [ ] All ACs are testable without knowledge of internals
   [ ] Edge cases from decision table are covered
 
-After inspection: update Feature Card status to 3_Design_Inspection_Passed
+After inspection: update Feature Card status to 3_Ready_to_Build
 Then run /pm-stripe to proceed to build.
 ```
 
@@ -372,4 +404,4 @@ pureinn-workspace/[project-slug]/domain/business_rules.md
 pureinn-workspace/[project-slug]/domain/decision_models.md
 ```
 
-State update → `pureinn-workspace/[project-slug]/state.json`: update feature status to `2_Design`.
+State update → `pureinn-workspace/[project-slug]/state.json`: update feature status to `2_Spec_Done`.
