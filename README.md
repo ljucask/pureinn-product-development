@@ -53,6 +53,56 @@ Full framework overview - all playbooks, phases, skills, and artifact chains.
 
 ---
 
+## Fast Track
+
+Skip upstream phases and go straight to spec + build. The engine detects the right path automatically after intake - or you can declare it explicitly.
+
+### Greenfield Express
+Use when: you have a validated idea, know the problem and customer, and don't need discovery.
+
+```
+/pureinn "your idea"     → workspace setup (3 questions)
+/pm-entity-registry      → lean entity list + key states
+/pm-business-rules-library → core rules, Draft mode
+/pm-features-list        → feature inventory + FEAT-IDs
+/pm-mvp-scope            → MVP scope + Delivery Stripes
+/pm-feature-design [ID]  → JIT spec per feature
+→ Build → Test → Release
+```
+
+Skips: Phase 1 (Foundation), Phase 2 (Discovery), Phase 3a/3b (Validation + Commercial).
+
+---
+
+### Feature Implementation - First Run
+Use when: existing product, first time using Pureinn on this codebase.
+
+```
+/pureinn [project]       → workspace setup
+/common-ground           → tech context from existing code
+/pm-reverse-extract      → bootstrap domain registers + feature inventory from codebase
+                           (shows what it found - you confirm or correct)
+/pm-feature-design [ID]  → JIT spec for the feature you want to build
+→ Build → Test → Release
+```
+
+FI delivery rules always apply: feature flags, regression suite, gradual rollout.
+
+---
+
+### Feature Implementation - Returning Session
+Use when: Pureinn already ran on this project, context files exist.
+
+```
+/pureinn [project-slug]  → loads state.json + context
+/pm-feature-design [ID]  → JIT spec directly
+→ Build → Test → Release
+```
+
+If FEAT-ID doesn't exist yet: add it to `feature_list.md`, create stub card, then run `pm-feature-design`.
+
+---
+
 ## Skill map
 
 ### Phase 1 - Foundation

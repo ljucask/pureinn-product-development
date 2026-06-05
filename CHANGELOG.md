@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.2.1] - 2026-06-05
+
+### Fast Track documented in README and FRAMEWORK_GUIDE
+
+---
+
+
 ## [4.2.0] - 2026-06-05
 
 ### Notion sync in pm-stripe, three Fast Track paths, Rebuild coming soon

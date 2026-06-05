@@ -32,6 +32,88 @@ Run `/pureinn [product idea or name]` - the engine runs the decision tree automa
 
 ---
 
+## Fast Track
+
+Three paths that skip upstream phases and go straight to spec + build. The engine detects the right path after intake and surfaces it proactively. You can also declare it explicitly.
+
+**When fast track applies:**
+- You already have validated knowledge (no need for discovery/validation)
+- You know exactly what to build
+- You want to move from idea → spec → build with minimal ceremony
+
+**What fast track never skips:**
+- Domain registers (`entities.md`, `business_rules.md`) - required by `pm-feature-design`
+- Feature list with FEAT-IDs - required for JIT cycle
+- FI delivery rules (feature flags, regression, gradual rollout) - always apply
+
+---
+
+### Fast Track 1 - Greenfield Express
+
+**Trigger:** New product, validated idea, no discovery needed.
+
+| Step | Skill | What it does |
+|---|---|---|
+| 1 | `/pureinn [idea]` | Workspace setup, 3 intake questions |
+| 2 | `/pm-entity-registry` [lean] | Entity list + key states only - no full ERD |
+| 3 | `/pm-business-rules-library` [lean] | Core rules in Draft mode - finalized JIT per feature |
+| 4 | `/pm-features-list` | Feature inventory + FEAT-IDs + KANO + V×C |
+| 5 | `/pm-mvp-scope` | MVP scope + Delivery Stripe assignment |
+| 6+ | `/pm-feature-design [FEAT-ID]` | JIT spec per feature → Build → Test → Release |
+
+**Skips:** Phase 1 (Foundation), Phase 2 (Discovery), Phase 3a (Validation), Phase 3b (Commercial Definition).
+
+**Lean mode:** `pm-entity-registry` and `pm-business-rules-library` run in condensed mode - bare minimum to enable JIT spec. Registers are enriched continuously as features are designed.
+
+---
+
+### Fast Track 2 - Feature Implementation: First Run
+
+**Trigger:** Existing product, first time running Pureinn on this codebase.
+
+| Step | Skill | What it does |
+|---|---|---|
+| 1 | `/pureinn [project]` | Workspace setup |
+| 2 | `/common-ground` | Tech context from existing code → `COMMON-GROUND.md` |
+| 3 | `/pm-reverse-extract` | Reads existing code/docs → extracts entities, business rules, feature inventory → bootstraps all domain registers → pushes to Notion → shows result for confirmation |
+| 4 | `/pm-feature-design [FEAT-ID]` | JIT spec for the target feature |
+| 5+ | Build → Test → Release | FI delivery rules always apply |
+
+**`pm-reverse-extract` bootstrap:** Extracts what it can from existing code. Shows result before proceeding - you confirm or correct. If code is poorly structured, you fill the gaps manually.
+
+**FI delivery rules (non-negotiable):**
+
+| Rule | Detail |
+|---|---|
+| Feature flags | All new code wrapped (OFF by default), FE + BE |
+| API changes | Additive only - no renames, no deletes |
+| DB changes | Additive only - new tables, new columns |
+| Regression | Full suite per feature before merge |
+| Performance gate | Feature adds ≤10% latency to existing API calls |
+| Gradual rollout | Internal → 5% → 25% → 50% → 100% |
+| Kill switch | Disable flag if error rate >5% |
+
+---
+
+### Fast Track 3 - Feature Implementation: Returning Session
+
+**Trigger:** Pureinn already ran on this project, `state.json` + domain registers exist.
+
+| Step | Skill | What it does |
+|---|---|---|
+| 1 | `/pureinn [project-slug]` | Loads `state.json`, restores context |
+| 2 | `/pm-feature-design [FEAT-ID]` | JIT spec directly - no setup needed |
+| 3+ | Build → Test → Release | FI delivery rules always apply |
+
+**If FEAT-ID doesn't exist yet** (new feature not in `feature_list.md`):
+1. Add entry to `features/feature_list.md` (format: `FEAT-[DOMAIN]-[NUMBER]`)
+2. Create stub Feature Card at `features/cards/FEAT-[ID].md`
+3. Run `/pm-feature-design [FEAT-ID]`
+
+Or use `/pm-stripe` for a full delivery dashboard showing all active stripes and their current state.
+
+---
+
 ## Greenfield
 
 Use when: building a new product from scratch, zero users, need to validate PMF before building.
