@@ -401,6 +401,106 @@ After confirmation, save the finalized assessment to:
 
 ---
 
+## STEP 3C - Fast Track Detection
+
+After assessment is confirmed, evaluate whether the user qualifies for a fast track. Check all three conditions independently.
+
+---
+
+### Fast Track 1 - Greenfield Express
+
+**Triggers (all must be true):**
+- Playbook = Greenfield
+- Current stage (from intake Group 3) = "Validated problem, ready to define strategy" OR "Have a strategy or specs, moving to execution"
+- Assessment shows: no significant unknown gaps in problem/customer/market understanding
+
+**If triggered, surface proactively:**
+
+```
+Vyzerá to, že discovery a validáciu nepotrebuješ.
+
+Express cesta:
+  1. /pm-entity-registry     [lean] → entity list + základné stavy
+  2. /pm-business-rules-library [lean] → kľúčové pravidlá, Draft mode
+  3. /pm-features-list       → feature inventory + FEAT-IDs
+  4. /pm-mvp-scope           → MVP scope + Delivery Stripes
+  5. /pm-feature-design [FEAT-ID] → JIT spec, opakuj per feature
+  → Build → Test → Release
+
+Preskočíme: Phase 1 (Foundation), Phase 2 (Discovery), Phase 3a/3b (Validation + Commercial).
+
+[AskUserQuestion: Express (odporúčané) / Štandardný flow / Chcem prejsť len časť Discovery]
+```
+
+**Express lean mode rules:**
+- `pm-entity-registry` lean: entity list + key states only, no full ERD, no Excalidraw
+- `pm-business-rules-library` lean: core rules only, all Draft, finalize JIT per feature
+- Skip: pm-domain-model, pm-privacy-requirements (unless regulated industry), pm-product-roadmap
+
+---
+
+### Fast Track 2 - Feature Implementation: First Run
+
+**Triggers (all must be true):**
+- Playbook = Feature Implementation
+- No `state.json` exists for this project (first time with Pureinn on this product)
+
+**If triggered, surface proactively:**
+
+```
+Existujúci produkt, prvý run s Pureinn.
+
+Express cesta:
+  1. /common-ground           → tech context z existujúceho kódu → COMMON-GROUND.md
+  2. /pm-reverse-extract      → bootstrap z kódu:
+                                 - extrahuje entities + business rules do registrov
+                                 - generuje feature inventory (FDD formát)
+                                 - pushne feature hierarchiu do Notion
+                                 → ukáže čo našiel, ty opravíš ak treba
+  3. /pm-feature-design [FEAT-ID] → JIT spec pre konkrétnu feature
+  → Build → Test → Release (FI delivery pravidlá platia vždy)
+
+[AskUserQuestion: Express (odporúčané) / Štandardný Phase 0 onboarding]
+```
+
+**Note on pm-reverse-extract bootstrap:** Extrahuje čo môže z kódu. Výsledok ukáže pred pokračovaním - user potvrdí alebo opraví. Štandardný PREREQ pattern.
+
+**FI delivery rules vždy platia bez výnimky:**
+- Feature flags (OFF by default), FE + BE
+- Additive-only API + DB changes
+- Full regression suite
+- Performance gate (≤10% latency overhead)
+- Gradual rollout: Internal → 5% → 25% → 50% → 100%
+- Kill switch ak error rate >5%
+
+---
+
+### Fast Track 3 - Feature Implementation: Returning Session
+
+**Triggers (all must be true):**
+- Playbook = Feature Implementation
+- `state.json` exists (Pureinn already ran on this project)
+- Context files exist: `COMMON-GROUND.md` + domain registers
+
+**If triggered, surface proactively:**
+
+```
+Kontext existuje z predošlej session.
+
+Express cesta:
+  → /pm-feature-design [FEAT-ID] priamo
+
+Ktorú feature ideme špecifikovať?
+(alebo: /pm-stripe pre delivery dashboard ak chceš vidieť stav všetkých stripes)
+```
+
+**Note:** Ak FEAT-ID ešte neexistuje (nová feature nie je v `feature_list.md`):
+1. Pridaj feature do `feature_list.md` manuálne (FEAT-[DOMAIN]-[NUMBER] formát)
+2. Vytvor stub Feature Card v `features/cards/`
+3. Potom spusti `/pm-feature-design [FEAT-ID]`
+
+---
+
 ## STEP 4 - Playbook Selection
 
 If not already determined from document analysis, ask:
@@ -418,7 +518,7 @@ Does the product already exist in any form?
 Map to playbook:
 - A or B → **Greenfield**
 - C → **Feature**
-- D → **Rebuild**
+- D → **Rebuild** *(coming soon - see note below)*
 
 **Feature playbook note:**
 Feature Implementation does not start at Phase 1. It starts at Phase 0 (context setup).
@@ -426,7 +526,18 @@ Phase 0 runs once per project onboarding - not per feature. After Phase 0, each 
 If Phase 0 is already done (context exists from a prior session), skip to Feature Viability Assessment.
 
 **Rebuild playbook note:**
-Rebuild starts at Phase 1 (Foundation) but includes two additional Rebuild-only phases: R2 (Legacy Assessment) and R3 (Migration Strategy) before Phase 3a. Do not skip these - poor legacy analysis is the primary cause of Rebuild failures.
+Rebuild playbook is not yet available. If user selects D, inform them:
+```
+Rebuild playbook je momentálne v príprave (coming soon).
+
+Pre technické transformácie odporúčam:
+- Ak ide o migráciu s funkčnou paritou: použi Feature Implementation playbook
+  (existujúce features ako "rebuild" features, JIT spec per feature)
+- Ak ide o greenfield rewrite: použi Greenfield playbook
+
+Ktorá z týchto možností bližšie popisuje tvoju situáciu?
+```
+Then route to the appropriate available playbook based on user's answer.
 
 ---
 
@@ -806,28 +917,7 @@ ACTIVE STRIPE: [stripe name or "none"]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-**Rebuild dashboard:**
-```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-PROJECT: [Product Name]
-PLAYBOOK: Rebuild
-GUIDANCE: [On / Off]
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-PHASE STATUS
-  Phase 1 - Foundation & Collaboration          [✅ Done / ⏭ Skipped / 🔲 To do]
-  Phase R2 - Legacy Assessment                  [✅ Done / ⚠️ Partial / 🔲 To do]
-  Phase R3 - Migration Strategy                 [✅ Done / ⚠️ Partial / 🔲 To do]
-  Phase 3a - Validation                         [🔲 To do]
-  Phase 3b - Commercial Definition              [🔲 To do]
-  Phase 4 - Domain Modeling + Register Setup    [🔲 To do]
-  Phase 5 - Feature Planning                    [🔲 To do]
-  Phase 6 + 7 - Delivery Cycle (JIT)            [🔲 To do]
-  Parallel Run + Cutover                        [🔲 To do]
-
-STARTING FROM: Phase [N] - [Phase Name]
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-```
+**Rebuild dashboard:** *(Rebuild playbook coming soon - not shown, user routed to Feature or Greenfield)*
 
 Then show the skills queue for the current phase.
 

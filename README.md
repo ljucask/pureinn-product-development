@@ -27,7 +27,7 @@ Three playbooks:
 |---|---|
 | Greenfield | New product, zero users, validating PMF |
 | Feature Implementation | Product exists, active users, adding functionality |
-| Rebuild | Product exists, active users, technical transformation |
+| Rebuild | Product exists, active users, technical transformation *(coming soon)* |
 
 ---
 

@@ -59,7 +59,24 @@ pm-stripe reads the current state of all active stripes, detects where each acti
 
 ---
 
-## Step 0: Session start - read state and detect context
+## Step 0: Session start - Notion sync + read state
+
+**Notion Status Sync (run first, before reading local files):**
+
+1. Read `pureinn-workspace/[slug]/pureinn-variables.md` - check if "Feature Backlog" URL is present
+2. **If URL is blank or Notion MCP not available:** skip sync, continue with local `.md` files as source of truth. No error, no blocking.
+3. **If URL is present and Notion is available:**
+   - Query the Feature Backlog DB for all features in the current stripe(s)
+   - For each feature: compare Notion `Status` field with `.md` frontmatter `status`
+   - If drift detected: update `.md` frontmatter to match Notion status, log the change:
+     ```
+     Notion sync: FEAT-[ID] status updated [old] → [new] (Notion was ahead)
+     ```
+   - After sync, continue with updated `.md` files
+
+**Why Notion wins:** Status changes made by PMs or teammates in Notion (e.g., moving a feature to `3_Ready_to_Build` after design review) are the authoritative team signal. Content (Sections 1-3-4) stays in `.md` - Claude owns that.
+
+---
 
 Read `features/feature_list.md` and scan all `/features/cards/FEAT-*.md` files.
 

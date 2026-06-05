@@ -17,14 +17,14 @@ Three questions determine the right path.
 
 **2. What is the primary goal?**
 - Add new functionality - Feature Implementation
-- Technical transformation (replatforming, migration) - Rebuild
+- Technical transformation (replatforming, migration) - Rebuild *(coming soon)*
 - Both - Hybrid (identify primary + secondary)
 
 | Situation | Playbook |
 |---|---|
 | New product, 0 users, validating PMF | **Greenfield** |
 | Product exists, active users, adding functionality | **Feature Implementation** |
-| Product exists, active users, technical transformation | **Rebuild** |
+| Product exists, active users, technical transformation | **Rebuild** *(coming soon)* |
 | Product built outside the framework, starting to use Pureinn | **Feature Implementation - Migration Path** |
 | Two scenarios apply simultaneously | **Hybrid** (primary + secondary playbook) |
 

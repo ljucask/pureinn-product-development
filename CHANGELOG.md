@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.2.0] - 2026-06-05
+
+### Notion sync in pm-stripe, three Fast Track paths, Rebuild coming soon
+
+---
+
+
 ## [4.1.1] - 2026-06-05
 
 ### Pre-launch consistency audit: remove stale BRD/FSD/feature-forge/impeccable-teach/time-box references
