@@ -31,7 +31,7 @@ Engine prečíta dokumenty, zmapuje ich na fázy, identifikuje kde si, preskoč�
 /pureinn "Acme CRM - chceme pridať AI asistenta do reportingu"
 /pureinn "náš e-shop, potrebujeme loyalty program"
 ```
-Engine vyberie Feature playbook. Ak Phase 0 nie je hotová, začne kontextovým setupom (pureinn + common-ground + impeccable-teach). Ak Phase 0 existuje, smeruje priamo na Feature Viability Assessment.
+Engine vyberie Feature playbook. Ak Phase 0 nie je hotová, začne kontextovým setupom (pureinn + common-ground + impeccable document). Ak Phase 0 existuje, smeruje priamo na Feature Viability Assessment.
 
 ### Pokračovanie v rozpracovanom projekte
 ```
@@ -793,7 +793,7 @@ GUIDANCE: [On / Off]
 
 PHASE STATUS
   Phase 0 - Context Setup                [✅ Done / 🔲 To do]
-             (pureinn + common-ground + impeccable-teach - runs once)
+             (pureinn + common-ground + impeccable document - runs once)
   Feature Viability Assessment           [runs per feature]
              (KANO + V×C + demand validation + MDP + success metrics)
   Track A / Track B                      [determined per feature]
@@ -1078,7 +1078,6 @@ TRACK B - KNOW THE AREA, NOT THE SOLUTION  [discovery needed, output → Track A
   [👤 Human] User research (5-10 interviews, target segment only)
   [👤 Human] Competitive analysis (if solution direction unclear)
   [👤 Human] Tech feasibility (with existing stack)
-  /feature-value-prop → Feature Value Prop (WHO / WHAT / WHERE / WHEN / IMPACT)
   /pm-business-case   → Feature Business Case (revenue/retention impact, ROI, Go/No-Go)
   /pm-kpis            → Feature Success Metrics (depth / behavior / business impact)
 

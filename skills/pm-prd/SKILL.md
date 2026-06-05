@@ -220,7 +220,7 @@ Generate in English.
 
 This PRD is the consolidation of Phase 2 (Discovery), Phase 3a (Validation), and Phase 3b (Commercial Definition) outputs. It captures the validated product-market fit hypothesis and serves as the stable reference for Phase 4+ execution.
 
-It is NOT a feature spec. Feature specifications are generated per Feature Set in Phase 6 (BRD + FSD).
+It is NOT a feature spec. Feature specifications are generated per Feature (JIT) in Phase 6 by `pm-feature-design` (Feature Card Sections 1-3).
 
 ---
 

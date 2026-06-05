@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.1.1] - 2026-06-05
+
+### Pre-launch consistency audit: remove stale BRD/FSD/feature-forge/impeccable-teach/time-box references
+
+---
+
+
 ## [4.1.0] - 2026-06-05
 
 ### User-centric onboarding: PREREQ+handoff patterns, Impact over Activity, first-run orientation, no time estimates

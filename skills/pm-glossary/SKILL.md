@@ -162,7 +162,7 @@ Apply glossary name types consistently:
 - [ ] Name: the exact term as used in project documents (match casing and spelling)
 - [ ] Definition: precise, not circular (does not use the term in its own definition)
 - [ ] Domain: one of the 6 standard domains, or "Other" with explanation
-- [ ] Usage Context: specific enough to tell someone where to look (e.g., "Used in BRD and FSD - defines the business rules for Feature Set boundaries")
+- [ ] Usage Context: specific enough to tell someone where to look (e.g., "Used in Feature Card Section 1 and business_rules.md - defines the guard conditions for this entity state transition")
 - [ ] Type: one of the 8 standard types
 - [ ] Connected Entities: at least one link where relevant; empty only for standalone abbreviations
 - [ ] Note: filled when term has a common misuse, overlaps with another term, or is context-specific

@@ -268,22 +268,22 @@ When updating to v3, Claude adds the following section to the artifact:
 
 ### Feature Sets (logical groupings)
 
-| Feature Set | Description | BRD/FSD Status | Priority |
+| Feature Set | Description | Feature Cards Status | Priority |
 |---|---|---|---|
-| [FS-01: Name] | [What functional area this covers] | [To be written / In progress / Complete] | P1 |
+| [FS-01: Name] | [What functional area this covers] | [Backlog / In Spec / Ready to Build] | P1 |
 | [FS-02: Name] | | | P2 |
 | [FS-03: Name] | | | P3 |
 
-### Delivery Stripes (2-week time-boxes)
+### Delivery Stripes (domain-focused parallel channels)
 
-| Stripe | Timeframe | Features included | Feature Set(s) | Goal |
+| Stripe | Domain focus | Features included | Feature Set(s) | Goal |
 |---|---|---|---|---|
-| Stripe 1 | [Week 1-2] | [Feature A, Feature B] | FS-01 | [What this stripe proves or delivers] |
-| Stripe 2 | [Week 3-4] | [Feature C, Feature D] | FS-01, FS-02 | |
-| Stripe 3 | [Week 5-6] | [Feature E] | FS-02 | |
+| Stripe 1 | [e.g., Auth + Onboarding] | [FEAT-AUTH-001, FEAT-AUTH-002] | FS-01 | [What this stripe proves or delivers] |
+| Stripe 2 | [e.g., Payments] | [FEAT-PAY-001, FEAT-PAY-002] | FS-02 | |
+| Stripe 3 | [e.g., Notifications] | [FEAT-NOT-001] | FS-03 | |
 | ... | | | | |
 
-**MVP completion:** [Stripe X] - [Estimated date]
+**MVP completion:** [Stripe X - when last MVP feature reaches 6_Shipped]
 
 ### Post-MVP Roadmap
 
@@ -320,11 +320,11 @@ When updating to v3, Claude adds the following section to the artifact:
 
 **v3 additions must cover:**
 - [ ] Feature Sets listed with priority
-- [ ] Delivery Stripes defined (2-week time-boxes, in sequence)
+- [ ] Delivery Stripes defined (domain-focused parallel channels, dependency-ordered)
 - [ ] Each stripe has a stated goal (not just a feature list)
 - [ ] MVP completion stripe identified
 - [ ] Post-MVP roadmap direction stated
-- [ ] BRD/FSD status per Feature Set noted (spec must exist before build starts)
+- [ ] Feature Card status per feature noted (spec gate: Sections 1-3 + 3_Ready_to_Build before build)
 - [ ] Version history updated
 
 **Living document quality:**

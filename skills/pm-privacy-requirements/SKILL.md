@@ -22,7 +22,7 @@ Maps the domain model to privacy and data protection obligations. Produces:
 2. Privacy Requirements - what the system must do to comply (consent, retention, rights)
 3. GDPR Action Plan - concrete actions with owners and timing before launch
 
-This skill runs after `pm-domain-model` - entities must be defined to inventory PII accurately. Output feeds directly into Phase 6 (BRD and FSD reference privacy rules when specifying features that handle personal data).
+This skill runs after `pm-domain-model` - entities must be defined to inventory PII accurately. Output feeds directly into Phase 6 (`pm-feature-design` references privacy rules in Feature Card Section 1 for features that handle personal data).
 
 This is a PM-level analysis, not a legal opinion. Validate with legal counsel before launch.
 
@@ -37,8 +37,8 @@ This is a PM-level analysis, not a legal opinion. Validate with legal counsel be
 - `pm-domain-analysis` - legal requirements from Phase 2 provide the regulatory baseline
 
 **Produces artifacts used by:**
-- `pm-business-rules-library` - privacy rules become RULE-A and RULE-C entries in the BRD
-- `pm-feature-design` - consent flows, data export, deletion - all specified at feature level in FSD
+- `pm-business-rules-library` - privacy rules become RULE-A and RULE-C entries in `business_rules.md`
+- `pm-feature-design` - consent flows, data export, deletion - specified JIT in Feature Card Section 1
 - Phase 6 build - developers need privacy requirements before implementing user-facing features
 
 ---

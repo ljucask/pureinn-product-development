@@ -249,7 +249,7 @@ Pokračovať napriek tomu, alebo preskočiť na [next relevant skill]?
 - `/pm-comms-charter`: Skip if solo builder (no team to communicate with)
 - `/pm-team-roster`: Skip if solo builder
 - `/pm-pitch-deck`: Skip if not raising capital and not pitching to partners
-- `/pm-feature-set-overview`: Skip if feature is already well-scoped from prior work
+- `/pm-feature-viability`: Skip if feature is already scoped, committed, or in a validated roadmap
 
 The orchestrator (`/pureinn`) surfaces these conditions proactively during phase routing.
 

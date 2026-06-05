@@ -164,7 +164,7 @@ I need inputs for the FDD Feature List (Live Register 4), Dependency Map, and KA
 
 **Hierarchy:**
 - **Domain** - business area, determines the feature ID prefix (ORD, PAY, USR...). Corresponds to entity clusters in entities.md.
-- **Feature Set** - optional grouping label within a domain. Use when a domain has 5+ features that naturally cluster (e.g., "Checkout Flow", "Order History"). Grouping only - no spec artifact, no BRD, no FSD.
+- **Feature Set** - optional grouping label within a domain. Use when a domain has 5+ features that naturally cluster (e.g., "Checkout Flow", "Order History"). Grouping only - no separate spec document per Feature Set.
 - **Feature** - atomic delivery unit. One Feature Card per feature. Spec written JIT by pm-feature-design.
 
 Before generating:
