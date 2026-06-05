@@ -405,3 +405,22 @@ pureinn-workspace/[project-slug]/domain/decision_models.md
 ```
 
 State update → `pureinn-workspace/[project-slug]/state.json`: update feature status to `2_Spec_Done`.
+
+---
+
+## Handoff
+
+```
+---
+**Čo si teraz má:** Feature Card Sections 1-3 kompletné + domain registers finalizované.
+Feature [FEAT-ID] je ready na Design Inspection. Status: 2_Spec_Done.
+
+**Ďalší krok:** Design Inspection
+- Tím: reviewni Sections 1-3, potvrď že ACs sú testovateľné a sequence diagram pokrýva happy path + guard failures.
+- Solo: prejdi Sections 1-3, potvrď alebo oprav, potom nastav status na 3_Ready_to_Build.
+Použite /pm-stripe pre tracking.
+
+**Po Design Inspection:** /pm-stripe → routuje na build skills pre [FEAT-ID].
+
+**Spec gate - nezačínaj build kým:** Status nie je 3_Ready_to_Build.
+```

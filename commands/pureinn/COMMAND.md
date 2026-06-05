@@ -62,6 +62,28 @@ Otherwise:
 
 ---
 
+## First-Run Orientation
+
+If no `state.json` exists for this project (new start, not a resume), display the following before asking about guidance mode:
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PUREINN - AI Product Development Framework
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+I'll ask you 9 questions in 3 groups to understand what you're building.
+I'll also scan your directory for existing research, notes, or specs.
+Then I'll select the right playbook and show you exactly which skills to run.
+
+Run one skill at a time. Each skill tells you what's next when it finishes.
+Type /pureinn map at any point to see the full framework overview.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+Then proceed to Guidance Mode Check.
+
+---
+
 ## STEP 1A - Guidance Mode Check
 
 Ask the user:
@@ -264,7 +286,7 @@ Phase 1 skills are not all relevant for every team type. Apply these rules:
 **Solo builder:**
 - Skip: `/pm-stakeholder-map` (no stakeholders), `/pm-team-roster` (no team), `/pm-comms-charter` (no team communication)
 - Keep: `/pm-project-charter` - simplified: assumptions, risks, personal constraints, success definition
-- Phase 1 for solo = one skill, ~30 minutes
+- Phase 1 for solo = one skill
 
 **Small founding team (2-3 people):**
 - Skip: `/pm-stakeholder-map` (unless external investors or advisors are involved)
@@ -904,7 +926,7 @@ riskiest assumptions tested. Phase 3a is then marked complete and 3b can start.
 ### Phase 3b - Commercial Definition
 ```
 Character: AI-assisted synthesis sprint. With clean Phase 3a inputs, this is
-hours to a few focused sessions. Quality depends entirely on Phase 3a rigor.
+Quality depends entirely on Phase 3a rigor.
 Condition: only starts after GO verdict from Phase 3a. No FORCE bypass for this gate.
 
 "Done elsewhere" path: if you already have a Lean Canvas, financial model, or
@@ -1320,7 +1342,7 @@ Output: Go/No-Go verdict (hard gate - only GO unlocks Phase 3b).
 
 PHASE 3b - COMMERCIAL DEFINITION
 Goal: Translate validated problem-market fit into commercial strategy and product specification.
-Character: AI-assisted synthesis sprint. With clean 3a inputs, hours to a few sessions.
+Character: AI-assisted synthesis sprint. Quality of output depends entirely on Phase 3a signal quality.
 Condition: Phase 3a GO verdict required. Non-negotiable.
 Output: PRD (frozen after creation) + Business Case + Roadmap v1.
 "Done elsewhere": accepted - bring existing Lean Canvas, financial model, or strategy artifacts via Path A.
@@ -1474,13 +1496,13 @@ ONCE AT START
   /pureinn [idea]         → intake, document scan, playbook selection, dashboard
   /pm-glossary            → start domain glossary; update continuously
 
-PHASE 1 - FOUNDATION  [~1 day, scales by team size]
+PHASE 1 - FOUNDATION  (scales by team size)
   Solo:  /pm-project-charter
   Team:  /pm-project-charter → /pm-team-roster → /pm-comms-charter
   Corp:  + /pm-stakeholder-map first
   Run /pureinn when done to advance.
 
-PHASE 2 - DISCOVERY  [1-3 weeks, four parallel tracks]
+PHASE 2 - DISCOVERY  (four parallel tracks)
   🔍 → /pm-tech-feasibility      (tech feasibility)
   🔍 → /pm-domain-analysis       (domain + legal)
   🔍 → /pm-market-analysis       (market + competitors)
@@ -1488,7 +1510,7 @@ PHASE 2 - DISCOVERY  [1-3 weeks, four parallel tracks]
   Converge: /pm-problem-validation  (Phase 2 exit artifact)
   Run /pureinn when done to advance.
 
-PHASE 3 - DEFINE & VALIDATION  [2-4 weeks]
+PHASE 3 - DEFINE & VALIDATION
   /design-thinking          → Problem Statement, HMW, Elevator Pitch,
                               Validation Hypotheses draft
   /pm-hypotheses [Plan]     → Hypothesis Register (ICP, experiments, success
@@ -1507,7 +1529,7 @@ PHASE 3 - DEFINE & VALIDATION  [2-4 weeks]
   /pm-pitch-deck         → Pitch Deck (optional)
   Run /pureinn when done to advance.
 
-PHASE 4 - DOMAIN MODELING + REGISTER SETUP  [3-5 days]
+PHASE 4 - DOMAIN MODELING + REGISTER SETUP
   /pm-domain-model            → Domain Model, ERD
   /pm-entity-registry         → entities.md (entity states + Mermaid state machines)
   /pm-business-rules-library  → business_rules.md + decision_models.md (Draft mode)

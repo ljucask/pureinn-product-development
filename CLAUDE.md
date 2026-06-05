@@ -168,6 +168,93 @@ This pattern applies to all skills: intake rounds, discovery sessions, validatio
 
 ---
 
+## Skill PREREQ block (universal standard)
+
+Every skill that requires external input (research, documents, user data) MUST open with a prerequisite check. The goal is never to block - it is to assess and route.
+
+**PREREQ check structure:**
+
+1. State what the skill needs to produce its best output
+2. Ask what the user has available
+3. Route based on the answer:
+
+| User has | Action |
+|---|---|
+| Full input ready | Proceed normally |
+| Partial input | Proceed with what's there, surface gaps as assumptions |
+| No input | Offer informed assumptions via AskUserQuestion, proceed with confirmed assumptions |
+
+**Graceful degradation - when user has no data:**
+
+Never block. Never say "go collect data first and come back." Instead:
+
+1. State what you would normally expect as input
+2. Based on context already available (product type, industry, prior intake answers), form 3-4 concrete assumptions
+3. Surface them via AskUserQuestion with a recommended option
+4. Proceed based on confirmed assumptions
+5. Mark all assumptions in output as `[ASSUMED - replace when real data available]`
+
+Output with explicit assumptions is better than no output. The user can substitute real data later.
+
+**"Bring your data" skills** (pm-market-analysis, pm-personas, pm-domain-analysis, jtbd-building, etc.) always offer two paths:
+- **Path A** - user has research: structure and formalize it
+- **Path B** - user has nothing: AI-powered elicitation or guided AskUserQuestion assumptions
+
+Never tell the user to go do research and return. Offer Path B immediately.
+
+---
+
+## Skill handoff block (universal standard)
+
+Every skill MUST end with an explicit handoff block. No exceptions. This is not a summary of what was done - it is a forward-looking routing signal.
+
+**Format:**
+
+```
+---
+**Co si teraz má:** [1 veta - konkrétna hodnota tohto artefaktu]
+
+**Ďalší krok:** `/[skill-name]` — [jeden dôvod prečo práve tento]
+Alebo spusti `/pureinn` pre phase gate check.
+
+**Môžeš preskočiť ak:** [konkrétna podmienka kedy nasledujúci skill nepridáva hodnotu]
+```
+
+**Rules:**
+- "Čo si teraz má" is about value, not content. Not "you have a document" but "you can now [do X / decide Y / proceed with Z]"
+- The next skill must be the highest-ROI move from the user's current position, not just the next in sequence
+- Skip suggestion must have a concrete condition. "If [X], then [skill] adds no value because [Z]." Never vague.
+- If there is genuinely no valid skip condition, omit the skip line entirely
+
+---
+
+## Impact over Activity principle
+
+Pureinn does not generate files for their own sake. Every skill run must produce something that moves the project forward. This principle is active - it requires judgment at runtime, not just documentation.
+
+**Four operational rules:**
+
+**1. Context fit check** - Before generating, a skill must evaluate whether it applies to this specific context. If it is low-value for this user and situation, surface it proactively before generating anything:
+```
+Pre [context] je /[skill] pravdepodobne nízka hodnota pretože [reason].
+Pokračovať napriek tomu, alebo preskočiť na [next relevant skill]?
+```
+
+**2. Depth over breadth** - Fewer high-confidence sections beat many thin placeholder sections. If a section cannot be filled with real information, either omit it or mark it explicitly as `[TODO - insufficient input]`. Never generate content to fill space.
+
+**3. Highest-ROI next step** - The handoff always routes to the highest-impact next move, not the mechanically next skill. Sometimes the right next step is "talk to 3 customers" not "run the next skill."
+
+**4. Skip_if conditions** - Skills that are conditionally low-value must define their skip condition explicitly. Built-in examples:
+- `/pm-stakeholder-map`: Skip if solo builder with no external investors or board
+- `/pm-comms-charter`: Skip if solo builder (no team to communicate with)
+- `/pm-team-roster`: Skip if solo builder
+- `/pm-pitch-deck`: Skip if not raising capital and not pitching to partners
+- `/pm-feature-set-overview`: Skip if feature is already well-scoped from prior work
+
+The orchestrator (`/pureinn`) surfaces these conditions proactively during phase routing.
+
+---
+
 ### Renaming or removing a skill
 
 This is a major version change - existing users may have workflows referencing the old name.

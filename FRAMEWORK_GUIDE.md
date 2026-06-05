@@ -305,6 +305,26 @@ JIT design per feature (one at a time, per stripe):
 
 ## Key concepts
 
+### Impact over Activity
+
+Pureinn does not measure progress by files generated. It measures progress by decisions made and validated.
+
+**What this means:**
+
+- Every skill run must produce a decision, a validated assumption, or a delivery-ready artifact. If it produces none of these, it should be skipped.
+- More artifacts is not better. A 3-section document with real decisions beats a 12-section document with placeholders.
+- Every skill surfaces its own skip condition. If the context makes a skill low-value, the skill says so before generating anything and offers to route elsewhere.
+- The highest-ROI next step is not always the next skill in sequence. Sometimes it is talking to customers, running an experiment, or making a team decision. The handoff at the end of each skill reflects this.
+
+**Practical application:**
+- Solo builder: `/pm-stakeholder-map`, `/pm-team-roster`, `/pm-comms-charter`, `/pm-pitch-deck` are all skippable with explicit rationale
+- No research available: skills offer assumption-based paths, never block
+- Validated insight exists: skip the corresponding discovery skill, carry the insight forward
+
+The orchestrator (`/pureinn`) applies this principle at phase gates - it only routes forward when real criteria are met, not when documents exist.
+
+---
+
 ### Artifact chain
 
 Artifacts are not independent documents. Each phase feeds the next:

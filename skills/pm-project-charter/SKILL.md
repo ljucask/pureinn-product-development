@@ -35,17 +35,23 @@ Generates two artifacts:
 
 ---
 
-## Step 0: Current state check
+## Step 0: PREREQ check + current state
 
-Check for existing artifacts:
-- Project Charter
-- Assumptions & Risks Register
+**What this skill needs:** Your knowledge of what you're building - no documents required. If you have research notes, briefs, or specs, include them and the skill will extract relevant context automatically.
 
-Also check: does a Stakeholder Map exist? If yes, cross-reference for consistency (decision authority, constraints).
+**If you have nothing written down yet:** Proceed directly to Step 1 intake questions. The skill elicits everything it needs through questions.
 
-Look for: empty or placeholder sections, assumptions without validation plan, risks without mitigation or owner, constraints that may have changed.
+**If a Project Charter already exists:** Read it. Evaluate: is it still current? If scope, constraints, and success definition haven't changed, surface this:
+```
+A Project Charter already exists. It looks [current / potentially outdated because: X].
 
-Apply the standard skill interaction pattern (CLAUDE.md).
+Skip this skill and proceed to [next Phase 1 skill / Phase 2]?
+Or regenerate / update the charter?
+```
+
+**Stakeholder Map check:** If a Stakeholder Map exists, cross-reference it for decision authority and constraints - feed into charter generation.
+
+**Gaps check before generating:** Look for: empty scope sections, assumptions without validation plan, risks without mitigation or owner, constraints that may have changed. Flag any, but do not block generation.
 
 ---
 
@@ -247,4 +253,23 @@ Generate both documents in English.
 ```
 pureinn-workspace/[project-slug]/artifacts/phase-1-foundation/project-charter.md
 pureinn-workspace/[project-slug]/artifacts/phase-1-foundation/assumptions-risks-register.md
+```
+
+---
+
+## Handoff
+
+```
+---
+**Čo si teraz má:** Zdokumentovaný zámer projektu - scope, success metrics, riziká a decision authority.
+Toto je základ pre všetky Phase 2 skills a Phase 1 tímové skills.
+
+**Ďalší krok:**
+- Solo:       /pm-glossary → potom /pureinn pre Phase 2 routing
+- Malý tím:   /pm-team-roster → /pm-comms-charter
+- Tím/Corp:   /pm-team-roster → /pm-comms-charter (stakeholder map mal byť pred charterom)
+- Alebo spusti /pureinn pre gate check.
+
+**Môžeš preskočiť /pm-team-roster ak:** Buduješ solo - žiadny tím na roster.
+**Môžeš preskočiť /pm-comms-charter ak:** Buduješ solo - žiadny tím na komunikáciu.
 ```

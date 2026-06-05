@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.1.0] - 2026-06-05
+
+### User-centric onboarding: PREREQ+handoff patterns, Impact over Activity, first-run orientation, no time estimates
+
+---
+
+
 ## [4.0.1] - 2026-06-04
 
 ### Post-audit fixes: example files state names, CHANGELOG v4.0.0 detail, CLAUDE.md version, pm-feature-viability in related-skills

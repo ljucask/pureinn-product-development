@@ -423,3 +423,36 @@ Read `pureinn-variables.md` key "Open Questions" → if DB URL present, check `s
 pureinn-workspace/[project-slug]/artifacts/phase-3-define/hypothesis-register.md
 pureinn-workspace/[project-slug]/artifacts/phase-3-define/go-no-go.md
 ```
+
+---
+
+## Handoff
+
+**Plan mode:**
+```
+---
+**Čo si teraz má:** Štruktúrovaný experiment plán s pre-definovanými success criteria.
+Hypotézy sú pripravené na testovanie - nezačínaj experimenty bez tohto registra.
+
+**Ďalší krok:** 👤 Spusti experimenty podľa plánu (landing page / smoke test / pre-order / concierge MVP).
+Po dokončení experimentov: /pm-hypotheses [Results mode] pre Go/No-Go verdikt.
+
+**Môžeš preskočiť experimenty a ísť priamo na Results mode ak:**
+Máš už výsledky z predchádzajúcej validácie (externý workshop, Miro, iný nástroj) -
+povedz /pureinn "Phase 3a done elsewhere" a dodaj verdikt + kľúčové evidencie.
+```
+
+**Results mode:**
+```
+---
+**Čo si teraz má:** Go/No-Go verdikt s evidenciou.
+
+**GO → Ďalší krok:** /pm-kotler — začíname Phase 3b Commercial Definition.
+Spusti /pureinn pre gate check a potvrdenie.
+
+**PIVOT → Ďalší krok:** /pm-hypotheses [Plan mode] — prepracuj riskiest assumption
+a navrhni nový experiment. Ktorú hypotézu meníš?
+
+**STOP → Ďalší krok:** Zaznamenaj learnings. Projekt sa ukončuje.
+Čo ste sa naučili? (toto má hodnotu pre budúce projekty)
+```

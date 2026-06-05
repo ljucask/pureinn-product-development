@@ -42,18 +42,34 @@ Run this before `jtbd-building` - JTBD analysis uses personas as input.
 
 ---
 
-## Step 0: Current state check
+## Step 0: PREREQ check + current state
 
-Check for existing artifacts:
-- Customer Segments
-- Personas
-- Early Adopters Profile
+**What this skill needs:** Raw VOC data - interview transcripts, synthetic interview outputs (SynthFolk, ChatGPT), survey data, behavioral observations, support tickets.
 
-Also check: does a Market Analysis exist? Cross-reference segments identified there vs. personas here. Does a JTBD Analysis exist? Check for consistency between jobs and persona pains.
+**If you have research data:** Paste it or reference the files - proceed to structured synthesis (Path A).
 
-Look for: personas with no direct quotes (invented, not research-based), segments without pain intensity ranking, early adopter profile without "where to find them" and "what triggers adoption", missing empathy map or as-is journey.
+**If you have no data at all:** Do not block. Immediately offer Path B:
 
-Apply the standard skill interaction pattern (CLAUDE.md).
+```
+Nemáš výskumné dáta. Môžeme pracovať dvomi spôsobmi:
+
+A) Syntetické persony z assumption-based kontextu
+   Vygenerujem persony na základe toho čo viem o tvojom produkte,
+   priemysle a cieľovom segmente. Označím ich [ASSUMED - validate with real users].
+
+B) Guided elicitation
+   Opýtam ťa 5-7 cielených otázok o tvojich zákazníkoch.
+   Výsledok bude slabší než z reálnych interview, ale lepší než nič.
+
+[AskUserQuestion: ktorá cesta? A odporúčaná (rýchlejšia), B (viac kontext)]
+```
+
+**Existing artifacts check:**
+- Do Customer Segments / Personas / Early Adopters Profile already exist? If yes and they look current, surface the skip option: "Persony vyzerajú aktuálne. Preskočiť a pokračovať na /jtbd-building?"
+- Does a Market Analysis exist? Cross-reference segments.
+- Does a JTBD Analysis exist? Check consistency with jobs and pains.
+
+**Gaps check:** personas without direct quotes, segments without pain intensity ranking, early adopter profile missing "where to find them" - flag but do not block.
 
 ---
 
@@ -478,4 +494,19 @@ Read `pureinn-variables.md` key "Customer Interviews" → if DB URL present, che
 pureinn-workspace/[project-slug]/artifacts/phase-2-discovery/customer-segments.md
 pureinn-workspace/[project-slug]/artifacts/phase-2-discovery/personas.md
 pureinn-workspace/[project-slug]/artifacts/phase-2-discovery/early-adopters-profile.md
+```
+
+---
+
+## Handoff
+
+```
+---
+**Čo si teraz má:** Segmenty, persony a early adopter profil. JTBD analysis môže začať.
+
+**Ďalší krok:** /jtbd-building — analyzuje Jobs-to-be-Done a Forces diagram pre každú personu.
+Alebo spusti /pureinn pre Phase 2 gate check ak sú hotové aj ostatné Track A-C.
+
+**Môžeš preskočiť /jtbd-building ak:** Máš jasné JTBD insights z rozhovorov
+a nepotrebuješ formálny Forces diagram pre fázu 3a.
 ```
