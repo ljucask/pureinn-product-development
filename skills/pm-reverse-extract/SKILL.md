@@ -270,14 +270,30 @@ Read `pureinn-variables.md` key `Feature Backlog URL`.
 
 If URL is blank: skip Notion push, generate markdown only. Remind user to paste the URL once they have it.
 
-If URL is present: push feature entries to Notion Product Features database:
+If URL is present: push feature entries to Notion Product Features database.
 
-For each FEAT-[DOMAIN]-NNN:
-- Title: `FEAT-[DOMAIN]-NNN: [Feature Name]`
-- Status property: Done / In Progress / Backlog (maps from extraction status)
-- Domain property: [DOMAIN]
-- Stripe property: [Stripe name]
-- Feature Flag property: [kebab-case-feature-name]
+**Status mapping (extraction → Notion):**
+
+| Extraction status | Notion Status |
+|---|---|
+| Done (live in production) | `6_Shipped` |
+| In Progress (being built) | `4_In_Build` |
+| Planned / Backlog | `1_Backlog` |
+| Unclear | `1_Backlog` |
+
+**Properties to set per entry:**
+
+| Property | Value |
+|---|---|
+| `Artefact Name` | `FEAT-[DOMAIN]-NNN: [Feature Name]` |
+| `Artefact Type` | `Feature` |
+| `FEAT-ID` | `FEAT-[DOMAIN]-NNN` |
+| `Status` | mapped from table above |
+| `Dev Stripe` | `Stripe [N]` (from stripe assignment) |
+| `Phase` | `MVP` (default - user can update later) |
+| `Short Description` | 1-sentence description from extraction |
+
+Leave blank: `KANO Category`, `V×C Quadrant`, `Priority`, `Feature Card URL` - filled later by pm-feature-design and pm-features-list.
 
 After push, confirm count: "Pushed [N] features to Notion."
 

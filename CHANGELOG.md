@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.2.2] - 2026-06-06
+
+### pm-reverse-extract Notion push aligned to new DB schema (status values, FEAT-ID, Artefact Type)
+
+---
+
+
 ## [4.2.1] - 2026-06-05
 
 ### Fast Track documented in README and FRAMEWORK_GUIDE
