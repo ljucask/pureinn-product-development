@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.2.4] - 2026-06-06
+
+### Fix: all A/B/C/D option questions use AskUserQuestion tool instead of plain text
+
+---
+
+
 ## [4.2.3] - 2026-06-06
 
 ### Deep Notion schema audit fixes: pm-features-list, pm-mvp-scope, pm-feature-card

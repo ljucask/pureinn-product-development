@@ -86,14 +86,11 @@ Then proceed to Guidance Mode Check.
 
 ## STEP 1A - Guidance Mode Check
 
-Ask the user:
+Use the AskUserQuestion tool:
 
-```
-Do you want guidance throughout the workflow?
-
-  A) Yes - explain the why behind each phase and skill as we go
-  B) No - just tell me what to run next
-```
+- Question: "Do you want guidance throughout the workflow?"
+- Option A: "Yes - explain the why" (Recommended) — description: "Before each phase and skill, adds 2-3 sentences of context: what it achieves, what to watch out for."
+- Option B: "No - just tell me what to run" — description: "Pure routing. Dashboard + skills queue only."
 
 Store the answer. Save as `"guidance_mode": true` or `false` in state.json.
 
@@ -161,22 +158,18 @@ Questions are grouped into 3 rounds. Each round: ask questions, then show a summ
 
 What are you building? Describe it in 2-3 sentences.
 
-Wait for the user's answer, then ask the following two questions together:
+Wait for the user's answer, then use the AskUserQuestion tool with both questions together:
 
-**Options (ask together):**
+- Question 1: "What type of product is it?"
+  - A: "SaaS web application"
+  - B: "Mobile application (iOS / Android / both)"
+  - C: "Marketplace or platform"
+  - D: "Something else (internal tool, API)"
 
-What type of product is it?
-
-  A) SaaS web application
-  B) Mobile application (iOS / Android / both)
-  C) Marketplace or platform (connects two or more sides)
-  D) Something else (internal tool, API)
-
-Who is it for?
-
-  A) External customers (product for sale)
-  B) Internal team only
-  C) Both
+- Question 2: "Who is it for?"
+  - A: "External customers (product for sale)"
+  - B: "Internal team only"
+  - C: "Both"
 
 After receiving all answers for Group 1, output a summary block:
 
@@ -195,21 +188,19 @@ Wait for confirmation. If corrections needed, update and re-confirm. Then procee
 
 ### Group 2 of 3 - Product shape
 
-No free-text questions in this group. Ask both together:
+No free-text questions in this group. Use the AskUserQuestion tool with both questions together:
 
-What is the primary experience?
+- Question 1: "What is the primary experience?"
+  - A: "Mobile first" — description: "Main value delivered on mobile"
+  - B: "Desktop first" — description: "Web/desktop: CRM, dashboard, admin tool"
+  - C: "Both equally" — description: "Full parity across mobile and web"
+  - D: "Not sure yet"
 
-  A) Mobile first - main value delivered on mobile
-  B) Desktop first - web/desktop (CRM, dashboard, admin tool)
-  C) Both equally - full parity across mobile and web
-  D) Not sure yet
-
-Will the product be paid?
-
-  A) Yes - paid from day one (subscription, one-time, usage-based)
-  B) Freemium - free tier + paid upgrade
-  C) Free / internal - no revenue target
-  D) Not decided yet
+- Question 2: "Will the product be paid?"
+  - A: "Yes - paid from day one" — description: "Subscription, one-time, or usage-based"
+  - B: "Freemium" — description: "Free tier + paid upgrade"
+  - C: "Free / internal" — description: "No revenue target"
+  - D: "Not decided yet"
 
 After receiving answers, output a summary block:
 
@@ -227,21 +218,19 @@ Wait for confirmation. If corrections needed, update and re-confirm. Then procee
 
 ### Group 3 of 3 - Context and starting point
 
-**Options (ask together first):**
+Use the AskUserQuestion tool with both questions together first, then ask free-text questions:
 
-Where are you now?
+- Question 1: "Where are you now?"
+  - A: "Idea only" — description: "Nothing validated yet, starting from scratch"
+  - B: "Have some research" — description: "Early customer insights or market knowledge"
+  - C: "Validated problem" — description: "Ready to define strategy, problem is confirmed"
+  - D: "Have strategy or specs" — description: "Moving to execution, know what to build"
 
-  A) Idea only - nothing validated yet
-  B) Have some research or early customer insights
-  C) Validated problem, ready to define strategy
-  D) Have a strategy or specs, moving to execution
-
-Who is building this?
-
-  A) Solo - just me, no team
-  B) Small founding team (2-3 people, wearing multiple hats)
-  C) Team with defined roles (PM, developers, designer)
-  D) Corporate / enterprise team (multiple stakeholders)
+- Question 2: "Who is building this?"
+  - A: "Solo" — description: "Just me, no team"
+  - B: "Small founding team" — description: "2-3 people, wearing multiple hats"
+  - C: "Team with defined roles" — description: "PM, developers, designer"
+  - D: "Corporate / enterprise team" — description: "Multiple stakeholders"
 
 Wait for answers, then ask the following two free-text questions:
 
@@ -429,7 +418,11 @@ Express cesta:
 
 Preskočíme: Phase 1 (Foundation), Phase 2 (Discovery), Phase 3a/3b (Validation + Commercial).
 
-[AskUserQuestion: Express (odporúčané) / Štandardný flow / Chcem prejsť len časť Discovery]
+Use the AskUserQuestion tool:
+- Question: "Ktorú cestu zvoliť?"
+- Option A: "Express - preskočiť Discovery a Validation (Recommended)" — description: "Lean domain registers → feature list → JIT delivery"
+- Option B: "Štandardný flow" — description: "Všetky fázy vrátane Discovery a Validation"
+- Option C: "Čiastočný Discovery" — description: "Niektoré Phase 2 tracky chcem prejsť"
 ```
 
 **Express lean mode rules:**
@@ -460,7 +453,10 @@ Express cesta:
   3. /pm-feature-design [FEAT-ID] → JIT spec pre konkrétnu feature
   → Build → Test → Release (FI delivery pravidlá platia vždy)
 
-[AskUserQuestion: Express (odporúčané) / Štandardný Phase 0 onboarding]
+Use the AskUserQuestion tool:
+- Question: "Ktorú cestu zvoliť?"
+- Option A: "Express - pm-reverse-extract bootstrap (Recommended)" — description: "Extrahuje entity, business rules a feature inventory priamo z kódu"
+- Option B: "Štandardný Phase 0 onboarding" — description: "Manuálny setup: common-ground + impeccable document + pm-glossary + registre"
 ```
 
 **Note on pm-reverse-extract bootstrap:** Extrahuje čo môže z kódu. Výsledok ukáže pred pokračovaním - user potvrdí alebo opraví. Štandardný PREREQ pattern.
@@ -503,17 +499,13 @@ Ktorú feature ideme špecifikovať?
 
 ## STEP 4 - Playbook Selection
 
-If not already determined from document analysis, ask:
+If not already determined from document analysis, use the AskUserQuestion tool:
 
-```
-One question to confirm the right playbook:
-
-Does the product already exist in any form?
-  A) No - building from scratch
-  B) Yes, but no active users yet
-  C) Yes, with active users - adding features
-  D) Yes, with active users - rebuilding or migrating
-```
+- Question: "Does the product already exist in any form?"
+  - A: "No - building from scratch"
+  - B: "Yes, but no active users yet"
+  - C: "Yes, with active users - adding features" (Recommended if product exists)
+  - D: "Yes, with active users - rebuilding or migrating" — description: "Coming soon - will be routed to best available path"
 
 Map to playbook:
 - A or B → **Greenfield**
