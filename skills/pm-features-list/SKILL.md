@@ -516,10 +516,12 @@ Create one entry per feature with:
 |---|---|---|
 | `Artefact Name` | Feature name (FDD format) | Feature List |
 | `Artefact Type` | `"Feature"` | Fixed |
+| `FEAT-ID` | `FEAT-[DOMAIN]-[NUMBER]` | Feature List |
 | `Short Description` | 1-sentence description of what the feature does | Feature List |
-| `Status` | `"Backlog"` | Fixed |
-| `Priority` | P1 / P2 / P3 | KANO + V×C mapping (see Artifact 4) |
-| `Feature ID` | FEAT-[DOMAIN]-[NUMBER] | Feature List |
+| `Status` | `"1_Backlog"` | Fixed |
+| `Priority` | `"P1 - Critical"` / `"P2 - High"` / `"P3 - Medium"` / `"P4 - Low"` | KANO + V×C mapping (see Artifact 4) |
+| `KANO Category` | `"Must-be"` / `"Performance"` / `"Delighter"` / `"Indifferent"` | KANO Analysis |
+| `V×C Quadrant` | `"Quick Win"` / `"Big Bet"` / `"Fill-in"` / `"Time Waster"` | V×C Matrix |
 | `template_id` | Feature Template ID from database schema | From notion-fetch result |
 
 Push features in batches of up to 100 per call if the list is large.

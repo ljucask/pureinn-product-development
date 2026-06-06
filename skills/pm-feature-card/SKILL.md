@@ -212,9 +212,9 @@ Update the Feature entry via `notion-update-page`:
 
 | Notion property | Value |
 |---|---|
-| `Status` | `Promoted to Build` |
-| `Feature Flag` | `[feature_flag from frontmatter]` |
-| `Stripe` | `[stripe from frontmatter]` |
+| `Status` | `"6_Shipped"` |
+| `Dev Stripe` | `"Stripe N"` (mapped from stripe name in frontmatter - position in delivery plan) |
+| `Feature Card URL` | local path to the `.md` file for reference |
 
 Push Feature Card content as the Notion page body.
 

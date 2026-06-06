@@ -288,13 +288,17 @@ If no Notion Feature entries exist (pm-features-list was not pushed to Notion): 
 
 ### 5b. Enrich Feature entries
 
-For each Feature, update the existing Notion entry via `mcp__claude_ai_Notion__notion-update-page`:
+For each Feature, update the existing Notion entry via `mcp__claude_ai_Notion__notion-update-page`.
+
+**Only update MVP and POST-MVP features. Do NOT push CUT features - they remain in local feature_list.md only.**
 
 | Property | Value | Source |
 |---|---|---|
-| `Phase` | `"MVP"` / `"MVP+"` / `"CUT"` | Artifact 1 MVP decision |
-| `Dev Stripe` | `"stripe-[name]"` (MVP features only) | Artifact 2 stripe assignment |
-| `Feature ID` | `FEAT-[DOMAIN]-[NUMBER]` | feature_list.md |
+| `Phase` | `"MVP"` (MVP features) / `"MVP+"` (POST-MVP features) | Artifact 1 MVP decision |
+| `Dev Stripe` | `"Stripe 1"` / `"Stripe 2"` / ... / `"Stripe 7"` | Artifact 2 stripe number (Stripe 1 = first stripe defined, Stripe 2 = second, etc.) |
+| `FEAT-ID` | `FEAT-[DOMAIN]-[NUMBER]` | feature_list.md |
+
+**Dev Stripe mapping:** Named stripes (e.g., `stripe-auth`, `stripe-payments`) map to Notion's numbered options by position in the delivery plan. The first stripe defined = `Stripe 1`, second = `Stripe 2`, etc. The domain name is preserved in local Feature Card frontmatter and `feature_list.md`.
 
 ### 5c. Confirm
 

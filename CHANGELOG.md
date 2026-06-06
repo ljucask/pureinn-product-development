@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.2.3] - 2026-06-06
+
+### Deep Notion schema audit fixes: pm-features-list, pm-mvp-scope, pm-feature-card
+
+---
+
+
 ## [4.2.2] - 2026-06-06
 
 ### pm-reverse-extract Notion push aligned to new DB schema (status values, FEAT-ID, Artefact Type)
