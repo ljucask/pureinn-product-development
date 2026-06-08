@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.4.0] - 2026-06-08
+
+### pm-entity-registry pushes to Notion Entity Catalogues; Event Catalogue added to variables template
+
+---
+
+
 ## [4.3.0] - 2026-06-08
 
 ### pm-feature-design pushes Sections 1-3 to Notion after spec is complete
