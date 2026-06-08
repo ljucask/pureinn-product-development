@@ -352,4 +352,47 @@ State update → `state.json`: set `registers.business_rules_initialized` and `r
 - [ ] New domain section added with clear domain header
 - [ ] No ID collisions (new domain code is distinct: BR-ONB-* vs. existing BR-PAY-*, BR-ORD-*)
 - [ ] Changelog in both files updated
+
+---
+
+## Notion push
+
+After saving local files, push to Notion DBs.
+
+### Business Rules DB
+
+1. Read `pureinn-variables.md` key `"Business Rules"` → get DB URL
+2. If blank: skip, continue
+3. Call `mcp__claude_ai_Notion__notion-fetch` → extract `data_source_id`, cache in `state.json notion_ids.business_rules`
+4. For each rule in `business_rules.md`, call `mcp__claude_ai_Notion__notion-create-pages`:
+
+| Property | Value |
+|---|---|
+| `Name` (title) | Rule name |
+| `Rule ID` | `BR-[DOMAIN]-[NUMBER]` |
+| `Category` | `"A – Critical / Hard Business Invariant"` / `"B – Core Business Rule"` / `"C – Governance / Control / UX Policy"` |
+| `Domain (BLD)` | Domain name |
+| `Description` | Rule description |
+| `Priority` | `"Critical"` / `"High"` / `"Medium"` / `"Low"` |
+| `Affecteed Entity` | Entity name(s) this rule applies to |
+
+**Append mode:** Only create entries for newly added rules. Do NOT update existing entries.
+
+### Decision Models DB
+
+1. Read `pureinn-variables.md` key `"Decision Models"` → get DB URL
+2. If blank: skip, continue
+3. Call `mcp__claude_ai_Notion__notion-fetch` → extract `data_source_id`, cache in `state.json notion_ids.decision_models`
+4. For each decision table in `decision_models.md`, call `mcp__claude_ai_Notion__notion-create-pages`:
+
+| Property | Value |
+|---|---|
+| `Name` (title) | Decision model name |
+| `userDefined:ID` | `TBL-[DOMAIN]-[NUMBER]` |
+| `Type` | `"TBL"` / `"TRE"` / `"SCR"` |
+| `Domain` | Domain name(s) |
+| `What is being decided` | Decision description |
+| `Uses Business Rules` | BR-IDs this model references |
+
+After push: report counts (rules pushed, decision models pushed, errors).
 - [ ] New rules cross-reference existing entities from entities.md (append mode entities must exist)

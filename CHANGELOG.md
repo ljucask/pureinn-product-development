@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.5.0] - 2026-06-08
+
+### pm-business-rules-library Notion push to Business Rules DB and Decision Models DB
+
+---
+
+
 ## [4.4.0] - 2026-06-08
 
 ### pm-entity-registry pushes to Notion Entity Catalogues; Event Catalogue added to variables template

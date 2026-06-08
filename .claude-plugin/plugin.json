@@ -1,6 +1,6 @@
 {
   "name": "pureinn-product-development",
-  "version": "4.4.0",
+  "version": "4.5.0",
   "description": "AI-native product development framework. 36 active skills covering the full product lifecycle. FDD+SDD hybrid: 4 living registers, JIT design per feature, atomic commit protocol. Three playbooks: Greenfield, Feature Implementation, Rebuild. From zero to launch.",
   "author": {
     "name": "ljucask",
