@@ -511,25 +511,41 @@ Call `mcp__claude_ai_Notion__notion-create-pages` with:
 - `parent.type` = `"data_source_id"`
 - `parent.data_source_id` = ID from 5a
 
-Per entry:
+Per entry - use both `properties` AND `content`. Do NOT use `template_id`:
 
-```json
-{
-  "properties": {
-    "Artefact Name": "FEAT-[DOMAIN]-[NUMBER]: [Feature Name]",
-    "Artefact Type": "Feature",
-    "FEAT-ID": "FEAT-[DOMAIN]-[NUMBER]",
-    "Short Description": "[1-sentence description]",
-    "Status": "1_Backlog",
-    "Priority": "[P1 - Critical / P2 - High / P3 - Medium / P4 - Low]",
-    "KANO Category": "[Must-be / Performance / Delighter / Indifferent]",
-    "V×C Quadrant": "[Quick Win / Big Bet / Fill-in / Time Waster]"
-  },
-  "template_id": "[Feature Card Template ID from Step 5a]"
-}
 ```
+properties:
+  Artefact Name: FEAT-[DOMAIN]-[NUMBER]: [Feature Name]
+  Artefact Type: Feature
+  FEAT-ID: FEAT-[DOMAIN]-[NUMBER]
+  Short Description: [1-sentence description]
+  Status: 1_Backlog
+  Priority: [P1 - Critical / P2 - High / P3 - Medium / P4 - Low]
+  KANO Category: [Must-be / Performance / Delighter / Indifferent]
+  V×C Quadrant: [Quick Win / Big Bet / Fill-in / Time Waster]
 
-**IMPORTANT:** `template_id` MUST be set. It applies the Feature Card Template (Sections 1-3-4 skeleton) to every page. Without it, pages are empty.
+content:
+  ## [Feature Name]
+
+  [1-2 sentence description of what this feature does and who uses it]
+
+  **KANO:** [Must-be / Performance / Delighter / Indifferent]
+  **V×C:** [Quick Win / Big Bet / Fill-in / Time Waster]
+
+  ---
+
+  ## Section 1: Biznis Mantinely
+  *TBD - run /pm-feature-design [FEAT-ID]*
+
+  ## Section 2: Acceptance Criteria
+  *TBD - run /pm-feature-design [FEAT-ID]*
+
+  ## Section 3: Technical Design
+  *TBD - run /pm-feature-design [FEAT-ID]*
+
+  ## Section 4: Realizacny Protokol
+  *TBD - filled after build*
+```
 
 Push features in batches of up to 100 per call if the list is large.
 

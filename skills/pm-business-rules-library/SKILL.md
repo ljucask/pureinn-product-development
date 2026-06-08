@@ -365,24 +365,37 @@ After saving local files, push to Notion DBs.
 2. If blank: skip, continue
 3. Call `mcp__claude_ai_Notion__notion-fetch` → extract `data_source_id`, cache in `state.json notion_ids.business_rules`
 4. From notion-fetch `<templates>` section: find template named `"A — Critical / Hard Business Invariant (Business Rule)"`, `"B — Core Business Rule (Business Rule)"`, or `"C — Governance / Policy / UX Rule (Business Rule)"` - match by rule Category
-5. For each rule in `business_rules.md`, call `mcp__claude_ai_Notion__notion-create-pages`:
+5. For each rule in `business_rules.md`, call `mcp__claude_ai_Notion__notion-create-pages` with both `properties` AND `content`. Do NOT use `template_id` - provide content directly.
 
-```json
-{
-  "properties": {
-    "Name": "[Rule name]",
-    "Rule ID": "BR-[DOMAIN]-[NUMBER]",
-    "Category": "[A / B / C category]",
-    "Domain (BLD)": "[Domain name]",
-    "Description": "[Rule description]",
-    "Priority": "[Critical / High / Medium / Low]",
-    "Affecteed Entity": "[Entity name(s)]"
-  },
-  "template_id": "[matching template ID from Step 4]"
-}
 ```
+properties:
+  Name: [Rule name]
+  Rule ID: BR-[DOMAIN]-[NUMBER]
+  Category: [A / B / C category]
+  Domain (BLD): [Domain name]
+  Description: [Rule description]
+  Priority: [Critical / High / Medium / Low]
+  Affecteed Entity: [Entity name(s)]
 
-**IMPORTANT:** `template_id` MUST be set - without it pages are created empty.
+content:
+  ## [Rule Name]
+
+  **ID:** BR-[DOMAIN]-[NUMBER]
+  **Category:** [A / B / C]
+  **Status:** [Draft / Final]
+
+  ## Rule Definition
+
+  [Full rule text from business_rules.md]
+
+  ## Affected Entities
+
+  [Entity names and how they are affected]
+
+  ## Enforcement
+
+  [When and how this rule is enforced]
+```
 **Append mode:** Only create entries for newly added rules. Do NOT update existing entries.
 
 ### Decision Models DB
@@ -391,23 +404,36 @@ After saving local files, push to Notion DBs.
 2. If blank: skip, continue
 3. Call `mcp__claude_ai_Notion__notion-fetch` → extract `data_source_id`, cache in `state.json notion_ids.decision_models`
 4. From notion-fetch `<templates>` section: find template matching the model type (TBL/TRE/SCR)
-5. For each decision table in `decision_models.md`, call `mcp__claude_ai_Notion__notion-create-pages`:
+5. For each decision table in `decision_models.md`, call `mcp__claude_ai_Notion__notion-create-pages` with both `properties` AND `content`. Do NOT use `template_id` - provide content directly.
 
-```json
-{
-  "properties": {
-    "Name": "[Decision model name]",
-    "userDefined:ID": "TBL-[DOMAIN]-[NUMBER]",
-    "Type": "[TBL / TRE / SCR]",
-    "Domain": ["[Domain name]"],
-    "What is being decided": "[Decision description]",
-    "Uses Business Rules": "[BR-IDs]"
-  },
-  "template_id": "[matching template ID from Step 4]"
-}
 ```
+properties:
+  Name: [Decision model name]
+  userDefined:ID: TBL-[DOMAIN]-[NUMBER]
+  Type: [TBL / TRE / SCR]
+  Domain: [[Domain name]]
+  What is being decided: [Decision description]
+  Uses Business Rules: [BR-IDs]
 
-**IMPORTANT:** `template_id` MUST be set - without it pages are created empty.
+content:
+  ## [Decision Model Name]
+
+  **ID:** TBL-[DOMAIN]-[NUMBER]
+  **Type:** [Table / Tree / Scoring]
+
+  ## What is being decided
+
+  [Decision description from decision_models.md]
+
+  ## Decision Table / Logic
+
+  [Full table or logic from decision_models.md]
+
+  ## References
+
+  **Business Rules:** [BR-IDs]
+  **Used in process:** [Process names]
+```
 
 After push: report counts (rules pushed, decision models pushed, errors).
 - [ ] New rules cross-reference existing entities from entities.md (append mode entities must exist)

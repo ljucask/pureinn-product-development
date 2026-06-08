@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.6.0] - 2026-06-08
+
+### Replace template_id with inline content across all Notion push operations
+
+---
+
+
 ## [4.5.1] - 2026-06-08
 
 ### Add template_id to pm-entity-registry and pm-business-rules-library Notion push

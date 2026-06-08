@@ -314,25 +314,36 @@ After saving `entities.md`, push entity data to the Internal Entity Catalogue DB
 
 **Step 2 - Create entries:**
 
-For each **internal entity** in `entities.md`, call `mcp__claude_ai_Notion__notion-create-pages`:
+For each **internal entity** in `entities.md`, call `mcp__claude_ai_Notion__notion-create-pages` with both `properties` AND `content`. Do NOT use `template_id` - provide content directly.
 
-```json
-{
-  "properties": {
-    "Entity": "[Entity name]",
-    "Domain/Source": ["[Domain name]"],
-    "Description": "[1-sentence description]",
-    "Lifecycle States": "[states from state machine, comma-separated]",
-    "Register Status": "Active",
-    "Väzby (R/W/Event)": "[key relationships]"
-  },
-  "template_id": "[Internal Entity Template ID from Step 1]"
-}
+```
+properties:
+  Entity: [Entity name]
+  Domain/Source: [[Domain name]]
+  Description: [1-sentence description]
+  Lifecycle States: [states comma-separated, e.g. "Draft, Active, Archived"]
+  Register Status: Active
+  Väzby (R/W/Event): [key relationships]
+
+content: (inline markdown - fill from entities.md)
+  ## [Entity Name]
+
+  [Description from entities.md]
+
+  ## Lifecycle States
+
+  [Paste the stateDiagram-v2 block from entities.md for this entity]
+
+  ## Key Business Rules
+
+  [List any BR-IDs that reference this entity, or "See business_rules.md"]
+
+  ## Relationships
+
+  [Relationships from entities.md Väzby section]
 ```
 
-**IMPORTANT:** `template_id` MUST be set - without it pages are created empty.
-
-For **external entities**: use `"External Entity Catalogue"` URL and `"Externa/Integrational Entity Template"` template. Use `Source System/Provider` field instead of `Domain/Source`.
+For **external entities**: use `"External Entity Catalogue"` URL. Use `Source System/Provider` field instead of `Domain/Source`. Include system description and integration type in content.
 
 **Append mode:** For new entities added in append mode, create new entries. Do NOT update existing entries.
 

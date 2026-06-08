@@ -309,24 +309,43 @@ Call `mcp__claude_ai_Notion__notion-create-pages` with:
 | Planned / Backlog | `1_Backlog` |
 | Unclear | `1_Backlog` |
 
-**Per entry:**
+**Per entry - use both `properties` AND `content`. Do NOT use `template_id`:**
 
-```json
-{
-  "properties": {
-    "Artefact Name": "FEAT-[DOMAIN]-NNN: [Feature Name]",
-    "Artefact Type": "Feature",
-    "FEAT-ID": "FEAT-[DOMAIN]-NNN",
-    "Status": "[mapped status]",
-    "Dev Stripe": "Stripe [N]",
-    "Phase": "MVP",
-    "Short Description": "[1-sentence description]"
-  },
-  "template_id": "[Feature Card Template ID from Step 4b]"
-}
 ```
+properties:
+  Artefact Name: FEAT-[DOMAIN]-NNN: [Feature Name]
+  Artefact Type: Feature
+  FEAT-ID: FEAT-[DOMAIN]-NNN
+  Status: [mapped status]
+  Dev Stripe: Stripe [N]
+  Phase: MVP
+  Short Description: [1-sentence description]
 
-**IMPORTANT:** `template_id` MUST be set. It applies the Feature Card Template (Sections 1-3-4 skeleton) to every page. Without it, pages are empty. Do not skip this step.
+content:
+  ## [Feature Name]
+
+  [2-3 sentence description from extraction: what it does, who uses it, value]
+
+  ## Current State
+
+  **Status:** [Done / In Progress / Planned]
+  **Evidence:** [file path or document where this was found]
+  **Known gaps:** [what is missing before build]
+
+  ---
+
+  ## Section 1: Biznis Mantinely
+  *TBD - run /pm-feature-design [FEAT-ID]*
+
+  ## Section 2: Acceptance Criteria
+  *TBD - run /pm-feature-design [FEAT-ID]*
+
+  ## Section 3: Technical Design
+  *TBD - run /pm-feature-design [FEAT-ID]*
+
+  ## Section 4: Realizacny Protokol
+  *TBD - filled after build*
+```
 
 Leave blank: `KANO Category`, `V×C Quadrant`, `Priority`, `Feature Card URL` - filled later by pm-feature-design.
 
