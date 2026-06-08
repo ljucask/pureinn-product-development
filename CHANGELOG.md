@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.5.1] - 2026-06-08
+
+### Add template_id to pm-entity-registry and pm-business-rules-library Notion push
+
+---
+
+
 ## [4.5.0] - 2026-06-08
 
 ### pm-business-rules-library Notion push to Business Rules DB and Decision Models DB

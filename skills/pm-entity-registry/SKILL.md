@@ -305,26 +305,34 @@ State update → `state.json`: set `registers.entities_initialized` to `true`.
 
 After saving `entities.md`, push entity data to the Internal Entity Catalogue DB in Notion.
 
-**Step 1 - Get data source ID:**
+**Step 1 - Get data source ID and template ID:**
 1. Read `pureinn-variables.md` key `"Internal Entity Catalogue"` → get DB URL
 2. If blank: skip Notion push entirely, continue
-3. Call `mcp__claude_ai_Notion__notion-fetch` with the URL → extract `data_source_id`
-4. Cache in `state.json notion_ids.internal_entity_catalogue`
+3. Call `mcp__claude_ai_Notion__notion-fetch` with the URL
+4. Extract `data_source_id` from `<data-source url="collection://...">` → cache in `state.json notion_ids.internal_entity_catalogue`
+5. Extract template ID from `<templates>` section - look for `"Internal Entity Template"` → required for Step 2
 
-**Step 2 - Create or update entries:**
+**Step 2 - Create entries:**
 
 For each **internal entity** in `entities.md`, call `mcp__claude_ai_Notion__notion-create-pages`:
 
-| Property | Value |
-|---|---|
-| `Entity` (title) | Entity name |
-| `Domain/Source` | Domain name (multi-select) |
-| `Description` | 1-sentence entity description |
-| `Lifecycle States` | Comma-separated list of states from state machine (e.g. "Draft, Active, Suspended, Archived") |
-| `Register Status` | `"Active"` (first run) or `"Draft"` (append/initiative mode - guard conditions TBD) |
-| `Väzby (R/W/Event)` | Key relationships extracted from entities.md |
+```json
+{
+  "properties": {
+    "Entity": "[Entity name]",
+    "Domain/Source": ["[Domain name]"],
+    "Description": "[1-sentence description]",
+    "Lifecycle States": "[states from state machine, comma-separated]",
+    "Register Status": "Active",
+    "Väzby (R/W/Event)": "[key relationships]"
+  },
+  "template_id": "[Internal Entity Template ID from Step 1]"
+}
+```
 
-For **external entities**: push to External Entity Catalogue DB using key `"External Entity Catalogue"` from `pureinn-variables.md`. Use `Source System/Provider` field instead of `Domain/Source`.
+**IMPORTANT:** `template_id` MUST be set - without it pages are created empty.
+
+For **external entities**: use `"External Entity Catalogue"` URL and `"Externa/Integrational Entity Template"` template. Use `Source System/Provider` field instead of `Domain/Source`.
 
 **Append mode:** For new entities added in append mode, create new entries. Do NOT update existing entries.
 
