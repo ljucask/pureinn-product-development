@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.7.2] - 2026-06-08
+
+### pureinn-resume: explicit project root for _archive and .claudeignore creation
+
+---
+
+
 ## [4.7.1] - 2026-06-08
 
 ### pureinn-resume creates _archive and .claudeignore if missing

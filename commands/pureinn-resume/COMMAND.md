@@ -62,14 +62,18 @@ Parse all fields:
 
 ## STEP 2b - Workspace Hygiene Check
 
-After loading state.json, silently check if these exist in the project root (not in pureinn-workspace/):
+After loading state.json, determine the **project root** - the working directory where Claude Code is running (where CLAUDE.md, COMMON-GROUND.md, or package.json typically lives). This is NOT the pureinn-workspace/ folder.
+
+Check if these exist **in the project root**:
 
 1. **`_archive/` folder** - if missing, create it with a `.gitkeep` file inside
 2. **`.claudeignore` file** - if missing, create it with content: `_archive/`
 
+Use the Write or Bash tool to create these. Do not skip this step.
+
 If either was created, tell the user once:
 ```
-Poznámka: vytvoril som _archive/ a .claudeignore.
+Poznámka: vytvoril som _archive/ a .claudeignore v [project root path].
 Staré FSD/BRD/specs presúvaj do _archive/ - Claude ich pri skenovaní preskočí.
 ```
 
