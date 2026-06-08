@@ -272,6 +272,22 @@ If URL is blank: skip Notion push, generate markdown only. Remind user to paste 
 
 If URL is present: push feature entries to Notion Product Features database.
 
+**Step 4a - Get data source ID:**
+1. Call `mcp__claude_ai_Notion__notion-fetch` with the Feature Backlog URL
+2. Extract `data_source_id` from the `<data-source url="collection://...">` tag
+3. Cache in `state.json notion_ids.feature_backlog`
+
+**Step 4b - Get Feature Card Template ID:**
+From the same notion-fetch result, find the `<templates>` section.
+Look for the template named `"Feature Card Template"` and extract its `id` attribute.
+Example: `<template id="b8df8652-..." name="Feature Card Template"/>` → use this id.
+
+**Step 4c - Create pages:**
+
+Call `mcp__claude_ai_Notion__notion-create-pages` with:
+- `parent.type` = `"data_source_id"`
+- `parent.data_source_id` = ID from Step 4a
+
 **Status mapping (extraction → Notion):**
 
 | Extraction status | Notion Status |
@@ -281,22 +297,26 @@ If URL is present: push feature entries to Notion Product Features database.
 | Planned / Backlog | `1_Backlog` |
 | Unclear | `1_Backlog` |
 
-**Properties to set per entry:**
+**Per entry:**
 
-| Property | Value |
-|---|---|
-| `Artefact Name` | `FEAT-[DOMAIN]-NNN: [Feature Name]` |
-| `Artefact Type` | `Feature` |
-| `FEAT-ID` | `FEAT-[DOMAIN]-NNN` |
-| `Status` | mapped from table above |
-| `Dev Stripe` | `Stripe [N]` (from stripe assignment) |
-| `Phase` | `MVP` (default - user can update later) |
-| `Short Description` | 1-sentence description from extraction |
-| `template_id` | Feature Card Template ID from database schema (get from notion-fetch result `<templates>` section - look for template named "Feature Card Template") |
+```json
+{
+  "properties": {
+    "Artefact Name": "FEAT-[DOMAIN]-NNN: [Feature Name]",
+    "Artefact Type": "Feature",
+    "FEAT-ID": "FEAT-[DOMAIN]-NNN",
+    "Status": "[mapped status]",
+    "Dev Stripe": "Stripe [N]",
+    "Phase": "MVP",
+    "Short Description": "[1-sentence description]"
+  },
+  "template_id": "[Feature Card Template ID from Step 4b]"
+}
+```
 
-Leave blank: `KANO Category`, `V×C Quadrant`, `Priority`, `Feature Card URL` - filled later by pm-feature-design and pm-features-list.
+**IMPORTANT:** `template_id` MUST be set. It applies the Feature Card Template (Sections 1-3-4 skeleton) to every page. Without it, pages are empty. Do not skip this step.
 
-**Template note:** `template_id` applies the Feature Card Template structure to each new Notion page. This gives every entry the Section 1-3-4 skeleton. Without it, pages are created empty.
+Leave blank: `KANO Category`, `V×C Quadrant`, `Priority`, `Feature Card URL` - filled later by pm-feature-design.
 
 After push, confirm count: "Pushed [N] features to Notion."
 

@@ -498,31 +498,38 @@ After creating all stub cards: confirm count and remind user that:
 
 If no Notion database is configured (state.json `notion.product_features_data_source_id` is null and user did not provide a URL in Step 1): skip this step, output Markdown files only.
 
-### 5a. Get data source ID
+### 5a. Get data source ID and template ID
 
 1. Read `pureinn-variables.md` key "Feature Backlog" → get URL
-2. Check `state.json notion_ids.feature_backlog` → if set, use it directly
-3. If not cached: call `mcp__claude_ai_Notion__notion-fetch` with the URL, extract data source ID from `<data-source url="collection://...">`, save to `state.json notion_ids.feature_backlog`
+2. Check `state.json notion_ids.feature_backlog` → if set, use it directly; otherwise call `mcp__claude_ai_Notion__notion-fetch`
+3. From notion-fetch result: extract `data_source_id` from `<data-source url="collection://...">`, save to `state.json`
+4. From notion-fetch result: find `<templates>` section, extract ID of template named `"Feature Card Template"` - this is required for Step 5b
 
 ### 6b. Push Feature entries
 
 Call `mcp__claude_ai_Notion__notion-create-pages` with:
 - `parent.type` = `"data_source_id"`
-- `parent.data_source_id` = ID from 6a
+- `parent.data_source_id` = ID from 5a
 
-Create one entry per feature with:
+Per entry:
 
-| Notion property | Value | Source |
-|---|---|---|
-| `Artefact Name` | Feature name (FDD format) | Feature List |
-| `Artefact Type` | `"Feature"` | Fixed |
-| `FEAT-ID` | `FEAT-[DOMAIN]-[NUMBER]` | Feature List |
-| `Short Description` | 1-sentence description of what the feature does | Feature List |
-| `Status` | `"1_Backlog"` | Fixed |
-| `Priority` | `"P1 - Critical"` / `"P2 - High"` / `"P3 - Medium"` / `"P4 - Low"` | KANO + V×C mapping (see Artifact 4) |
-| `KANO Category` | `"Must-be"` / `"Performance"` / `"Delighter"` / `"Indifferent"` | KANO Analysis |
-| `V×C Quadrant` | `"Quick Win"` / `"Big Bet"` / `"Fill-in"` / `"Time Waster"` | V×C Matrix |
-| `template_id` | Feature Template ID from database schema | From notion-fetch result |
+```json
+{
+  "properties": {
+    "Artefact Name": "FEAT-[DOMAIN]-[NUMBER]: [Feature Name]",
+    "Artefact Type": "Feature",
+    "FEAT-ID": "FEAT-[DOMAIN]-[NUMBER]",
+    "Short Description": "[1-sentence description]",
+    "Status": "1_Backlog",
+    "Priority": "[P1 - Critical / P2 - High / P3 - Medium / P4 - Low]",
+    "KANO Category": "[Must-be / Performance / Delighter / Indifferent]",
+    "V×C Quadrant": "[Quick Win / Big Bet / Fill-in / Time Waster]"
+  },
+  "template_id": "[Feature Card Template ID from Step 5a]"
+}
+```
+
+**IMPORTANT:** `template_id` MUST be set. It applies the Feature Card Template (Sections 1-3-4 skeleton) to every page. Without it, pages are empty.
 
 Push features in batches of up to 100 per call if the list is large.
 

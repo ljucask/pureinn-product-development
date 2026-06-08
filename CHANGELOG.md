@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.2.6] - 2026-06-08
+
+### Explicit template_id lookup steps in pm-reverse-extract and pm-features-list Notion push
+
+---
+
+
 ## [4.2.5] - 2026-06-08
 
 ### pm-reverse-extract: add template_id to Notion push so feature pages get Feature Card Template structure
