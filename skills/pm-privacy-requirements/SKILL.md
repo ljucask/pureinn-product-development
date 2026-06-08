@@ -384,12 +384,43 @@ Validate all items with qualified legal counsel before launch.
 
 **Runs after user approves the privacy artifacts.**
 
-Read `pureinn-variables.md` key "Data Sensitivity Map" → get DB URL.
-If blank: skip Notion push, output Markdown only.
-Check `state.json notion_ids.data_sensitivity_map` for cached ID. Fetch and cache if missing.
+1. Read `pureinn-variables.md` key `"Data Sensitivity Map"` → get DB URL
+2. If blank: skip Notion push, output Markdown only
+3. Call `mcp__claude_ai_Notion__notion-fetch` → extract `data_source_id`, cache in `state.json notion_ids.data_sensitivity_map`
 
-Push one entry per PII field/data class from the PII Inventory to the Data Sensitivity Map DB.
-Use actual schema from notion-fetch to map: field name → title, entity → related entity field, sensitivity level (Public / Internal / Confidential / Restricted) → classification property, legal basis → notes, retention period → retention field if available.
+For each PII field/data class from the PII Inventory, call `mcp__claude_ai_Notion__notion-create-pages` with both `properties` AND `content`. Do NOT use template_id.
+
+```
+properties:
+  Name: [Field/data class name]
+  Attribute (Business Name): [Business-readable attribute name]
+  Classification Level: [L2 / L3 / L4]
+  Description: [What this data is]
+  Implied Sensitivity: [Why it's sensitive]
+  Usage Context: [Where it's stored/used]
+
+content:
+  ## [Field Name]
+
+  **Classification:** [L2 - Internal / L3 - Confidential / L4 - Restricted]
+  **Entity:** [Which entity holds this field]
+
+  ## Sensitivity Rationale
+
+  [Why this data is classified at this level]
+
+  ## Legal Basis (GDPR)
+
+  [Legal basis for processing: consent / contract / legitimate interest / etc]
+
+  ## Retention Period
+
+  [How long this data is kept and why]
+
+  ## Access Controls
+
+  [Who can access this data and how]
+```
 
 After push: report counts (created, errors).
 

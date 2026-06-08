@@ -353,6 +353,29 @@ If user selects B: note the checkpoint ID returned by `create_view` and inform t
 
 ---
 
+## Notion push
+
+After generating a diagram, update the Diagrams page in Notion with the output.
+
+1. Read `pureinn-variables.md` key `"Diagrams"` → get Page URL
+2. If blank: skip, remind user to add URL to pureinn-variables.md
+3. Call `mcp__claude_ai_Notion__notion-update-page` with `command: "insert_content"`:
+
+```
+## [Diagram Name] — [date]
+
+**Type:** [Domain Model / User Flow / Business Process / System Architecture / JTBD Forces / Sequence Diagram]
+**Feature/Context:** [FEAT-ID or phase context]
+
+[Mermaid code block with the generated diagram]
+
+[Excalidraw URL if generated - or "Mermaid only"]
+```
+
+This keeps the Diagrams page as a running catalogue of all generated visuals.
+
+---
+
 ## Internal completeness checklist
 
 <!-- Claude reference only -->

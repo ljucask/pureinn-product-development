@@ -612,7 +612,26 @@ pureinn-workspace/[slug]/
 Each `_index.md` is a one-line placeholder: `# [Phase Name] - artifacts will appear here.`
 This creates the folder and makes the structure visible in any file explorer.
 
-**2b. Create pureinn-variables.md**
+**2b. Create `_archive/` folder and `.claudeignore`**
+
+Create `_archive/` in the project root (alongside the working directory, not inside pureinn-workspace):
+```
+_archive/
+  .gitkeep
+```
+
+Create `.claudeignore` in the project root:
+```
+_archive/
+```
+
+Tell the user:
+```
+_archive/ vytvorený - sem presúvaj staré FSD/BRD/feature cards pred tým ako spustíš pm-reverse-extract.
+.claudeignore vytvorený - Claude _archive/ pri skenovaní preskočí.
+```
+
+**2c. Create pureinn-variables.md**
 
 Create `pureinn-workspace/[project-slug]/pureinn-variables.md` with the following content (all URLs blank - user fills them in):
 

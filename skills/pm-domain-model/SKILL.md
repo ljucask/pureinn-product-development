@@ -379,19 +379,70 @@ After rendering, offer export to excalidraw.com.
 
 **Runs after user approves the domain model artifacts.**
 
-Read `pureinn-variables.md` for keys "Internal Entity Catalogue", "External Entity Catalogue", "Event Catalogue". Use only those where URL is present.
-Check `state.json notion_ids` for cached IDs per DB. Fetch and cache any missing.
+For each DB: read URL from `pureinn-variables.md`, call `mcp__claude_ai_Notion__notion-fetch` to get `data_source_id`, cache in `state.json`. Skip if URL blank.
 
-**Internal Entity Catalogue DB:** push one entry per internal entity (user-owned domain objects).
-Map: entity name → title, attributes → body content or description, relationships → notes.
+Use `mcp__claude_ai_Notion__notion-create-pages` with both `properties` AND `content` - do NOT use template_id.
 
-**External Entity Catalogue DB:** push one entry per external entity (third-party systems, integrations).
-Map: entity name → title, source system → description.
+**Internal Entity Catalogue DB** (key: `"Internal Entity Catalogue"`):
+```
+properties:
+  Entity: [Entity name]
+  Domain/Source: [[Domain name]]
+  Description: [1-sentence description]
+  Lifecycle States: [comma-separated states]
+  Register Status: Active
+  Väzby (R/W/Event): [key relationships]
 
-**Event Catalogue DB:** push one entry per domain event identified in the model.
-Map: event name → title, trigger → description, affected entities → notes.
+content:
+  ## [Entity Name]
 
-For each DB: call `mcp__claude_ai_Notion__notion-create-pages`. Use actual schema from notion-fetch result to map properties correctly.
+  [Description]
+
+  ## Attributes
+  [Key attributes from domain model]
+
+  ## Relationships
+  [Relationships to other entities]
+```
+
+**External Entity Catalogue DB** (key: `"External Entity Catalogue"`):
+```
+properties:
+  Entity: [System/service name]
+  Source System/Provider: [[Provider type]]
+  Description: [What this external system provides]
+  Väzby (R/W/Event): [integration type: REST API / webhook / SDK]
+
+content:
+  ## [External System Name]
+
+  [Description of what it provides]
+
+  ## Integration Type
+  [How MediOps connects to it]
+
+  ## Data Exchanged
+  [What data flows in/out]
+```
+
+**Event Catalogue DB** (key: `"Event Catalogue"`):
+```
+properties:
+  Name: [Event name in past tense, e.g. order.confirmed]
+  Domain: [[Domain name]]
+
+content:
+  ## [Event Name]
+
+  **Trigger:** [What causes this event]
+  **Affected entities:** [Entity names]
+  **Consumers:** [Who listens to this event]
+  **Payload:** [Key fields in the event payload]
+```
+
+Also update the **Domain Model page** (key: `"Domain Model"`) with the full domain-model.md content:
+Call `mcp__claude_ai_Notion__notion-update-page` with `command: "replace_content"` and the full domain-model.md text.
+
 After push: report counts per DB (created, errors).
 
 ## Save to

@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.7.0] - 2026-06-08
+
+### Fix all remaining empty Notion pages + _archive/.claudeignore init + pm-diagrams Notion push
+
+---
+
+
 ## [4.6.0] - 2026-06-08
 
 ### Replace template_id with inline content across all Notion push operations

@@ -181,12 +181,29 @@ Read `pureinn-variables.md` key "Glossary" → get DB URL.
 If blank: ask user, save URL to pureinn-variables.md.
 Check `state.json notion_ids.glossary` for cached ID. If not cached: call `mcp__claude_ai_Notion__notion-fetch`, extract data source ID, save to `state.json notion_ids.glossary`.
 
-For each term in the glossary: call `mcp__claude_ai_Notion__notion-create-pages` or `mcp__claude_ai_Notion__notion-update-page` (update if entry with matching name already exists).
+For each term in the glossary, call `mcp__claude_ai_Notion__notion-create-pages` with both `properties` AND `content`. Do NOT use template_id - provide content directly.
 
-Use the Glossary DB schema. Map fields:
-- Title → Term name
-- Definition → Short Description or body content
-- Domain, Usage Context, Type, Connected Entities → additional properties if available in schema
+```
+properties:
+  Name: [Term]
+  Definícia (2–4 vety): [Definition text]
+  Doména: [Domain]
+  Typ pojmu: [Type - Entity/Status/Rule/Event/etc]
+  Kontext použitia: [Usage context]
+  Prepojené entity/procesy: [Related entities]
+
+content:
+  ## [Term]
+
+  [Full definition - 2-4 sentences]
+
+  **Domain:** [Domain]
+  **Type:** [Type]
+  **Used in:** [Where this term appears in the product]
+  **Related:** [Related terms or entities]
+```
+
+Update if entry with matching Name already exists (use `mcp__claude_ai_Notion__notion-update-page`).
 
 After push: report counts (created, updated, errors).
 
