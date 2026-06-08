@@ -247,6 +247,18 @@ feature_flag: "[kebab-case-feature-name]"
 > **Status:** 1_Backlog - stub created by pm-reverse-extract
 > **Next step:** Run /pm-feature-design FEAT-[DOMAIN]-NNN to complete Sections 1-3 before build
 
+## Description
+
+[2-3 sentences extracted from codebase/docs: what this feature does, who uses it, and what value it delivers. Fill from extraction evidence - do not leave blank.]
+
+## Current state (extracted)
+
+**Implementation status:** [Done / In Progress / Planned]
+**Evidence:** [where this was found - file path, doc name, or code reference]
+**Known gaps:** [what is missing, unclear, or needs investigation before build]
+
+---
+
 ## Section 1: Biznis Mantinely
 *TBD - run pm-feature-design*
 

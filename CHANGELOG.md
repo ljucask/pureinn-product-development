@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.2.7] - 2026-06-08
+
+### Feature Card stub includes description, current state and evidence from extraction
+
+---
+
+
 ## [4.2.6] - 2026-06-08
 
 ### Explicit template_id lookup steps in pm-reverse-extract and pm-features-list Notion push
