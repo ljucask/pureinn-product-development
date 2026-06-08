@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.3.0] - 2026-06-08
+
+### pm-feature-design pushes Sections 1-3 to Notion after spec is complete
+
+---
+
+
 ## [4.2.7] - 2026-06-08
 
 ### Feature Card stub includes description, current state and evidence from extraction
