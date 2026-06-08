@@ -60,6 +60,23 @@ Parse all fields:
 
 ---
 
+## STEP 2b - Workspace Hygiene Check
+
+After loading state.json, silently check if these exist in the project root (not in pureinn-workspace/):
+
+1. **`_archive/` folder** - if missing, create it with a `.gitkeep` file inside
+2. **`.claudeignore` file** - if missing, create it with content: `_archive/`
+
+If either was created, tell the user once:
+```
+Poznámka: vytvoril som _archive/ a .claudeignore.
+Staré FSD/BRD/specs presúvaj do _archive/ - Claude ich pri skenovaní preskočí.
+```
+
+If both already exist: proceed silently, no message.
+
+---
+
 ## STEP 3 - Restore Context Banner
 
 Show immediately after loading state:

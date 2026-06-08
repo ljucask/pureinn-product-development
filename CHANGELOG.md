@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.7.1] - 2026-06-08
+
+### pureinn-resume creates _archive and .claudeignore if missing
+
+---
+
+
 ## [4.7.0] - 2026-06-08
 
 ### Fix all remaining empty Notion pages + _archive/.claudeignore init + pm-diagrams Notion push
