@@ -292,8 +292,11 @@ If URL is present: push feature entries to Notion Product Features database.
 | `Dev Stripe` | `Stripe [N]` (from stripe assignment) |
 | `Phase` | `MVP` (default - user can update later) |
 | `Short Description` | 1-sentence description from extraction |
+| `template_id` | Feature Card Template ID from database schema (get from notion-fetch result `<templates>` section - look for template named "Feature Card Template") |
 
 Leave blank: `KANO Category`, `V×C Quadrant`, `Priority`, `Feature Card URL` - filled later by pm-feature-design and pm-features-list.
+
+**Template note:** `template_id` applies the Feature Card Template structure to each new Notion page. This gives every entry the Section 1-3-4 skeleton. Without it, pages are created empty.
 
 After push, confirm count: "Pushed [N] features to Notion."
 

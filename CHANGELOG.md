@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.2.5] - 2026-06-08
+
+### pm-reverse-extract: add template_id to Notion push so feature pages get Feature Card Template structure
+
+---
+
+
 ## [4.2.4] - 2026-06-06
 
 ### Fix: all A/B/C/D option questions use AskUserQuestion tool instead of plain text
