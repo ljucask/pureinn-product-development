@@ -54,15 +54,12 @@ If glossary exists: show a summary - how many terms, which domains are covered, 
 
 Apply the standard skill interaction pattern (CLAUDE.md).
 
-Use AskUserQuestion tool for this question:
-
-```
-What do you want to do in this session?
-  A) Add new terms - paste or describe what to capture (Recommended)
-  B) Extract terms from an existing artifact - paste the artifact text
-  C) Review and update existing entries
-  D) Export full glossary as a clean table or something specific
-```
+Use AskUserQuestion tool with:
+- Question: "What do you want to do in this session?"
+- Option A: "Add new terms - paste or describe what to capture (Recommended)"
+- Option B: "Extract terms from an existing artifact - paste the artifact text"
+- Option C: "Review and update existing entries"
+- Option D: "Export full glossary as a clean table or something specific"
 
 If user provides explicit intent with the command (e.g., `/pm-glossary add "Feature Set, Delivery Stripe, Stripe"`), skip the question and proceed directly.
 

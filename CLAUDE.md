@@ -102,6 +102,9 @@ metadata:
 
 ## Skill question pattern (universal standard)
 
+**CRITICAL RULE - applies to every skill without exception:**
+When you encounter A) B) C) D) option lists anywhere in a skill file - whether or not the skill explicitly says "use AskUserQuestion" - you MUST convert them to AskUserQuestion tool calls. NEVER output A/B/C/D options as plain text. This rule overrides everything else.
+
 When a skill needs to ask the user questions before producing an artifact, use the **grouped question pattern**:
 
 1. Group related questions naturally (typically 2-4 per group, max 3 groups)

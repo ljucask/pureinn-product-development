@@ -81,6 +81,8 @@ Apply the standard skill interaction pattern (CLAUDE.md).
 
 ## Step 1: Gather inputs
 
+Ask as plain text:
+
 ```
 I need inputs for the Entity & State Registry.
 
@@ -91,20 +93,20 @@ I need inputs for the Entity & State Registry.
    (For append mode: paste only the capabilities for the new domain/initiative)
    [paste or "in context"]
 
-2. TEAM MODE
-   Solo Builder or Delivery Team?
-     A) Solo Builder - AI generates entities autonomously, you verify
-     B) Delivery Team - we refine the entity list together (Domain Walkthrough mode)
-
 3. EXISTING CONTEXT (optional)
    Is there an existing domain model, ERD, or tech spec that defines some entities?
    [paste or "none"]
-
-4. DOMAIN OVERVIEW DIAGRAM
-   Do you want a high-level domain overview diagram in Excalidraw?
-     A) Yes - generate after entities are complete (append mode: full diagram including existing entities)
-     B) No - entities.md only
 ```
+
+Then use AskUserQuestion tool with two questions together:
+
+- Question 1: "Team mode for entity generation?"
+  - Option A: "Solo Builder - AI generates entities autonomously, you verify (Recommended)"
+  - Option B: "Delivery Team - we refine the entity list together (Domain Walkthrough mode)"
+
+- Question 2: "Do you want a high-level domain overview diagram in Excalidraw after entities are complete?"
+  - Option A: "Yes - generate domain overview diagram (Recommended)"
+  - Option B: "No - entities.md only"
 
 ---
 

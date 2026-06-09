@@ -68,15 +68,12 @@ If no checkpoint: proceed to Step 1.
 
 Apply the standard skill interaction pattern (CLAUDE.md).
 
-Use AskUserQuestion tool for this question:
-
-```
-What diagram do you want to create?
-  A) Entity State Machine (Mermaid.js) - states and transitions for a specific entity
-  B) Sequence Diagram (Mermaid.js) - data flow between services for a specific feature
-  C) Domain Model Overview (Excalidraw) - entities and relationships, high-level
-  D) User Flow, Business Process, System Architecture, JTBD Forces, or other - describe what you need
-```
+Use AskUserQuestion tool with:
+- Question: "What diagram do you want to create?"
+- Option A: "Entity State Machine (Mermaid.js) - states and transitions for a specific entity"
+- Option B: "Sequence Diagram (Mermaid.js) - data flow between services for a specific feature"
+- Option C: "Domain Model Overview (Excalidraw) - entities and relationships, high-level"
+- Option D: "User Flow, Business Process, System Architecture, JTBD Forces, or other - I'll describe"
 
 ---
 
@@ -336,16 +333,11 @@ Layout guidance:
 
 ## Step 3: Export (optional)
 
-After rendering the diagram inline, offer export:
-
-```
-Diagram complete.
-
-Options:
-  A) Export to excalidraw.com → shareable link for editing
-  B) Save checkpoint → continue editing in a future session
-  C) Done
-```
+After rendering the diagram inline, use AskUserQuestion tool with:
+- Question: "Diagram complete - what do you want to do next?"
+- Option A: "Export to excalidraw.com - shareable link for editing"
+- Option B: "Save checkpoint - continue editing in a future session (Recommended)"
+- Option C: "Done"
 
 If user selects A: call `mcp__claude_ai_Excalidraw__export_to_excalidraw` with the diagram JSON and return the shareable URL.
 

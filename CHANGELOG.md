@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.8.0] - 2026-06-09
+
+### Added domain_model.md and decision_models.md examples to saas-subscription showcase
+
+---
+
+
 ## [4.7.2] - 2026-06-08
 
 ### pureinn-resume: explicit project root for _archive and .claudeignore creation

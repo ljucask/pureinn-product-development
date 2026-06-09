@@ -85,6 +85,8 @@ Apply the standard skill interaction pattern (CLAUDE.md).
 
 ## Step 1: Gather inputs
 
+Ask as plain text:
+
 ```
 I need inputs for the Business Rules Library and Decision Models Matrix.
 
@@ -108,12 +110,12 @@ I need inputs for the Business Rules Library and Decision Models Matrix.
 4. EXISTING DOMAIN CONTEXT
    Is entities.md in context? (required for entity mapping in rules)
    [confirm or paste]
-
-5. ENRICHMENT MODE
-   A) Draft mode - capture known rules, mark complex logic as TBD (Phase 5 init)
-   B) JIT mode - finalize a specific rule for an in-progress feature (Phase 6 enrichment)
-      If B: which rule ID and which feature? [specify]
 ```
+
+Then use AskUserQuestion tool with:
+- Question: "Enrichment mode for this session?"
+- Option A: "Draft mode - capture known rules, mark complex logic as TBD (Phase 5 init) (Recommended)"
+- Option B: "JIT mode - finalize a specific rule for an in-progress feature (Phase 6 enrichment) - I'll specify which rule ID and feature"
 
 ---
 

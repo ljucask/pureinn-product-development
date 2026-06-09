@@ -95,46 +95,45 @@ Apply the standard skill interaction pattern (CLAUDE.md).
 
 ## Step 1: Gather inputs
 
+Use AskUserQuestion tool with two questions together:
+
+- Question 1: "Playbook mode for [FEAT-ID]?"
+  - Option A: "Greenfield - designing from scratch, diagram defines new classes/methods (Recommended for new projects)"
+  - Option B: "Feature Implementation - adding to existing codebase, diagram must match real code (Recommended for FI context)"
+
+- Question 2: "Team mode?"
+  - Option A: "Solo Builder - AI generates full design, you confirm before build starts (Recommended)"
+  - Option B: "Delivery Team - design goes to Design Inspection after this step"
+
+Then ask as plain text:
+
 ```
 JIT Design for: [FEAT-ID]: [Feature title]
 
-1. PLAYBOOK MODE
-   A) Greenfield - designing from scratch (diagram defines new classes/methods)
-   B) Feature Implementation - adding to existing codebase (diagram must match real code)
-   
-   [If B: which service files are relevant? I will scan them before designing.]
-
-2. PRD CONTEXT
+PRD CONTEXT
    The feature references: [prd_ref from frontmatter]
    Is this PRD section in context, or should I read it?
    [confirm or paste relevant section]
 
-3. BUSINESS RULES SCOPE
+BUSINESS RULES SCOPE
    Which business rules from business_rules.md apply to this feature?
    List BR-IDs, or I will identify them from the feature scope.
    [list or "identify automatically"]
 
-4. TEAM MODE CHECKPOINT
-   Solo Builder: I will generate the full design. You confirm before build starts.
-   Delivery Team: Design goes to Design Inspection after this step.
-   [A - Solo / B - Delivery Team]
+   [If Feature Implementation mode: which service files are relevant? I will scan them before designing.]
 
-5. UX/UI CONTEXT (skip if backend/API-only feature)
-   Does this feature have a user interface component?
-   If yes, provide one of the following:
-     A) Text description - where does this feature live in the app? What does the user see and do?
-     B) Attach a screenshot or mockup directly in this message
-     C) Figma URL - paste the screen URL (requires Figma MCP connected)
-     D) Figma MCP connected - I will read the referenced screen automatically from pureinn-variables.md
-   [describe / attach / paste URL / "backend only - skip"]
-
-   If the overall design system was established by Impeccable: reference which component or pattern
-   this feature should follow. [component name or "new pattern needed"]
-
-6. OPEN QUESTIONS
+OPEN QUESTIONS
    Any known edge cases or constraints specific to this feature not yet in the registers?
    [list or "none"]
 ```
+
+Then use AskUserQuestion tool for UX context (skip if backend/API-only feature):
+
+- Question: "Does this feature have a user interface component? If yes, how will you provide the UX context?"
+  - Option A: "Text description - I'll describe where this feature lives and what the user sees/does"
+  - Option B: "Attach a screenshot or mockup directly in this message"
+  - Option C: "Figma URL - I'll paste the screen URL (requires Figma MCP connected)"
+  - Option D: "Backend/API-only - no UI component, skip UX context"
 
 ---
 
@@ -320,6 +319,7 @@ git commit -m "spec([FEAT-ID]): feature design complete"
 
 **Solo Builder mode:**
 
+Show summary:
 ```
 Design complete for [FEAT-ID]: [title]
 
@@ -329,11 +329,12 @@ Summary:
 - Acceptance Criteria: [N] ACs covering happy path + [N] failure cases + flag OFF
 
 Review the sequence diagram in Section 3 of the Feature Card.
-Any corrections before build starts?
-
-  A) Looks good - start build
-  B) Correction needed: [describe]
 ```
+
+Then use AskUserQuestion tool with:
+- Question: "Any corrections before build starts?"
+- Option A: "Looks good - start build (Recommended)"
+- Option B: "Correction needed - I'll describe what to fix"
 
 **Delivery Team mode:**
 

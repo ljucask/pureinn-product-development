@@ -114,23 +114,19 @@ BLOCKED (dependencies not met):
 
 Then use AskUserQuestion tool based on what's detected:
 
-**If one clear action is obvious** (e.g., one feature at 3_Ready_to_Build):
-```
-What do you want to do?
-  A) [Specific next action for the detected feature] (Recommended)
-  B) Different stripe - choose which
-  C) Impact Analysis - a business rule changed
-  D) Something else
-```
+**If one clear action is obvious** (e.g., one feature at 3_Ready_to_Build): use AskUserQuestion tool with:
+- Question: "What do you want to do?"
+- Option A: "[Specific next action for the detected feature] (Recommended)"
+- Option B: "Different stripe - choose which"
+- Option C: "Impact Analysis - a business rule changed"
+- Option D: "Something else - I'll describe"
 
-**If no active features or multiple stripes need attention:**
-```
-What do you want to do?
-  A) Advance next feature - pick a stripe (Recommended)
-  B) Impact Analysis - a business rule changed
-  C) Close a completed stripe
-  D) Check specific feature or stripe status
-```
+**If no active features or multiple stripes need attention:** use AskUserQuestion tool with:
+- Question: "What do you want to do?"
+- Option A: "Advance next feature - pick a stripe (Recommended)"
+- Option B: "Impact Analysis - a business rule changed"
+- Option C: "Close a completed stripe"
+- Option D: "Check specific feature or stripe status"
 
 ---
 
@@ -190,13 +186,11 @@ Review Feature Card /features/cards/FEAT-[ID].md:
     [ ] Design system reference present or Figma link provided
 ```
 
-Use AskUserQuestion tool:
-```
-Design Inspection result for FEAT-[ID]?
-  A) Approved - all sections complete and correct (Recommended if reviewed)
-  B) Changes needed - I'll describe what to fix
-  C) Re-run pm-feature-design - significant rework needed
-```
+Use AskUserQuestion tool with:
+- Question: "Design Inspection result for FEAT-[ID]?"
+- Option A: "Approved - all sections complete and correct (Recommended if reviewed)"
+- Option B: "Changes needed - I'll describe what to fix"
+- Option C: "Re-run pm-feature-design - significant rework needed"
 
 If approved: update Feature Card frontmatter `status: 3_Ready_to_Build`.
 

@@ -85,15 +85,12 @@ Show state table:
 
 Apply the standard skill interaction pattern (CLAUDE.md).
 
-Use AskUserQuestion tool for this question:
-
-```
-What do you want to do in this session?
-  A) Plan mode - structure hypotheses and design experiments (Recommended if register is empty)
-  B) Results mode - record experiment outcomes and issue Go/No-Go verdict
-  C) Add a new hypothesis or update success criteria in an existing register
-  D) Something specific: ...
-```
+Use AskUserQuestion tool with:
+- Question: "What do you want to do in this session?"
+- Option A: "Plan mode - structure hypotheses and design experiments (Recommended if register is empty)"
+- Option B: "Results mode - record experiment outcomes and issue Go/No-Go verdict"
+- Option C: "Add a new hypothesis or update success criteria in an existing register"
+- Option D: "Something specific - I'll describe"
 
 ---
 
@@ -366,10 +363,11 @@ If by PIVOT 2 all four elements have changed at least once across the two PIVOTs
 >
 > Before continuing: is this still the same product idea or effectively a new one? If the problem, customer, and solution are all different from where you started, you are not iterating - you are starting over. A new project with a clean slate is more efficient than continuing to patch a broken premise.
 >
-> Options:
-> A) Continue with current direction - acknowledge this is iteration 3, set a final deadline and budget ceiling for validation
-> B) Archive this idea, apply learnings to a new hypothesis
-> C) Narrow scope - one of the three (Problem/Customer/Solution) is still solid; rebuild around that anchor
+> At this point use AskUserQuestion tool with:
+> - Question: "This is iteration 3 - how do you want to proceed?"
+> - Option A: "Continue with current direction - set a final deadline and budget ceiling (Recommended if one element is still solid)"
+> - Option B: "Archive this idea and apply learnings to a new hypothesis"
+> - Option C: "Narrow scope - one of the three (Problem/Customer/Solution) is still solid, rebuild around that anchor"
 
 After PIVOT 3 on the same project without a GO, issue STOP unless A) was explicitly chosen and the deadline has not passed.
 

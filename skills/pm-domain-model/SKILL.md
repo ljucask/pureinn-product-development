@@ -183,15 +183,10 @@ Please review:
 Confirm to proceed to Stage 2 (full entity definitions).
 ```
 
-After the user reviews Stage 1, offer to render the domain overview as a visual diagram:
-
-```
-Stage 1 is ready for review.
-
-Would you also like a visual diagram of the domain overview?
-  A) Yes - render Domain Model Overview in Excalidraw
-  B) No - proceed to Stage 2 confirmation
-```
+After the user reviews Stage 1, use AskUserQuestion tool with:
+- Question: "Stage 1 is ready for review. Would you also like a visual diagram of the domain overview?"
+- Option A: "Yes - render Domain Model Overview in Excalidraw (Recommended)"
+- Option B: "No - proceed to Stage 2 confirmation"
 
 If A: generate the Excalidraw diagram using `mcp__claude_ai_Excalidraw__create_view`.
 
@@ -312,15 +307,10 @@ erDiagram
 
 ## Stage 2: Excalidraw ERD (optional)
 
-After all entity definitions are complete, offer a visual ERD:
-
-```
-All entity definitions are complete.
-
-Would you like a visual ERD overview showing all entities and their relationships?
-  A) Yes - render full ERD in Excalidraw
-  B) No - we're done
-```
+After all entity definitions are complete, use AskUserQuestion tool with:
+- Question: "All entity definitions are complete. Would you like a visual ERD overview showing all entities and their relationships?"
+- Option A: "Yes - render full ERD in Excalidraw (Recommended)"
+- Option B: "No - we're done"
 
 If A: generate the Excalidraw diagram using `mcp__claude_ai_Excalidraw__create_view`.
 

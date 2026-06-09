@@ -162,19 +162,17 @@ After receiving artifact status, show a coverage table and note which sections o
 
 ### Step 1b - Follow-up questions
 
-Use AskUserQuestion tool for these two questions:
+Use AskUserQuestion tool with both questions together:
 
-Is this PRD for internal use only, or will it be shared externally?
+- Question 1: "Is this PRD for internal use only, or will it be shared externally?"
+  - A: "Internal only (Recommended)" — description: "Full transparency on risks and assumptions"
+  - B: "Shared externally" — description: "Investors, partners - softer language on risks"
+  - C: "Both versions needed"
 
-  A) Internal only - full transparency on risks and assumptions
-  B) Shared externally (investors, partners) - softer language on risks
-  C) Both versions needed
-
-Has anything changed or been revised since these artifacts were generated?
-
-  A) No - artifacts are current
-  B) Yes - minor updates (I'll describe them)
-  C) Yes - significant changes (pricing, scope, segment, pivot)
+- Question 2: "Has anything changed since these artifacts were generated?"
+  - A: "No - artifacts are current (Recommended)"
+  - B: "Yes - minor updates" — description: "I'll describe them"
+  - C: "Yes - significant changes" — description: "Pricing, scope, segment, or pivot"
 
 Then ask as plain text:
 
@@ -579,16 +577,14 @@ State update → `state.json`: set `registers.prd_master` to `done`.
 
 ### Step 0 (Initiative mode): identify initiative
 
-```
-Which initiative is this PRD for?
+Ask as plain text: "Which initiative is this PRD for? (slug, e.g. multitenant-architecture)"
 
-  Initiative slug: [e.g., ai-onboarding]
-  (This determines the save path: initiatives/[slug]/prd.md)
+After getting the slug, use AskUserQuestion tool:
 
-  Does the discovery folder exist at initiatives/[slug]/discovery/?
-    A) Yes - I'll read the outputs from there
-    B) No / different location - paste or describe discovery outputs below
-```
+- Question: "Does discovery exist at initiatives/[slug]/discovery/?"
+  - A: "Yes - read outputs from there (Recommended if done)"
+  - B: "No / different location - I'll paste or describe discovery outputs"
+  - C: "Discovery not done - generate from business context and goals"
 
 ### Step 1 (Initiative mode): gather inputs
 
