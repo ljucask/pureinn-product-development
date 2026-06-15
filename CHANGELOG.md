@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.9.1] - 2026-06-15
+
+### Fix product-roadmap-v3 example: full product Feature Sets, Version History moved to end, structure matches skill template
+
+---
+
+
 ## [4.9.0] - 2026-06-15
 
 ### Added PRD_master and product-roadmap-v3 examples to saas-subscription showcase
