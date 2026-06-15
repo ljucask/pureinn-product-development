@@ -10,7 +10,13 @@ This example shows a complete FDD+SDD workflow run for a subscription billing in
 
 ## What each file shows - read in this order
 
-### 1. `initiatives/subscription-billing/prd.md`
+### 1. `product/PRD_master.md`
+The Product PRD - Phase 3b exit artifact for the core ProjectFlow product. Synthesizes all Phase 2 + 3a + 3b outputs (34 customer interviews, JTBD analysis, market sizing, Tech Feasibility, Business Model Canvas, KPIs). Covers: validated problem statement, primary persona (Martin the Engineering Team Lead), business capabilities across 5 domains (AUTH, WS, PROJ, TASK, TEAM, NOTIF), explicit out-of-scope decisions, regulatory constraints, and critical assumptions. Frozen after creation - new initiatives (like subscription billing) generate their own Initiative PRD without touching this document.
+
+### 2. `product/product-roadmap-v3.md`
+The Product Roadmap at version 3 - showing all three evolution stages in one document. v1 (Phase 3b): strategic phases and vision. v2 (Phase 4): domain constraints and WebSocket deferral incorporated. v3 (Phase 5): Delivery Stripes and Feature Sets added for the subscription billing initiative. Shows Phase 1 as complete with real outcome data, Phase 2 in progress, and Phase 3 planned with AI feature staging rationale. Demonstrates the version history and "not building" section as a strategic decision log.
+
+### 3. `initiatives/subscription-billing/prd.md`
 The Initiative PRD written after Track B discovery. Covers the business capabilities (BC-01 through BC-05), success metrics, scope boundaries, constraints (Stripe, GDPR, PCI DSS), and open questions. This is the scoped PRD for this initiative - not the product-level PRD_master.md.
 
 ### 2. `domain/domain_model.md`
@@ -48,6 +54,10 @@ The complete lifecycle of a Feature Card, from spec through to promoted build. S
 
 | Step | Skill used | Output file |
 |---|---|---|
+| Phase 2-3b synthesis → Product PRD | pm-prd [Product mode] | product/PRD_master.md |
+| Roadmap v1 (Phase 3b) | pm-product-roadmap [v1] | product/product-roadmap-v3.md (v1 section) |
+| Roadmap v2 (Phase 4, domain constraints) | pm-product-roadmap [v2 update] | product/product-roadmap-v3.md (v2 section) |
+| Roadmap v3 (Phase 5, delivery stripes) | pm-product-roadmap [v3 update] | product/product-roadmap-v3.md (v3 section) |
 | Track B discovery + Initiative PRD | pm-prd [Initiative mode] | initiatives/subscription-billing/prd.md |
 | Domain model - entities, relationships, ERD | pm-domain-model [append] | domain/domain_model.md |
 | Entity state machines added | pm-entity-registry [append] | domain/entities.md |
@@ -61,6 +71,6 @@ The complete lifecycle of a Feature Card, from spec through to promoted build. S
 
 ## What this example does NOT show
 
-- Phase 1-3 artifacts (project charter, personas, hypotheses, Lean Canvas) - those belong to the product level, not this initiative
-- The Greenfield playbook path - this is Feature Implementation only
-- PRD_master.md - that already existed for the core product; this initiative appended to the domain registers without touching it
+- Phase 1-3 artifacts (project charter, personas, hypotheses, Lean Canvas) - those belong to the product level and were inputs to PRD_master.md
+- The Greenfield playbook path for domain model and feature work - this is Feature Implementation only
+- Product Roadmap v1 and v2 as standalone files - product-roadmap-v3.md shows all three evolution stages in one document with a version history block

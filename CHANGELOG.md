@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.9.0] - 2026-06-15
+
+### Added PRD_master and product-roadmap-v3 examples to saas-subscription showcase
+
+---
+
+
 ## [4.8.1] - 2026-06-09
 
 ### Fix saas-subscription README - correct reading order, add domain_model and decision_models to workflow, remove stale 'not needed' note
