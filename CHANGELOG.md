@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.10.0] - 2026-06-15
+
+### Audit and align all example documents with skills: bug fixes, missing sections, skill template updates (Section 1 table format, BC numbered format, Full ERD)
+
+---
+
+
 ## [4.9.1] - 2026-06-15
 
 ### Fix product-roadmap-v3 example: full product Feature Sets, Version History moved to end, structure matches skill template

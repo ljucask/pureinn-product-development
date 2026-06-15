@@ -177,7 +177,7 @@ All invoices (Paid and Void) must be retained in storage for a minimum of 7 year
 - Deletion of invoice records only permitted after retain_until date has passed (automated cleanup job)
 
 **Applies to features:** FEAT-SUB-001, FEAT-SUB-007, FEAT-SUB-008 (Download invoice PDF)
-**Source:** EU VAT Directive Article 246; local tax authorities require minimum 7-year retention
+**Source:** EU VAT Directive Article 246; local tax law in SK/CZ/AT requires minimum 7-year retention
 
 ---
 

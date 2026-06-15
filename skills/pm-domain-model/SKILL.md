@@ -303,6 +303,36 @@ erDiagram
 [Any domain-specific constraints, design decisions, or open questions for this entity]
 ```
 
+After all entity definitions are generated, append a Full ERD section to the document:
+
+```markdown
+---
+
+## [N+1]. Full ERD
+
+Cross-entity ERD showing all internal entities and their relationships. Use this as the single reference for database schema design.
+
+```mermaid
+erDiagram
+  [ENTITY_A] {
+    uuid id PK
+    uuid [fk_field] FK
+    [type] [field]
+    enum status
+    timestamp created_at
+  }
+  [ENTITY_B] {
+    uuid id PK
+    uuid [entity_a_id] FK
+    [type] [field]
+    timestamp created_at
+  }
+  [ENTITY_A] ||--o{ [ENTITY_B] : "[relationship label]"
+  [ENTITY_B] ||--o{ [ENTITY_C] : "[relationship label]"
+  [ENTITY_A] ||--|| [EXT_ENTITY] : "[external reference]"
+```
+```
+
 ---
 
 ## Stage 2: Excalidraw ERD (optional)
@@ -350,7 +380,8 @@ After rendering, offer export to excalidraw.com.
 - [ ] Events: what events this entity emits
 - [ ] Enums: all enumerated values listed
 - [ ] Derived fields: what is computed vs. stored
-- [ ] ERD diagram (Mermaid)
+- [ ] ERD diagram (Mermaid) - per entity, showing immediate relationships
+- [ ] Full ERD section at the end of the document - all entities together in one cross-entity diagram
 
 **Cross-entity consistency:**
 - [ ] No entity belongs to multiple domains (one owner per entity)

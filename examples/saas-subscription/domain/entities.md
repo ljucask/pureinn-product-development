@@ -87,7 +87,7 @@ stateDiagram-v2
 
 ## Invoice
 
-**Business role:** Financial record of a payment attempt. Must exist for every payment event - successful or failed. Immutable after status reaches Issued.
+**Business role:** Financial record of a payment attempt. Must exist for every payment event - successful or failed. Immutable after status reaches Paid.
 **Owned by Feature Set:** Subscription Stripe (FEAT-SUB-*)
 **Domain code:** INV
 
@@ -171,8 +171,21 @@ stateDiagram-v2
     Removed --> [*]
 ```
 
+**Transitions:**
+
+| From | To | Trigger | Emits | Guard condition |
+|---|---|---|---|---|
+| Unverified | Active | provider.verification_confirmed | payment_method.verified | Stripe setup intent succeeded |
+| Unverified | Removed | user.removed OR verification_failed | payment_method.removed | - |
+| Active | Expiring_Soon | expiry_check.scheduled | payment_method.expiring_soon | expiry_date < now + 60 days |
+| Active | Removed | user.removed | payment_method.removed | workspace has another Active method OR subscription not Active (BR-PAY-002) |
+| Expiring_Soon | Active | user.card_updated | payment_method.updated | new expiry_date >= now + 60 days |
+| Expiring_Soon | Expired | expiry_date.passed | payment_method.expired | expiry_date <= today |
+| Expired | Removed | user.removed OR new_card_added_as_default | payment_method.removed | - |
+
 **Illegal transitions:**
-- Active → Expired (must go through Expiring_Soon)
+- Active → Expired (must go through Expiring_Soon first)
+- Expired → Active (must add a new card - expired card cannot be reactivated)
 - Removed → any state (terminal)
 
 ---

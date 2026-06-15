@@ -1,11 +1,14 @@
 ---
 id: FEAT-SUB-003
 title: Cancel subscription
-stripe: Subscription Billing - Stripe 1
 status: 3_Ready_to_Build
+stripe: Subscription Billing - Stripe 1
+owner: unassigned
+priority: P1
 actor: Workspace Admin
 prd_ref: "initiatives/subscription-billing/prd.md#bc-04-plan-management"
 feature_flag: billing-subscription-cancel
+flag_default: off
 ---
 
 # FEAT-SUB-003: Cancel subscription

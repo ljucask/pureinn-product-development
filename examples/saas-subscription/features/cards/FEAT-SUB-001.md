@@ -1,11 +1,14 @@
 ---
 id: FEAT-SUB-001
 title: Subscribe to a plan
-stripe: Subscription Billing - Stripe 1
 status: 6_Shipped
+stripe: Subscription Billing - Stripe 1
+owner: Lukas K.
+priority: P1
 actor: Workspace Admin
 prd_ref: "initiatives/subscription-billing/prd.md#bc-01-subscription-lifecycle-management"
 feature_flag: billing-subscription-create
+flag_default: off
 ---
 
 # FEAT-SUB-001: Subscribe to a plan

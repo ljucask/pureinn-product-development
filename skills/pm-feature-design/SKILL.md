@@ -199,21 +199,29 @@ git commit -m "spec([FEAT-ID]): guard conditions + rule finalization"
 
 **4a. Section 1 - Biznis Mantinely**
 
-Populate with direct markdown links to register entries:
+Populate using table format for rules and entity transitions. Tables are scannable and show enforcement points explicitly - critical for code review and build.
 
 ```markdown
 ## 1. Biznis Mantinely (SDD Input)
 
-- **Affected entity:** [Entity Name](/domain/entities.md#entity-name)
-  - State before: [state]
-  - State after: [state]
-  - Transition trigger: [trigger name]
+**Rules enforced in this feature:**
 
-- **Business rules enforced:**
-  - [BR-XXX-001](/domain/business_rules.md#br-xxx-001) - [Rule name: one-line summary]
-  - [BR-XXX-002](/domain/business_rules.md#br-xxx-002) - [Rule name: one-line summary]
+| Rule ID | Rule | Priority | Enforcement point |
+|---|---|---|---|
+| [BR-XXX-001](/domain/business_rules.md#br-xxx-001) | [Rule name: one-line summary] | [Critical/High/Medium] | [Service method / webhook handler / DB constraint] |
+| [BR-XXX-002](/domain/business_rules.md#br-xxx-002) | [Rule name: one-line summary] | [Critical/High/Medium] | [Service method / middleware] |
 
-- **Decision model:** [TBL-XXX-01](/domain/decision_models.md#tbl-xxx-01) - [Table name]
+**Entity guard conditions (from entities.md):**
+
+| Entity | Transition | Guard condition |
+|---|---|---|
+| [Entity Name](/domain/entities.md#entity-name) | [State before] → [State after] | [exact guard expression (finalized: FEAT-ID)] |
+
+**Decision model:** [TBL-XXX-01](/domain/decision_models.md#tbl-xxx-01) - [Table name, if applicable]
+
+**What this feature does NOT do:**
+- [explicit scope exclusion - what adjacent feature handles, or what is out of scope in v1]
+- [explicit scope exclusion]
 ```
 
 **4b. Section 2 - Acceptance Criteria**

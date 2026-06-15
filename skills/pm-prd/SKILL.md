@@ -650,16 +650,20 @@ Save to: `pureinn-workspace/[project-slug]/initiatives/[slug]/prd.md`
 
 What this initiative must enable. Primary input for pm-entity-registry (append), pm-business-rules-library (append), and pm-features-list (FI append).
 
-**Format:** "The system must enable [actor] to [business outcome]." No User Stories.
+**Format:** Use numbered BC-NN blocks. Each block is a named capability group (not a single action). Block names become `prd_ref` anchor targets in Feature Cards (e.g., `prd_ref: "initiatives/[slug]/prd.md#bc-01-[name]"`). No User Stories.
 
 **[Domain: e.g., Employee Onboarding]**
-- The system must enable HR Admins to create role-based onboarding templates with task lists.
-- The system must enable the system to generate a personalized onboarding plan for each new employee based on their role.
-- The system must enable employees to track their onboarding progress and complete assigned tasks.
-- The system must enable line managers to monitor the onboarding status of their direct reports.
-- The system must integrate with the HRIS system to receive new hire data automatically.
 
-> Section anchors here - Feature Cards will link to specific capabilities via prd_ref.
+**BC-01: [Capability group name]**
+[2-4 sentences describing what the system must enable in this capability group. State the business outcome, who benefits, and any key constraints. This is the business context, not the technical spec.]
+
+**BC-02: [Capability group name]**
+[2-4 sentences. Each BC maps to one or more features in features/feature_list.md.]
+
+**BC-03: [Capability group name]**
+[Continue for all capability groups in this domain.]
+
+> BC-IDs are used as anchors: Feature Cards reference `prd_ref: "initiatives/[slug]/prd.md#bc-01-[slug]"` so Claude Code reads only the relevant capability during JIT design.
 
 ---
 

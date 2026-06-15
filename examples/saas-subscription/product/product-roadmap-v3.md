@@ -147,11 +147,11 @@ The timeline in this roadmap assumes:
 
 **Phase 1 stripes (complete):**
 
-| Stripe | Domain focus | Feature Set(s) | Goal |
-|---|---|---|---|
-| Stripe A | Auth & Workspace | FS-01 | Authenticated workspaces with role enforcement live |
-| Stripe B | Projects & Tasks | FS-02 | Block detection working end-to-end across projects |
-| Stripe C | Collaboration & Notifications | FS-03 | Team activity visible without leaving the tool |
+| Stripe | Domain focus | Features included | Feature Set(s) | Goal |
+|---|---|---|---|---|
+| Stripe A | Auth & Workspace | FEAT-USR-*, FEAT-WS-* (all shipped) | FS-01 | Authenticated workspaces with role enforcement live |
+| Stripe B | Projects & Tasks | FEAT-PRJ-*, FEAT-TASK-* (all shipped) | FS-02 | Block detection working end-to-end across projects |
+| Stripe C | Collaboration & Notifications | FEAT-TEAM-*, FEAT-NOTIF-* (all shipped) | FS-03 | Team activity visible without leaving the tool |
 
 **Phase 2 stripes (active):**
 

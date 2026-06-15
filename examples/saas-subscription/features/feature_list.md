@@ -30,6 +30,8 @@
 **Actor:** Workspace Admin
 **KANO:** Must-be
 **V×C:** Quick Win
+**Priority:** P1
+**MVP:** true
 **Delivery Stripe:** Subscription Billing (Stripe 1)
 **Status:** 6_Shipped
 **Business rules:** BR-SUB-001, BR-PAY-001, BR-INV-001, BR-REG-001, BR-REG-002
@@ -42,6 +44,8 @@
 **Actor:** Workspace Admin
 **KANO:** Must-be
 **V×C:** Quick Win
+**Priority:** P1
+**MVP:** true
 **Delivery Stripe:** Subscription Billing (Stripe 1)
 **Status:** 6_Shipped
 **Business rules:** BR-SUB-002 (grace period display), BR-SUB-003 (cancels_at display)
@@ -54,6 +58,8 @@
 **Actor:** Workspace Admin
 **KANO:** Must-be
 **V×C:** Quick Win
+**Priority:** P1
+**MVP:** true
 **Delivery Stripe:** Subscription Billing (Stripe 1)
 **Status:** 3_Ready_to_Build
 **Business rules:** BR-SUB-003, BR-SUB-004
@@ -66,6 +72,8 @@
 **Actor:** Workspace Admin
 **KANO:** Must-be
 **V×C:** Quick Win
+**Priority:** P1
+**MVP:** true
 **Delivery Stripe:** Subscription Billing (Stripe 1)
 **Status:** 1_Backlog
 **Business rules:** BR-PAY-002, BR-REG-002
@@ -78,6 +86,8 @@
 **Actor:** System (scheduler)
 **KANO:** Must-be
 **V×C:** Big Bet
+**Priority:** P1
+**MVP:** true
 **Delivery Stripe:** Subscription Billing (Stripe 2)
 **Status:** 1_Backlog
 **Business rules:** BR-SUB-001, BR-SUB-002, BR-PAY-001
@@ -90,6 +100,8 @@
 **Actor:** Workspace Admin
 **KANO:** Performance
 **V×C:** Big Bet
+**Priority:** P2
+**MVP:** true
 **Delivery Stripe:** Subscription Billing (Stripe 2)
 **Status:** 1_Backlog
 **Business rules:** BR-PAY-001, BR-INV-001
@@ -102,6 +114,8 @@
 **Actor:** Workspace Admin
 **KANO:** Must-be
 **V×C:** Quick Win
+**Priority:** P1
+**MVP:** true
 **Delivery Stripe:** Subscription Billing (Stripe 2)
 **Status:** 1_Backlog
 **Business rules:** BR-INV-001, BR-REG-001
@@ -114,6 +128,8 @@
 **Actor:** Workspace Admin
 **KANO:** Must-be
 **V×C:** Quick Win
+**Priority:** P1
+**MVP:** true
 **Delivery Stripe:** Subscription Billing (Stripe 2)
 **Status:** 1_Backlog
 **Business rules:** BR-INV-001, BR-REG-001
@@ -126,6 +142,8 @@
 **Actor:** Workspace Admin
 **KANO:** Performance
 **V×C:** Fill-in
+**Priority:** P2
+**MVP:** true
 **Delivery Stripe:** Subscription Billing (Stripe 3)
 **Status:** 1_Backlog
 **Business rules:** BR-SUB-001, BR-PAY-001
@@ -138,6 +156,8 @@
 **Actor:** Internal Admin
 **KANO:** Must-be
 **V×C:** Fill-in
+**Priority:** P2
+**MVP:** true
 **Delivery Stripe:** Subscription Billing (Stripe 3)
 **Status:** 1_Backlog
 **Business rules:** BR-SUB-001, BR-SUB-003, BR-INV-001
@@ -173,10 +193,47 @@
 
 ---
 
+## Features Flagged for Splitting
+
+| Feature ID | Reason | Suggested split |
+|---|---|---|
+| FEAT-SUB-005 | Renewal job + retry logic + grace period transition are three distinct concerns | FEAT-SUB-005a: Trigger renewal payment attempt; FEAT-SUB-005b: Retry logic on failure; FEAT-SUB-005c: Grace period expiry → Cancel transition |
+
+> Note: Splitting deferred to design phase. If FEAT-SUB-005 exceeds 14-day build estimate during pm-feature-design, apply the split above.
+
+---
+
+## Feature Count Summary
+
+| Domain | Feature Sets | Features | MVP |
+|---|---|---|---|
+| Auth & Workspace | 2 | 8 | 8 |
+| Projects & Tasks | 2 | 12 | 12 |
+| Collaboration & Notifications | 1 | 6 | 6 |
+| Subscription Billing | 3 | 10 | 10 |
+| **Total** | **8** | **36** | **36** |
+
+> Auth, Projects & Tasks, and Collaboration features (FEAT-USR-*, FEAT-WS-*, FEAT-PRJ-*, FEAT-NOTIF-*) not shown here - appended before this section.
+
+---
+
+## Features Not in Scope (from PRD)
+
+| Capability | Reason excluded | Reconsider when |
+|---|---|---|
+| Enterprise self-serve billing | Manual quote process maintained; insufficient volume to justify automation | When > 3 Enterprise deals close per quarter |
+| Multiple payment providers (non-Stripe) | Stripe covers 100% of current ICP (EU cards). Multi-provider adds compliance overhead. | When first non-Stripe market represents > 15% of MRR |
+| Multi-currency billing | EUR-only covers current ICP. Multi-currency adds tax complexity beyond Stripe Tax defaults. | When first non-EUR customer represents > 10% of MRR |
+| Dunning email sequences | Basic payment failure notification in v1. Full dunning sequence (3-email cadence) deferred. | After churn analysis shows dunning affects > 5% of PastDue recoveries |
+| Immediate cancellation with refund | End-of-period cancellation is standard SaaS practice. Refund path is manual via Stripe dashboard in v1. | If NPS data shows refund policy is a top-3 objection to purchase |
+| Usage-based billing | Flat-rate pricing is proven simpler to convert. Usage metering adds metering infrastructure. | Phase 3 - if Pro tier customers consistently hit plan limits |
+
+---
+
 ## Changelog
 
 | Version | Date | Change | Triggered by |
 |---|---|---|---|
 | 1.0 | 2026-05-01 | Initial feature list - FEAT-USR-*, FEAT-WS-*, FEAT-PRJ-* | Phase 5 init |
 | 1.1 | 2026-05-20 | FEAT-USR-001, FEAT-WS-003 promoted | pm-stripe |
-| 1.2 | 2026-06-01 | FEAT-SUB-001..010 appended | subscription-billing initiative FI Append |
+| 1.2 | 2026-06-01 | FEAT-SUB-001..010 appended; Priority + MVP fields added | subscription-billing initiative FI Append |

@@ -157,4 +157,4 @@ Is the PaymentMethod expiry date in the past?
 |---|---|---|---|
 | 1.0 | 2026-06-01 | Initial tables: TBL-SUB-01, TBL-SUB-02, TRE-PAY-01, SCR-SUB-01 | subscription-billing initiative init |
 | 1.1 | 2026-06-01 | TBL-SUB-01 finalized | pm-feature-design FEAT-SUB-005 |
-| 1.1 | 2026-06-01 | TRE-PAY-01 finalized | pm-feature-design FEAT-SUB-004 |
+| 1.2 | 2026-06-01 | TRE-PAY-01 finalized | pm-feature-design FEAT-SUB-004 |

@@ -1,9 +1,11 @@
 # Initiative PRD - Subscription Billing
+> **Initiative:** subscription-billing
+> **Domain:** SUB - Subscription Billing
+> **Date:** 2026-06-01
+> **Version:** 1.0
+> **Status:** Approved - drives Phase 4 append + Phase 5 append
 > **Parent PRD:** product/PRD_master.md
 > **Discovery source:** initiatives/subscription-billing/discovery/
-> **Version:** 1.0
-> **Last updated:** 2026-06-01
-> **Status:** Approved - drives Phase 4 append + Phase 5 append
 
 ---
 

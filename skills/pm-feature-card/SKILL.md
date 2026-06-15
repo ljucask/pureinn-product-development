@@ -134,15 +134,22 @@ flag_default: off
 
 *Populated by pm-feature-design (JIT). Links to live registers as source of truth.*
 
-- **Affected entity:** [Entity Name](/domain/entities.md#entity-name)
-  - State before: [state]
-  - State after: [state]
-  - Transition trigger: [event name]
+**Rules enforced in this feature:**
 
-- **Business rules enforced:**
-  - [BR-XXX-001](/domain/business_rules.md#br-xxx-001) - [Rule name: one-line summary]
+| Rule ID | Rule | Priority | Enforcement point |
+|---|---|---|---|
+| [BR-XXX-001](/domain/business_rules.md#br-xxx-001) | [Rule name: one-line summary] | [Critical/High/Medium] | [Service method / middleware / DB constraint] |
 
-- **Decision model:** [TBL-XXX-01](/domain/decision_models.md#tbl-xxx-01) - [Table name, if applicable]
+**Entity guard conditions (from entities.md):**
+
+| Entity | Transition | Guard condition |
+|---|---|---|
+| [Entity Name](/domain/entities.md#entity-name) | [State before] → [State after] | [exact guard expression] |
+
+**Decision model:** [TBL-XXX-01](/domain/decision_models.md#tbl-xxx-01) - [Table name, if applicable]
+
+**What this feature does NOT do:**
+- [explicit scope exclusion]
 
 ---
 
