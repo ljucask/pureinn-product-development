@@ -1,5 +1,26 @@
 # Changelog
 
+## [5.1.0] - 2026-06-24
+
+Fills the long-standing "Rebuild playbook coming soon" slot in the orchestrator.
+
+### New Skills
+
+- **pm-reconcile** - the Rebuild playbook for onboarding an existing product whose legacy docs (BRD, FSD, domain/entity models, business rules) conflict with the code and each other. Two-phase, argument-driven:
+  - **Plan** (`/pm-reconcile`): inspects the docs + codebase surface, detects which areas exist, maps each to its target Pureinn artifact, and defines the order. Writes `reconciliation_plan.md` and initializes `state.json reconcile.areas[]`.
+  - **Per-area execution** (`/pm-reconcile domain | rules | features | ...`): reconciles one layer at a time in dependency order (entities → rules → features = registers 1 → 2 → 3 → 4). State-machine **structure** reconciles in `domain`; transition **guard conditions** reconcile in `rules`.
+  - Asymmetric source-of-truth model: **code = truth for structure** (names, shape, what is implemented - docs rewritten to match, mechanically); **docs = truth for business logic** (rule values, decisions - code divergences flagged as `DIV-NN` and asked via AskUserQuestion, never silently resolved). Docs ahead of code → `specified, not implemented` (backlog), not fabricated into the registers. Code never changes.
+  - Appends to a living **Reconciliation Report** per area, then rebuilds that register via the existing register skills in reconciled mode. Business logic migrated fully now; feature technical design (Sections 2-3) stays JIT.
+- **pm-reconcile-status** - read-only progress dashboard for the multi-session reconcile. Reads `reconciliation_plan.md` + `state.json`, shows which areas are done/in-progress/pending, surfaces open divergences awaiting a team decision, and routes to the next area command. The session re-entry tool for a long-running rebuild (the reconcile analogue of pm-stripe).
+
+### Changed
+
+- Orchestrator (`/pureinn`): the **Rebuild** route (Playbook D) is now live and points to `/pm-reconcile`. Migration path documented as two sub-paths - A1 reconcile (conflicting docs) vs A2 bootstrap (clean/absent docs). Updated in COMMAND.md, README.md, FRAMEWORK_GUIDE.md.
+- `pm-entity-registry`, `pm-business-rules-library`, `pm-reverse-extract`: added a **reconciled mode** note - when a Reconciliation Report exists, it is the authoritative input; they do not re-question what it already settled.
+
+---
+
+
 ## [5.0.0] - 2026-06-23
 
 Framework-wide consistency audit (follow-up to the v4.11.0 Feature Card alignment).

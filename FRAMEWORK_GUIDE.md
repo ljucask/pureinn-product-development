@@ -290,7 +290,19 @@ Use when: product exists, active users, goal is adding new functionality.
 
 ### Option A - Migration path (product built outside the framework)
 
-Run once to sync current state into Notion and generate Claude context:
+Run once to sync current state into Notion and generate Claude context.
+
+**Two sub-paths - choose by the state of the legacy docs:**
+
+**A1 - Rebuild with reconciliation** (legacy docs exist and conflict with code / each other, or the team is changing - you need one reconciled source of truth):
+
+| Skill | Output | From |
+|---|---|---|
+| `/pureinn` + `/common-ground` + `/impeccable document` + `/pm-glossary` | Workspace + technical + design context | Pureinn / fullstack-dev-skills / impeccable |
+| `/pm-reconcile` | **Plan**, then reconcile **per layer** in order: `/pm-reconcile domain` → `rules` → `features`. Code = structural truth, docs = business logic, real conflicts asked. Living Reconciliation Report; registers + feature inventory rebuilt in reconciled mode. Old docs become reference only. | Pureinn |
+| `/pm-reconcile-status` | Progress dashboard across the multi-session reconcile - done/pending areas, open divergences, next command. | Pureinn |
+
+**A2 - Bootstrap from code** (docs already clean or absent - just sync current state):
 
 | Skill | Output | From |
 |---|---|---|
@@ -302,7 +314,7 @@ Run once to sync current state into Notion and generate Claude context:
 | `/pm-business-rules-library` | business_rules.md + decision_models.md (extracted existing rules) | Pureinn |
 | `/pm-reverse-extract` | feature_list.md + Feature hierarchy pushed to Notion; delivery-stripes.md for Claude context | Pureinn |
 
-Then proceed directly to Phase 6 + 7 (JIT per feature).
+Both then proceed directly to Phase 6 + 7 (JIT per feature).
 
 ---
 

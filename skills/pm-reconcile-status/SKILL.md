@@ -1,0 +1,90 @@
+---
+name: pm-reconcile-status
+description: Progress dashboard for an in-flight reconciliation rebuild. Reads the Reconciliation Plan and state.json, shows which areas are done, in progress, and pending, surfaces open business-logic divergences that still need the team's decision, and routes to the next area command. Run it every time you sit down to a multi-session reconcile. Read-only - it changes nothing.
+license: MIT
+metadata:
+  author: https://github.com/ljucask
+  version: "1.0.0"
+  domain: product-management
+  triggers: reconcile status, reconciliation progress, rebuild status, what is left to reconcile, reconcile dashboard
+  role: orchestrator
+  scope: status
+  output-format: dashboard
+  related-skills: pm-reconcile, pm-entity-registry, pm-business-rules-library, pm-reverse-extract
+---
+
+# PM - Reconcile Status
+
+## What this skill does
+
+A read-only dashboard for a reconciliation rebuild driven by `pm-reconcile`. Because reconciliation runs across multiple sessions, this skill answers "where are we" at a glance: which areas are done, what is next, and which divergences still need a human ruling. It writes nothing.
+
+Run it whenever you return to a reconcile in progress, before deciding what to do next.
+
+---
+
+## Dependencies
+
+- `pm-reconcile` plan exists: `reconcile/reconciliation_plan.md` and `state.json reconcile.areas[]`.
+
+If no plan exists, do not guess. Tell the user:
+```
+No reconciliation plan found. Run /pm-reconcile first to inspect the docs and build the plan.
+```
+
+---
+
+## Step 1: Read state
+
+Read `state.json reconcile` (machine source of truth for status) and `reconcile/reconciliation_plan.md` (area definitions). If they disagree, trust `state.json` and note the drift. Read `reconcile/reconciliation_report.md` to count and list open divergences (`DIV-NN` rows with no ruling, and any "Open questions for the team").
+
+## Step 2: Render the dashboard
+
+```
+RECONCILE STATUS - [Product Name]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Scope:  [domain-by-domain / whole product]    Policy: [source-of-truth policy]
+Progress: [X]/[N] areas done
+
+ #  AREA       TARGET                                STATUS         DIV OPEN
+ 1  domain     domain/entities.md                    ✓ done         0
+ 2  rules      business_rules.md + decision_models   ▸ in_progress  2
+ 3  features   features/feature_list.md              · pending      -
+
+NEEDS A TEAM DECISION (open divergences)
+  DIV-03 [rules] refund window: doc 14d vs code 30d - decide fix code / update rule
+  [open question from report]
+
+NEXT
+  ▸ /pm-reconcile rules        (resume the in-progress area)
+  then /pm-reconcile features
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+Rules for "NEXT":
+- If an area is `in_progress` → resume it first.
+- Else the lowest-order `pending` area is next.
+- If all areas are `done` → reconciliation is complete; route onward (below).
+
+## Step 3: Route
+
+| Situation | Output |
+|---|---|
+| Area in progress | "Resume with `/pm-reconcile [area]`." |
+| Next area pending | "Run `/pm-reconcile [area]` to continue." |
+| Open divergences block confidence | "Decide DIV-NN with the team before marking rules Final; they are listed above." |
+| All areas done | "Reconciliation complete. Review `reconciliation_report.md` with the team, then `/pm-stripe` for JIT delivery." |
+
+---
+
+## Handoff
+
+```
+---
+**Čo si teraz má:** Aktuálny obraz rekonciliácie - čo hotové, čo zostáva, ktoré divergencie čakajú na rozhodnutie tímu.
+
+**Ďalší krok:** `/pm-reconcile [oblasť]` podľa NEXT vyššie.
+Keď sú všetky oblasti hotové → `/pm-stripe` pre JIT delivery.
+
+**Môžeš preskočiť ak:** rekonciliácia ešte nezačala — vtedy spusti `/pm-reconcile` (plán) najprv.
+```

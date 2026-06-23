@@ -34,6 +34,8 @@ Extracts the full feature inventory from an existing product and formalizes it i
 
 Can be re-run at any point to re-sync Notion after significant state changes.
 
+**Reconciled mode (when run by pm-reconcile):** If `reconcile/reconciliation_report.md` exists, it is the authoritative input. Derive features from the reconciled code reality, map the old feature names as aliases, include code-only features from the report, and do NOT create cards for doc-only / not-implemented items (those are backlog). Do not re-question what the report already settled.
+
 ---
 
 ## What this skill does NOT do

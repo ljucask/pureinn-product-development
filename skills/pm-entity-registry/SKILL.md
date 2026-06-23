@@ -40,6 +40,12 @@ This register is the architectural foundation of the FDD+SDD framework. It defin
 
 ---
 
+## Reconciled mode (when run by pm-reconcile)
+
+If `reconcile/reconciliation_report.md` exists, it is the authoritative input - use it instead of a naive extraction. Code is truth for structure and naming; the old docs' business meaning is already reconciled into the report. Carry the report's resolved entities, attributes, and state machines plus any flagged divergences; do not re-derive or re-question what the report already settled.
+
+---
+
 ## Dependencies
 
 **Required before running:**

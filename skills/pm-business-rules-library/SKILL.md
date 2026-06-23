@@ -42,6 +42,12 @@ These registers replace the BRD as standalone documents. Business rules are no l
 
 ---
 
+## Reconciled mode (when run by pm-reconcile)
+
+If `reconcile/reconciliation_report.md` exists, it is the authoritative input - use it instead of a naive extraction. Business rule values come from the reconciled docs, expressed against the real code entities. Rules tied to an unresolved divergence (DIV-NN in the report) stay `Draft` with a link to the report row; only divergence-free rules go `Final`. Do not re-question what the report already settled.
+
+---
+
 ## Dependencies
 
 **Required before running:**

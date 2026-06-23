@@ -505,12 +505,12 @@ If not already determined from document analysis, use the AskUserQuestion tool:
   - A: "No - building from scratch"
   - B: "Yes, but no active users yet"
   - C: "Yes, with active users - adding features" (Recommended if product exists)
-  - D: "Yes, with active users - rebuilding or migrating" — description: "Coming soon - will be routed to best available path"
+  - D: "Yes, with active users - rebuilding or migrating from old docs" — description: "Existing code + legacy docs (BRD/FSD/domain models) that need reconciling into a clean Pureinn structure"
 
 Map to playbook:
 - A or B → **Greenfield**
 - C → **Feature**
-- D → **Rebuild** *(coming soon - see note below)*
+- D → **Rebuild**
 
 **Feature playbook note:**
 Feature Implementation does not start at Phase 1. It starts at Phase 0 (context setup).
@@ -518,18 +518,18 @@ Phase 0 runs once per project onboarding - not per feature. After Phase 0, each 
 If Phase 0 is already done (context exists from a prior session), skip to Feature Viability Assessment.
 
 **Rebuild playbook note:**
-Rebuild playbook is not yet available. If user selects D, inform them:
+Rebuild is for an existing product onboarded to Pureinn where legacy docs and the codebase disagree. Route by what the user has:
 ```
-Rebuild playbook je momentálne v príprave (coming soon).
-
-Pre technické transformácie odporúčam:
-- Ak ide o migráciu s funkčnou paritou: použi Feature Implementation playbook
-  (existujúce features ako "rebuild" features, JIT spec per feature)
-- Ak ide o greenfield rewrite: použi Greenfield playbook
-
-Ktorá z týchto možností bližšie popisuje tvoju situáciu?
+- Existing code + legacy docs (BRD/FSD/domain models) that may conflict with the code:
+  → /pm-reconcile  (first plans which areas to reconcile and in what order, then reconciles
+                    per layer: /pm-reconcile domain → rules → features. Produces a living
+                    Reconciliation Report and rebuilds the registers + feature inventory clean.
+                    Track multi-session progress with /pm-reconcile-status. Old docs become reference only.)
+- Existing code, docs already clean or absent (just need to bootstrap from code):
+  → naive migration path: /pm-entity-registry + /pm-business-rules-library + /pm-reverse-extract
+- Greenfield rewrite (throwing the code away): → Greenfield playbook
 ```
-Then route to the appropriate available playbook based on user's answer.
+Confirm which case fits, then route. For the first case, `/pm-reconcile` is the entry point.
 
 ---
 
@@ -928,7 +928,7 @@ ACTIVE STRIPE: [stripe name or "none"]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-**Rebuild dashboard:** *(Rebuild playbook coming soon - not shown, user routed to Feature or Greenfield)*
+**Rebuild dashboard:** entry point is `/pm-reconcile` (plan, then per-layer reconcile: domain → rules → features). Show reconcile progress via `/pm-reconcile-status`. After all areas are done, the project drops into the Phase 6 JIT delivery cycle - show the standard stripe/feature queue.
 
 Then show the skills queue for the current phase.
 
@@ -1108,14 +1108,27 @@ MIGRATION PATH (existing product built outside the framework)
   /common-ground        → technical context (stack, APIs, debt) → COMMON-GROUND.md
   /impeccable document     → design context (design system, components) → PRODUCT.md + DESIGN.md
   /pm-glossary          → start domain glossary
-  /pm-entity-registry   → entities.md (extract from existing codebase/docs)
-  /pm-business-rules-library → business_rules.md + decision_models.md (extract existing rules)
-  /pm-reverse-extract   → reads existing Feature Cards/codebase
+
+  TWO SUB-PATHS:
+
+  A) Legacy docs exist and may conflict with the code (old BRD/FSD/domain models),
+     and/or the team is changing - you need one reconciled source of truth:
+     /pm-reconcile       → scans code, parses old docs, reconciles (code = structural truth,
+                            docs = business logic, conflicts → AskUserQuestion)
+                          → Reconciliation Report (the team's "where are we" brief)
+                          → then orchestrates the rebuild below in reconciled mode.
+                          This is the entry point - run it instead of the three skills standalone.
+
+  B) Docs already clean or absent - just bootstrap from code:
+     /pm-entity-registry   → entities.md (extract from existing codebase/docs)
+     /pm-business-rules-library → business_rules.md + decision_models.md (extract existing rules)
+     /pm-reverse-extract   → reads existing Feature Cards/codebase
                           → extracts feature inventory in FDD format (FEAT-[DOMAIN]-[NUMBER])
                           → Notion: creates Feature hierarchy (primary: team visibility)
                           → generates feature_list.md, delivery-stripes.md
                           Use INSTEAD of pm-features-list + pm-mvp-scope.
-                          Then proceed to Phase 6 + 7 (JIT per feature) directly.
+
+  Both then proceed to Phase 6 + 7 (JIT per feature) directly.
 
 ─────────────────────────────────────────────
 

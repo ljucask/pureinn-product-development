@@ -172,6 +172,8 @@ If FEAT-ID doesn't exist yet: add it to `feature_list.md`, create stub card, the
 ### Feature Implementation - migration path
 | Skill | Purpose |
 |---|---|
+| `/pm-reconcile` | **Rebuild playbook.** Existing code + legacy docs (BRD/FSD/domain models) that conflict with each other and the code. First plans (which areas, what order, target structure), then reconciles per layer - `/pm-reconcile domain` → `rules` → `features` - with code = structural truth, docs = business logic, real conflicts asked. Produces a living Reconciliation Report and rebuilds the registers + feature inventory clean. Entry point when docs are stale or the team is changing. |
+| `/pm-reconcile-status` | Read-only progress dashboard for a multi-session reconcile: which areas are done/pending, open divergences awaiting a team decision, next area command. |
 | `/pm-entity-registry` | Extracts entity states from existing codebase into entities.md |
 | `/pm-business-rules-library` | Extracts business rules from existing codebase into business_rules.md + decision_models.md |
 | `/pm-reverse-extract` | Extracts feature inventory from an existing product into Notion + local artifacts. Run instead of pm-features-list + pm-mvp-scope for products built outside the framework. |
@@ -182,7 +184,7 @@ If FEAT-ID doesn't exist yet: add it to `feature_list.md`, create stub card, the
 
 | MCP | Skills | Without MCP |
 |---|---|---|
-| Notion | `pm-features-list`, `pm-mvp-scope`, `pm-glossary`, `pm-domain-model`, `pm-kpis`, `pm-privacy-requirements`, `pm-reverse-extract`, `pm-feature-card` | Markdown artifacts only, Notion push skipped |
+| Notion | `pm-features-list`, `pm-mvp-scope`, `pm-glossary`, `pm-domain-model`, `pm-kpis`, `pm-privacy-requirements`, `pm-reverse-extract`, `pm-reconcile`, `pm-feature-card` | Markdown artifacts only, Notion push skipped |
 | Figma | `pm-feature-design` | Paste Figma URL or attach screenshot manually |
 | Excalidraw | `pm-diagrams`, `pm-domain-model` | Mermaid.js output only (state machines, sequence diagrams always available) |
 | Gamma | `pm-pitch-deck` | Slide content brief only |
