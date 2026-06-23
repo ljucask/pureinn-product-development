@@ -119,6 +119,7 @@ id: FEAT-[DOMAIN]-[NUMBER]
 title: "[Action] [Result] [Object]"
 status: 1_Backlog
 stripe: [stripe-name]
+actor: [User / Host / Admin / System]
 owner: unassigned
 priority: P1
 prd_ref: /product/PRD.md#[section]

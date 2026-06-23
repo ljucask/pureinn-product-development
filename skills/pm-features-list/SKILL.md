@@ -463,6 +463,7 @@ id: [FEAT-ID]
 title: "[Action] [Result] [Object]"
 status: 1_Backlog
 stripe: TBD
+actor: [User / Host / Admin / System]
 owner: unassigned
 priority: [P1/P2/P3 from V×C]
 prd_ref: /product/PRD.md#[relevant-section]
@@ -473,16 +474,16 @@ flag_default: off
 # Feature Card: {{title}}
 
 ## 1. Biznis Mantinely (SDD Input)
-*Populated by pm-feature-design (JIT) - not yet.*
+*TBD - populated by /pm-feature-design [FEAT-ID]*
 
 ## 2. Acceptance Criteria
-*Populated by pm-feature-design (JIT) - not yet.*
+*TBD - populated by /pm-feature-design [FEAT-ID]*
 
 ## 3. JIT Technical Design (FDD Design)
-*Populated by pm-feature-design (JIT) - not yet.*
+*TBD - populated by /pm-feature-design [FEAT-ID]*
 
 ## 4. Realizacny Protokol (Build Verification)
-*Populated after build - not yet.*
+*TBD - populated after build and Code Inspection*
 ```
 
 After creating all stub cards: confirm count and remind user that:
@@ -534,17 +535,17 @@ content:
 
   ---
 
-  ## Section 1: Biznis Mantinely
-  *TBD - run /pm-feature-design [FEAT-ID]*
+  ## 1. Biznis Mantinely (SDD Input)
+  *TBD - populated by /pm-feature-design [FEAT-ID]*
 
-  ## Section 2: Acceptance Criteria
-  *TBD - run /pm-feature-design [FEAT-ID]*
+  ## 2. Acceptance Criteria
+  *TBD - populated by /pm-feature-design [FEAT-ID]*
 
-  ## Section 3: Technical Design
-  *TBD - run /pm-feature-design [FEAT-ID]*
+  ## 3. JIT Technical Design (FDD Design)
+  *TBD - populated by /pm-feature-design [FEAT-ID]*
 
-  ## Section 4: Realizacny Protokol
-  *TBD - filled after build*
+  ## 4. Realizacny Protokol (Build Verification)
+  *TBD - populated after build and Code Inspection*
 ```
 
 Push features in batches of up to 100 per call if the list is large.

@@ -234,15 +234,18 @@ Create `features/cards/FEAT-[DOMAIN]-NNN.md` with stub frontmatter:
 ```markdown
 ---
 id: FEAT-[DOMAIN]-NNN
-title: [Feature Name]
-stripe: [Stripe name]
+title: "[Action] [Result] [Object]"
 status: 1_Backlog
+stripe: [stripe-name]
 actor: [User / Host / Admin / System]
-prd_ref: "[product/PRD_master.md or initiatives/[slug]/prd.md - section TBD]"
-feature_flag: "[kebab-case-feature-name]"
+owner: unassigned
+priority: [P1/P2/P3 - assign during planning]
+prd_ref: /product/PRD_master.md#[section]
+feature_flag: [domain.feature-name]
+flag_default: off
 ---
 
-# FEAT-[DOMAIN]-NNN: [Feature Name]
+# Feature Card: {{title}}
 
 > **Status:** 1_Backlog - stub created by pm-reverse-extract
 > **Next step:** Run /pm-feature-design FEAT-[DOMAIN]-NNN to complete Sections 1-3 before build
@@ -259,17 +262,17 @@ feature_flag: "[kebab-case-feature-name]"
 
 ---
 
-## Section 1: Biznis Mantinely
-*TBD - run pm-feature-design*
+## 1. Biznis Mantinely (SDD Input)
+*TBD - populated by /pm-feature-design [FEAT-ID]*
 
-## Section 2: Acceptance Criteria
-*TBD - run pm-feature-design*
+## 2. Acceptance Criteria
+*TBD - populated by /pm-feature-design [FEAT-ID]*
 
-## Section 3: Technical Design
-*TBD - run pm-feature-design*
+## 3. JIT Technical Design (FDD Design)
+*TBD - populated by /pm-feature-design [FEAT-ID]*
 
-## Section 4: Realizacny Protokol
-*TBD - filled after build and code inspection*
+## 4. Realizacny Protokol (Build Verification)
+*TBD - populated after build and Code Inspection*
 ```
 
 For features with Status = Done that have no Feature Card: create a minimal stub with status `6_Shipped` and a note that the feature is live - no JIT design needed.
@@ -316,35 +319,34 @@ properties:
   Artefact Name: FEAT-[DOMAIN]-NNN: [Feature Name]
   Artefact Type: Feature
   FEAT-ID: FEAT-[DOMAIN]-NNN
+  Short Description: [1-sentence description]
   Status: [mapped status]
   Dev Stripe: Stripe [N]
-  Phase: MVP
-  Short Description: [1-sentence description]
 
 content:
-  ## [Feature Name]
+  ## Description
 
   [2-3 sentence description from extraction: what it does, who uses it, value]
 
-  ## Current State
+  ## Current state (extracted)
 
-  **Status:** [Done / In Progress / Planned]
+  **Implementation status:** [Done / In Progress / Planned]
   **Evidence:** [file path or document where this was found]
   **Known gaps:** [what is missing before build]
 
   ---
 
-  ## Section 1: Biznis Mantinely
-  *TBD - run /pm-feature-design [FEAT-ID]*
+  ## 1. Biznis Mantinely (SDD Input)
+  *TBD - populated by /pm-feature-design [FEAT-ID]*
 
-  ## Section 2: Acceptance Criteria
-  *TBD - run /pm-feature-design [FEAT-ID]*
+  ## 2. Acceptance Criteria
+  *TBD - populated by /pm-feature-design [FEAT-ID]*
 
-  ## Section 3: Technical Design
-  *TBD - run /pm-feature-design [FEAT-ID]*
+  ## 3. JIT Technical Design (FDD Design)
+  *TBD - populated by /pm-feature-design [FEAT-ID]*
 
-  ## Section 4: Realizacny Protokol
-  *TBD - filled after build*
+  ## 4. Realizacny Protokol (Build Verification)
+  *TBD - populated after build and Code Inspection*
 ```
 
 Leave blank: `KANO Category`, `V×C Quadrant`, `Priority`, `Feature Card URL` - filled later by pm-feature-design.

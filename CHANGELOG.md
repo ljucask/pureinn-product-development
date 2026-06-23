@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.11.0] - 2026-06-23
+
+### Feature Card consistency: unified structure, headers, naming and placeholder text across pm-feature-card, pm-features-list, pm-feature-design and pm-reverse-extract (.md + Notion parity)
+
+---
+
+
 ## [4.10.0] - 2026-06-15
 
 ### Audit and align all example documents with skills: bug fixes, missing sections, skill template updates (Section 1 table format, BC numbered format, Full ERD)
