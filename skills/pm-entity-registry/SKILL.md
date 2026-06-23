@@ -1,6 +1,6 @@
 ---
 name: pm-entity-registry
-description: Build the Entity & State Registry - Live Register 1 of 4 in the FDD+SDD framework. Extracts business entities from PRD Business Capabilities, defines their states and transitions in Mermaid.js, and writes to /domain/entities.md. Phase 4 skill - runs after PRD is complete. Replaces pm-domain-model in the new FDD+SDD architecture.
+description: Build the Entity & State Registry - Live Register 1 of 4 in the FDD+SDD framework. Extracts business entities from PRD Business Capabilities, defines their states and transitions in Mermaid.js, and writes to /domain/entities.md. Phase 4 skill - runs after PRD is complete. This is the operational register; pm-domain-model is the optional higher-level companion (cross-domain ERD and domain boundaries) that sits above it.
 license: MIT
 metadata:
   author: https://github.com/ljucask
@@ -10,7 +10,7 @@ metadata:
   role: specialist
   scope: specification
   output-format: document
-  related-skills: pm-prd, pm-business-rules-library, pm-features-list
+  related-skills: pm-prd, pm-domain-model, pm-business-rules-library, pm-features-list
 ---
 
 # PM - Entity Registry
@@ -160,7 +160,7 @@ Save to: `pureinn-workspace/[project-slug]/domain/entities.md`
 ## [Entity Name 1] (e.g., Order)
 
 **Business role:** [What this entity represents in the business domain]
-**Owned by Feature Set:** [FS-ID - filled after pm-features-list]
+**Owned by Feature Set:** [FS-NN: name - filled after pm-features-list]
 
 **States:**
 

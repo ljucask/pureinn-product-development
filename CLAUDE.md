@@ -31,6 +31,15 @@ FRAMEWORK_GUIDE.md  - Detailed playbook and skill reference
 CHANGELOG.md        - Version history
 ```
 
+### Path conventions (workspace artifacts)
+
+Two distinct contexts - keep them consistent in every skill:
+
+- **File save locations** (where a skill writes output): full workspace-relative path, no leading slash - `pureinn-workspace/[project-slug]/domain/entities.md`.
+- **In-document cross-references** (links between artifacts, e.g. a Feature Card pointing to a rule): workspace-root-relative with leading slash - `[BR-ORD-001](/domain/business_rules.md#br-ord-001)`, `/features/cards/FEAT-ORD-001.md`. The leading slash means "from the project workspace root".
+
+Never use a leading slash for a save location, and always use one for a cross-reference link.
+
 ---
 
 ## Update and versioning process
@@ -43,7 +52,7 @@ Edit skill files directly in this repo (`skills/[name]/SKILL.md` or `commands/[n
 
 | Change type | Version bump | Examples |
 |---|---|---|
-| Bug fix, text correction, clarification | **patch** `1.0.x` | Fixed logic error in pm-brd, corrected description |
+| Bug fix, text correction, clarification | **patch** `1.0.x` | Fixed logic error in pm-feature-design, corrected description |
 | New skill, significant skill update, new MCP integration | **minor** `1.x.0` | Added pm-competitive-analysis, updated pm-hypotheses flow |
 | Renamed/removed skill, broken workflow change, structural change | **major** `x.0.0` | pm-business-model renamed, skill removed, phase restructure |
 
@@ -55,7 +64,7 @@ Every release - in this order:
 # 1. Make your edits to skill/command files
 
 # 2. Run release script (handles version bump + CHANGELOG entry)
-./scripts/release.sh patch "Fixed X in pm-brd"
+./scripts/release.sh patch "Fixed X in pm-feature-design"
 ./scripts/release.sh minor "Added pm-competitive-analysis skill"
 ./scripts/release.sh major "Renamed pm-business-model to pm-revenue-model"
 

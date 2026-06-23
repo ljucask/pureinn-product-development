@@ -1,5 +1,31 @@
 # Changelog
 
+## [5.0.0] - 2026-06-23
+
+Framework-wide consistency audit (follow-up to the v4.11.0 Feature Card alignment).
+
+### Breaking Changes
+
+- **Removed deprecated skills** `pm-brd`, `pm-fsd`, `pm-feature-set-overview` (the entire `skills/deprecated/` folder). They have been non-functional since v4.0.0.
+  - Migration: `pm-brd` → `pm-entity-registry` (entities + state machines) + `pm-business-rules-library` (rules + decision models). `pm-fsd` → `pm-feature-design` (JIT per-feature design). `pm-feature-set-overview` → `pm-feature-card` + `pm-prd`.
+
+### Changed
+
+- **pm-domain-model** repositioned as the optional higher-level companion to `pm-entity-registry` (cross-domain ERD + domain boundaries above the operational `entities.md` register). Removed the contradictory "Replaces pm-domain-model" wording from `pm-entity-registry`; the two are complementary, not alternatives.
+- **Feature Set ID system (FS-NN):** Feature Sets now get a stable globally-sequential ID (`FS-01`, `FS-02`, ... continuing across domains). `pm-features-list` assigns them; `feature_set: "FS-NN: name"` added to the canonical Feature Card frontmatter (pm-feature-card, pm-features-list, pm-reverse-extract). All `[FS-ID]` references normalized to the `FS-NN: Name` format.
+- Removed lingering deprecated-skill mentions from active skill descriptions (pm-feature-design, pm-business-rules-library) and CLAUDE.md examples. Historical CHANGELOG entries left intact.
+
+### Fixed
+
+- **pm-features-list** Notion cache key: `notion.product_features_data_source_id` → `notion_ids.feature_backlog` (now matches the convention used by all other Notion-pushing skills).
+
+### Docs
+
+- Documented workspace path conventions in CLAUDE.md: full no-leading-slash paths for file save locations, leading-slash workspace-root-relative paths for in-document cross-references.
+
+---
+
+
 ## [4.11.0] - 2026-06-23
 
 ### Feature Card consistency: unified structure, headers, naming and placeholder text across pm-feature-card, pm-features-list, pm-feature-design and pm-reverse-extract (.md + Notion parity)

@@ -1,6 +1,6 @@
 ---
 name: pm-domain-model
-description: Generate a Domain Model - domain boundaries, entity catalogue, relationships, and ERD diagrams. Phase 4 foundational artifact. All other Phase 4-6 outputs (entities.md, business_rules.md, Feature Cards) build on this. Two-stage output - confirm entity catalogue before generating entity definitions.
+description: Generate a Domain Model - domain boundaries, entity catalogue, relationships, and ERD diagrams. Optional Phase 4 higher-level companion to pm-entity-registry - gives the cross-domain ERD and boundary view above the operational entities.md register. Two-stage output - confirm entity catalogue before generating entity definitions.
 license: MIT
 metadata:
   author: https://github.com/ljucask

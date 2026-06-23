@@ -90,7 +90,7 @@ Creating Feature Card for: [FEAT-ID]
 1. FEATURE REFERENCE
    Feature ID: [FEAT-ID]
    Feature title (FDD format): "[Action] [Result] [Object]"
-   Feature Set: [FS-ID: Name]
+   Feature Set: [FS-NN: Name]
    From feature_list.md: [confirm feature exists]
 
 2. STRIPE ASSIGNMENT
@@ -119,6 +119,7 @@ id: FEAT-[DOMAIN]-[NUMBER]
 title: "[Action] [Result] [Object]"
 status: 1_Backlog
 stripe: [stripe-name]
+feature_set: "FS-NN: [Feature Set name]"
 actor: [User / Host / Admin / System]
 owner: unassigned
 priority: P1

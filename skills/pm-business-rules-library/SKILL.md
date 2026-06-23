@@ -1,6 +1,6 @@
 ---
 name: pm-business-rules-library
-description: Build the Business Rules Library and Decision Models Matrix - Live Registers 2 and 3 of 4 in the FDD+SDD framework. Centralizes all business rules with unique IDs (BR-XXX-001) and decision tables into /domain/business_rules.md and /domain/decision_models.md. Replaces pm-brd in the new FDD+SDD architecture. Phase 4-5 skill - initial draft at Phase 5, enriched JIT in Phase 6 per feature.
+description: Build the Business Rules Library and Decision Models Matrix - Live Registers 2 and 3 of 4 in the FDD+SDD framework. Centralizes all business rules with unique IDs (BR-XXX-001) and decision tables into /domain/business_rules.md and /domain/decision_models.md. Replaces the upfront monolithic BRD with two continuously-maintained registers. Phase 4-5 skill - initial draft at Phase 5, enriched JIT in Phase 6 per feature.
 license: MIT
 metadata:
   author: https://github.com/ljucask

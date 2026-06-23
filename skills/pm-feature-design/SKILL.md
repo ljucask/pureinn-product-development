@@ -1,6 +1,6 @@
 ---
 name: pm-feature-design
-description: JIT Design by Feature - Phase 6 skill. Just-In-Time technical design for a single feature before it enters build. Enriches the 4 live registers with guard conditions and finalized rules, generates a Mermaid.js sequence diagram, writes Acceptance Criteria, and completes Feature Card Sections 1-3. Replaces pm-fsd in the FDD+SDD architecture. Run once per feature, triggered by pm-stripe when the feature is next in its Stripe.
+description: JIT Design by Feature - Phase 6 skill. Just-In-Time technical design for a single feature before it enters build. Enriches the 4 live registers with guard conditions and finalized rules, generates a Mermaid.js sequence diagram, writes Acceptance Criteria, and completes Feature Card Sections 1-3. Replaces upfront Feature-Set design documents with JIT per-feature design. Run once per feature, triggered by pm-stripe when the feature is next in its Stripe.
 license: MIT
 metadata:
   author: https://github.com/ljucask
@@ -19,13 +19,13 @@ metadata:
 
 Produces the Just-In-Time technical design for a single feature immediately before it enters build. This is the FDD Phase 4 (Design by Feature) executed in SDD mode.
 
-**What replaces what:**
+**JIT vs. upfront design:**
 
-| Old | New |
+| Upfront approach (not used) | This skill (JIT) |
 |---|---|
-| pm-fsd (Feature Set level, upfront) | pm-feature-design (Feature level, JIT) |
-| FSD document | Register updates + sequence diagram embedded in Feature Card |
-| Written for entire FS before Stripe | Written for one Feature just before build |
+| Feature-Set-level design, written upfront | Feature-level design, written just-in-time |
+| Standalone design document | Register updates + sequence diagram embedded in Feature Card |
+| Written for an entire Feature Set before the Stripe | Written for one Feature just before build |
 
 **What this skill does in one run:**
 1. Reads the Feature Card (Section 1 is stub at this point)

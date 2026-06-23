@@ -237,6 +237,7 @@ id: FEAT-[DOMAIN]-NNN
 title: "[Action] [Result] [Object]"
 status: 1_Backlog
 stripe: [stripe-name]
+feature_set: "FS-NN: [Feature Set name - group during planning]"
 actor: [User / Host / Admin / System]
 owner: unassigned
 priority: [P1/P2/P3 - assign during planning]

@@ -218,11 +218,14 @@ Features must be:
 - Expressed from the business/user value perspective (not technical implementation)
 - NO User Stories format ("As a user I want...") - FDD grammar only
 
+**Feature Set ID convention:**
+Feature Sets are grouping labels (not spec artifacts), but each gets a stable ID for indexing and cross-reference. Assign `FS-NN` globally sequential across the whole product (FS-01, FS-02, FS-03...), continuing across domains - not reset per domain. Reference format everywhere is `FS-NN: Name` (e.g., `FS-01: Order Processing`). Each feature inherits its Feature Set's ID; this is written to the `feature_set` field of every stub Feature Card.
+
 ---
 
 ## [Domain 1: e.g., Order Management]
 
-### Feature Set: [e.g., Order Processing]
+### FS-01: [e.g., Order Processing]
 
 | ID | Feature | Actor | Priority | MVP | Stripe | Status | Dependencies |
 |---|---|---|---|---|---|---|---|
@@ -230,7 +233,7 @@ Features must be:
 | FEAT-ORD-002 | [Confirm] [order] [after payment] | [System] | P1 | true | TBD | 1_Backlog | FEAT-ORD-001, FEAT-PAY-001 |
 | FEAT-ORD-003 | [Cancel] [order] [before fulfillment] | [Customer] | P2 | true | TBD | 1_Backlog | FEAT-ORD-001 |
 
-### Feature Set: [e.g., Order Fulfillment]
+### FS-02: [e.g., Order Fulfillment]
 
 | ID | Feature | Actor | Priority | MVP | Stripe | Status | Dependencies |
 |---|---|---|---|---|---|---|---|
@@ -240,7 +243,7 @@ Features must be:
 
 ## [Domain 2: e.g., Payments]
 
-### Feature Set: [e.g., Card Payments]
+### FS-03: [e.g., Card Payments]
 
 | ID | Feature | Actor | Priority | MVP | Stripe | Status | Dependencies |
 |---|---|---|---|---|---|---|---|
@@ -463,6 +466,7 @@ id: [FEAT-ID]
 title: "[Action] [Result] [Object]"
 status: 1_Backlog
 stripe: TBD
+feature_set: "FS-NN: [Feature Set name]"
 actor: [User / Host / Admin / System]
 owner: unassigned
 priority: [P1/P2/P3 from V×C]
@@ -497,7 +501,7 @@ After creating all stub cards: confirm count and remind user that:
 
 **Runs after stub Feature Cards are created.**
 
-If no Notion database is configured (state.json `notion.product_features_data_source_id` is null and user did not provide a URL in Step 1): skip this step, output Markdown files only.
+If no Notion database is configured (state.json `notion_ids.feature_backlog` is null and user did not provide a URL in Step 1): skip this step, output Markdown files only.
 
 ### 5a. Get data source ID and template ID
 
