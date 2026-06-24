@@ -1,5 +1,14 @@
 # Changelog
 
+## [5.6.0] - 2026-06-25
+
+### Added
+
+- **`pm-reconcile` high-volume batching (checkpointed).** When a single area pass has many items to reconcile (roughly >15 rules / decision tables / features - common in legacy systems with dozens of each), it now processes them in batches by a natural grouping (rules and tables by feature set or rule category; features by feature set; entities by cluster), ~10-15 per batch. After each batch it checkpoints: appends findings to the report, records `batches_done` / `batches_total` in `state.json`, and reports `batch N/M done`. The user can stop after any batch; `/pm-reconcile-status` shows batch progress, and re-running `/pm-reconcile [area]` resumes at the next un-done batch without redoing completed ones. This bounds the AskUserQuestion load per batch instead of by the whole area's volume. Surfaced by the Vezmee onboarding (legacy has dozens of business rules and dozens of decision models). `pm-reconcile-status` dashboard gained a BATCHES column.
+
+---
+
+
 ## [5.5.1] - 2026-06-25
 
 ### Fixed

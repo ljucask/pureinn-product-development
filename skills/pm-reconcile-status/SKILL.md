@@ -46,17 +46,17 @@ RECONCILE STATUS - [Product Name]
 Scope:  [domain-by-domain / whole product]    Policy: [source-of-truth policy]
 Progress: [X]/[N] areas done
 
- #  AREA       TARGET                                STATUS         DIV OPEN
- 1  domain     domain/entities.md                    ✓ done         0
- 2  rules      business_rules.md + decision_models   ▸ in_progress  2
- 3  features   features/feature_list.md              · pending      -
+ #  AREA       TARGET                                STATUS         BATCHES  DIV OPEN
+ 1  domain     domain/entities.md                    ✓ done         1/1      0
+ 2  rules      business_rules.md + decision_models   ▸ in_progress  2/5      2
+ 3  features   features/feature_list.md              · pending      -        -
 
 NEEDS A TEAM DECISION (open divergences)
   DIV-03 [rules] refund window: doc 14d vs code 30d - decide fix code / update rule
   [open question from report]
 
 NEXT
-  ▸ /pm-reconcile rules        (resume the in-progress area)
+  ▸ /pm-reconcile rules        (resumes at batch 3/5 - completed batches are not redone)
   then /pm-reconcile features
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
