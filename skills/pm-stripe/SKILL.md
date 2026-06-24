@@ -401,3 +401,13 @@ Feature status in Feature Card frontmatter:
 State update → `pureinn-workspace/[project-slug]/state.json`:
 - `current_stripes`: list of active stripe names (remove on closure)
 - Per stripe: `active_feature`, `queue` (ordered FEAT-ID list)
+
+---
+
+## Handoff
+
+**Čo si teraz má:** Aktuálny obraz delivery - kde je každá feature v lifecycle, čo je ďalšia akcia per stripe.
+
+**Ďalší krok:** Skill, na ktorý ťa pm-stripe nasmeroval pre aktívnu feature - typicky `/pm-feature-design [FEAT-ID]` (spec) alebo build skilly podľa stavu. Spúšťaj `/pm-stripe` vždy keď si sadáš k Phase 6-7 práci.
+
+**Môžeš preskočiť ak:** Žiadny aktívny stripe a žiadne featury v queue - najprv `/pm-mvp-scope` (alebo `/pm-reverse-extract` pre existujúci produkt).

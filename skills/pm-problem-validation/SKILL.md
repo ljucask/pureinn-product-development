@@ -391,3 +391,13 @@ When [situation], I want to [motivation], so I can [expected outcome].
 ```
 pureinn-workspace/[project-slug]/artifacts/phase-2-discovery/problem-validation-summary.md
 ```
+
+---
+
+## Handoff
+
+**Čo si teraz má:** Problem Validation Summary - Phase 2 je uzavretá, máš validovaný problém ako základ pre validáciu a commercial definition.
+
+**Ďalší krok:** `/design-thinking` (Phase 3a) — ideácia a validačné hypotézy. Alebo `/pureinn` pre Phase 2 gate.
+
+**Môžeš preskočiť ak:** Problém je už silne validovaný reálnymi dátami - choď rovno na `/pm-hypotheses` [Plan mode].

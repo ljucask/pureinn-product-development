@@ -431,3 +431,13 @@ pureinn-workspace/[project-slug]/artifacts/phase-4-domain/pii-inventory.md
 pureinn-workspace/[project-slug]/artifacts/phase-4-domain/privacy-requirements.md
 pureinn-workspace/[project-slug]/artifacts/phase-4-domain/gdpr-action-plan.md
 ```
+
+---
+
+## Handoff
+
+**Čo si teraz má:** PII Inventory, Privacy Requirements a GDPR Action Plan - vieš aké osobné údaje spracúvaš a aké povinnosti z toho plynú ešte pred buildom.
+
+**Ďalší krok:** `/pm-features-list` (Phase 5) — feature inventory + KANO/V×C. Privacy pravidlá sa zapíšu ako BR governance pravidlá.
+
+**Môžeš preskočiť ak:** Phase 4 je hotová a chceš rovno plánovať features.

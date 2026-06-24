@@ -523,3 +523,13 @@ pureinn-workspace/[project-slug]/artifacts/phase-2-discovery/competitor-analysis
 pureinn-workspace/[project-slug]/artifacts/phase-2-discovery/swot-analysis.md
 pureinn-workspace/[project-slug]/artifacts/phase-2-discovery/market-timing-rationale.md
 ```
+
+---
+
+## Handoff
+
+**Čo si teraz má:** Market Size (TAM/SAM/SOM), competitor analysis, SWOT - vieš veľkosť príležitosti a konkurenčný kontext.
+
+**Ďalší krok:** Dokonči Phase 2 tracky, potom `/pm-problem-validation`. Trhové dáta neskôr vstúpia do `/pm-lean-canvas` a `/pm-business-case`.
+
+**Môžeš preskočiť ak:** Trh a konkurenciu už máš zmapované z existujúcej analýzy.

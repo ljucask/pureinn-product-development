@@ -731,3 +731,15 @@ pureinn-workspace/[project-slug]/initiatives/[slug]/prd.md
 1. `/pm-entity-registry` - append mode: extract ONB entities from Business Capabilities, append to domain/entities.md
 2. `/pm-business-rules-library` - append mode: extract ONB rules, append to domain/business_rules.md + decision_models.md
 3. `/pm-features-list` - FI append mode: extract FEAT-ONB-* features, append to features/feature_list.md
+
+---
+
+## Handoff
+
+**Čo si teraz má:** PRD - jediný syntetizujúci dokument. Product mode: exit artefakt Phase 3b (PRD_master.md, frozen). Initiative mode: scoped PRD pre nový domén.
+
+**Ďalší krok:**
+- Product mode: `/pm-domain-model` → `/pm-entity-registry` (Phase 4 - registre z Business Capabilities).
+- Initiative mode: append skilly vyššie (entity-registry → business-rules-library → features-list v append móde).
+
+**Môžeš preskočiť ak:** PRD_master.md už existuje a je frozen - nevytváraj nový, len z neho čerpaj.

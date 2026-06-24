@@ -361,3 +361,13 @@ For **external entities**: use `"External Entity Catalogue"` URL. Use `Source Sy
 - [ ] Entity Relationship Overview table updated with new cross-domain relationships (if any)
 - [ ] Changelog updated
 - [ ] File header `Last updated` updated
+
+---
+
+## Handoff
+
+**Čo si teraz má:** `entities.md` (Live Register 1) - entity, stavy a Mermaid state machines. Architektonický základ frameworku.
+
+**Ďalší krok:** `/pm-business-rules-library` — Registre 2+3 (pravidlá + decision tables), ktoré strážia prechody entít.
+
+**Môžeš preskočiť ak:** Registre 2+3 už existujú a táto doména k nim nepridáva žiadne pravidlá.

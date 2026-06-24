@@ -371,3 +371,13 @@ This document is based on PM and desk research. It does not constitute legal adv
 pureinn-workspace/[project-slug]/artifacts/phase-2-discovery/domain-analysis-report.md
 pureinn-workspace/[project-slug]/artifacts/phase-2-discovery/legal-regulatory-requirements.md
 ```
+
+---
+
+## Handoff
+
+**Čo si teraz má:** Domain Analysis + legal/regulatory requirements - poznáš pravidlá ihriska a compliance mantinely ešte pred dizajnom.
+
+**Ďalší krok:** Dokonči Phase 2 tracky, potom `/pm-problem-validation` (konvergencia). Compliance zistenia neskôr použije `/pm-privacy-requirements` v Phase 4.
+
+**Môžeš preskočiť ak:** Doména je dobre známa a bez regulačnej zložitosti.

@@ -471,3 +471,13 @@ After push: report counts per DB (created, errors).
 ```
 pureinn-workspace/[project-slug]/artifacts/phase-4-domain/domain-model.md
 ```
+
+---
+
+## Handoff
+
+**Čo si teraz má:** Domain Model - hranice domén, entity catalogue, vzťahy a ERD. Vyšší pohľad nad operačným registrom.
+
+**Ďalší krok:** `/pm-entity-registry` — preklop entity do registra `entities.md` (R1) so state machines.
+
+**Môžeš preskočiť ak:** Projekt je malý/jednodoménový - `/pm-entity-registry` v lean móde stačí aj bez plného ERD.

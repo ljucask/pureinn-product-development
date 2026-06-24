@@ -150,3 +150,13 @@ Use `## User / Authorization Rules` section for USR-category rules.
 If the section does not yet exist, create it.
 
 Update the Rule Coverage Map. Update the Changelog.
+
+---
+
+## Handoff
+
+**Čo si teraz má:** Jedno Compliance/Policy pravidlo (REG/USR kategória) pridané do `business_rules.md`.
+
+**Ďalší krok:** Späť do JIT cyklu - `/pm-feature-design [FEAT-ID]` alebo `/pm-stripe`. Pre širšie PII súvislosti pozri `/pm-privacy-requirements`.
+
+**Môžeš preskočiť ak:** Pravidlo už v registri je.

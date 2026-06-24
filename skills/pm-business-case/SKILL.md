@@ -385,3 +385,13 @@ Generate in English.
 ```
 pureinn-workspace/[project-slug]/artifacts/phase-3-define/business-case.md
 ```
+
+---
+
+## Handoff
+
+**Čo si teraz má:** Business Case - 3-ročné projekcie, unit economics a finančný Go/No-Go pre commercial definition.
+
+**Ďalší krok:** `/pm-product-roadmap` (v1), potom `/pm-prd` — PRD je exit artefakt Phase 3b, ktorý syntetizuje všetko.
+
+**Môžeš preskočiť ak:** Business case netreba (interný nástroj, žiadny finančný gate) - choď rovno na `/pm-prd`.

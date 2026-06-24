@@ -244,3 +244,14 @@ pureinn-workspace/[project-slug]/artifacts/phase-1-foundation/team-roster.md
 pureinn-workspace/[project-slug]/artifacts/phase-1-foundation/decision-rights-matrix.md
 pureinn-workspace/[project-slug]/artifacts/phase-1-foundation/skill-gap-assessment.md
 ```
+
+---
+
+## Handoff
+
+**Čo si teraz má:** Roly, zodpovednosti a decision rights v tíme - jasné kto čo vlastní a kde sú skill gapy.
+
+**Ďalší krok:** `/pm-comms-charter` — komunikačná kadencia a meeting rhythm pre tieto roly.
+Alebo `/pureinn` pre Phase 1 gate check.
+
+**Môžeš preskočiť ak:** Si solo builder - žiadny tím na koordináciu, choď rovno do Phase 2 (`/pm-tech-feasibility`).

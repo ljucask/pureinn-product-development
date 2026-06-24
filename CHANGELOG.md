@@ -1,5 +1,27 @@
 # Changelog
 
+## [5.2.0] - 2026-06-24
+
+Full pre-launch consistency audit across all 38 skills, relationships, naming, and usability.
+
+### Changed
+
+- **Handoff blocks added to all 38 skills.** Only 6 followed the mandated handoff format (`Čo si teraz má` / `Ďalší krok` / `Môžeš preskočiť ak`); 25 had no forward guidance at all and 7 used an ad-hoc format. Every skill now ends with a tailored handoff that routes to the highest-ROI next step with a concrete skip condition.
+- **pm-business-model wired into Phase 3b.** It claimed "Phase 3b" but appeared in zero playbook/doc tables (orphaned alongside pm-lean-canvas). Added to FRAMEWORK_GUIDE, README, and the orchestrator as the optional fuller alternative to Lean Canvas. Removed the contradictory "Replaces BMC" line in the orchestrator.
+- **Single-rule JIT helpers wired in.** `pm-business-rule-core`, `pm-business-rule-critical`, `pm-business-rule-governance` were referenced nowhere. Now surfaced from `pm-business-rules-library` and `pm-feature-design` as the way to append one rule by priority class without re-running the full library skill.
+
+### Fixed
+
+- **Public skill count 36 → 38** in plugin.json, marketplace.json, and README (the descriptions users see at install).
+- Removed the stale `exclude: ./skills/deprecated/` from plugin.json (the folder was deleted in v5.0.0).
+
+### Verified clean (no change needed)
+
+- Folder name = frontmatter name (38/38), no dangling related-skills or body references, uniform ID formats (FEAT/BR/TBL/FS/DIV-[DOMAIN]-NNN), uniform lifecycle states (1_Backlog..6_Shipped), uniform Notion cache keys (`notion_ids.*`), PREREQ/dependencies present in all skills.
+
+---
+
+
 ## [5.1.1] - 2026-06-24
 
 ### Docs

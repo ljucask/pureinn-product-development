@@ -390,3 +390,13 @@ pureinn-workspace/[project-slug]/features/cards/FEAT-[DOMAIN]-NNN.md  (one stub 
 ```
 
 State update → `state.json`: set `registers.feature_list_initialized` to `true`. Set `current_phase_index` to 6 (ready for JIT delivery cycle).
+
+---
+
+## Handoff
+
+**Čo si teraz má:** `feature_list.md` (Live Register 4) + stub Feature Cards z existujúceho produktu - feature inventory zladený a pushnutý do Notion.
+
+**Ďalší krok:** `/pm-stripe` — nastav delivery channels a choď JIT po featurach (`/pm-feature-design [FEAT-ID]` na in-progress/planned featury).
+
+**Môžeš preskočiť ak:** Staré docs si protirečia s kódom - vtedy nepoužívaj samostatný reverse-extract, ale celý `/pm-reconcile` (rebuild s rekonciliáciou), ktorý tento skill orchestruje.

@@ -218,3 +218,13 @@ Read `pureinn-variables.md` key "Kotler Five Levels" → if URL present, remind 
 ```
 pureinn-workspace/[project-slug]/artifacts/phase-3-define/kotler-five-levels.md
 ```
+
+---
+
+## Handoff
+
+**Čo si teraz má:** Product Definition cez Kotlerových 5 úrovní - jasné čo je jadro hodnoty a kam siaha rozšírená ponuka.
+
+**Ďalší krok:** `/pm-lean-canvas` — pretav definíciu do one-page biznis modelu.
+
+**Môžeš preskočiť ak:** Produktovú definíciu už máš z inej strategickej práce - choď rovno na `/pm-lean-canvas`.

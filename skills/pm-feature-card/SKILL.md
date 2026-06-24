@@ -257,3 +257,13 @@ If Feature Backlog URL is blank in pureinn-variables.md: save locally, remind us
 ```
 pureinn-workspace/[project-slug]/features/cards/[FEAT-ID].md
 ```
+
+---
+
+## Handoff
+
+**Čo si teraz má:** Feature Card podľa kanonickej šablóny (frontmatter + sekcie 1-4) - štruktúra pripravená na JIT dizajn.
+
+**Ďalší krok:** `/pm-feature-design [FEAT-ID]` — napĺňa sekcie 1-3 (Biznis Mantinely, ACs, sequence diagram) tesne pred buildom.
+
+**Môžeš preskočiť ak:** Kartu vytvára automaticky `/pm-features-list` alebo `/pm-reverse-extract` - samostatne ju spúšťaj len keď chceš šablónu/referenciu.

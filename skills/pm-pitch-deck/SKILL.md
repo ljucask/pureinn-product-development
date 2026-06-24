@@ -520,3 +520,13 @@ Read `pureinn-variables.md` key "Investor Pitch" → if URL present, remind user
 ```
 pureinn-workspace/[project-slug]/artifacts/phase-3-define/pitch-deck-brief.md
 ```
+
+---
+
+## Handoff
+
+**Čo si teraz má:** Pitch Deck content brief - štruktúrovaný príbeh pre investorov alebo partnerov.
+
+**Ďalší krok:** `/pm-prd` (ak ešte nie je) na uzavretie Phase 3b, potom Phase 4 (`/pm-domain-model` → `/pm-entity-registry`).
+
+**Môžeš preskočiť ak:** Nezháňaš kapitál a nepitchuješ partnerom - tento skill je voliteľný, preskoč ho.

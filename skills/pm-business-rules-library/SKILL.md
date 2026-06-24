@@ -10,7 +10,7 @@ metadata:
   role: specialist
   scope: specification
   output-format: document
-  related-skills: pm-entity-registry, pm-features-list, pm-feature-design
+  related-skills: pm-entity-registry, pm-features-list, pm-feature-design, pm-business-rule-core, pm-business-rule-critical, pm-business-rule-governance
 ---
 
 # PM - Business Rules Library
@@ -39,6 +39,13 @@ These registers replace the BRD as standalone documents. Business rules are no l
 **JIT enrichment:** Rules are added in two stages:
 1. Draft (Phase 5) - known constraints, compliance rules, high-level policies captured as raw text
 2. JIT finalization (Phase 6, pm-feature-design) - exact mathematical formulas, guard conditions, and decision matrices finalized just before the feature that uses them is built
+
+**Adding a single rule later (JIT helpers):** Once the library exists, you do not re-run this whole skill to add one rule. Use the focused single-rule helpers, which append one well-formed `BR-[DOMAIN]-NNN` entry by priority class:
+- `/pm-business-rule-core` - High priority operational rule (matching, pricing, SLAs, fulfillment)
+- `/pm-business-rule-critical` - Critical hard invariant (violation = financial loss, legal exposure, irreversible damage)
+- `/pm-business-rule-governance` - Compliance / policy rule (GDPR, regulatory, admin, data handling)
+
+These are typically triggered from `pm-feature-design` when a feature surfaces a rule not yet in the register.
 
 ---
 
@@ -445,3 +452,13 @@ content:
 
 After push: report counts (rules pushed, decision models pushed, errors).
 - [ ] New rules cross-reference existing entities from entities.md (append mode entities must exist)
+
+---
+
+## Handoff
+
+**Čo si teraz má:** `business_rules.md` + `decision_models.md` (Registre 2+3) - centralizované pravidlá s BR-IDs a decision tables, ktoré všetky Feature Cards referujú.
+
+**Ďalší krok:** `/pm-privacy-requirements` (ak narábaš s osobnými údajmi), potom `/pm-features-list` (Phase 5).
+
+**Môžeš preskočiť ak:** Žiadne osobné údaje - `/pm-privacy-requirements` preskoč, choď rovno na `/pm-features-list`.

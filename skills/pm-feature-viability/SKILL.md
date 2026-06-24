@@ -191,3 +191,13 @@ Save to: `pureinn-workspace/[project-slug]/initiatives/[feature-slug or FEAT-ID]
 - [ ] Success metric is observable and measurable, not qualitative
 - [ ] Failure condition defined (what would tell us it didn't work)
 - [ ] Clear next step: build / defer / cut
+
+---
+
+## Handoff
+
+**Čo si teraz má:** Viability verdikt pre feature - KANO klasifikáciu, MDP scope a merateľné success metriky stanovené pred buildom.
+
+**Ďalší krok:** Ak verdikt = build → `/pm-feature-design [FEAT-ID]` pre JIT dizajn. Ak defer/cut → späť na `/pm-stripe`.
+
+**Môžeš preskočiť ak:** Feature je už scopnutá, commitnutá alebo vo validovanej roadmape - viability nepridáva hodnotu, choď rovno na `/pm-feature-design`.

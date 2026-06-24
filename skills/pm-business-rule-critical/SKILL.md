@@ -143,3 +143,13 @@ Update the Rule Coverage Map at the bottom of the file.
 Update the Changelog with: `| [new version] | [date] | BR-[DOMAIN]-[NNN] added | pm-business-rule-critical |`
 
 State update: no state.json change needed (business_rules_initialized already true).
+
+---
+
+## Handoff
+
+**Čo si teraz má:** Jeden Critical invariant (hard rule) pridaný do `business_rules.md` - porušenie znamená finančnú stratu, právne riziko alebo nezvratnú škodu.
+
+**Ďalší krok:** Späť do JIT cyklu - `/pm-feature-design [FEAT-ID]` alebo `/pm-stripe`. Ak má pravidlo viac vetiev, zváž TBL v `decision_models.md` cez `/pm-business-rules-library`.
+
+**Môžeš preskočiť ak:** Invariant už v registri existuje.

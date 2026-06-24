@@ -301,3 +301,13 @@ Generate in English.
 ```
 pureinn-workspace/[project-slug]/artifacts/phase-2-discovery/tech-feasibility-report.md
 ```
+
+---
+
+## Handoff
+
+**Čo si teraz má:** Tech Feasibility Report - vieš či je riešenie realizovateľné s daným stackom a kde sú technické riziká.
+
+**Ďalší krok:** Dokonči ostatné Phase 2 tracky (`/pm-domain-analysis`, `/pm-market-analysis`, `/pm-personas` → `/jtbd-building`), potom konverguj cez `/pm-problem-validation`.
+
+**Môžeš preskočiť ak:** Tech je triviálna alebo overená z predošlého produktu - Track A nepridáva hodnotu.

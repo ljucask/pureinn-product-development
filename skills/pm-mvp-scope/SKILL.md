@@ -343,3 +343,13 @@ pureinn-workspace/[project-slug]/artifacts/phase-5-planning/delivery-stripes.md
 pureinn-workspace/[project-slug]/features/feature_list.md         (updated: MVP + stripe columns)
 pureinn-workspace/[project-slug]/features/cards/FEAT-*.md         (updated: stripe field in frontmatter)
 ```
+
+---
+
+## Handoff
+
+**Čo si teraz má:** MVP Scope (IN/POST-MVP/CUT per feature) + Delivery Stripes - jasné čo sa stavia a v akých paralelných kanáloch. Phase 5 exit.
+
+**Ďalší krok:** `/pm-stripe` — spusti JIT delivery cyklus, rieši features jednu po druhej per stripe v dependency poradí.
+
+**Môžeš preskočiť ak:** Pred buildom ešte potrebuješ technický základ - najprv `/common-ground` (stack, repo štruktúra).

@@ -631,3 +631,13 @@ pureinn-workspace/[project-slug]/initiatives/[slug]/value-complexity-matrix.md  
 - Stub Feature Cards created only for new FEAT-[NEW-DOMAIN]-* features
 - KANO + V×C saved to initiative folder (not overwriting master phase-5/ analysis)
 - Dependency map section in feature_list.md updated with cross-initiative dependencies (if any)
+
+---
+
+## Handoff
+
+**Čo si teraz má:** `feature_list.md` (Live Register 4) - prioritizovaný feature inventory s FEAT-IDs, KANO + V×C, dependency map a stub Feature Cards.
+
+**Ďalší krok:** `/pm-mvp-scope` — rozhodni IN/POST-MVP/CUT per feature a prirad ich do Delivery Stripes.
+
+**Môžeš preskočiť ak:** Ide o existujúci produkt - vtedy MVP cut a stripes rieši `/pm-reverse-extract` (migrácia), nie tento flow.

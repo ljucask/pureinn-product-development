@@ -351,3 +351,13 @@ pureinn-workspace/[project-slug]/artifacts/phase-3-define/product-roadmap-v1.md
 pureinn-workspace/[project-slug]/artifacts/phase-4-domain/product-roadmap-v2.md
 pureinn-workspace/[project-slug]/artifacts/phase-5-planning/product-roadmap-v3.md
 ```
+
+---
+
+## Handoff
+
+**Čo si teraz má:** Product Roadmap - vízia a sekvencia v čase. (Beží 3x: v1 v Phase 3b, v2 po doméne v Phase 4, v3 po features v Phase 5.)
+
+**Ďalší krok:** Podľa fázy - po v1: `/pm-prd` (exit Phase 3b). Po v2: `/pm-features-list`. Po v3: `/pm-mvp-scope`.
+
+**Môžeš preskočiť ak:** Roadmapa sa pre dané kolo nezmenila - nový rez nepridáva hodnotu.

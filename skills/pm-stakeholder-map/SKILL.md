@@ -236,3 +236,14 @@ pureinn-workspace/[project-slug]/artifacts/phase-1-foundation/stakeholder-map.md
 pureinn-workspace/[project-slug]/artifacts/phase-1-foundation/raci-matrix.md
 pureinn-workspace/[project-slug]/artifacts/phase-1-foundation/escalation-tree.md
 ```
+
+---
+
+## Handoff
+
+**Čo si teraz má:** Zmapovaných stakeholderov podľa vplyvu a záujmu (+ RACI, eskalačný strom) - vieš koho zapojiť do ktorých rozhodnutí a kadiaľ eskalovať.
+
+**Ďalší krok:** `/pm-project-charter` — ciele, scope a success kritériá, na ktoré sa stakeholdri viažu.
+Alebo `/pureinn` pre Phase 1 gate check.
+
+**Môžeš preskočiť ak:** Si solo builder bez externých investorov či boardu - tento aj nasledujúce Phase 1 koordinačné skilly preskoč, choď rovno do Phase 2 (`/pm-tech-feasibility`).

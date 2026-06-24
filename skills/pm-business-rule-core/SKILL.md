@@ -149,3 +149,13 @@ If the rule logic implies a decision table, note it:
 ```
 
 Update the Rule Coverage Map. Update the Changelog.
+
+---
+
+## Handoff
+
+**Čo si teraz má:** Jedno High-priority operačné pravidlo pridané do `business_rules.md` (nový BR-ID).
+
+**Ďalší krok:** Späť do JIT cyklu - `/pm-feature-design [FEAT-ID]` (ak pravidlo vzniklo pri dizajne feature) alebo `/pm-stripe`.
+
+**Môžeš preskočiť ak:** Pravidlo už v registri bolo - duplicitu nepridávaj.

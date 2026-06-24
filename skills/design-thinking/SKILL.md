@@ -384,3 +384,13 @@ How this Define + Ideate output connects to what comes next:
 ```
 pureinn-workspace/[project-slug]/artifacts/phase-3-define/design-thinking-synthesis.md
 ```
+
+---
+
+## Handoff
+
+**Čo si teraz má:** Problem Statement, POV, HMW, ideáciu a draft validačných hypotéz - máš z čoho postaviť experimenty.
+
+**Ďalší krok:** `/pm-hypotheses` [Plan mode] — sformalizuj hypotézy do registra s ICP, assumption mapou a success kritériami pred spustením experimentov.
+
+**Môžeš preskočiť ak:** Hypotézy a experiment plán už máš zo workshopu - importuj výsledok a choď rovno na experimenty.

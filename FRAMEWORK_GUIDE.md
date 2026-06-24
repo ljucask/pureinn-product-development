@@ -132,7 +132,8 @@ Four tracks run in parallel, converge at the end.
 | Skill | Output |
 |---|---|
 | `/pm-kotler` | Product Definition - Kotler's Five Levels |
-| `/pm-lean-canvas` | Lean Canvas (one-page business model) |
+| `/pm-lean-canvas` | Lean Canvas (one-page, problem-focused - default for startups) |
+| `/pm-business-model` | Business Model Canvas (fuller, operations-focused - optional alternative to Lean Canvas for established or more complex models) |
 | `/pm-kpis` | North Star Metric, AARRR Funnel Metrics, OKRs |
 | `/pm-business-case` | 3-year projections, unit economics, Go/No-Go |
 | `/pm-product-roadmap` | Product Roadmap v1 |

@@ -277,3 +277,13 @@ Time: by [9:00] every business day
 pureinn-workspace/[project-slug]/artifacts/phase-1-foundation/communication-charter.md
 pureinn-workspace/[project-slug]/artifacts/phase-1-foundation/meeting-rhythm.md
 ```
+
+---
+
+## Handoff
+
+**Čo si teraz má:** Dohodnutú komunikačnú kadenciu a meeting rhythm - Phase 1 Foundation je kompletná.
+
+**Ďalší krok:** `/pureinn` pre Phase 1 gate check, potom Phase 2 Discovery - štyri tracky paralelne (`/pm-tech-feasibility`, `/pm-domain-analysis`, `/pm-market-analysis`, `/pm-personas`).
+
+**Môžeš preskočiť ak:** Problém už máš validovaný externe - importuj cez `/pureinn` a skoč na Phase 3.

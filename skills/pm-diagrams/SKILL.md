@@ -382,3 +382,11 @@ This keeps the Diagrams page as a running catalogue of all generated visuals.
 - [ ] All elements labeled and readable at display scale (font ≥ 16)
 - [ ] Camera covers all content with padding
 - [ ] Export option offered to user
+
+---
+
+## Handoff
+
+**Čo si teraz má:** Vizuálny diagram (User Flow / Architecture / JTBD Forces / Domain Overview) na komunikáciu alebo do dokumentácie.
+
+**Ďalší krok:** Pokračuj v aktuálnej fáze - `/pm-diagrams` je cross-phase utilita, spúšťaj ho kedykoľvek treba vizuál. `/pureinn` ukáže ďalší krok podľa fázy.

@@ -372,3 +372,13 @@ So I can [expected outcome].
 ```
 pureinn-workspace/[project-slug]/artifacts/phase-2-discovery/jtbd-analysis.md
 ```
+
+---
+
+## Handoff
+
+**Čo si teraz má:** JTBD Analysis + Forces Diagram - rozumieš prečo zákazníci "najímajú" produkt a čo ich brzdí pri prechode.
+
+**Ďalší krok:** `/pm-problem-validation` — konvergencia Phase 2, spojí JTBD s personami, trhom a tech do validovaného problému.
+
+**Môžeš preskočiť ak:** Job a switching dynamika sú už jasné z persón - choď rovno na konvergenciu.

@@ -19,7 +19,7 @@ A structured methodology for building products - from zero to launch. Implemente
 
 ## What this is
 
-**36 active skills + 2 commands** covering the full product lifecycle: discovery, validation, domain modeling, feature planning, and FDD delivery.
+**38 active skills + 2 commands** covering the full product lifecycle: discovery, validation, domain modeling, feature planning, FDD delivery, and reconciliation-based rebuild.
 
 Three playbooks:
 
@@ -133,7 +133,8 @@ If FEAT-ID doesn't exist yet: add it to `feature_list.md`, create stub card, the
 | Skill | Output |
 |---|---|
 | `/pm-kotler` | Product Definition - Kotler's Five Levels |
-| `/pm-lean-canvas` | Lean Canvas |
+| `/pm-lean-canvas` | Lean Canvas (problem-focused, startups) |
+| `/pm-business-model` | Business Model Canvas (optional fuller alternative for established/complex models) |
 | `/pm-kpis` | North Star Metric, AARRR, OKRs |
 | `/pm-business-case` | Business Case (3-year projections, Go/No-Go) |
 | `/pm-product-roadmap` | Product Roadmap v1 |

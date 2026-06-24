@@ -407,3 +407,13 @@ Generate in English.
 ```
 pureinn-workspace/[project-slug]/artifacts/phase-3-define/business-model-canvas.md
 ```
+
+---
+
+## Handoff
+
+**Čo si teraz má:** Business Model Canvas - plnší operačný pohľad (partneri, aktivity, zdroje, nákladová štruktúra) nad rámec Lean Canvas.
+
+**Ďalší krok:** `/pm-kpis` — North Star + AARRR + OKRs.
+
+**Môžeš preskočiť ak:** Tento skill je sám voliteľný - ak ti stačil `/pm-lean-canvas`, BMC nerob a choď na `/pm-kpis`.

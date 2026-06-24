@@ -179,6 +179,8 @@ For each BR-ID this feature enforces:
 - Update status: `Draft` → `Final`
 - Add this FEAT-ID to the "Applies to features" field
 
+If this feature surfaces a brand-new rule not yet in the register, add it with the focused single-rule helper by priority class - `/pm-business-rule-core` (operational), `/pm-business-rule-critical` (hard invariant), or `/pm-business-rule-governance` (compliance/policy) - rather than re-running the full library skill.
+
 **3c. Finalize decision tables in decision_models.md**
 
 For each TBL-ID this feature uses:

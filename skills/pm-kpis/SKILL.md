@@ -409,3 +409,13 @@ pureinn-workspace/[project-slug]/artifacts/phase-3-define/north-star-metric.md
 pureinn-workspace/[project-slug]/artifacts/phase-3-define/aarrr-metrics.md
 pureinn-workspace/[project-slug]/artifacts/phase-3-define/okrs.md
 ```
+
+---
+
+## Handoff
+
+**Čo si teraz má:** North Star Metric, AARRR funnel a OKRs - vieš čo definuje úspech a ako ho budeš merať.
+
+**Ďalší krok:** `/pm-business-case` — finančné projekcie a unit economics, ktoré validujú či model dáva zmysel.
+
+**Môžeš preskočiť ak:** Nezháňaš kapitál a finančný gate neriešiš - choď rovno na `/pm-product-roadmap` alebo `/pm-prd`.

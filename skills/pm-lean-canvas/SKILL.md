@@ -284,3 +284,14 @@ Read `pureinn-variables.md` key "Lean Canvas" → if URL present, remind user af
 ```
 pureinn-workspace/[project-slug]/artifacts/phase-3-define/lean-canvas.md
 ```
+
+---
+
+## Handoff
+
+**Čo si teraz má:** Lean Canvas - one-page biznis model s problémom, riešením, kanálmi a ekonomikou na jednej strane.
+
+**Ďalší krok:** `/pm-kpis` — North Star + AARRR + OKRs, aby si vedel čo merať.
+Ak potrebuješ plnší operačný model (etablovaný/komplexný biznis), najprv `/pm-business-model` (Business Model Canvas).
+
+**Môžeš preskočiť ak:** Pre startup vo validačnej fáze Lean Canvas stačí - `/pm-business-model` preskoč.

@@ -209,3 +209,11 @@ After push: report counts (created, updated, errors).
 ```
 pureinn-workspace/[project-slug]/glossary.md
 ```
+
+---
+
+## Handoff
+
+**Čo si teraz má:** Aktualizovaný glossary - zdieľaný slovník termínov, entít a skratiek, ktorý drží jazyk projektu konzistentný.
+
+**Ďalší krok:** Pokračuj v aktuálnej fáze - glossary je cross-phase utilita, spúšťaj ho kedykoľvek pribudne nová terminológia. `/pureinn` ti ukáže ďalší krok podľa fázy.

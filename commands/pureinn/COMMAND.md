@@ -655,6 +655,7 @@ Create `pureinn-workspace/[project-slug]/pureinn-variables.md` with the followin
 | Product Roadmap | Page | pm-product-roadmap | |
 | Elevator Pitch | Page | design-thinking | |
 | Lean Canvas | Page | pm-lean-canvas | |
+| Business Model Canvas | Page | pm-business-model | optional |
 | Kotler Five Levels | Page | pm-kotler | |
 | Competitor Analysis | Page | pm-market-analysis | |
 | SWOT Analysis | Page | pm-market-analysis | |
@@ -795,6 +796,7 @@ When a skill needs a Notion URL, it:
 | pm-hypotheses | hypothesis-register.md, go-no-go.md | artifacts/phase-3-define/ |
 | pm-kotler | kotler-five-levels.md | artifacts/phase-3-define/ |
 | pm-lean-canvas | lean-canvas.md | artifacts/phase-3-define/ |
+| pm-business-model | business-model-canvas.md | artifacts/phase-3-define/ |
 | pm-kpis | north-star-metric.md, aarrr-metrics.md, okrs.md | artifacts/phase-3-define/ |
 | pm-business-case | business-case.md | artifacts/phase-3-define/ |
 | pm-prd | PRD_master.md (Greenfield, frozen) / initiatives/[slug]/prd.md (FI Initiative mode) | product/ or initiatives/[slug]/ |
@@ -1035,8 +1037,8 @@ existing commercial strategy artifacts, bring them via Path A in each skill.
 State "Phase 3b partially done elsewhere" and list which artifacts exist.
 
 /pm-kotler             → Product Definition (5 levels: Core / Basic / Expected / Augmented / Potential)
-/pm-lean-canvas        → Lean Canvas (one-page business model for startups)
-                         [Replaces BMC - optimized for validation stage, not established operations]
+/pm-lean-canvas        → Lean Canvas (one-page, problem-focused - default for startups)
+/pm-business-model     → Business Model Canvas (optional fuller alternative - established or complex operational models)
 /pm-kpis               → North Star Metric, AARRR, OKRs
 /pm-business-case      → Business Case (3-year projections, Go/No-Go)
 /pm-product-roadmap    → Product Roadmap v1
@@ -1634,7 +1636,8 @@ PHASE 3 - DEFINE & VALIDATION
 
   After GO:
   /pm-kotler             → Product Definition (5 levels)
-  /pm-lean-canvas        → Lean Canvas
+  /pm-lean-canvas        → Lean Canvas (default)
+  /pm-business-model     → Business Model Canvas (optional fuller alternative)
   /pm-kpis               → North Star Metric, AARRR, OKRs
   /pm-business-case      → 3-year projections, Go/No-Go
   /pm-product-roadmap    → Roadmap v1
