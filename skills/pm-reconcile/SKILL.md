@@ -10,7 +10,7 @@ metadata:
   role: specialist
   scope: reconciliation
   output-format: document
-  related-skills: pm-reconcile-status, pm-entity-registry, pm-business-rules-library, pm-reverse-extract, pm-glossary, pm-stripe
+  related-skills: pm-reconcile-status, pm-entity-registry, pm-domain-model, pm-business-rules-library, pm-reverse-extract, pm-glossary, pm-stripe
 ---
 
 # PM - Reconcile (Rebuild from Existing Product)
@@ -34,7 +34,7 @@ This is the **Rebuild playbook** referenced in the `/pureinn` orchestrator. Run 
 |---|---|---|
 | `/pm-reconcile` | **Plan / route** | No plan yet → build the Reconciliation Plan. Plan exists → short status + point to the next area (full dashboard via `/pm-reconcile-status`). |
 | `/pm-reconcile plan` | **Plan (force)** | Re-inspect and rebuild the plan. |
-| `/pm-reconcile domain` | **Execute** | Reconcile entities + attributes + enums + state machine **structure** → `entities.md` (Register 1) + glossary aliases. |
+| `/pm-reconcile domain` | **Execute** | Reconcile entities + attributes + enums + state machine **structure** → `entities.md` (Register 1) + glossary aliases. Offers the cross-domain ERD → `domain-model.md`. |
 | `/pm-reconcile rules` | **Execute** | Reconcile business rules + decision models + transition **guard conditions** → `business_rules.md` + `decision_models.md` (Registers 2-3). |
 | `/pm-reconcile features` | **Execute** | Reconcile feature inventory → `feature_list.md` + stub Feature Cards Section 1 (Register 4). |
 | `/pm-reconcile [other]` | **Execute** | Any extra area the plan defined (e.g. `events`, `integrations`). |
@@ -186,7 +186,8 @@ Append this area's section to the living `reconcile/reconciliation_report.md` (d
 ## Step A5: Rebuild this area's register (reconciled mode)
 
 Drive the existing skill - do not duplicate its template:
-- **domain** → `/pm-entity-registry` (reconciled mode) → `entities.md` (entities, attributes, state-machine structure) + `/pm-glossary` for aliases
+- **domain** → `/pm-entity-registry` (reconciled mode) → `entities.md` (entities, attributes, state-machine structure) + `/pm-glossary` for aliases.
+  **Also offer the higher-level map:** ask via AskUserQuestion (default **Yes** for a rebuild - a new team benefits) whether to generate `domain-model.md` too via `/pm-domain-model` (reconciled mode) - the cross-domain ERD and domain boundaries, derived from the same reconciled entities. The two are complementary: the Reconciliation Report is the audit ("what conflicted, how we ruled"); the domain model is the structural map ("how it all fits together"). Skip only if the user declines.
 - **rules** → `/pm-business-rules-library` (reconciled mode) → `business_rules.md` + `decision_models.md`; also writes the reconciled guard conditions onto the transitions in `entities.md`. Rules with an open `DIV-NN` stay `Draft` linked to the report; divergence-free rules go `Final`.
 - **features** → `/pm-reverse-extract` (reconciled mode) → `feature_list.md` + stub cards. Features normalized to FDD grammar, grouped into `FS-NN`, Section 1 linked to register BR-IDs; code-only features included; doc-only items NOT carded (backlog).
 
@@ -218,7 +219,7 @@ Save to: `pureinn-workspace/[project-slug]/reconcile/reconciliation_plan.md`
 
 | # | Area | Command | Source docs | Code locations | Target artifact | Status |
 |---|---|---|---|---|---|---|
-| 1 | domain | `/pm-reconcile domain` | [domain_model.md, entities.md] | [app/models, db/schema] | domain/entities.md (R1) | pending |
+| 1 | domain | `/pm-reconcile domain` | [domain_model.md, entities.md] | [app/models, db/schema] | domain/entities.md (R1) + domain-model.md (ERD, offered) | pending |
 | 2 | rules | `/pm-reconcile rules` | [BRD.md §rules, decision_tables.md] | [services, validators] | business_rules.md + decision_models.md (R2-3) | pending |
 | 3 | features | `/pm-reconcile features` | [FSD/*, feature_list.xlsx] | [routes, controllers] | features/feature_list.md + cards (R4) | pending |
 

@@ -227,7 +227,7 @@ Rules that follow: **code is never changed** (only documents); docs that run ahe
 |---|---|---|
 | Prep | `/pureinn` + `/common-ground` + put docs in `legacy-docs/` | Workspace, tech context, source docs in one folder |
 | Plan | `/pm-reconcile` | Inspects docs + code surface, defines areas + order + targets → `reconciliation_plan.md` |
-| Execute 1 | `/pm-reconcile domain` | Entities, attributes, enums, **state-machine structure** → `entities.md` (R1) + glossary aliases |
+| Execute 1 | `/pm-reconcile domain` | Entities, attributes, enums, **state-machine structure** → `entities.md` (R1) + glossary aliases. Offers the cross-domain ERD / `domain-model.md` (the structural map for a new team). |
 | Execute 2 | `/pm-reconcile rules` | Business rules, decision models, transition **guard conditions** → `business_rules.md` + `decision_models.md` (R2-3). Heaviest AskUserQuestion pass. |
 | Execute 3 | `/pm-reconcile features` | Feature inventory (FDD grammar, FS-NN, Section 1 → BR-IDs) → `feature_list.md` (R4) + stub cards |
 | Anytime | `/pm-reconcile-status` | Dashboard: done / pending areas, open divergences, next command |

@@ -28,6 +28,12 @@ Output is the foundation for entities.md (entity state machines), business_rules
 
 ---
 
+## Reconciled mode (when run by pm-reconcile)
+
+If `reconcile/reconciliation_report.md` and the reconciled `entities.md` exist, build the domain model (boundaries, entity catalogue, relationships, ERD) **from the reconciled entities** - do not re-derive from code or old docs. The entity names and structure are already canonical (code-aligned); this skill adds the cross-domain map on top. Do not re-question what the report already settled.
+
+---
+
 ## Dependencies
 
 **Recommended before running:**

@@ -1,5 +1,14 @@
 # Changelog
 
+## [5.5.0] - 2026-06-25
+
+### Changed
+
+- **`pm-reconcile` domain pass now also offers the domain model.** Previously `/pm-reconcile domain` produced only `entities.md` (the operational register) - not `domain-model.md` (the cross-domain ERD and boundaries). For a rebuild, a new team benefits from both: the Reconciliation Report is the audit ("what conflicted, how we ruled"), the domain model is the structural map ("how it all fits together"). The domain pass now offers (default Yes) to also drive `/pm-domain-model` in reconciled mode, building the ERD from the same reconciled entities. Added a **Reconciled mode** note to `pm-domain-model` (builds from the reconciled `entities.md`, does not re-derive). Updated the reconcile invocation table, plan template, and the FRAMEWORK_GUIDE Rebuild A1 flow.
+
+---
+
+
 ## [5.4.0] - 2026-06-24
 
 ### New Skill
