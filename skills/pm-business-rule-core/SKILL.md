@@ -10,7 +10,7 @@ metadata:
   role: specialist
   scope: specification
   output-format: document
-  related-skills: pm-business-rules-library, pm-entity-registry, pm-feature-design
+  related-skills: pm-business-rules-library, pm-decision-model, pm-entity-registry, pm-feature-design
 ---
 
 # PM - Business Rule: Core Operational Rule (JIT Helper)
@@ -50,7 +50,7 @@ Read `domain/business_rules.md`.
 
 List existing rules in the relevant domain. Identify the next available BR-[DOMAIN]-NNN.
 
-Check if a similar rule already exists. Check if this should actually be Critical (no exceptions → pm-business-rule-critical) or a decision table (multiple conditions → add to decision_models.md via pm-business-rules-library).
+Check if a similar rule already exists. Check if this should actually be Critical (no exceptions → pm-business-rule-critical) or a decision table (multiple conditions → `/pm-decision-model`).
 
 Use AskUserQuestion tool to confirm scope and mode before proceeding.
 
@@ -144,8 +144,8 @@ If the domain section does not yet exist, create it as:
 
 If the rule logic implies a decision table, note it:
 ```
-> Note: This rule has multiple condition combinations. Consider adding TBL-[DOMAIN]-NNN
-> to decision_models.md via pm-business-rules-library.
+> Note: This rule has multiple condition combinations. Add a decision table TBL-[DOMAIN]-NN
+> to decision_models.md via /pm-decision-model.
 ```
 
 Update the Rule Coverage Map. Update the Changelog.

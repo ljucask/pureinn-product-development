@@ -10,7 +10,7 @@ metadata:
   role: specialist
   scope: specification
   output-format: document
-  related-skills: pm-entity-registry, pm-features-list, pm-feature-design, pm-business-rule-core, pm-business-rule-critical, pm-business-rule-governance
+  related-skills: pm-entity-registry, pm-features-list, pm-feature-design, pm-business-rule-core, pm-business-rule-critical, pm-business-rule-governance, pm-decision-model
 ---
 
 # PM - Business Rules Library
@@ -45,7 +45,10 @@ These registers replace the BRD as standalone documents. Business rules are no l
 - `/pm-business-rule-critical` - Critical hard invariant (violation = financial loss, legal exposure, irreversible damage)
 - `/pm-business-rule-governance` - Compliance / policy rule (GDPR, regulatory, admin, data handling)
 
-These are typically triggered from `pm-feature-design` when a feature surfaces a rule not yet in the register.
+And for a single **decision table** (multi-condition logic → one output, e.g. pricing/eligibility/risk matrices) added to `decision_models.md`:
+- `/pm-decision-model` - appends one well-formed `TBL-[DOMAIN]-NN` entry, without re-running this library skill.
+
+These are typically triggered from `pm-feature-design` when a feature surfaces a rule or decision table not yet in the registers.
 
 ---
 

@@ -1,5 +1,14 @@
 # Changelog
 
+## [5.7.0] - 2026-06-25
+
+### New Skill
+
+- **pm-decision-model** (40th skill) - JIT single decision-table helper, closing an asymmetry: Register 2 (business_rules.md) had three single-rule helpers (`pm-business-rule-core/critical/governance`) for adding one rule during development, but Register 3 (decision_models.md) had none - a new decision table meant re-running the whole `pm-business-rules-library`. This adds one well-formed `TBL-[DOMAIN]-NN` to `decision_models.md` directly: input columns, exhaustive condition rows, output, edge cases. It actively surfaces uncovered condition combinations (a partial decision table is the most common defect). One helper (not three by priority) - a decision table has no priority class. Wired in: `pm-business-rules-library` JIT-helpers section and `pm-feature-design` finding-routing now point to it; `pm-business-rule-core` routes here when a rule turns out to have multiple condition combinations (instead of routing to the heavy library skill). Surfaced by a Vezmee question: how to add a single decision model during development.
+
+---
+
+
 ## [5.6.0] - 2026-06-25
 
 ### Added

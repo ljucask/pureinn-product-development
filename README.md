@@ -19,7 +19,7 @@ A structured methodology for building products - from zero to launch. Implemente
 
 ## What this is
 
-**39 active skills + 2 commands** covering the full product lifecycle: discovery, validation, domain modeling, feature planning, FDD delivery, reconciliation-based rebuild, and workspace health-check.
+**40 active skills + 2 commands** covering the full product lifecycle: discovery, validation, domain modeling, feature planning, FDD delivery, reconciliation-based rebuild, and workspace health-check.
 
 Three playbooks:
 

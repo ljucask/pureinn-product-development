@@ -10,7 +10,7 @@ metadata:
   role: specialist
   scope: specification
   output-format: document
-  related-skills: pm-feature-viability, pm-entity-registry, pm-business-rules-library, pm-feature-card, pm-stripe
+  related-skills: pm-feature-viability, pm-entity-registry, pm-business-rules-library, pm-decision-model, pm-feature-card, pm-stripe
 ---
 
 # PM - Feature Design (JIT)
@@ -171,7 +171,7 @@ Criticality = f(KANO, priority, touches money?, touches PII?, number of state tr
 | Finding | Goes to |
 |---|---|
 | Non-negotiable, reusable logic | **Business rule** → add via `/pm-business-rule-core` / `-critical` / `-governance` (Step 3), or finalize an existing BR-ID |
-| Multi-condition logic | **Decision table** (TBL) in `decision_models.md` |
+| Multi-condition logic | **Decision table** (TBL) → add via `/pm-decision-model`, or finalize an existing TBL-ID |
 | Testable condition for this feature | **Acceptance Criterion** (§2) |
 | Lightweight nuance / dev helper | **Subtask** (§Subtasks) - not a rule, not an AC |
 
