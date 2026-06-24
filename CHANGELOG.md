@@ -1,5 +1,19 @@
 # Changelog
 
+## [5.1.1] - 2026-06-24
+
+### Docs
+
+- **FRAMEWORK_GUIDE restructured** for clearer separation. Now three parallel, self-contained playbook sections - **Greenfield**, **Rebuild**, **Feature Implementation** - each with its own flow diagram and express path, funneling into a single shared **JIT delivery engine** section, followed by a **Reference** appendix.
+- Added pseudo-diagrams (decision tree, per-playbook flows, JIT lifecycle, artifact chain, workspace tree) as an orientation aid alongside the prose.
+- Documented the full **Rebuild / pm-reconcile flow** end to end (prep → plan → per-layer reconcile → status → handoff), giving the Rebuild playbook a proper home instead of being buried under Feature Implementation.
+- Folded the standalone Fast Track section into each playbook as its "Express path".
+- Consolidated content that was duplicated (delivery rules appeared twice; JIT delivery was split between Greenfield and Feature Implementation).
+- Fixed the stale "Rebuild coming soon" references (the playbook shipped in v5.1.0).
+
+---
+
+
 ## [5.1.0] - 2026-06-24
 
 Fills the long-standing "Rebuild playbook coming soon" slot in the orchestrator.
