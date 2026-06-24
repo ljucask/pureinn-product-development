@@ -1,5 +1,14 @@
 # Changelog
 
+## [5.5.1] - 2026-06-25
+
+### Fixed
+
+- **`pm-domain-model` - explicit reconciled-mode hard check in Step 0.** Before anything else, the skill now checks whether `reconcile/reconciliation_report.md` and `domain/entities.md` both exist. If so, it announces reconciled mode, builds the cross-domain ERD **on top of** the already-reconciled entities, skips entity re-elicitation, and does not re-derive or re-question what the report settled. This makes the v5.5.0 reconciled-mode detection robust for the real case: a user who already ran `/pm-reconcile domain` and now wants only the higher-level domain-model layer (e.g. after upgrading the plugin mid-migration). Found while onboarding the Vezmee project.
+
+---
+
+
 ## [5.5.0] - 2026-06-25
 
 ### Changed

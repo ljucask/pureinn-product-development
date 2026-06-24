@@ -51,7 +51,28 @@ If `reconcile/reconciliation_report.md` and the reconciled `entities.md` exist, 
 
 ## Step 0: Current state check
 
-Check for existing artifacts:
+**FIRST - reconciled-mode detection (hard check, before anything else):**
+
+Check whether BOTH of these exist in the workspace:
+- `reconcile/reconciliation_report.md`
+- `domain/entities.md`
+
+If **both exist → reconciled mode is ON.** Announce it explicitly and switch behaviour:
+```
+Reconciled mode detected: entities.md is already reconciled (code-aligned, business meaning settled).
+I will build the domain model / cross-domain ERD ON TOP of those entities.
+I will NOT re-derive entities from code or old docs, and I will NOT re-question what the
+Reconciliation Report already settled.
+```
+Then skip the Entity Catalogue elicitation in Step 1 - take the entity catalogue directly from `entities.md`, and go straight to adding the cross-domain layer (boundaries, relationships, ERD). This is the case when the user has already run `/pm-reconcile domain` and now wants only the higher-level map. Do not treat a "done" reconcile domain area as a reason to re-reconcile.
+
+If **only `entities.md` exists** (no reconciliation report - e.g. a normal Phase 4 build): standard mode, but still reuse the existing entities rather than inventing new ones.
+
+If **neither exists**: standard greenfield/standalone mode - proceed with the full two-stage flow below.
+
+---
+
+**Then check for existing artifacts:**
 - Domain Model (any version)
 - Entity Catalogue
 - Entity Definitions
