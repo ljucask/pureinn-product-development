@@ -123,6 +123,7 @@ feature_set: "FS-NN: [Feature Set name]"
 actor: [User / Host / Admin / System]
 owner: unassigned
 priority: P1
+estimate: "[S / M / L - informational sizing for roadmap, NOT the atomicity test]"
 prd_ref: /product/PRD.md#[section]
 feature_flag: [domain.feature-name]
 flag_default: off
@@ -174,6 +175,14 @@ flag_default: off
 - **Given** flag `[feature_flag]` is OFF
 - **When** [same trigger as AC-01]
 - **Then** [existing behavior unchanged / feature hidden]
+
+---
+
+## Subtasks (helper notes)
+
+*Lightweight nuance / spec helpers for the developer - NOT deliverables, NOT sub-features, they never break the feature's atomicity. Added during pm-feature-design discovery, by the team while writing the card, or folded from too-granular legacy features by pm-reconcile. A subtask that hardens into a testable condition becomes an AC; one that becomes reusable non-negotiable logic becomes a business rule (BR-ID).*
+
+- [ ] [nuance / spec detail - e.g. "reset link expires in 15 min", "reuse existing EmailService", "show skeleton loader while fetching"]
 
 ---
 

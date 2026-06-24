@@ -1,5 +1,26 @@
 # Changelog
 
+## [5.3.0] - 2026-06-24
+
+JIT feature-design redesign - making feature design a guided deep-dive rather than a form to fill, grounded in an FDD feature-definition deep-research pass.
+
+### Added
+
+- **Discovery Interrogation (`pm-feature-design` Step 1.5).** The skill now actively interrogates to surface what the user did not yet know when writing the business logic - instead of passively asking "any edge cases?" and accepting "none". Adaptive depth calibrated to feature criticality (KANO, priority, touches money/PII, state-transition count). Probes happy path, state transitions, guard conditions, edge cases, hidden concerns (permissions, idempotency, audit, retention), and rule gaps. Uses the grouped question pattern + "I don't know" handling + assumption surfacing. Every finding is sorted into the right layer: business rule / decision table / acceptance criterion / subtask.
+- **Subtask helper layer.** A new lightweight `## Subtasks` section on the Feature Card (canonical template + both stub creators + all Notion blocks). Subtasks are nuance/spec helpers for the developer - not deliverables, not sub-features; they never break feature atomicity. Captured during discovery, by the team, or folded from too-granular legacy features. A subtask that hardens becomes an AC or a business rule.
+- **Roadmap Functional Decomposition (`pm-product-roadmap` v2+).** Maps strategic phases to Domains and Feature Sets as the explicit top-down input to the Feature Plan. One picture for both audiences - investor sees direction, dev team sees what gets built where.
+
+### Changed
+
+- **Atomicity is now a semantic test, not time-based.** Replaced the "≤2 weeks / 14 days" rule with: *a Feature is one coherent client-valued function with one result*. "...and..." → split; a detail → a subtask. The `estimate` field (S/M/L) is informational for the roadmap, not the gate - dev time compresses with AI agents.
+- **`pm-features-list`** - explicit top-down derivation from the roadmap decomposition (Features are leaves, derived last); strengthened naming rules (strong-verb whitelist, vague-verb blacklist, object = entity from `entities.md`); the 7 FDD anti-patterns as validation checks.
+- **`pm-feature-design`** - JIT rule enrichment loop made explicit (new rules surfaced in discovery added via the single-rule helpers); writes Subtasks; Notion push includes description + subtasks.
+- **`pm-reconcile`** - legacy feature right-sizing: too-granular legacy "features" consolidate under one rightful Feature with the granular bits captured as Subtasks; too-big ones split. Recorded in the Reconciliation Report.
+- **Hierarchy confirmed 2-level** (Domain > Feature Set > Feature, top-down). The classic FDD "Major Feature Set" level is intentionally not used (lean / AI-first). Feature ordering is driven by dependency + priority + Delivery Stripe, never by completing whole Feature Sets.
+
+---
+
+
 ## [5.2.0] - 2026-06-24
 
 Full pre-launch consistency audit across all 38 skills, relationships, naming, and usability.

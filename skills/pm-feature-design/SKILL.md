@@ -29,13 +29,14 @@ Produces the Just-In-Time technical design for a single feature immediately befo
 
 **What this skill does in one run:**
 1. Reads the Feature Card (Section 1 is stub at this point)
-2. Enriches `entities.md` - adds exact guard conditions to state transitions relevant to this feature
-3. Enriches `business_rules.md` and `decision_models.md` - finalizes formulas and decision matrices for rules this feature enforces (status: Draft → Final)
-4. Populates Feature Card Section 1 (Biznis Mantinely) - links entities, BR-IDs, TBL-IDs
-5. Writes Feature Card Section 2 (Acceptance Criteria) - derived from register state + business rules
-6. Generates Mermaid.js sequence diagram - writes to Feature Card Section 3
-7. Lists files to modify - writes to Feature Card Section 3
-8. Sets Feature Card status to `2_Spec_Done`
+2. **Discovery Interrogation** (Step 1.5) - actively interrogates to surface unknowns and reach precision, calibrated to feature criticality; sorts findings into rules / ACs / subtasks
+3. Enriches `entities.md` - adds exact guard conditions to state transitions relevant to this feature
+4. Enriches `business_rules.md` and `decision_models.md` - finalizes rules this feature enforces (Draft → Final); adds brand-new rules surfaced in discovery via the single-rule helpers
+5. Populates Feature Card Section 1 (Biznis Mantinely) - links entities, BR-IDs, TBL-IDs
+6. Writes Feature Card Section 2 (Acceptance Criteria) - derived from register state + business rules
+7. Writes Feature Card Subtasks - lightweight nuance helpers captured in discovery
+8. Generates Mermaid.js sequence diagram + files to modify - writes to Feature Card Section 3
+9. Pushes description + Sections 1-3 + Subtasks to Notion; sets Feature Card status to `2_Spec_Done`
 
 **Atomic commit protocol (parallel Stripe safety):**
 All register updates (steps 2-3) are committed BEFORE any code generation begins. This prevents merge conflicts when multiple Stripes run in parallel.
@@ -134,6 +135,47 @@ Then use AskUserQuestion tool for UX context (skip if backend/API-only feature):
   - Option B: "Attach a screenshot or mockup directly in this message"
   - Option C: "Figma URL - I'll paste the screen URL (requires Figma MCP connected)"
   - Option D: "Backend/API-only - no UI component, skip UX context"
+
+---
+
+## Step 1.5: Discovery Interrogation
+
+This is the core of JIT design. A Feature is a *detailed* view of functionality - at design time the user often does not yet know every detail they implied when writing the business logic, and is unaware of some entirely. **Do not passively ask "any edge cases?" and accept "none."** Actively interrogate to surface the unknowns and reach precision - this is what the deep-dive is for. The AI drives; the user (and optionally the team) answers, or the AI proceeds on flagged assumptions. No class-owner machinery - roles stay flat.
+
+**Calibrate depth to feature criticality - do NOT run a fixed 30-question checklist** (that just trains people to click "none"):
+
+```
+Criticality = f(KANO, priority, touches money?, touches PII?, number of state transitions)
+  Low   (CRUD, P3, no money/PII)      → 2-3 targeted questions, move on
+  Medium (P2)                          → happy path + guard conditions + flag-OFF behavior
+  High  (money / PII / P1 / critical)  → full interrogation across all axes below
+```
+
+**Axes to probe** (use the grouped question pattern from CLAUDE.md - batch 2-4 related questions per AskUserQuestion round, confirm, continue):
+
+| Axis | What to actively probe | Feeds |
+|---|---|---|
+| Happy path | Propose the step-by-step flow yourself; the user corrects | → sequence diagram (§3) |
+| State transitions | Which entity states does this touch (from `entities.md`)? What triggers each? | → guard conditions |
+| Guard conditions | Under what conditions is each action allowed / blocked? | → BR-IDs or new rules |
+| Edge cases | Systematically: invalid input? concurrency? external-service failure? entity in an unexpected state? | → ACs (§2) + subtasks |
+| Hidden concerns | Permissions, idempotency, notifications, audit, data retention - the things the user "has no clue about" | → rules / subtasks |
+| Rule gaps | At every decision point: "is there a rule governing this? what is the value?" | → register enrichment |
+
+**When the user says "I don't know"** (per CLAUDE.md): never leave a vacuum. Based on the domain, registers, and similar features, propose 3-4 concrete options via AskUserQuestion and let them choose, plus an "Other / I'll describe" option.
+
+**Surface assumptions inline** when proceeding without explicit input: `Assumption: [X]. If wrong, tell me - it affects [Y].`
+
+**Outputs of the interrogation - sort every finding into the right layer:**
+
+| Finding | Goes to |
+|---|---|
+| Non-negotiable, reusable logic | **Business rule** → add via `/pm-business-rule-core` / `-critical` / `-governance` (Step 3), or finalize an existing BR-ID |
+| Multi-condition logic | **Decision table** (TBL) in `decision_models.md` |
+| Testable condition for this feature | **Acceptance Criterion** (§2) |
+| Lightweight nuance / dev helper | **Subtask** (§Subtasks) - not a rule, not an AC |
+
+Produce a short interrogation summary (new rules to add, ACs identified, subtasks captured, open assumptions) before moving to register updates.
 
 ---
 
@@ -253,6 +295,17 @@ Minimum: happy path AC + at least one guard failure AC + feature flag OFF behavi
 
 ### AC-0N: [Edge Case from TBL-ID]
 [Cover key rows from the decision table]
+```
+
+**4b-Subtasks. Subtasks (helper notes)**
+
+Write the lightweight nuance helpers captured during the Step 1.5 interrogation (and any the user/team added). These are dev aids, not deliverables - never sub-features. If none surfaced, leave the section with `- none`.
+
+```markdown
+## Subtasks (helper notes)
+
+- [ ] [nuance / spec detail - e.g. "reset link expires in 15 min", "reuse existing EmailService"]
+- [ ] [implementation hint or UX nuance the developer should know]
 ```
 
 **4c. Section 3 - JIT Technical Design**
@@ -450,6 +503,12 @@ Call `mcp__claude_ai_Notion__notion-update-page` with `command: "replace_content
 ## 2. Acceptance Criteria
 
 [Full Section 2 content generated by this skill]
+
+---
+
+## Subtasks (helper notes)
+
+[Subtask helper notes captured during discovery - or "none"]
 
 ---
 

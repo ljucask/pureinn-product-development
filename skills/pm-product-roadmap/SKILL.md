@@ -20,7 +20,7 @@ metadata:
 Creates and maintains the Product Roadmap - a living strategic document that evolves across phases:
 
 - **v1 (Phase 3b):** Vision + validated problem + customer segments + business model horizon. No features yet - strategic direction only.
-- **v2 (Phase 4):** Domain constraints and architecture decisions incorporated. Technical realities added. Still no delivery details.
+- **v2 (Phase 4):** Domain constraints and architecture decisions incorporated. Technical realities added. **Functional Decomposition** introduced - phases mapped to Domains and Feature Sets as the top-down input to the Feature Plan. Still no individual Features.
 - **v3 (Phase 5):** Feature view added. Phases aligned with Feature Sets and Delivery Stripes. Delivery timeline visible.
 
 This skill handles all three versions. Step 0 determines which version applies and what updates are needed.
@@ -206,6 +206,23 @@ Generate in English.
 
 **Success criteria:**
 - [ ] [Condition 1]
+
+---
+
+## Functional Decomposition (v2+ - top-down input to the Feature Plan)
+
+> Added in v2 (once the Domain Model exists), refined in v3. This is the bridge from strategy to the Feature List: each strategic phase is decomposed into the functional areas (**Domains**) and capabilities (**Feature Sets, FS-NN**) it requires. `pm-features-list` consumes this map to derive **Features** top-down as the leaves. One consistent picture for both audiences - investor sees direction, dev team sees what gets built where.
+
+| Strategic Phase | Domain | Feature Set (FS-NN) | Capability / business outcome |
+|---|---|---|---|
+| Phase 1: [Name] | [Order Management] | FS-01: [Order Processing] | [what this capability delivers for the client] |
+| Phase 1: [Name] | [Payments] | FS-02: [Card Payments] | |
+| Phase 2: [Name] | [Notifications] | FS-03: [Transactional Email] | |
+
+**Derivation rules:**
+- Features are **not** listed here - they are derived from these Feature Sets in `pm-features-list` (top-down, leaves last). This guarantees every Feature traces to a phase and a capability.
+- 2-level hierarchy only: **Domain > Feature Set (FS-NN) > Feature**. The classic FDD "Major Feature Set" level is intentionally not used (lean / AI-first).
+- FS-NN numbering is global and continues across domains.
 
 ---
 

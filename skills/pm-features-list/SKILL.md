@@ -206,17 +206,21 @@ Save to: `pureinn-workspace/[project-slug]/features/feature_list.md`
 
 ## Feature Naming Convention
 
-Every feature follows: **`[Action] [Result] [Object]`**
+**Top-down derivation (Features are leaves, derived last):** Start from the roadmap's Functional Decomposition (Domain > Feature Set), then derive the atomic Features within each Feature Set. Every Feature traces up to a Feature Set and a strategic phase. If no roadmap decomposition exists, derive directly from the domain registers (`entities.md`) - but the roadmap map is the preferred input.
 
-- Action: what happens (Submit, Calculate, Validate, Generate, Send, Approve, Cancel...)
-- Result: the outcome or state change (order confirmation, payment status, availability...)
-- Object: the entity being acted on (card, order, booking, invoice, user account...)
+Every feature follows: **`[Action] [Result] [Object]`** (FDD grammar - never the User Story "As a user I want..." form).
 
-Features must be:
-- Independently implementable and testable
-- Deliverable in 14 days or less (if larger: split atomically)
-- Expressed from the business/user value perspective (not technical implementation)
-- NO User Stories format ("As a user I want...") - FDD grammar only
+- **Action** = a strong, concrete verb. Use: *Calculate, Validate, Generate, Create, Add, Submit, Send, Approve, Cancel, Update, Display, Download, Assign, Reverse*. **Ban vague verbs:** *Process, Manage, Handle, Support, Set up, Maintain, Control* - they hide what actually happens ("Process order" → what exactly?).
+- **Result** = the outcome / state change (order confirmation, payment status, availability).
+- **Object** = a concrete **entity from `entities.md`** - never an abstract noun ("data", "information", "system", "process").
+
+**Sizing - the atomicity test is SEMANTIC, not time-based:**
+A Feature is one coherent, client-valued function with one result. Test: *"Is this one thing the client perceives as value, expressible as `<verb> <result> <object>`?"*
+- "...and..." / two independent results → **split** into separate Features.
+- A detail or nuance of one Feature → a **Subtask**, not a split.
+The `estimate` field (S/M/L) is informational for the roadmap - it is **not** the atomicity gate (dev time compresses with AI agents).
+
+**Validate every feature against the 7 anti-patterns** (fix if any hits): (1) too big - two results, (2) vague verb, (3) technical task with no client value, (4) named after a UI screen, (5) missing acceptance criteria, (6) abstract object, (7) duplicate of an existing feature.
 
 **Feature Set ID convention:**
 Feature Sets are grouping labels (not spec artifacts), but each gets a stable ID for indexing and cross-reference. Assign `FS-NN` globally sequential across the whole product (FS-01, FS-02, FS-03...), continuing across domains - not reset per domain. Reference format everywhere is `FS-NN: Name` (e.g., `FS-01: Order Processing`). Each feature inherits its Feature Set's ID; this is written to the `feature_set` field of every stub Feature Card.
@@ -470,6 +474,7 @@ feature_set: "FS-NN: [Feature Set name]"
 actor: [User / Host / Admin / System]
 owner: unassigned
 priority: [P1/P2/P3 from V×C]
+estimate: "[S / M / L - informational sizing, NOT the atomicity test]"
 prd_ref: /product/PRD.md#[relevant-section]
 feature_flag: [domain.feature-name]
 flag_default: off
@@ -482,6 +487,9 @@ flag_default: off
 
 ## 2. Acceptance Criteria
 *TBD - populated by /pm-feature-design [FEAT-ID]*
+
+## Subtasks (helper notes)
+*TBD - nuance helpers added during /pm-feature-design [FEAT-ID] or by the team*
 
 ## 3. JIT Technical Design (FDD Design)
 *TBD - populated by /pm-feature-design [FEAT-ID]*
@@ -544,6 +552,9 @@ content:
 
   ## 2. Acceptance Criteria
   *TBD - populated by /pm-feature-design [FEAT-ID]*
+
+  ## Subtasks (helper notes)
+  *TBD - nuance helpers added during /pm-feature-design [FEAT-ID] or by the team*
 
   ## 3. JIT Technical Design (FDD Design)
   *TBD - populated by /pm-feature-design [FEAT-ID]*

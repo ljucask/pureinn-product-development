@@ -188,7 +188,12 @@ Append this area's section to the living `reconcile/reconciliation_report.md` (d
 Drive the existing skill - do not duplicate its template:
 - **domain** → `/pm-entity-registry` (reconciled mode) → `entities.md` (entities, attributes, state-machine structure) + `/pm-glossary` for aliases
 - **rules** → `/pm-business-rules-library` (reconciled mode) → `business_rules.md` + `decision_models.md`; also writes the reconciled guard conditions onto the transitions in `entities.md`. Rules with an open `DIV-NN` stay `Draft` linked to the report; divergence-free rules go `Final`.
-- **features** → `/pm-reverse-extract` (reconciled mode) → `feature_list.md` + stub cards. Features normalized to FDD grammar, regularized granularity, grouped into `FS-NN`, Section 1 linked to register BR-IDs; code-only features included; doc-only items NOT carded (backlog).
+- **features** → `/pm-reverse-extract` (reconciled mode) → `feature_list.md` + stub cards. Features normalized to FDD grammar, grouped into `FS-NN`, Section 1 linked to register BR-IDs; code-only features included; doc-only items NOT carded (backlog).
+
+  **Right-sizing legacy features (apply the semantic atomicity test):** legacy systems are often mis-granular. Reconcile each to one coherent client-valued function:
+  - **Too granular** (several legacy "features" are really nuances of one capability, e.g. *login*, *register*, *reset password* under *authenticate user*) → consolidate them under one rightful Feature and capture the granular bits as **Subtasks** (helper notes) on that card. They are not lost, not kept as pseudo-features.
+  - **Too big** (a legacy feature carries two independent results) → split into separate Features.
+  - Record every merge/split in the Reconciliation Report (Section: feature regrouping) so the team can trace where each legacy item went.
 
 ## Step A6: Update status + Notion
 
@@ -238,6 +243,7 @@ Header (written by Plan mode): purpose, scope, policy, date. Then one section ap
 ### Decisions made (AskUserQuestion log)
 ### Specified but not implemented (→ backlog)
 ### Undocumented in code (→ confirm intent)
+### Feature regrouping (features area only - merges/splits, where each legacy item went)
 ### Open questions for the team
 ```
 

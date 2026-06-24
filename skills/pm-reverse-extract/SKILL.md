@@ -243,6 +243,7 @@ feature_set: "FS-NN: [Feature Set name - group during planning]"
 actor: [User / Host / Admin / System]
 owner: unassigned
 priority: [P1/P2/P3 - assign during planning]
+estimate: "[S / M / L - informational sizing, NOT the atomicity test]"
 prd_ref: /product/PRD_master.md#[section]
 feature_flag: [domain.feature-name]
 flag_default: off
@@ -270,6 +271,9 @@ flag_default: off
 
 ## 2. Acceptance Criteria
 *TBD - populated by /pm-feature-design [FEAT-ID]*
+
+## Subtasks (helper notes)
+*Granular legacy features folded here as nuance helpers (see Reconciliation Report), or added during /pm-feature-design [FEAT-ID]*
 
 ## 3. JIT Technical Design (FDD Design)
 *TBD - populated by /pm-feature-design [FEAT-ID]*
@@ -344,6 +348,9 @@ content:
 
   ## 2. Acceptance Criteria
   *TBD - populated by /pm-feature-design [FEAT-ID]*
+
+  ## Subtasks (helper notes)
+  *Granular legacy features folded here as nuance helpers, or added during /pm-feature-design [FEAT-ID]*
 
   ## 3. JIT Technical Design (FDD Design)
   *TBD - populated by /pm-feature-design [FEAT-ID]*
