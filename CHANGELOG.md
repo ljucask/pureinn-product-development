@@ -1,5 +1,18 @@
 # Changelog
 
+## [5.4.0] - 2026-06-24
+
+### New Skill
+
+- **pm-audit** (39th skill) - workspace health check. Scans the framework's own artifacts (the 4 Live Registers, feature_list, Feature Cards, roadmap, glossary, state.json) against the **current** Pureinn conventions, finds inconsistencies, drift, and errors, fixes the mechanical ones in place, and asks about the judgment calls via grouped AskUserQuestion. Detects **framework-version drift** (old lifecycle state names, old hierarchy terms, missing newer fields like `feature_set`/`estimate`/Subtasks, `notion.*` cache keys) and migrates older-version workspaces. Findings scored by severity (P0-P3). Distinct from pm-reconcile (code vs legacy docs) and pm-reverse-extract (code to inventory) - this checks Pureinn artifacts against Pureinn conventions. Run after reconcile/extract, on an older workspace, or any time before continuing. `pm-reconcile` now routes to it as its verification step. This productizes the manual consistency passes done in v4.11.0 / v5.0.0 / v5.2.0.
+
+### Fixed
+
+- **pm-features-list** internal checklist: replaced the leftover "deliverable in 2 weeks or less" with the semantic atomicity test (one coherent client-valued function with one result), aligning the checklist with the v5.3.0 reframe.
+
+---
+
+
 ## [5.3.0] - 2026-06-24
 
 JIT feature-design redesign - making feature design a guided deep-dive rather than a form to fill, grounded in an FDD feature-definition deep-research pass.

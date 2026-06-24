@@ -4,7 +4,7 @@ This file provides guidance to Claude Code when working in this repository.
 
 ## What this repository is
 
-The Pureinn product development framework published as a Claude Code plugin. Contains 38 active skills and 2 commands covering the full product lifecycle (FDD+SDD hybrid with JIT per-feature design, intuitive Feature Card lifecycle states, Figma MCP integration, and a reconciliation-based Rebuild playbook for onboarding existing products - pm-reconcile plan + per-area execution, tracked by pm-reconcile-status).
+The Pureinn product development framework published as a Claude Code plugin. Contains 39 active skills and 2 commands covering the full product lifecycle (FDD+SDD hybrid with JIT per-feature design, intuitive Feature Card lifecycle states, Figma MCP integration, a reconciliation-based Rebuild playbook for onboarding existing products, and a pm-audit workspace health check).
 
 **Plugin repo is the master copy.** The `AI Workflow/.claude/commands/` folder in the personal framework repo is secondary. Always edit here first.
 

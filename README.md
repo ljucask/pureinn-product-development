@@ -19,7 +19,7 @@ A structured methodology for building products - from zero to launch. Implemente
 
 ## What this is
 
-**38 active skills + 2 commands** covering the full product lifecycle: discovery, validation, domain modeling, feature planning, FDD delivery, and reconciliation-based rebuild.
+**39 active skills + 2 commands** covering the full product lifecycle: discovery, validation, domain modeling, feature planning, FDD delivery, reconciliation-based rebuild, and workspace health-check.
 
 Three playbooks:
 
@@ -178,6 +178,7 @@ If FEAT-ID doesn't exist yet: add it to `feature_list.md`, create stub card, the
 | `/pm-entity-registry` | Extracts entity states from existing codebase into entities.md |
 | `/pm-business-rules-library` | Extracts business rules from existing codebase into business_rules.md + decision_models.md |
 | `/pm-reverse-extract` | Extracts feature inventory from an existing product into Notion + local artifacts. Run instead of pm-features-list + pm-mvp-scope for products built outside the framework. |
+| `/pm-audit` | **Workspace health check.** Scans the Pureinn artifacts against current conventions, finds drift/errors, fixes mechanical ones, asks about judgment calls. Migrates older-version workspaces. Run after reconcile/extract, on an older workspace, or any time before continuing. |
 
 ---
 

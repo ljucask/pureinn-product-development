@@ -396,6 +396,7 @@ Mandatory when building onto a product that already has users. (Greenfield has n
 |---|---|
 | `/pm-glossary` | Start early, update when new terminology surfaces |
 | `/pm-diagrams` | When a visual is needed (User Flow, Architecture, JTBD Forces) |
+| `/pm-audit` | Workspace health check - scans Pureinn artifacts against current conventions, fixes drift/errors, migrates older-version workspaces. Run after reconcile/extract or any time before continuing. |
 
 ---
 

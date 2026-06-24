@@ -276,7 +276,7 @@ register prestavaný.
 **Ďalší krok:** `/pm-reconcile [ďalšia oblasť podľa plánu]` — pokračuj v poradí.
 Stav kedykoľvek cez `/pm-reconcile-status`.
 
-**Po dokončení všetkých oblastí:** `/pm-stripe` → delivery channels a JIT po featurach.
+**Po dokončení všetkých oblastí:** `/pm-audit` → overí konzistenciu prestaveného workspace, potom `/pm-stripe` → delivery channels a JIT po featurach.
 Reconciliation Report prejdi s tímom kvôli otvoreným divergenciám.
 
 **Môžeš preskočiť ak:** žiadne staré docs neexistujú (len kód) — vtedy stačí naivná migračná cesta

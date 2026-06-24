@@ -581,8 +581,8 @@ After push: report how many entries were created, how many stub Feature Cards we
 - [ ] Features are discrete actions, not multi-step processes
 
 **Feature granularity:**
-- [ ] Each feature deliverable in 2 weeks or less
-- [ ] Features too broad are flagged for splitting
+- [ ] Each feature is one coherent client-valued function with one result (semantic atomicity test - not time-based)
+- [ ] Features with two independent results are flagged for splitting; nuances captured as Subtasks, not splits
 
 **Coverage:**
 - [ ] All in-scope functional areas from PRD have features
