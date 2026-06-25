@@ -19,7 +19,7 @@ A structured methodology for building products - from zero to launch. Implemente
 
 ## What this is
 
-**40 active skills + 2 commands** covering the full product lifecycle: discovery, validation, domain modeling, feature planning, FDD delivery, reconciliation-based rebuild, and workspace health-check.
+**41 active skills + 2 commands** covering the full product lifecycle: discovery, validation, domain modeling, feature planning, prioritization, FDD delivery, reconciliation-based rebuild, and workspace health-check.
 
 Three playbooks:
 
@@ -154,6 +154,7 @@ If FEAT-ID doesn't exist yet: add it to `feature_list.md`, create stub card, the
 | Skill | Output |
 |---|---|
 | `/pm-features-list` | feature_list.md (FDD Feature List, Live Register 4), KANO Analysis, V×C Matrix + stub Feature Cards |
+| `/pm-prioritize` | Re-runnable backlog prioritization engine - align to roadmap, follow a directive, apply a lens, or let it propose a basis. Dependency-reconciled, non-destructive. Run at any point when priorities shift. |
 | `/pm-mvp-scope` | MVP Scope, Delivery Stripes (domain-focused channels), Feature-to-Stripe assignment |
 | `/pm-product-roadmap` | Product Roadmap v3 |
 

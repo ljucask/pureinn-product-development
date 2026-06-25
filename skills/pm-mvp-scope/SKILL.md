@@ -10,7 +10,7 @@ metadata:
   role: specialist
   scope: planning
   output-format: document
-  related-skills: pm-features-list, pm-product-roadmap, pm-stripe, pm-entity-registry
+  related-skills: pm-features-list, pm-prioritize, pm-product-roadmap, pm-stripe, pm-entity-registry
 ---
 
 # PM - MVP Scope

@@ -162,6 +162,7 @@ Four tracks run in parallel, converge at the end.
 | Skill | Output | Notion |
 |---|---|---|
 | `/pm-features-list` | feature_list.md (Register 4, `FEAT-[DOMAIN]-[NUMBER]`, `FS-NN` Feature Sets), KANO, V×C + stub Feature Cards | Feature entries pushed (Status = Backlog, Priority from KANO+V×C) |
+| `/pm-prioritize` | Re-runnable prioritization engine - basis: roadmap / directive / lens / propose. Dependency-reconciled, non-destructive. Any time priorities shift. | - |
 | `/pm-mvp-scope` | MVP Scope (IN/POST-MVP/CUT), Delivery Stripes, Feature-to-Stripe assignment | Features enriched with Phase/Stripe |
 | `/pm-product-roadmap` | Product Roadmap v3 (+ feature and delivery view) | - |
 

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code when working in this repository.
 
 ## What this repository is
 
-The Pureinn product development framework published as a Claude Code plugin. Contains 40 active skills and 2 commands covering the full product lifecycle (FDD+SDD hybrid with JIT per-feature design, intuitive Feature Card lifecycle states, Figma MCP integration, a reconciliation-based Rebuild playbook for onboarding existing products, and a pm-audit workspace health check).
+The Pureinn product development framework published as a Claude Code plugin. Contains 41 active skills and 2 commands covering the full product lifecycle (FDD+SDD hybrid with JIT per-feature design, intuitive Feature Card lifecycle states, Figma MCP integration, a reconciliation-based Rebuild playbook for onboarding existing products, a pm-audit workspace health check, and a re-runnable pm-prioritize backlog engine).
 
 **Plugin repo is the master copy.** The `AI Workflow/.claude/commands/` folder in the personal framework repo is secondary. Always edit here first.
 
@@ -264,6 +264,19 @@ Pokračovať napriek tomu, alebo preskočiť na [next relevant skill]?
 - `/pm-feature-viability`: Skip if feature is already scoped, committed, or in a validated roadmap
 
 The orchestrator (`/pureinn`) surfaces these conditions proactively during phase routing.
+
+---
+
+## Adaptive execution - agile, not waterfall (universal standard)
+
+Every skill runs as an **adaptive, returnable step in an agile loop** - never as a fixed waterfall stage. This governs both how skills are written and how they execute at runtime. Four properties, required of every skill:
+
+1. **Situation-aware + proactive.** A skill detects the current state and adapts - it does not assume a fixed entry point or run a fixed script. When the user does not know, or the document/context is thin, the skill becomes a **proactive partner**: it analyses what it has, **formulates concrete candidate assumptions**, and probes via **AskUserQuestion** to close the gap and reach the goal *together*. It never stalls on missing input. (This is the active form of the PREREQ graceful-degradation and "Handling I don't know" patterns above.)
+2. **Offer, don't impose.** When there is a meaningful choice - which method to use, what scope, whether to act now - the skill **offers** it (asks + proposes options with a recommended one and the reasoning) rather than silently auto-executing a default. Example: prioritization is offered with a basis-selection, not auto-applied.
+3. **Re-runnable + returnable.** Artifacts are living, not write-once. Returning to a skill **iterates and updates** - it does not start over destructively. Any skill can be revisited as new information arrives.
+4. **Sequence is a default, not a mandate.** The phase/skill order is a suggested path; move between skills as the situation demands. The only hard constraints are the few **intentional gates** (Phase 3a Go/No-Go, Phase 6 Design Inspection) that exist to prevent compounding, uncorrectable waste - agile does not mean removing those.
+
+When writing or updating any skill, check it against these four. A skill that auto-executes without offering, or that cannot be re-run without damage, violates this standard.
 
 ---
 

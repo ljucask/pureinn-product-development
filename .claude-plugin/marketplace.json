@@ -5,14 +5,14 @@
   },
   "metadata": {
     "description": "AI-native product development framework covering the full lifecycle from idea to launch",
-    "version": "5.7.0"
+    "version": "5.8.0"
   },
   "plugins": [
     {
       "name": "pureinn-product-development",
       "source": "./",
-      "description": "40 active skills and 2 commands covering the full product development lifecycle. FDD+SDD hybrid with JIT per-feature design, 4 living registers, atomic commit protocol. Three playbooks: Greenfield, Feature Implementation, Rebuild. Integrates with Notion, Excalidraw, and Gamma via MCP.",
-      "version": "5.7.0",
+      "description": "41 active skills and 2 commands covering the full product development lifecycle. FDD+SDD hybrid with JIT per-feature design, 4 living registers, atomic commit protocol. Three playbooks: Greenfield, Feature Implementation, Rebuild. Integrates with Notion, Excalidraw, and Gamma via MCP.",
+      "version": "5.8.0",
       "author": {
         "name": "ljucask",
         "email": "lukas.kianka@gmail.com"

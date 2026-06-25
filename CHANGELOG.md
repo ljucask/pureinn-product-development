@@ -1,5 +1,20 @@
 # Changelog
 
+## [5.8.0] - 2026-06-25
+
+### Added
+
+- **Adaptive-execution universal standard (CLAUDE.md) - "agile, not waterfall".** Codifies a cross-cutting principle for all 41 skills + every future one: (1) **situation-aware + proactive** - a skill detects state and adapts, and when the user does not know or context is thin it becomes a proactive partner that formulates candidate assumptions and probes via AskUserQuestion to reach the goal together (never stalls on missing input); (2) **offer, don't impose** - meaningful choices are offered with a recommended option and reasoning, not silently auto-executed; (3) **re-runnable + returnable** - artifacts are living, returning iterates rather than restarts; (4) **sequence is a default, not a mandate** - move between skills freely, the only hard constraints are the few intentional gates (Go/No-Go, Design Inspection). Generalizes patterns the framework already used (PREREQ graceful degradation, "I don't know" handling, living registers).
+- **pm-prioritize** (41st skill) - re-runnable backlog prioritization engine, usable at **any** point (after the feature list, after the MVP cut, or later when priorities shift). Pick the basis or let it propose one: **align to the roadmap** / **follow your directive** ("payments first", "revenue first") / **apply a lens** (Value / Quick-wins / Risk / Unblock-dependencies) / **you-decide** (it analyses and recommends a basis with reasoning). Always reconciles against the Dependency Map (cannot rank a feature ahead of its blocker, surfaces conflicts), non-destructive (proposes, you confirm before it writes, KANO/V×C scores left intact), and logs each prioritization with its rationale.
+
+### Changed
+
+- **pm-features-list now offers prioritization instead of auto-running KANO/V×C.** Its Step 4 asks on what basis to prioritize (KANO+V×C as the recommended first-pass lens, or delegate to `pm-prioritize` for roadmap/directive/propose). The prioritization logic lives once, in `pm-prioritize`.
+- **pm-product-roadmap documented as bidirectional and iterative with the feature list** - not strictly top-down. A partial roadmap (phases only) is a valid state: derive features from it then complete the roadmap (top-down), OR extract features first and fill the roadmap from them (bottom-up). Features can drive phasing, not only reflect it.
+
+---
+
+
 ## [5.7.0] - 2026-06-25
 
 ### New Skill

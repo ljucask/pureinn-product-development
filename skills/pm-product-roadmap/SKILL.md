@@ -10,7 +10,7 @@ metadata:
   role: specialist
   scope: planning
   output-format: document
-  related-skills: pm-prd, pm-mvp-scope, pm-features-list, pm-kpis
+  related-skills: pm-prd, pm-mvp-scope, pm-features-list, pm-prioritize, pm-kpis
 ---
 
 # PM - Product Roadmap
@@ -24,6 +24,13 @@ Creates and maintains the Product Roadmap - a living strategic document that evo
 - **v3 (Phase 5):** Feature view added. Phases aligned with Feature Sets and Delivery Stripes. Delivery timeline visible.
 
 This skill handles all three versions. Step 0 determines which version applies and what updates are needed.
+
+**The roadmap and the feature list are iterative and bidirectional - not strictly top-down.** The v1/v2/v3 versions are a default rhythm, not a rigid waterfall (per the Adaptive-execution standard in CLAUDE.md). Two valid orderings, and you can mix them:
+
+- **Top-down:** you have a notion of phases first (a partial roadmap - v1/v2, phases only, detail TBD). The feature list is derived from that, then the roadmap is **completed** (v3) once features exist.
+- **Bottom-up:** you extract or propose features first (via `pm-features-list` / `pm-reverse-extract`), and the roadmap phases and sequencing are **filled in from them**.
+
+So a partial roadmap is a valid, expected state - capture the phases you know, derive features, and return to complete the remaining parts. Features can drive phasing, not only reflect it. When you run this skill, detect what already exists (partial roadmap? feature list?) and adapt - complete what is missing rather than assuming a fixed order.
 
 The roadmap is NOT a sprint backlog. It communicates strategic intent and phase sequencing - not implementation details.
 

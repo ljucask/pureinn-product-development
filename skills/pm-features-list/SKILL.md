@@ -10,7 +10,7 @@ metadata:
   role: specialist
   scope: planning
   output-format: document
-  related-skills: pm-mvp-scope, pm-entity-registry, pm-business-rules-library, pm-prd, pm-product-roadmap
+  related-skills: pm-mvp-scope, pm-prioritize, pm-entity-registry, pm-business-rules-library, pm-prd, pm-product-roadmap
 ---
 
 # PM - Features List
@@ -350,13 +350,23 @@ The longest sequence of hard dependencies that determines minimum delivery timel
 
 ---
 
-## Step 4: Generate KANO + Value vs. Complexity
+## Step 4: Prioritize (offer, don't impose)
 
-After Dependency Map is approved.
+After the Dependency Map is approved. **Do not auto-run KANO/V×C silently** - prioritization is offered on a basis, consistent with the canonical engine `pm-prioritize` (per the Adaptive-execution standard in CLAUDE.md).
+
+Use AskUserQuestion: "How should I prioritize this backlog?"
+- Option A: "**KANO + V×C** (Recommended for a first greenfield pass)" - the default scoring; generate the two artifacts below
+- Option B: "**Align to the roadmap**" (if one exists) - delegate to `/pm-prioritize` Option A
+- Option C: "**My directive / a specific lens**" - delegate to `/pm-prioritize` (Options B/C)
+- Option D: "**You decide and propose**" - delegate to `/pm-prioritize` Option D
+
+If the user picks A, generate the KANO + V×C artifacts below. For B/C/D, run the `pm-prioritize` basis instead (KANO/V×C remains available as an input lens). Either way the result is a dependency-reconciled priority order on the feature list - the engine and its logic live in `pm-prioritize`; this step just offers it at creation time.
+
+If the user is unsure: be the proactive partner - propose the most fitting basis with reasoning (e.g. "no roadmap yet and you're validating - KANO + V×C is the right first lens") and confirm.
 
 ---
 
-### ARTIFACT 3: KANO Analysis
+### ARTIFACT 3: KANO Analysis (when basis = KANO + V×C)
 
 ```markdown
 # KANO Analysis - [Product Name]
