@@ -1,5 +1,14 @@
 # Changelog
 
+## [5.10.1] - 2026-06-25
+
+### Changed
+
+- **`pm-audit` now takes an optional area scope**, mirroring `pm-reconcile`'s per-area model: `/pm-audit domain` (entities + domain-model), `/pm-audit rules` (business_rules + decision_models), `/pm-audit features` (feature_list + cards), or `/pm-audit` for the whole workspace (default). A scoped run checks only that area's artifacts plus their direct cross-references (e.g. `features` confirms card BR-IDs resolve into business_rules.md without re-auditing the rules). A plain-language scope is also honoured. Gives the same per-area granularity for verification that reconcile has for the rebuild.
+
+---
+
+
 ## [5.10.0] - 2026-06-25
 
 ### Added

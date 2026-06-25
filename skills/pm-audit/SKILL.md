@@ -1,6 +1,6 @@
 ---
 name: pm-audit
-description: Health check for an existing Pureinn workspace. Scans the framework's own artifacts - the 4 Live Registers, feature_list, Feature Cards, roadmap, glossary, state.json - against the current Pureinn conventions, finds inconsistencies, drift, and errors, then fixes the mechanical ones and asks about the judgment calls. Detects framework-version drift (artifacts produced by an older Pureinn version) and offers to migrate them. Use when a workspace was built with an older version, after pm-reconcile or pm-reverse-extract, or any time you want to confirm the workspace is internally consistent before continuing. Distinct from pm-reconcile (code vs legacy docs) and pm-reverse-extract (code to inventory) - this checks Pureinn artifacts against Pureinn conventions.
+description: Health check for an existing Pureinn workspace. Scans the framework's own artifacts - the 4 Live Registers, feature_list, Feature Cards, roadmap, glossary, state.json - against the current Pureinn conventions, finds inconsistencies, drift, and errors, then fixes the mechanical ones and asks about the judgment calls. Detects framework-version drift (artifacts produced by an older Pureinn version) and offers to migrate them. Use when a workspace was built with an older version, after pm-reconcile or pm-reverse-extract, or any time you want to confirm the workspace is internally consistent before continuing. Takes an optional area argument to scope the audit (/pm-audit domain | rules | features), or audits the whole workspace by default. Distinct from pm-reconcile (code vs legacy docs) and pm-reverse-extract (code to inventory) - this checks Pureinn artifacts against Pureinn conventions.
 license: MIT
 metadata:
   author: https://github.com/ljucask
@@ -61,9 +61,25 @@ If no workspace is found, do not guess. Tell the user to run `/pureinn` first (g
 
 ---
 
+## Scope (whole workspace or one area)
+
+`pm-audit` takes an optional area argument, mirroring `pm-reconcile`'s per-area model:
+
+| Command | Audits |
+|---|---|
+| `/pm-audit` | **Whole workspace** (default) - all artifacts |
+| `/pm-audit domain` | `domain/entities.md` + `domain/domain-model.md` (structure, entity/state naming, ERD ↔ entities consistency) |
+| `/pm-audit rules` | `domain/business_rules.md` + `domain/decision_models.md` (BR/TBL IDs, rule↔entity refs, decision-table completeness) |
+| `/pm-audit features` | `features/feature_list.md` + `features/cards/` (card structure, FS-NN, Section-1 BR-ID refs resolve, lifecycle status) |
+| `/pm-audit [other]` | any single artifact the user names |
+
+When an area is given, scan and report only that area's artifacts (plus their direct cross-references - e.g. `features` checks that BR-IDs in cards resolve into `business_rules.md`, without auditing the rules themselves). When no area is given, audit everything. If the user states a scope in plain language, honour it (per the Adaptive-execution standard).
+
+---
+
 ## Step 0: Locate workspace + detect version
 
-Find the workspace and inventory what artifacts exist:
+Determine the **scope** first (from the argument or the user's request - default whole workspace). Then find the workspace and inventory the artifacts in scope:
 
 | Artifact | Present? |
 |---|---|
@@ -85,7 +101,7 @@ Apply the standard skill interaction pattern (CLAUDE.md).
 
 ## Step 1: Scan
 
-Read every artifact and run the checks below. Collect findings; do not fix yet.
+Read every artifact **in scope** (Step 0) and run the checks below - for an area scope, only that area's artifacts and their direct cross-references; for whole-workspace, all of them. Collect findings; do not fix yet.
 
 | Dimension | What is checked |
 |---|---|
