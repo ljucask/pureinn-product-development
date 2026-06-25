@@ -111,6 +111,7 @@ Read every artifact **in scope** (Step 0) and run the checks below - for an area
 | **Lifecycle** | `status` is one of the canonical 6 (`1_Backlog`..`6_Shipped`). No orphaned or invalid states. |
 | **Version drift** | Any of the Step 0 drift signals → migration finding. |
 | **Completeness** | Every feature in feature_list has a card; every card has its required sections; registers are initialized; state.json flags match reality. |
+| **Description present** | Every feature has a non-blank Description - both its `feature_list.md` entry and its card's `## Description` section, for **every status** (including `6_Shipped` lean stubs and `1_Backlog`). A feature with no description is a P2 finding (orientation gap). |
 | **Notion sync** (if configured) | Local `status` vs Notion `Status` mismatch surfaced (drift log, like pm-stripe). |
 
 ---
@@ -153,6 +154,7 @@ Present the score and P0/P1 summary to the user before fixing.
 
 - **Mechanical (auto-fix):** ID format normalization, old → new lifecycle state names, missing `feature_set`/`estimate`/`Subtasks` scaffolding added, `notion.*` → `notion_ids.*`, path-slash convention, dead-link repair where the target is unambiguous. Apply in place; report a diff summary.
 - **Judgment (ask):** anything where the fix changes meaning - a naming anti-pattern rewrite, an ambiguous dangling reference, a feature that may need splitting, a missing card that may be intentional. Batch these via the grouped AskUserQuestion pattern (CLAUDE.md), 2-4 per round, confirm, apply.
+- **Missing descriptions (backfill from evidence):** for every feature missing a Description, propose one **drafted from the card's Evidence / code references / linked rules** (2-3 sentences: what it does, who, value), batch them via AskUserQuestion for confirmation, then write to both the `feature_list.md` entry and the card's `## Description`. This lets an existing workspace be backfilled without re-running the whole reconcile.
 
 Never silently change a rule value, an acceptance criterion, or a business decision - those are out of scope (route to `pm-feature-design` / `pm-business-rules-library`).
 

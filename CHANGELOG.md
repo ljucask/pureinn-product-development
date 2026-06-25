@@ -1,5 +1,18 @@
 # Changelog
 
+## [5.11.0] - 2026-06-25
+
+### Changed
+
+- **Every feature must carry a Description, for every status.** A feature was orientable only if it had a full card - shipped "lean" stubs and un-carded backlog features had no description, which hurt the team's ability to understand the backlog at a glance (surfaced on Vezmee: 21 shipped + 7 backlog features with no description). Now mandatory everywhere:
+  - `## Description` section added to the **canonical Feature Card** (pm-feature-card) and the **pm-features-list** stub (pm-reverse-extract already had it) - a 2-3 sentence "what / who / value", required regardless of status (`1_Backlog` to `6_Shipped`).
+  - A **`Description:` line per feature in `feature_list.md`** (pm-reverse-extract blocks) so even un-carded backlog features are orientable in the register itself.
+  - The reconcile "lean" shipped stub must now fill its Description from the extraction evidence (no longer blank).
+- **`pm-audit` flags and backfills missing descriptions.** A new "Description present" check (P2); on fix, it drafts a description from the card's evidence / code references / linked rules and confirms via AskUserQuestion - so an existing workspace (like Vezmee) can be backfilled with `/pm-audit features` without re-running the whole reconcile.
+
+---
+
+
 ## [5.10.1] - 2026-06-25
 
 ### Changed

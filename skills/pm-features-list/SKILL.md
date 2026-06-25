@@ -492,6 +492,9 @@ flag_default: off
 
 # Feature Card: {{title}}
 
+## Description
+[2-3 sentences - what this feature does, who uses it, the value. Mandatory for every card regardless of status - the team's orientation. Never blank.]
+
 ## 1. Biznis Mantinely (SDD Input)
 *TBD - populated by /pm-feature-design [FEAT-ID]*
 

@@ -193,6 +193,7 @@ Save to: `pureinn-workspace/[project-slug]/features/feature_list.md`
 ## [Domain Name] (FEAT-[DOMAIN]-*)
 
 ### FEAT-[DOMAIN]-001: [Feature Name]
+**Description:** [1-2 sentences - what this feature does, who uses it, the value. **MANDATORY for every feature, every status** - including Built/Shipped and Backlog. This is the team's orientation; never leave it blank.]
 **Actor:** [User / Host / Admin / System]
 **Status:** Done / In Progress / Planned / Unclear
 **Delivery Stripe:** [Stripe name]
@@ -282,7 +283,7 @@ flag_default: off
 *TBD - populated after build and Code Inspection*
 ```
 
-For features with Status = Done that have no Feature Card: create a minimal stub with status `6_Shipped` and a note that the feature is live - no JIT design needed.
+For features with Status = Done that have no Feature Card: create a minimal stub with status `6_Shipped`, **its `## Description` filled from the extraction evidence** (never blank - even shipped features need orientation), and a note that the feature is live - no JIT design needed. Backlog features that are not stubbed must still carry their **Description** in `feature_list.md` (above) - every feature is orientable regardless of card status.
 
 ---
 
