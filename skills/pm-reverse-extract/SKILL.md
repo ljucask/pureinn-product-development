@@ -194,9 +194,9 @@ Save to: `pureinn-workspace/[project-slug]/features/feature_list.md`
 
 ### FEAT-[DOMAIN]-001: [Feature Name]
 **Description:** [1-2 sentences - what this feature does, who uses it, the value. **MANDATORY for every feature, every status** - including Built/Shipped and Backlog. This is the team's orientation; never leave it blank.]
-**Actor:** [User / Host / Admin / System]
-**Status:** Done / In Progress / Planned / Unclear
-**Delivery Stripe:** [Stripe name]
+**Layer:** frontend / backend / system   ·   **Phase:** MVP / MVP+ / Phase 1 / ...   ·   **Actor:** [User / Host / Admin / System]
+**KANO:** Must-be / Performance / Delighter / Indifferent   ·   **V×C:** Quick Win / Big Bet / Fill-in / Time Waster
+**Status:** Done / In Progress / Planned / Unclear   ·   **Dev Stripe:** [Dev Stripe 1 / ...]   ·   **Subtasks:** yes / no
 **Spec coverage:** [Feature Card exists: Yes/No | Sections 1-3: Complete/Partial/None]
 **Notes:** [any relevant context]
 
@@ -241,10 +241,15 @@ title: "[Action] [Result] [Object]"
 status: 1_Backlog
 stripe: [stripe-name]
 feature_set: "FS-NN: [Feature Set name - group during planning]"
+layer: [frontend / backend / system - from code evidence]
+phase: [MVP / MVP+ / Phase 1 / ...]
 actor: [User / Host / Admin / System]
 owner: unassigned
 priority: [P1/P2/P3 - assign during planning]
+kano: [Must-be / Performance / Delighter / Indifferent]
+vxc: [Quick Win / Big Bet / Fill-in / Time Waster]
 estimate: "[S / M / L - informational sizing, NOT the atomicity test]"
+has_subtasks: false
 prd_ref: /product/PRD_master.md#[section]
 feature_flag: [domain.feature-name]
 flag_default: off
@@ -329,7 +334,12 @@ properties:
   FEAT-ID: FEAT-[DOMAIN]-NNN
   Short Description: [1-sentence description]
   Status: [mapped status]
-  Dev Stripe: Stripe [N]
+  Layer: [Frontend / Backend / System - from code evidence]
+  Phase: [MVP / MVP+ / Phase 1 / ...]
+  KANO Category: [Must-be / Performance / Delighter / Indifferent]
+  V×C Quadrant: [Quick Win / Big Bet / Fill-in / Time Waster]
+  Dev Stripe: Dev Stripe [N]
+  Has Subtasks: [true / false]
 
 content:
   ## Description
@@ -360,7 +370,7 @@ content:
   *TBD - populated after build and Code Inspection*
 ```
 
-Leave blank: `KANO Category`, `V×C Quadrant`, `Priority`, `Feature Card URL` - filled later by pm-feature-design.
+Fill from evidence/derivation: `Layer` (from code - FE routes/components → Frontend, controllers/services → Backend, jobs/cron → System), `Has Subtasks` (true if the card has any subtasks), `Dev Stripe`. Propose with reasoning (confirm via AskUserQuestion): `Phase`, `KANO Category` (a shipped feature is usually Must-be), `V×C Quadrant`, `Priority`. Leave blank only: `Feature Card URL` - filled later by pm-feature-design. Never leave Layer / Description / Has Subtasks blank.
 
 After push, confirm count: "Pushed [N] features to Notion."
 

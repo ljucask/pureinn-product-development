@@ -229,19 +229,21 @@ Feature Sets are grouping labels (not spec artifacts), but each gets a stable ID
 
 ## [Domain 1: e.g., Order Management]
 
+> **Column codes:** Layer = FE / BE / SYS · Phase = MVP / MVP+ / P1... · Pri = P1-P3 · KANO = M(ust-be) / P(erformance) / D(elighter) / I(ndifferent) · V×C = QW / BB / FI / TW · Sub = has subtasks (✓ / –). Full values live in each card's frontmatter; this is the index.
+
 ### FS-01: [e.g., Order Processing]
 
-| ID | Feature | Actor | Priority | MVP | Stripe | Status | Dependencies |
-|---|---|---|---|---|---|---|---|
-| FEAT-ORD-001 | [Create] [draft order] [from cart] | [Customer] | P1 | true | TBD | 1_Backlog | none |
-| FEAT-ORD-002 | [Confirm] [order] [after payment] | [System] | P1 | true | TBD | 1_Backlog | FEAT-ORD-001, FEAT-PAY-001 |
-| FEAT-ORD-003 | [Cancel] [order] [before fulfillment] | [Customer] | P2 | true | TBD | 1_Backlog | FEAT-ORD-001 |
+| ID | Feature | Actor | Layer | Phase | Pri | KANO | V×C | Sub | Stripe | Status | Deps |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| FEAT-ORD-001 | [Create] [draft order] [from cart] | Customer | FE | MVP | P1 | M | QW | – | TBD | 1_Backlog | none |
+| FEAT-ORD-002 | [Confirm] [order] [after payment] | System | BE | MVP | P1 | M | BB | – | TBD | 1_Backlog | FEAT-ORD-001, FEAT-PAY-001 |
+| FEAT-ORD-003 | [Cancel] [order] [before fulfillment] | Customer | FE | MVP | P2 | P | QW | – | TBD | 1_Backlog | FEAT-ORD-001 |
 
 ### FS-02: [e.g., Order Fulfillment]
 
-| ID | Feature | Actor | Priority | MVP | Stripe | Status | Dependencies |
-|---|---|---|---|---|---|---|---|
-| FEAT-ORD-010 | [Track] [fulfillment status] [for order] | [Customer] | P2 | true | TBD | 1_Backlog | FEAT-ORD-002 |
+| ID | Feature | Actor | Layer | Phase | Pri | KANO | V×C | Sub | Stripe | Status | Deps |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| FEAT-ORD-010 | [Track] [fulfillment status] [for order] | Customer | FE | MVP+ | P2 | P | FI | – | TBD | 1_Backlog | FEAT-ORD-002 |
 
 ---
 
@@ -249,10 +251,10 @@ Feature Sets are grouping labels (not spec artifacts), but each gets a stable ID
 
 ### FS-03: [e.g., Card Payments]
 
-| ID | Feature | Actor | Priority | MVP | Stripe | Status | Dependencies |
-|---|---|---|---|---|---|---|---|
-| FEAT-PAY-001 | [Validate] [card payment] [for order] | [System] | P1 | true | TBD | 1_Backlog | FEAT-ORD-001 |
-| FEAT-PAY-002 | [Process] [refund] [for cancelled order] | [System] | P1 | true | TBD | 1_Backlog | FEAT-ORD-003 |
+| ID | Feature | Actor | Layer | Phase | Pri | KANO | V×C | Sub | Stripe | Status | Deps |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| FEAT-PAY-001 | [Validate] [card payment] [for order] | System | BE | MVP | P1 | M | BB | – | TBD | 1_Backlog | FEAT-ORD-001 |
+| FEAT-PAY-002 | [Issue] [refund] [for cancelled order] | System | BE | MVP+ | P1 | P | BB | – | TBD | 1_Backlog | FEAT-ORD-003 |
 
 ---
 
@@ -481,10 +483,15 @@ title: "[Action] [Result] [Object]"
 status: 1_Backlog
 stripe: TBD
 feature_set: "FS-NN: [Feature Set name]"
+layer: [frontend / backend / system]
+phase: [MVP / MVP+ / Phase 1 / ...]
 actor: [User / Host / Admin / System]
 owner: unassigned
 priority: [P1/P2/P3 from V×C]
+kano: [Must-be / Performance / Delighter / Indifferent]
+vxc: [Quick Win / Big Bet / Fill-in / Time Waster]
 estimate: "[S / M / L - informational sizing, NOT the atomicity test]"
+has_subtasks: false
 prd_ref: /product/PRD.md#[relevant-section]
 feature_flag: [domain.feature-name]
 flag_default: off
@@ -546,9 +553,12 @@ properties:
   FEAT-ID: FEAT-[DOMAIN]-[NUMBER]
   Short Description: [1-sentence description]
   Status: 1_Backlog
+  Layer: [Frontend / Backend / System]
+  Phase: [MVP / MVP+ / Phase 1 / ...]
   Priority: [P1 - Critical / P2 - High / P3 - Medium / P4 - Low]
   KANO Category: [Must-be / Performance / Delighter / Indifferent]
   V×C Quadrant: [Quick Win / Big Bet / Fill-in / Time Waster]
+  Has Subtasks: [true / false]
 
 content:
   ## [Feature Name]

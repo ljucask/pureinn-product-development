@@ -120,10 +120,15 @@ title: "[Action] [Result] [Object]"
 status: 1_Backlog
 stripe: [stripe-name]
 feature_set: "FS-NN: [Feature Set name]"
+layer: [frontend / backend / system]
+phase: [MVP / MVP+ / Phase 1 / ...]
 actor: [User / Host / Admin / System]
 owner: unassigned
 priority: P1
+kano: [Must-be / Performance / Delighter / Indifferent]
+vxc: [Quick Win / Big Bet / Fill-in / Time Waster]
 estimate: "[S / M / L - informational sizing for roadmap, NOT the atomicity test]"
+has_subtasks: false
 prd_ref: /product/PRD.md#[section]
 feature_flag: [domain.feature-name]
 flag_default: off

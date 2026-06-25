@@ -1,5 +1,22 @@
 # Changelog
 
+## [5.12.0] - 2026-06-25
+
+### Added
+
+- **Per-feature property set - every feature now carries its classification metadata everywhere.** Five properties added to the canonical Feature Card frontmatter and both stub creators (`pm-feature-card`, `pm-features-list`, `pm-reverse-extract`), the `feature_list.md` overview, and the Notion push - kept in parity (the v4.11.0 discipline):
+  - `layer` - frontend / backend / system (the type tag)
+  - `phase` - MVP / MVP+ / Phase 1 / ... (replaces the old MVP boolean - richer)
+  - `kano` - Must-be / Performance / Delighter / Indifferent (now on the card, not only the analysis artifact)
+  - `vxc` - Quick Win / Big Bet / Fill-in / Time Waster
+  - `has_subtasks` - true / false, kept in sync with the card's actual Subtasks section (so the backlog shows at a glance which features have subtask detail - previously invisible in the list)
+  - (`stripe` / Dev Stripe already existed.)
+  The `feature_list.md` table gained a compact 12-column layout (FE/BE/SYS, M/P/D/I, QW/BB/FI/TW codes) with a legend; the reverse-extract block format gained the property lines.
+- **`pm-audit` checks and backfills the property set.** New "Feature metadata complete" check (P2). On fix: `has_subtasks` is mechanical (derived from the Subtasks section); `layer` is derived from code evidence; `phase` / `kano` / `vxc` are proposed with reasoning and confirmed via AskUserQuestion (never silently guessed). All three locations - frontmatter, feature_list, Notion - are kept in sync. So Vezmee's existing features can be backfilled with `/pm-audit features`.
+
+---
+
+
 ## [5.11.0] - 2026-06-25
 
 ### Changed

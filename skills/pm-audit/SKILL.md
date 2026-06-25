@@ -112,6 +112,7 @@ Read every artifact **in scope** (Step 0) and run the checks below - for an area
 | **Version drift** | Any of the Step 0 drift signals → migration finding. |
 | **Completeness** | Every feature in feature_list has a card; every card has its required sections; registers are initialized; state.json flags match reality. |
 | **Description present** | Every feature has a non-blank Description - both its `feature_list.md` entry and its card's `## Description` section, for **every status** (including `6_Shipped` lean stubs and `1_Backlog`). A feature with no description is a P2 finding (orientation gap). |
+| **Feature metadata complete** | Every feature carries the full property set in frontmatter + feature_list + Notion: `layer` (frontend/backend/system), `phase` (MVP/MVP+/Phase 1...), `kano`, `vxc`, `stripe` (Dev Stripe), `has_subtasks`. Also check **value consistency**: `has_subtasks` matches whether the card's Subtasks section actually has items; values are from the allowed sets (e.g. layer ∈ {frontend,backend,system}). Missing or inconsistent = P2. |
 | **Notion sync** (if configured) | Local `status` vs Notion `Status` mismatch surfaced (drift log, like pm-stripe). |
 
 ---
@@ -155,6 +156,11 @@ Present the score and P0/P1 summary to the user before fixing.
 - **Mechanical (auto-fix):** ID format normalization, old → new lifecycle state names, missing `feature_set`/`estimate`/`Subtasks` scaffolding added, `notion.*` → `notion_ids.*`, path-slash convention, dead-link repair where the target is unambiguous. Apply in place; report a diff summary.
 - **Judgment (ask):** anything where the fix changes meaning - a naming anti-pattern rewrite, an ambiguous dangling reference, a feature that may need splitting, a missing card that may be intentional. Batch these via the grouped AskUserQuestion pattern (CLAUDE.md), 2-4 per round, confirm, apply.
 - **Missing descriptions (backfill from evidence):** for every feature missing a Description, propose one **drafted from the card's Evidence / code references / linked rules** (2-3 sentences: what it does, who, value), batch them via AskUserQuestion for confirmation, then write to both the `feature_list.md` entry and the card's `## Description`. This lets an existing workspace be backfilled without re-running the whole reconcile.
+- **Missing / inconsistent feature metadata (backfill):** for `layer`, `phase`, `kano`, `vxc`, `has_subtasks`:
+  - `has_subtasks` → **mechanical auto-fix**: set from whether the card's Subtasks section has items (deterministic - no asking).
+  - `layer` → **derive from evidence** (FE routes/components → frontend, controllers/services → backend, jobs/cron/integrations → system), then confirm in batch.
+  - `phase`, `kano`, `vxc` → **propose with reasoning** and confirm via AskUserQuestion (e.g. a `6_Shipped` feature is usually KANO Must-be; phase from the roadmap / MVP flag if present). Never silently guess KANO/V×C - they are planning judgments.
+  Write confirmed values to frontmatter, the `feature_list.md` entry, and Notion - keep all three in sync (this is the v4.11.0 parity rule applied to metadata).
 
 Never silently change a rule value, an acceptance criterion, or a business decision - those are out of scope (route to `pm-feature-design` / `pm-business-rules-library`).
 
