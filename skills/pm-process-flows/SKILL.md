@@ -114,6 +114,25 @@ Never stall on missing input - if the user has nothing, propose. Use AskUserQues
 
 ---
 
+## Choosing the diagram type (adaptive - applies to Steps 2 and 3)
+
+Do not default to one diagram blindly. For each flow, **look at its character, identify the best-fit type, and offer it via AskUserQuestion with a recommendation and the reason** (per the Adaptive-execution standard). Mermaid renders all of these in UML-style notation.
+
+| If the flow is... | Best-fit diagram | UML equivalent |
+|---|---|---|
+| Steps + decisions, mostly one actor | `flowchart` | Activity diagram |
+| One process across several actors | `flowchart` with **swimlanes** (subgraphs per actor) | Activity + swimlanes |
+| Interaction user ↔ system ↔ external over time | `sequenceDiagram` | Sequence diagram |
+| A user moving screen-to-screen (2B) | `flowchart` (screens = nodes, actions = edges) | Activity / navigation map |
+
+**Never draw an entity state machine here** - it is UML state-diagram territory that lives in `entities.md`. Reference it by name (lean / DRY).
+
+Offer pattern: "This process spans 3 actors with hand-offs - I recommend a **swimlane** (clearest for who-does-what). Use that, a sequence diagram (if the system↔external timing matters more), or a plain flowchart?" - recommended option first, with the why.
+
+**Rendering / editing:** Mermaid inline is the default (renders everywhere). For a richer or exportable/editable diagram, hand off to `/pm-diagrams`, or the Mermaid / Excalidraw MCP if connected.
+
+---
+
 ## Step 2: Process map per domain (2A - business view)
 
 For each domain / process area in scope, the **end-to-end business process** - lean, no state/attribute detail.
@@ -151,7 +170,7 @@ flowchart TD
 ```
 ```
 
-Use a **swimlane** (Mermaid flowchart with subgraphs per actor) when several user types collaborate in one process; a plain flowchart when it is single-actor.
+Pick the diagram type per "Choosing the diagram type" above - offer it with a recommendation (swimlane for multi-actor, sequence diagram when system↔external timing dominates, plain flowchart for single-actor).
 
 ---
 

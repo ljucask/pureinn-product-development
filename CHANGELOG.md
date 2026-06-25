@@ -1,5 +1,14 @@
 # Changelog
 
+## [5.9.1] - 2026-06-25
+
+### Changed
+
+- **`pm-process-flows` - adaptive diagram-type selection.** Instead of defaulting to one diagram, the skill now looks at each flow's character, identifies the best-fit type, and offers it via AskUserQuestion with a recommendation and the reason. Includes a UML mapping: `flowchart` = activity diagram, flowchart + swimlanes = activity with swimlanes, `sequenceDiagram` = sequence diagram (for user ↔ system ↔ external interaction over time). Entity state machines are explicitly out of scope (UML state diagrams live in `entities.md` - referenced by name, not redrawn). Notes the rendering/editing paths: Mermaid inline (default), or hand off to `/pm-diagrams` / the Mermaid / Excalidraw MCP for a richer or exportable diagram.
+
+---
+
+
 ## [5.9.0] - 2026-06-25
 
 ### New Skill
