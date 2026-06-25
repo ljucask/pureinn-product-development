@@ -19,7 +19,7 @@ A structured methodology for building products - from zero to launch. Implemente
 
 ## What this is
 
-**41 active skills + 2 commands** covering the full product lifecycle: discovery, validation, domain modeling, feature planning, prioritization, FDD delivery, reconciliation-based rebuild, and workspace health-check.
+**42 active skills + 2 commands** covering the full product lifecycle: discovery, validation, domain modeling, process & user-flow mapping, feature planning, prioritization, FDD delivery, reconciliation-based rebuild, and workspace health-check.
 
 Three playbooks:
 
@@ -148,6 +148,7 @@ If FEAT-ID doesn't exist yet: add it to `feature_list.md`, create stub card, the
 | `/pm-entity-registry` | entities.md - entity states + Mermaid state machines (Live Register 1) |
 | `/pm-business-rules-library` | business_rules.md + decision_models.md in Draft mode (Live Registers 2+3) |
 | `/pm-privacy-requirements` | PII Inventory, Privacy Requirements, GDPR Action Plan |
+| `/pm-process-flows` | System user types + E2E process map per domain + per-user user flows connected to screens (designer/dev brief). Lean - references entity states by name. Bridge into design; feeds pm-feature-design UX. |
 | `/pm-product-roadmap` | Product Roadmap v2 |
 
 ### Phase 5 - Feature Planning

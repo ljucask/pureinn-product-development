@@ -10,7 +10,7 @@ metadata:
   role: specialist
   scope: research
   output-format: document
-  related-skills: jtbd-building, pm-market-analysis, pm-problem-validation, design-thinking
+  related-skills: jtbd-building, pm-market-analysis, pm-problem-validation, design-thinking, pm-process-flows
 ---
 
 # PM - Customer Segments & Personas

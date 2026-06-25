@@ -1,5 +1,14 @@
 # Changelog
 
+## [5.9.0] - 2026-06-25
+
+### New Skill
+
+- **pm-process-flows** (42nd skill) - bridges the domain model into design. Two connected outputs: (1) **system user types** (actors/roles - Admin, Courier, Dispatcher...) identified *adaptively* - analyse the docs, confirm with the user, ask if unsure, or propose from context, never stalling; (2) **flows** in two views - a lean **process map per domain** (E2E business view for dev + design) and **per-user user flows connected to screens** (the designer brief). Every flow covers happy / alternate / edge / constraints; the user flows additionally carry, per step, the user action + system/UI response (loading, tooltip, error, empty states) + screen touchpoint. **Lean by design:** process maps reference entity states and attributes **by name** - they never restate the state machines (those stay in `entities.md`), so a state change is maintained in one place. Sits between the domain registers and per-feature design - `pm-feature-design`'s Section 3b now draws its UX context from the relevant user flow rather than re-deriving it. Saves to `process-flows/`. Wired into README, FRAMEWORK_GUIDE (Phase 4), pm-feature-design, and pm-personas.
+
+---
+
+
 ## [5.8.0] - 2026-06-25
 
 ### Added

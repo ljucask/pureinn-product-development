@@ -10,7 +10,7 @@ metadata:
   role: specialist
   scope: specification
   output-format: document
-  related-skills: pm-feature-viability, pm-entity-registry, pm-business-rules-library, pm-decision-model, pm-feature-card, pm-stripe
+  related-skills: pm-feature-viability, pm-entity-registry, pm-business-rules-library, pm-decision-model, pm-process-flows, pm-feature-card, pm-stripe
 ---
 
 # PM - Feature Design (JIT)
@@ -358,6 +358,8 @@ sequenceDiagram
 
 **Visual notes:** [Any specific behavior: empty states, loading state, error state, responsive breakpoints]
 ```
+
+If a `process-flows/[domain]_user_flows.md` exists for this feature's module, draw the UX context (placement, user action, screen, loading/empty/error states) from the relevant user flow there rather than re-deriving it - the flow is the E2E source, this section is its per-feature slice.
 
 If no Figma URL was provided and Figma MCP is connected: check `figma_project_url` in `pureinn-variables.md` and read the relevant screen if identifiable. If not identifiable, ask the user for the Figma frame URL or accept a screenshot.
 

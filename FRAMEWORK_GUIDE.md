@@ -150,6 +150,7 @@ Four tracks run in parallel, converge at the end.
 | `/pm-entity-registry` | entities.md - entity list + Mermaid state machines per entity (guard conditions added JIT) |
 | `/pm-business-rules-library` | business_rules.md + decision_models.md in Draft (finalized JIT per feature) |
 | `/pm-privacy-requirements` | PII Inventory, Privacy Requirements, GDPR Action Plan |
+| `/pm-process-flows` | System user types + E2E process map per domain (business view) + per-user user flows connected to screens (designer brief, with UI/loading/empty states). Lean - references entity states by name, no duplication. Feeds pm-feature-design UX. |
 | `/pm-product-roadmap` | Product Roadmap v2 (+ domain constraints) |
 
 **The 4 Live Registers are initialized here and enriched continuously during Phase 6-7:**
