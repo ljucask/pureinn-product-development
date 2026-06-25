@@ -1,5 +1,14 @@
 # Changelog
 
+## [5.10.0] - 2026-06-25
+
+### Added
+
+- **Deep source ingestion universal standard (CLAUDE.md).** Every skill that reads provided documents, a source folder, or a codebase must now ingest the **full depth**, never the surface: (1) traverse subfolders **recursively** - a folder is not "read" until its subfolders are; (2) **follow the detail, not just the overview** - an index/summary/master table (e.g. a business-rules CSV listing IDs) is a pointer, not the content; if the detail lives in referenced files or a subfolder, read those too; (3) follow references ("see appendix", "detailed in [folder]", links, attachments) to their actual source; (4) confirm coverage before producing output ("Read N files across M folders: [list]"), surface anything skipped, and ask rather than silently skip. A skill that asks "point me at the docs" owns reading them completely. Reinforced in `pm-reconcile` (P1 catalogues recursively, A2 parses to full depth). Fixes the real Vezmee case where a skill read only the top-level overview table and missed the detail subfolder.
+
+---
+
+
 ## [5.9.1] - 2026-06-25
 
 ### Changed

@@ -280,6 +280,19 @@ When writing or updating any skill, check it against these four. A skill that au
 
 ---
 
+## Deep source ingestion (universal standard)
+
+Every skill that reads provided documents, a source folder, or a codebase MUST ingest the **full depth**, never the surface. A partial read produces a wrong artifact. Required of every skill:
+
+1. **Traverse recursively.** Read the entire tree - every subfolder, not just the top level. A folder is not "read" until its subfolders are read. Do not stop at the first level.
+2. **Follow the detail, not just the overview.** An index / summary / overview table (e.g. a business-rules CSV listing IDs, a contents page, a "master" sheet) is a **pointer, not the content**. If the detail lives in referenced files or a subfolder (e.g. one file per rule, an appendix, a `/details` folder), read those too. Never treat a summary table as the complete source.
+3. **Follow references.** Links, "see appendix", "detailed in [folder]", attachments, related/linked files - follow them to their actual source before concluding.
+4. **Confirm coverage before producing output.** State what was ingested: "Read N files across M folders: [list]." Surface anything skipped (unreadable, binary, out of scope) so the user can catch a miss. If unsure whether a file/folder is in scope, **ask - do not silently skip**.
+
+Never generate an artifact from a partial read. If the source is large, batch the reading and say so - but cover all of it. When a skill asks the user to "point me at the docs", it owns reading them **completely**, depth included - it does not wait to be told about the subfolder.
+
+---
+
 ### Renaming or removing a skill
 
 This is a major version change - existing users may have workflows referencing the old name.

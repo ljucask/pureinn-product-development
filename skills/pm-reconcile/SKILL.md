@@ -108,8 +108,9 @@ Apply the standard skill interaction pattern (CLAUDE.md).
 
 ## Step P1: Inspect (do not deep-reconcile yet)
 
-- Skim the old-docs folder: catalogue every document and what it covers (domain model, internal/external entities, state machines, business rules, decision tables, FSDs, feature lists).
+- Catalogue the old-docs folder **recursively** (per the Deep source ingestion standard) - walk every subfolder, list every document, not just the top level. An overview/master table (e.g. a business-rules CSV) is a pointer: note that its detail lives in the referenced files / subfolder and that those will be read in full during execution. Record what each document covers (domain model, internal/external entities, state machines, business rules, decision tables, FSDs, feature lists).
 - Skim the codebase surface: top-level structure, models/schema, route map, enums - enough to know what areas exist. Do NOT diff yet.
+- Report the catalogue: "Found N documents across M folders" - so a missed subfolder is visible before the plan is built.
 
 ## Step P2: Define the plan
 
@@ -162,7 +163,7 @@ Scan only the slice relevant to this area:
 
 ## Step A2: Scoped doc parse
 
-Read the source docs the plan tied to this area; extract the intended business picture for this layer only (with provenance: doc + section).
+Read the source docs the plan tied to this area **in full and to the depth** (per the Deep source ingestion standard) - if an overview/master table references per-item detail files or a `/details` subfolder, read every one of them, not just the summary row. Extract the intended business picture for this layer only (with provenance: doc + section/file). State coverage: "Read N source files for this area" so a skipped detail file is visible. Never reconcile from the overview table alone.
 
 ## Step A3: Reconcile
 
