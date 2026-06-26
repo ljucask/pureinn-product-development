@@ -155,12 +155,14 @@ Present the score and P0/P1 summary to the user before fixing.
 
 - **Mechanical (auto-fix):** ID format normalization, old → new lifecycle state names, missing `feature_set`/`estimate`/`Subtasks` scaffolding added, `notion.*` → `notion_ids.*`, path-slash convention, dead-link repair where the target is unambiguous. Apply in place; report a diff summary.
 - **Judgment (ask):** anything where the fix changes meaning - a naming anti-pattern rewrite, an ambiguous dangling reference, a feature that may need splitting, a missing card that may be intentional. Batch these via the grouped AskUserQuestion pattern (CLAUDE.md), 2-4 per round, confirm, apply.
-- **Missing descriptions (backfill from evidence):** for every feature missing a Description, propose one **drafted from the card's Evidence / code references / linked rules** (2-3 sentences: what it does, who, value), batch them via AskUserQuestion for confirmation, then write to both the `feature_list.md` entry and the card's `## Description`. This lets an existing workspace be backfilled without re-running the whole reconcile.
-- **Missing / inconsistent feature metadata (backfill):** for `layer`, `phase`, `kano`, `vxc`, `has_subtasks`:
-  - `has_subtasks` → **mechanical auto-fix**: set from whether the card's Subtasks section has items (deterministic - no asking).
-  - `layer` → **derive from evidence** (FE routes/components → frontend, controllers/services → backend, jobs/cron/integrations → system), then confirm in batch.
-  - `phase`, `kano`, `vxc` → **propose with reasoning** and confirm via AskUserQuestion (e.g. a `6_Shipped` feature is usually KANO Must-be; phase from the roadmap / MVP flag if present). Never silently guess KANO/V×C - they are planning judgments.
-  Write confirmed values to frontmatter, the `feature_list.md` entry, and Notion - keep all three in sync (this is the v4.11.0 parity rule applied to metadata).
+**The `feature_list.md` is the whole-list orientation surface - backfill writes there FIRST, for every feature, then mirrors to the card and Notion.** Do not fill individual cards while leaving the list incomplete - the list is what the team reads to understand the backlog at a glance. Every feature in the list must end up with a Description and the full property set; iterate across the whole list, not card-by-card in isolation.
+
+- **Missing / weak descriptions (backfill from evidence):** for every feature whose Description is missing OR too terse (a few words / a single clause), draft a proper one from the card's Evidence / code references / linked rules: **2-3 clear, genuinely orientational sentences - what it does, who uses it, the value/role.** Not a one-liner restating the title. Batch via AskUserQuestion, then write to **the `feature_list.md` entry AND the card's `## Description`**. The list entry can be a tight 1-2 sentences; the card carries the fuller version - but neither is blank or trivial.
+- **Missing / inconsistent feature metadata (backfill) - for the WHOLE list:** for `layer`, `phase`, `kano`, `vxc`, `has_subtasks` on every feature:
+  - `has_subtasks` → **mechanical**: true only if the Subtasks section has a **real item** - ignore italic/placeholder lines (`*TBD ...*`, the `- [ ] [nuance...]` template line). Empty/placeholder → false.
+  - `layer` → **derive from evidence** (FE routes/components → frontend, controllers/services → backend, jobs/cron/integrations → system), confirm in batch.
+  - `phase`, `kano`, `vxc` → **propose with reasoning** and confirm via AskUserQuestion (a `6_Shipped` feature is usually KANO Must-be; phase from the roadmap / MVP flag if present - for a coherent phase split across the whole list, align to `pm-product-roadmap`). Never silently guess KANO/V×C - they are planning judgments.
+  Write confirmed values to **the `feature_list.md` entry, the card frontmatter, and Notion** - keep all three in sync (the v4.11.0 parity rule). The list is not done until every feature carries the full set.
 
 Never silently change a rule value, an acceptance criterion, or a business decision - those are out of scope (route to `pm-feature-design` / `pm-business-rules-library`).
 

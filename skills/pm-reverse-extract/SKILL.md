@@ -193,7 +193,7 @@ Save to: `pureinn-workspace/[project-slug]/features/feature_list.md`
 ## [Domain Name] (FEAT-[DOMAIN]-*)
 
 ### FEAT-[DOMAIN]-001: [Feature Name]
-**Description:** [1-2 sentences - what this feature does, who uses it, the value. **MANDATORY for every feature, every status** - including Built/Shipped and Backlog. This is the team's orientation; never leave it blank.]
+**Description:** [1-2 clear, orientational sentences - what this feature does, who uses it, and its role/value. NOT a few words restating the title. **MANDATORY for every feature, every status** (Built/Shipped and Backlog). This whole-list view is the team's first orientation; never blank or trivial.]
 **Layer:** frontend / backend / system   ·   **Phase:** MVP / MVP+ / Phase 1 / ...   ·   **Actor:** [User / Host / Admin / System]
 **KANO:** Must-be / Performance / Delighter / Indifferent   ·   **V×C:** Quick Win / Big Bet / Fill-in / Time Waster
 **Status:** Done / In Progress / Planned / Unclear   ·   **Dev Stripe:** [Dev Stripe 1 / ...]   ·   **Subtasks:** yes / no

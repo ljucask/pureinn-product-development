@@ -1,5 +1,17 @@
 # Changelog
 
+## [5.12.1] - 2026-06-26
+
+### Fixed
+
+- **`pm-audit` backfill now populates the whole `feature_list.md` overview, not just individual cards.** On Vezmee the backfill filled card files but left the list overview sparse, and descriptions came out terse. The list is the team's first orientation, so backfill now writes there **first**, for every feature, then mirrors to the card and Notion - iterating across the whole list rather than card-by-card.
+- **Raised the description quality bar.** Descriptions must be clear, genuinely orientational sentences (what / who / value/role), explicitly *not* a one-liner restating the title - in the templates (canonical card, reverse-extract block) and in pm-audit's backfill.
+- **`has_subtasks` derivation hardened** - counts only a real Subtasks item, ignoring italic / placeholder lines (`*TBD ...*`, the `- [ ] [nuance...]` template), so it can't be fooled into `true` by an empty section. (The Vezmee audit caught this itself; now it's an explicit rule.)
+- Phase backfill notes that a coherent phase split across the whole list should align to `pm-product-roadmap`.
+
+---
+
+
 ## [5.12.0] - 2026-06-25
 
 ### Added

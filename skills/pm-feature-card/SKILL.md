@@ -140,7 +140,7 @@ flag_default: off
 
 ## Description
 
-[2-3 sentences - what this feature does, who uses it, and the value it delivers. **MANDATORY for every card regardless of status** (even `1_Backlog` and `6_Shipped`) - this is the orientation a teammate reads first. Never leave blank.]
+[2-3 clear, genuinely orientational sentences - what this feature does, who uses it, and the value/role it delivers. NOT a one-liner restating the title. **MANDATORY for every card regardless of status** (even `1_Backlog` and `6_Shipped`) - this is what a teammate reads first. Never blank or trivial.]
 
 ---
 
