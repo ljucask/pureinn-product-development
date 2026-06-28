@@ -1,5 +1,14 @@
 # Changelog
 
+## [5.13.3] - 2026-06-28
+
+### Fixed
+
+- **`pm-product-roadmap` no longer fabricates the MVP Delivery View when `pm-mvp-scope` has not run.** The v3 "MVP Delivery View" section (Delivery Stripes + IN/POST-MVP cut) is the **output of `/pm-mvp-scope`**, downstream of the roadmap. When roadmap runs early - common in a Rebuild, where it sets phases before features are fully carded - it had no stripe/cut data and would invent it. Added a dependency guard: the skill checks `feature_list.md` for stripe assignments + an MVP cut; if absent, it marks the section `[TBD - pending /pm-mvp-scope]`, finalizes every other section, and tells the user to re-run roadmap after mvp-scope (feature_list stays the source of truth; the section is a summary of it). Guard added both at the v3 input step and inline in the artifact template. Prevents a fabricated delivery view that doesn't match the real cut (depth-over-breadth).
+
+---
+
+
 ## [5.13.2] - 2026-06-28
 
 ### Fixed

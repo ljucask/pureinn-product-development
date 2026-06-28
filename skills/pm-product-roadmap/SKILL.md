@@ -4,7 +4,7 @@ description: Generate or update the Product Roadmap. Living document - v1 create
 license: MIT
 metadata:
   author: https://github.com/ljucask
-  version: "1.0.0"
+  version: "1.1.0"
   domain: product-management
   triggers: product roadmap, roadmap, strategic roadmap, roadmap v1 v2 v3, delivery plan
   role: specialist
@@ -126,6 +126,8 @@ Confirm before updating.
 ---
 
 ### For v3 (Phase 5 update):
+
+**First check the dependency:** the v3 delivery view (stripes + MVP cut) is downstream of `/pm-mvp-scope`. Look in `feature_list.md` for stripe assignments and an IN/POST-MVP cut. **If they are absent (mvp-scope has not run - common in a Rebuild where roadmap runs before features are carded), do not ask the user to invent them and do not fabricate them.** Finalize every other section, mark `MVP Delivery View` as `[TBD - pending /pm-mvp-scope]`, and tell the user to re-run this skill after mvp-scope. Only proceed with the questions below if mvp-scope output exists.
 
 Ask all as plain text in one group:
 
@@ -289,6 +291,8 @@ When updating to v3, Claude adds the following section to the artifact:
 ## MVP Delivery View (v3)
 
 > Added in Phase 5 after MVP Scope is defined.
+
+> **DEPENDENCY GUARD - do not fabricate this section.** Delivery Stripes and the MVP/POST-MVP cut are the **output of `/pm-mvp-scope`**, downstream of this skill. Before writing this section, check `feature_list.md` (and card frontmatter) for **stripe assignments and an IN/POST-MVP cut**. If they are absent - i.e. `/pm-mvp-scope` has not run yet (common when roadmap runs early, e.g. in a Rebuild before features are fully carded) - **do NOT invent stripes or an MVP cut.** Mark the whole section `[TBD - pending /pm-mvp-scope]` and finalize the other sections. Fabricating a delivery view that does not match the real cut violates the depth-over-breadth rule. Once `/pm-mvp-scope` has run, re-run this skill to mirror its result here (feature_list stays the source of truth; this section is a summary of it).
 
 ### Feature Sets (logical groupings)
 
