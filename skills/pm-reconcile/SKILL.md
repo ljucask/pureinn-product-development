@@ -4,9 +4,9 @@ description: Rebuild playbook for an existing product onboarded to Pureinn. Reco
 license: MIT
 metadata:
   author: https://github.com/ljucask
-  version: "1.1.0"
+  version: "1.2.0"
   domain: product-management
-  triggers: reconcile, rebuild, migration, existing product, old docs, BRD reconciliation, team handover, codebase vs docs, onboard existing product, rebuild from code, source coverage, verify transposition, disposal readiness, archive source
+  triggers: reconcile, rebuild, migration, existing product, old docs, BRD reconciliation, team handover, codebase vs docs, onboard existing product, rebuild from code, source coverage, verify transposition, disposal readiness, archive source, specified not implemented, strategic layer, delivery-driven roadmap
   role: specialist
   scope: reconciliation
   output-format: document
@@ -59,7 +59,7 @@ Reconciliation is **asymmetric**. Two layers, two kinds of mismatch. Apply on ev
 
 Two rules that follow:
 1. **Never change the codebase.** This skill rebuilds documents only. Code that diverges from intended logic is *flagged*, not edited away.
-2. **Docs that run ahead of the code** (described but not implemented) are recorded as `specified, not implemented` → backlog. They are not fabricated into the live registers. The registers describe the system that actually runs.
+2. **Docs that run ahead of the code** (described but not implemented) → **carded as `1_Backlog` in `feature_list.md` (Register 4), not just noted in the report.** Distinguish the layers: **R1-3 (entities, rules, decision models) describe only what actually runs** - never fabricate unbuilt logic into them. **R4 (feature_list / cards) is the backlog** - it legitimately holds `1_Backlog` stubs for specified-not-implemented capabilities, marked `specified in source, not yet implemented`. This is what `1_Backlog` is for. The reconciliation report is an audit log, not the backlog: a capability that lives only in the report is invisible backlog that vanishes when the source is discarded. Card it so it survives.
 
 End state: legacy docs become a dead reference. The rebuilt registers are the new single source of truth - structurally aligned to code, carrying business logic from the docs, every divergence visible.
 
@@ -76,6 +76,21 @@ Migrate all business logic now so the team never mirrors the old docs again - bu
 | Feature technical design (Sections 2-3: ACs, sequence diagram, files) | **JIT** via pm-feature-design | Written when the feature is next worked, with a fresh code scan |
 
 Business logic lives in the registers, not the cards - so deferring Sections 2-3 loses nothing.
+
+---
+
+## Rebuild captures structure, NOT the strategic layer (set expectations)
+
+Rebuild onboards an existing product: it reconciles **code + source** into entities, rules, decision models, feature inventory and a **delivery-driven** view. It deliberately **skips Phase 1-3** (discovery, validation, business model) - you are not re-validating a product that already exists.
+
+The consequence the team must know up front: **the strategic layer never gets captured by reconcile.** Vision, 12-month goal, North Star Metric, business model, and per-phase success criteria (the Phase 1-3 / roadmap-v1 outputs) are simply absent. If you go straight to `/pm-product-roadmap`, it can only build a roadmap whose **phase boundaries are driven by code-readiness and dependencies, not strategy** - and it will ask you for those strategic inputs or mark them TBD.
+
+This is not a bug - but it is a fork the team should make consciously:
+
+- **Want strategy-driven phasing** (MVP boundary set by what the business must prove, not by what is half-built)? **Backfill the strategic layer first** - it is lean because you already know it: `/pm-business-model` (how it earns - if a PSP like Stripe is wired, the take-rate model is knowable *now*, do not defer it), a North Star Metric, a one-line 12-month goal. Then run roadmap.
+- **Fine with a delivery-driven roadmap for now?** Run roadmap directly and let it mark the strategic layer TBD - revisit when it matters.
+
+Surface this fork at the end of reconcile (handoff), so the team is not surprised by it at roadmap time.
 
 ---
 
@@ -203,7 +218,7 @@ Drive the existing skill - do not duplicate its template:
 - **domain** → `/pm-entity-registry` (reconciled mode) → `entities.md` (entities, attributes, state-machine structure) + `/pm-glossary` for aliases.
   **Also offer the higher-level map:** ask via AskUserQuestion (default **Yes** for a rebuild - a new team benefits) whether to generate `domain-model.md` too via `/pm-domain-model` (reconciled mode) - the cross-domain ERD and domain boundaries, derived from the same reconciled entities. The two are complementary: the Reconciliation Report is the audit ("what conflicted, how we ruled"); the domain model is the structural map ("how it all fits together"). Skip only if the user declines.
 - **rules** → `/pm-business-rules-library` (reconciled mode) → `business_rules.md` + `decision_models.md`; also writes the reconciled guard conditions onto the transitions in `entities.md`. Rules with an open `DIV-NN` stay `Draft` linked to the report; divergence-free rules go `Final`.
-- **features** → `/pm-reverse-extract` (reconciled mode) → `feature_list.md` + stub cards. Features normalized to FDD grammar, grouped into `FS-NN`, Section 1 linked to register BR-IDs; code-only features included; doc-only items NOT carded (backlog).
+- **features** → `/pm-reverse-extract` (reconciled mode) → `feature_list.md` + stub cards. Features normalized to FDD grammar, grouped into `FS-NN`, Section 1 linked to register BR-IDs; code-only features included; **doc-only / specified-not-implemented capabilities are carded as `1_Backlog` stubs** (marked `specified in source, not yet implemented`) so the backlog is complete and survives source disposal - recorded in the report too, but the card in feature_list is the durable home, not the report. Aspirational notes that are not a real client-valued capability stay report-only.
 
   **Right-sizing legacy features (apply the semantic atomicity test):** legacy systems are often mis-granular. Reconcile each to one coherent client-valued function:
   - **Too granular** (several legacy "features" are really nuances of one capability, e.g. *login*, *register*, *reset password* under *authenticate user*) → consolidate them under one rightful Feature and capture the granular bits as **Subtasks** (helper notes) on that card. They are not lost, not kept as pseudo-features.
@@ -250,11 +265,11 @@ Classify every unit:
 
 | Status | Meaning |
 |---|---|
-| ✅ **Covered** | Transposed correctly, consistent with code |
-| ❌ **Not transposed** | In the source, absent from the registers - a real gap |
+| ✅ **Covered** | Carded / transposed and consistent: a built capability with its card, a rule in the register, **or a specified-not-implemented capability carded as `1_Backlog`**. Built or backlog - either way it has a durable home. |
+| ❌ **Not transposed** | In the source, absent from the registers **and from feature_list** - a real gap. **A capability that exists only in the reconciliation report (not carded) counts as a gap**, not as covered: the report is an audit log, the backlog is feature_list. |
 | ⚠️ **Transposed but conflicts code** | Landed, but the code does something else → `DIV-NN` |
 | 🔄 **Transposed but altered/incomplete** | Landed with wrong value or partial logic vs source |
-| ⛔ **Source-only, intentionally dropped** | Confirmed earlier as `specified, not implemented` / out of scope - not a gap |
+| ⛔ **Intentionally dropped** | The team explicitly confirmed this is out of scope / abandoned - not a gap. **Not to be confused with `specified, not implemented`** (that is real backlog → card it `1_Backlog`, status ✅). ⛔ is only for things deliberately not carried forward. |
 
 Batch by feature set / rule category for large sources (reuse Step A3 checkpointed batching - bound the question load per batch, record `verify.batches_done/total`).
 
@@ -272,7 +287,7 @@ A report alone changes nothing. For every non-covered unit, close it - with conf
 
 | Finding | Incorporation |
 |---|---|
-| ❌ **Not transposed** | Propose the artifact it should become - business logic → new `BR-NN` / `TBL-NN` / entity state; a capability → `FEAT-ID` (or a Subtask on an existing card if it is a nuance). Confirm via AskUserQuestion, then **write it into the register / card**. |
+| ❌ **Not transposed** | Propose the artifact it should become - business logic that runs → new `BR-NN` / `TBL-NN` / entity state; a **specified-not-implemented capability → a `FEAT-ID` card at `1_Backlog`** (marked `specified in source, not yet implemented`); a nuance → a Subtask on an existing card. Confirm via AskUserQuestion, then **write it into the register / feature_list / card**. Carding the unbuilt capability in feature_list (not just the report) is what makes it safe to discard the source. |
 | 🔄 **Altered / incomplete** | Show source value vs transposed value, propose the correction, confirm, **fix the register/card** to match the source's intent. |
 | ⚠️ **Conflicts code** | Assign `DIV-NN`, surface via AskUserQuestion (code-bug vs source-stale), record the ruling in the Reconciliation Report. Code is never changed - only the doc/register, per policy. |
 | ⛔ **Dropped** | Confirm once it was an intentional drop; record it so it is not re-flagged next run. |
@@ -411,6 +426,8 @@ Stav kedykoľvek cez `/pm-reconcile-status`.
 Reconciliation Report prejdi s tímom kvôli otvoreným divergenciám.
 
 **Prečo verify pred auditom:** verify **mení obsah** (zapracováva medzery), audit je forma nad stabilným setom. Audit-first by znamenal auditovať neúplnú množinu a po verify auditovať znova. Poradie: **obsah (`verify`) → plán (`roadmap`) → forma (`audit`) → archív zdroja** (disposal verdikt padá na verify - audit zdroj nečíta, nič z neho nestratí).
+
+**Pozor - Rebuild nezachytil strategickú vrstvu:** preskočil si Phase 1-3, takže vízia / NSM / biznis model / success kritériá fáz neexistujú. `/pm-product-roadmap` ti preto postaví **delivery-driven** roadmapu (hranice fáz diktuje rozostavanosť kódu, nie stratégia). Ak chceš **strategy-driven** fázovanie (MVP hranica podľa toho čo biznis musí dokázať), backfilluj strategickú vrstvu lean **pred** roadmapou: `/pm-business-model` (ak je zapojený PSP ako Stripe, take-rate model je knowable teraz - nedeferuj ho) + NSM + 12-mes. cieľ. Inak pusti roadmapu rovno a strategickú vrstvu nechaj TBD.
 
 **Môžeš preskočiť ak:** žiadne staré docs neexistujú (len kód) — vtedy stačí naivná migračná cesta
 (`/pm-entity-registry` + `/pm-business-rules-library` + `/pm-reverse-extract`) bez rekonciliácie.

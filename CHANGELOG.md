@@ -1,5 +1,16 @@
 # Changelog
 
+## [5.13.2] - 2026-06-28
+
+### Fixed
+
+- **Specified-but-not-implemented capabilities are now carded as `1_Backlog`, not just noted in the report.** A real Vezmee gap: roadmap found 4 Phase-1 capabilities (KYC, DAC7, dispute v1, admin ops) that existed as intent but were invisible as features. Root cause: reconcile recorded doc-only / specified-not-implemented capabilities **only in the reconciliation report** (an audit log), not in `feature_list.md` (the backlog) - so they vanish when the source is discarded. Fixed by making the layer distinction explicit: **R1-3 (entities/rules/decision models) describe only what runs** (never fabricate unbuilt logic), **R4 (feature_list/cards) is the backlog** and legitimately holds `1_Backlog` stubs for unbuilt-but-specified capabilities (marked `specified in source, not yet implemented`). Applied in the source-of-truth model, the features execution step, and `verify` (a capability that lives only in the report counts as a **gap**, not as covered; `⛔ intentionally dropped` is now distinct from `specified, not implemented`).
+
+### Added
+
+- **Rebuild strategic-layer expectation callout.** Rebuild (A1) skips Phase 1-3, so the strategic layer - vision, North Star Metric, business model, per-phase success criteria - is never captured. `/pm-product-roadmap` therefore produces a **delivery-driven** roadmap (phase boundaries set by code-readiness, not strategy) and the team only discovers the hole at roadmap time. `pm-reconcile` now states this fork up front (handoff + a dedicated section) and in `FRAMEWORK_GUIDE.md`: want strategy-driven phasing → backfill the strategic layer lean first (`/pm-business-model` - knowable now if a PSP like Stripe is wired, don't defer it - plus an NSM and a 12-month goal); fine with delivery-driven → run roadmap directly and mark strategy TBD.
+
+
 ## [5.13.1] - 2026-06-28
 
 ### Fixed

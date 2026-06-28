@@ -238,6 +238,8 @@ Rules that follow: **code is never changed** (only documents); docs that run ahe
 
 **Order is dependency-driven:** entities → rules → features (registers 1 → 2 → 3 → 4). Entities are the vocabulary everything references, so they become canonical first. On a large product, run domain-by-domain.
 
+**Rebuild captures structure, not strategy.** A1 skips Phase 1-3, so the strategic layer (vision, NSM, business model, per-phase success criteria) is never captured. `/pm-product-roadmap` will therefore produce a **delivery-driven** roadmap (phase boundaries set by code-readiness, not strategy) and ask for the strategic inputs or mark them TBD. If you want **strategy-driven** phasing, backfill the strategic layer lean before roadmap (`/pm-business-model` - knowable now if a PSP is wired - plus a North Star Metric and a 12-month goal). Specified-but-not-built capabilities are carded as `1_Backlog` (not just noted in the report), so the backlog is complete before phasing.
+
 ## A2 - Bootstrap (clean or no docs)
 
 Docs are already clean or absent - just sync current state from the code. No reconciliation needed.
