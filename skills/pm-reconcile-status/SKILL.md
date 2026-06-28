@@ -4,9 +4,9 @@ description: Progress dashboard for an in-flight reconciliation rebuild. Reads t
 license: MIT
 metadata:
   author: https://github.com/ljucask
-  version: "1.0.0"
+  version: "1.1.0"
   domain: product-management
-  triggers: reconcile status, reconciliation progress, rebuild status, what is left to reconcile, reconcile dashboard
+  triggers: reconcile status, reconciliation progress, rebuild status, what is left to reconcile, reconcile dashboard, disposal readiness, verify status
   role: orchestrator
   scope: status
   output-format: dashboard
@@ -36,7 +36,7 @@ No reconciliation plan found. Run /pm-reconcile first to inspect the docs and bu
 
 ## Step 1: Read state
 
-Read `state.json reconcile` (machine source of truth for status) and `reconcile/reconciliation_plan.md` (area definitions). If they disagree, trust `state.json` and note the drift. Read `reconcile/reconciliation_report.md` to count and list open divergences (`DIV-NN` rows with no ruling, and any "Open questions for the team").
+Read `state.json reconcile` (machine source of truth for status) and `reconcile/reconciliation_plan.md` (area definitions). If they disagree, trust `state.json` and note the drift. Read `reconcile/reconciliation_report.md` to count and list open divergences (`DIV-NN` rows with no ruling, and any "Open questions for the team"). If a `reconcile.verify` block exists, read it (and `coverage_report.md` if present) to report disposal readiness.
 
 ## Step 2: Render the dashboard
 
@@ -55,6 +55,9 @@ NEEDS A TEAM DECISION (open divergences)
   DIV-03 [rules] refund window: doc 14d vs code 30d - decide fix code / update rule
   [open question from report]
 
+SOURCE DISPOSAL (verify gate)
+  [not run yet / ⚠️ not safe - 4 gaps, 2 DIV open / ✅ safe to archive - covered 100%]
+
 NEXT
   ▸ /pm-reconcile rules        (resumes at batch 3/5 - completed batches are not redone)
   then /pm-reconcile features
@@ -64,7 +67,8 @@ NEXT
 Rules for "NEXT":
 - If an area is `in_progress` → resume it first.
 - Else the lowest-order `pending` area is next.
-- If all areas are `done` → reconciliation is complete; route onward (below).
+- If all areas are `done` but `verify.disposal_ready` is not `true` (or verify never ran) → next is `/pm-reconcile verify` (do not call the source safe to archive yet).
+- If all areas are `done` and `verify.disposal_ready: true` → reconciliation is complete and the source is safe to retire; route onward (below).
 
 ## Step 3: Route
 
@@ -73,7 +77,8 @@ Rules for "NEXT":
 | Area in progress | "Resume with `/pm-reconcile [area]`." |
 | Next area pending | "Run `/pm-reconcile [area]` to continue." |
 | Open divergences block confidence | "Decide DIV-NN with the team before marking rules Final; they are listed above." |
-| All areas done | "Reconciliation complete. Review `reconciliation_report.md` with the team, then `/pm-stripe` for JIT delivery." |
+| All areas done, verify not yet ✅ | "Run `/pm-reconcile verify` to prove the source is fully captured (and incorporate any gaps) before retiring it." |
+| All areas done + verify ✅ | "Reconciliation complete, source safe to archive. Review `reconciliation_report.md` with the team, then `/pm-stripe` for JIT delivery." |
 
 ---
 
@@ -84,7 +89,7 @@ Rules for "NEXT":
 **Čo si teraz má:** Aktuálny obraz rekonciliácie - čo hotové, čo zostáva, ktoré divergencie čakajú na rozhodnutie tímu.
 
 **Ďalší krok:** `/pm-reconcile [oblasť]` podľa NEXT vyššie.
-Keď sú všetky oblasti hotové → `/pm-stripe` pre JIT delivery.
+Keď sú všetky oblasti hotové → `/pm-reconcile verify` (dôkaz pokrytia + doplnenie medzier pred zahodením zdroja), až potom `/pm-stripe` pre JIT delivery.
 
 **Môžeš preskočiť ak:** rekonciliácia ešte nezačala — vtedy spusti `/pm-reconcile` (plán) najprv.
 ```

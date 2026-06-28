@@ -1,12 +1,12 @@
 ---
 name: pm-reconcile
-description: Rebuild playbook for an existing product onboarded to Pureinn. Reconciles the actual codebase against a folder of legacy documents (BRD, FSD, domain/entity models, business rules) that may contain logical, semantic and structural inconsistencies. Runs in two phases - first PLAN (inspect docs + code, define which areas to reconcile, in what order, into which Pureinn artifacts), then per-area EXECUTION (/pm-reconcile domain | rules | features ...) one layer at a time. Produces a living Reconciliation Report and rebuilds the 4 Live Registers + feature inventory clean. Use when a product was built outside the framework, has stale or conflicting docs, and the (often new) team needs one consistent source of truth that matches the code. Multi-session - track progress with pm-reconcile-status.
+description: Rebuild playbook for an existing product onboarded to Pureinn. Reconciles the actual codebase against a folder of legacy documents (BRD, FSD, domain/entity models, business rules) that may contain logical, semantic and structural inconsistencies. Runs in two phases - first PLAN (inspect docs + code, define which areas to reconcile, in what order, into which Pureinn artifacts), then per-area EXECUTION (/pm-reconcile domain | rules | features ...) one layer at a time. Produces a living Reconciliation Report and rebuilds the 4 Live Registers + feature inventory clean. A closing verify pass (/pm-reconcile verify) re-reads the source one last time, proves every unit was transposed, incorporates any gaps it finds (not just reports them), and rules whether the legacy source is safe to archive - the source-disposal gate. The source is whatever the user points to (any format), never a hardcoded BRD. Use when a product was built outside the framework, has stale or conflicting docs, and the (often new) team needs one consistent source of truth that matches the code. Multi-session - track progress with pm-reconcile-status.
 license: MIT
 metadata:
   author: https://github.com/ljucask
-  version: "1.0.0"
+  version: "1.1.0"
   domain: product-management
-  triggers: reconcile, rebuild, migration, existing product, old docs, BRD reconciliation, team handover, codebase vs docs, onboard existing product, rebuild from code
+  triggers: reconcile, rebuild, migration, existing product, old docs, BRD reconciliation, team handover, codebase vs docs, onboard existing product, rebuild from code, source coverage, verify transposition, disposal readiness, archive source
   role: specialist
   scope: reconciliation
   output-format: document
@@ -38,10 +38,15 @@ This is the **Rebuild playbook** referenced in the `/pureinn` orchestrator. Run 
 | `/pm-reconcile rules` | **Execute** | Reconcile business rules + decision models + transition **guard conditions** → `business_rules.md` + `decision_models.md` (Registers 2-3). |
 | `/pm-reconcile features` | **Execute** | Reconcile feature inventory → `feature_list.md` + stub Feature Cards Section 1 (Register 4). |
 | `/pm-reconcile [other]` | **Execute** | Any extra area the plan defined (e.g. `events`, `integrations`). |
+| `/pm-reconcile verify [area]` | **Verify + incorporate** | Re-read the source one more time, prove every unit landed in the registers, **incorporate the gaps it finds** (not just report them), and rule on disposal readiness. The source-disposal gate. Default = all areas; scope with `verify domain \| rules \| features`. |
 
 **Default area order is dependency-driven:** `domain` → `rules` → `features`. Entities are the vocabulary everything references, so they become canonical first. Rules operate on entities and guard transitions, so they come next. Features reference rules and entities, so they come last. This mirrors the register numbering 1 → 2 → 3 → 4. The plan can adapt the order (e.g. domain-by-domain on a large product).
 
 ---
+
+## The source is whatever the user points to (no hardcoded name)
+
+"BRD" is only one possible source. Another project's source of business intent may be an FSD, a domain model, a Confluence/Notion space, a spec folder, an old wiki, even a spreadsheet - any format, any name. **Never assume the source is a "BRD" or hardcode a filename.** At the start of PLAN (and at the start of VERIFY), ask the user where their source of business intent lives, then deep-ingest whatever they point to. Throughout this skill, "**legacy source**" / "**the source**" means that user-pointed input, not a specific document.
 
 ## Source of truth model (read before running any area)
 
@@ -213,6 +218,87 @@ Close with: what this area produced, open divergences, and the next area command
 
 ---
 
+# ===== VERIFY MODE (source-disposal gate) =====
+
+Runs on `/pm-reconcile verify [area]`. The closing pass of a rebuild: before the team throws the legacy source away, prove that **everything in it survived the transposition** - and **incorporate whatever did not**. This is not a fresh report for its own sake; the report is the orientation layer, the value is closing the gaps. Without this pass the source is discarded on faith that the earlier reconcile was perfect.
+
+**Run it when** all reconcile areas are `done` and the team is about to retire the legacy source. Re-runnable - re-running after fixes re-checks and shrinks the gap list.
+
+## Step V0: Locate source + registers, set scope
+
+- Ask where the legacy source lives (source-agnostic - see "The source is whatever the user points to"). Default to the source folder recorded in `reconciliation_plan.md` if present, but let the user redirect or add to it.
+- Confirm the rebuilt registers exist (`entities.md`, `business_rules.md`, `decision_models.md`, `feature_list.md` + cards). If a register is missing, that area was never reconciled - say so and route back to `/pm-reconcile [area]` first; do not "verify" a non-existent target.
+- Determine scope (default all; `verify domain | rules | features` scopes to one layer).
+
+Apply the standard skill interaction pattern (CLAUDE.md).
+
+## Step V1: Deep re-ingest the source
+
+Re-read the source **to full depth** (Deep source ingestion standard) - recursively, following every overview/master table down to its per-item detail files. Do not lean on the earlier reconcile's notes; read the source itself again. State coverage: "Re-read N source files across M folders." This independent re-read is the whole point - it catches what the first pass skipped.
+
+## Step V2: Enumerate source units + 3-way diff
+
+Break the source into its atomic units in scope - each business rule, decision, constraint, entity/state, requirement, feature. For every unit, locate where it landed and check it against the **asymmetric truth** (same model as reconcile):
+
+| Dimension | Checked against | Truth |
+|---|---|---|
+| **Business logic** (rule values, decisions, constraints, *what/why*) | `business_rules.md` / `decision_models.md` / entity states | **Source wins** - a missing or altered rule is a gap/divergence |
+| **Structure** (entity/attribute/enum/state names, what exists) | the codebase | **Code wins** - register must match code |
+| **Technical accuracy** (does the transposed artifact match how the code really behaves) | the codebase | **Code wins** - flag transposed logic the code contradicts |
+
+Classify every unit:
+
+| Status | Meaning |
+|---|---|
+| ✅ **Covered** | Transposed correctly, consistent with code |
+| ❌ **Not transposed** | In the source, absent from the registers - a real gap |
+| ⚠️ **Transposed but conflicts code** | Landed, but the code does something else → `DIV-NN` |
+| 🔄 **Transposed but altered/incomplete** | Landed with wrong value or partial logic vs source |
+| ⛔ **Source-only, intentionally dropped** | Confirmed earlier as `specified, not implemented` / out of scope - not a gap |
+
+Batch by feature set / rule category for large sources (reuse Step A3 checkpointed batching - bound the question load per batch, record `verify.batches_done/total`).
+
+## Step V3: Coverage report (informational layer)
+
+Write `reconcile/coverage_report.md` (template below) - the traceability surface: every source unit → where it landed or why it did not. This is read-only orientation; it does **not** replace incorporation.
+
+```
+COVERAGE: [N] source units - ✅ [x] covered  ❌ [x] gaps  ⚠️ [x] conflicts  🔄 [x] altered  ⛔ [x] dropped
+```
+
+## Step V4: Incorporate the gaps (the point of this mode)
+
+A report alone changes nothing. For every non-covered unit, close it - with confirmation, never silently:
+
+| Finding | Incorporation |
+|---|---|
+| ❌ **Not transposed** | Propose the artifact it should become - business logic → new `BR-NN` / `TBL-NN` / entity state; a capability → `FEAT-ID` (or a Subtask on an existing card if it is a nuance). Confirm via AskUserQuestion, then **write it into the register / card**. |
+| 🔄 **Altered / incomplete** | Show source value vs transposed value, propose the correction, confirm, **fix the register/card** to match the source's intent. |
+| ⚠️ **Conflicts code** | Assign `DIV-NN`, surface via AskUserQuestion (code-bug vs source-stale), record the ruling in the Reconciliation Report. Code is never changed - only the doc/register, per policy. |
+| ⛔ **Dropped** | Confirm once it was an intentional drop; record it so it is not re-flagged next run. |
+
+Use the grouped AskUserQuestion pattern (2-4 per round). Apply the same write-paths as reconcile: registers via their owning skills (`pm-business-rules-library`, `pm-entity-registry`, `pm-reverse-extract`), feature_list + cards kept in parity, Notion synced via `notion_ids.<key>`. **Never change the codebase.** Append every incorporation and every `DIV-NN` to `reconciliation_report.md`.
+
+## Step V5: Disposal-readiness verdict
+
+After incorporation, re-run V2 on the affected units and render the verdict:
+
+```
+SOURCE-DISPOSAL READINESS - [source name]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Source units:   [N]
+Covered:        [x]   Incorporated this pass: [x]
+Open gaps:      [x]   (listed in coverage_report.md)
+Open DIV-NN:    [x]   (team must rule before disposal)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+VERDICT: [✅ Source fully captured - safe to archive
+        | ⚠️ NOT safe - [x] gaps / [x] divergences open, resolve then re-run /pm-reconcile verify]
+```
+
+Only a **fully covered, zero-open-gap, zero-open-divergence** state earns "safe to archive". Anything else: the source stays, list what is open, point at re-running verify after the team rules on the divergences. The gate never says "safe" on faith.
+
+---
+
 ## Reconciliation Plan template
 
 Save to: `pureinn-workspace/[project-slug]/reconcile/reconciliation_plan.md`
@@ -257,6 +343,34 @@ Header (written by Plan mode): purpose, scope, policy, date. Then one section ap
 ### Open questions for the team
 ```
 
+## Coverage Report structure (verify mode)
+
+Save to: `pureinn-workspace/[project-slug]/reconcile/coverage_report.md`
+
+```markdown
+# Source Coverage Report - [Product Name]
+
+> **Source verified:** [name / folder the user pointed to]
+> **Scope:** [all / domain / rules / features]
+> **Generated:** [date]  **By:** pm-reconcile verify v[version]
+> Re-read [N] source files across [M] folders.
+
+## Verdict: [✅ safe to archive / ⚠️ not safe - N open]
+Covered [x] / [N]  ·  gaps [x]  ·  conflicts [x]  ·  altered [x]  ·  dropped [x]
+
+## Traceability
+| Source unit (doc §) | Status | Landed at | Action |
+|---|---|---|---|
+| [BRD §4.2 refund window] | ✅ covered | BR-ORD-003 | - |
+| [BRD §7 loyalty tiers] | ❌ not transposed | - | incorporated → TBL-LOY-01 (confirmed) |
+| [FSD §3 cancel flow] | ⚠️ conflicts code | BR-ORD-009 | DIV-12 → team rules |
+| [spec §2 grace period] | 🔄 altered | BR-ORD-005 | corrected 7d → 14d (source) |
+| [old wiki: SMS reminders] | ⛔ dropped | - | intentional (not implemented) |
+
+## Open before disposal
+- [gaps + DIV-NN that must be closed first]
+```
+
 ## state.json schema
 
 ```json
@@ -268,10 +382,17 @@ Header (written by Plan mode): purpose, scope, policy, date. Then one section ap
     {"area": "domain",   "order": 1, "target": "domain/entities.md",        "status": "done",        "divergences_open": 0, "batches_done": 1, "batches_total": 1},
     {"area": "rules",    "order": 2, "target": "domain/business_rules.md",   "status": "in_progress", "divergences_open": 2, "batches_done": 2, "batches_total": 5},
     {"area": "features", "order": 3, "target": "features/feature_list.md",   "status": "pending",     "divergences_open": 0, "batches_done": 0, "batches_total": 0}
-  ]
+  ],
+  "verify": {
+    "last_run": "2026-06-28",
+    "scope": "all",
+    "units_total": 0, "covered": 0, "gaps_open": 0, "divergences_open": 0,
+    "batches_done": 0, "batches_total": 0,
+    "disposal_ready": false
+  }
 }
 ```
-`status` ∈ `pending | in_progress | done`. On full completion also set `registers.reconciled: true`, `registers.feature_list_initialized: true`, `current_phase_index: 6`.
+`status` ∈ `pending | in_progress | done`. On full completion also set `registers.reconciled: true`, `registers.feature_list_initialized: true`, `current_phase_index: 6`. The `verify` block is written by VERIFY MODE; `disposal_ready: true` only when gaps and divergences are both 0.
 
 ---
 
@@ -286,8 +407,10 @@ register prestavaný.
 **Ďalší krok:** `/pm-reconcile [ďalšia oblasť podľa plánu]` — pokračuj v poradí.
 Stav kedykoľvek cez `/pm-reconcile-status`.
 
-**Po dokončení všetkých oblastí:** `/pm-audit` → overí konzistenciu prestaveného workspace, potom `/pm-stripe` → delivery channels a JIT po featurach.
+**Po dokončení všetkých oblastí:** `/pm-audit` → overí konzistenciu prestaveného workspace (forma, naming, metadata). Potom **`/pm-reconcile verify`** → posledná kontrola voči zdroju: dokáže že všetko zo zdroja je preklopené, **medzery doplní**, a vynesie verdikt či môžeš zdroj zahodiť (source-disposal gate). Až potom `/pm-stripe` → delivery a JIT po featurach.
 Reconciliation Report prejdi s tímom kvôli otvoreným divergenciám.
+
+**Poradie kontrol pred zahodením zdroja:** `/pm-audit` (forma) → `/pm-reconcile verify` (obsah voči zdroju) → archív zdroja až keď verify povie ✅.
 
 **Môžeš preskočiť ak:** žiadne staré docs neexistujú (len kód) — vtedy stačí naivná migračná cesta
 (`/pm-entity-registry` + `/pm-business-rules-library` + `/pm-reverse-extract`) bez rekonciliácie.

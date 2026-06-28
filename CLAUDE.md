@@ -284,6 +284,7 @@ When writing or updating any skill, check it against these four. A skill that au
 
 Every skill that reads provided documents, a source folder, or a codebase MUST ingest the **full depth**, never the surface. A partial read produces a wrong artifact. Required of every skill:
 
+0. **The source is whatever the user points to - never hardcode its name or format.** "BRD" is one possible source; another project's source of intent may be an FSD, a domain model, a Confluence/Notion space, a wiki, a spreadsheet, a folder of mixed docs. A skill that needs a source **asks the user where it lives** and ingests whatever they point to - it never assumes a specific filename or document type. Use generic wording ("the source", "your source of business intent") in skill text, not a hardcoded document name.
 1. **Traverse recursively.** Read the entire tree - every subfolder, not just the top level. A folder is not "read" until its subfolders are read. Do not stop at the first level.
 2. **Follow the detail, not just the overview.** An index / summary / overview table (e.g. a business-rules CSV listing IDs, a contents page, a "master" sheet) is a **pointer, not the content**. If the detail lives in referenced files or a subfolder (e.g. one file per rule, an appendix, a `/details` folder), read those too. Never treat a summary table as the complete source.
 3. **Follow references.** Links, "see appendix", "detailed in [folder]", attachments, related/linked files - follow them to their actual source before concluding.

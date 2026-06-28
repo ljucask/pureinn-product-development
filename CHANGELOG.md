@@ -1,5 +1,20 @@
 # Changelog
 
+## [5.13.0] - 2026-06-28
+
+### Added
+
+- **`/pm-reconcile verify [area]` - the source-disposal gate.** A closing pass for a rebuild: re-reads the legacy source one more time to full depth, enumerates every source unit (rule / decision / constraint / entity / requirement / feature), runs a 3-way diff (business logic → registers, structure + technical accuracy → code), and writes a traceability `coverage_report.md`. Crucially it does not just report - it **incorporates the gaps**: not-transposed units become new BR/TBL/entity/FEAT (or a Subtask) on confirmation, altered units get corrected to the source, code conflicts get a `DIV-NN`. Renders a disposal-readiness verdict that only says "safe to archive" at zero open gaps and zero open divergences. The codebase is never changed. New `reconcile.verify` block in `state.json`.
+
+### Changed
+
+- **Reconcile is now explicitly source-agnostic.** "BRD" was only ever one example; the source of business intent can be an FSD, domain model, Confluence/Notion space, wiki, or spreadsheet. The skill asks where the source lives and ingests whatever the user points to - no hardcoded filename or document type. Added as rule 0 of the **Deep source ingestion** universal standard (CLAUDE.md), so it binds every source-reading skill, not just reconcile.
+- **`pm-reconcile-status`** surfaces source-disposal readiness and routes `all areas done → /pm-reconcile verify → /pm-stripe` (verify is required before the source is called safe to retire).
+- `FRAMEWORK_GUIDE.md` and `README.md` Rebuild (A1) flow updated: form check (`/pm-audit`) → content check (`/pm-reconcile verify`) → archive source → JIT delivery.
+
+---
+
+
 ## [5.12.1] - 2026-06-26
 
 ### Fixed
