@@ -407,10 +407,10 @@ register prestavaný.
 **Ďalší krok:** `/pm-reconcile [ďalšia oblasť podľa plánu]` — pokračuj v poradí.
 Stav kedykoľvek cez `/pm-reconcile-status`.
 
-**Po dokončení všetkých oblastí:** `/pm-audit` → overí konzistenciu prestaveného workspace (forma, naming, metadata). Potom **`/pm-reconcile verify`** → posledná kontrola voči zdroju: dokáže že všetko zo zdroja je preklopené, **medzery doplní**, a vynesie verdikt či môžeš zdroj zahodiť (source-disposal gate). Až potom `/pm-stripe` → delivery a JIT po featurach.
+**Po dokončení všetkých oblastí - obsah pred formou:** najprv **`/pm-reconcile verify`** → posledná kontrola voči zdroju: dokáže že všetko zo zdroja je preklopené, **medzery doplní** (pridá nové BR/TBL/entity/FEAT), a vynesie verdikt či môžeš zdroj zahodiť (source-disposal gate). Až keď je obsah kompletný → `/pm-product-roadmap` (fázy nad celým setom) → `/pm-audit` (forma, naming, metadata, descriptions - **vrátane toho čo verify dorobil**) → `/pm-stripe` (JIT delivery).
 Reconciliation Report prejdi s tímom kvôli otvoreným divergenciám.
 
-**Poradie kontrol pred zahodením zdroja:** `/pm-audit` (forma) → `/pm-reconcile verify` (obsah voči zdroju) → archív zdroja až keď verify povie ✅.
+**Prečo verify pred auditom:** verify **mení obsah** (zapracováva medzery), audit je forma nad stabilným setom. Audit-first by znamenal auditovať neúplnú množinu a po verify auditovať znova. Poradie: **obsah (`verify`) → plán (`roadmap`) → forma (`audit`) → archív zdroja** (disposal verdikt padá na verify - audit zdroj nečíta, nič z neho nestratí).
 
 **Môžeš preskočiť ak:** žiadne staré docs neexistujú (len kód) — vtedy stačí naivná migračná cesta
 (`/pm-entity-registry` + `/pm-business-rules-library` + `/pm-reverse-extract`) bez rekonciliácie.

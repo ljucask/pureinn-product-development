@@ -206,12 +206,12 @@ Two sub-paths, by the state of the legacy docs:
 The full rebuild: reconcile the codebase against the legacy docs, produce a Reconciliation Report, and rebuild the registers + feature inventory clean. Run when docs are stale, contradictory, or the team is changing and needs one trustworthy source of truth.
 
 ```
-PREP                    PLAN                EXECUTE per layer (multi-session)        VERIFY + HANDOFF
-/pureinn                /pm-reconcile       ┌─ /pm-reconcile domain   ─┐             /pm-audit (form)
-+ source/          →   → reconciliation  → ├─ /pm-reconcile rules    ─┤  →          /pm-reconcile verify
-+ /common-ground          _plan.md          └─ /pm-reconcile features ─┘             (content + incorporate)
-+ Notion URLs                                  ▲ check: /pm-reconcile-status ▲       → safe to archive source
-                                               ▲ reconciliation_report.md grows ▲    → /pm-stripe (JIT)
+PREP                    PLAN                EXECUTE per layer (multi-session)        CLOSE (content→plan→form)
+/pureinn                /pm-reconcile       ┌─ /pm-reconcile domain   ─┐             /pm-reconcile verify
++ source/          →   → reconciliation  → ├─ /pm-reconcile rules    ─┤  →          (content + incorporate gaps)
++ /common-ground          _plan.md          └─ /pm-reconcile features ─┘             → /pm-product-roadmap (phases)
++ Notion URLs                                  ▲ check: /pm-reconcile-status ▲       → /pm-audit (form, naming, meta)
+                                               ▲ reconciliation_report.md grows ▲    → archive source → /pm-stripe (JIT)
 ```
 
 **Source-of-truth model (the crux):** reconciliation is asymmetric.
@@ -233,8 +233,8 @@ Rules that follow: **code is never changed** (only documents); docs that run ahe
 | Execute 2 | `/pm-reconcile rules` | Business rules, decision models, transition **guard conditions** → `business_rules.md` + `decision_models.md` (R2-3). Heaviest AskUserQuestion pass. |
 | Execute 3 | `/pm-reconcile features` | Feature inventory (FDD grammar, FS-NN, Section 1 → BR-IDs) → `feature_list.md` (R4) + stub cards |
 | Anytime | `/pm-reconcile-status` | Dashboard: done / pending areas, open divergences, disposal-readiness, next command |
-| Verify | `/pm-reconcile verify` | Re-reads the source one last time, proves every unit was transposed, **incorporates the gaps** it finds, rules whether the source is safe to archive → `coverage_report.md`. The source-disposal gate. |
-| Exit | review `reconciliation_report.md` with the team → `/pm-audit` (form) → `/pm-reconcile verify` (content) → `/pm-stripe` | Decide open `DIV-NN`, prove coverage, retire the source, then enter JIT delivery |
+| Verify (content) | `/pm-reconcile verify` | Re-reads the source one last time, proves every unit was transposed, **incorporates the gaps** it finds (adds BR/TBL/entity/FEAT), rules whether the source is safe to archive → `coverage_report.md`. The source-disposal gate. **Runs before audit** - it changes content; audit then checks the form of the complete set. |
+| Exit | review `reconciliation_report.md` → `/pm-reconcile verify` (content) → `/pm-product-roadmap` (phases) → `/pm-audit` (form) → archive source → `/pm-stripe` | Content first, then plan, then form. Decide open `DIV-NN`, prove + incorporate coverage, phase the complete set, audit naming/metadata/descriptions over what verify produced, retire the source, enter JIT delivery |
 
 **Order is dependency-driven:** entities → rules → features (registers 1 → 2 → 3 → 4). Entities are the vocabulary everything references, so they become canonical first. On a large product, run domain-by-domain.
 

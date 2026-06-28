@@ -1,5 +1,14 @@
 # Changelog
 
+## [5.13.1] - 2026-06-28
+
+### Fixed
+
+- **Corrected the Rebuild close order: content before form.** v5.13.0 routed `/pm-audit` (form) before `/pm-reconcile verify` (content) - wrong, because verify **changes content** (it incorporates gaps: new BR/TBL/entity/FEAT, corrected values, new cards). Auditing first means auditing an incomplete set, then re-auditing whatever verify adds. The dependency is **content → plan → form**: `/pm-reconcile verify` (incorporate everything from the source) → `/pm-product-roadmap` (phase the now-complete set) → `/pm-audit` (naming, metadata, descriptions over the stable set, covering what verify produced) → archive source → `/pm-stripe`. The disposal verdict belongs to verify (audit never reads the source). Fixed in the `pm-reconcile` + `pm-reconcile-status` handoffs and the `FRAMEWORK_GUIDE.md` A1 flow + diagram.
+
+---
+
+
 ## [5.13.0] - 2026-06-28
 
 ### Added
@@ -10,7 +19,7 @@
 
 - **Reconcile is now explicitly source-agnostic.** "BRD" was only ever one example; the source of business intent can be an FSD, domain model, Confluence/Notion space, wiki, or spreadsheet. The skill asks where the source lives and ingests whatever the user points to - no hardcoded filename or document type. Added as rule 0 of the **Deep source ingestion** universal standard (CLAUDE.md), so it binds every source-reading skill, not just reconcile.
 - **`pm-reconcile-status`** surfaces source-disposal readiness and routes `all areas done → /pm-reconcile verify → /pm-stripe` (verify is required before the source is called safe to retire).
-- `FRAMEWORK_GUIDE.md` and `README.md` Rebuild (A1) flow updated: form check (`/pm-audit`) → content check (`/pm-reconcile verify`) → archive source → JIT delivery.
+- `FRAMEWORK_GUIDE.md` and `README.md` Rebuild (A1) flow updated to include the verify pass. (Close order corrected in 5.13.1 to content→plan→form.)
 
 ---
 

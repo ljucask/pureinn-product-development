@@ -77,8 +77,8 @@ Rules for "NEXT":
 | Area in progress | "Resume with `/pm-reconcile [area]`." |
 | Next area pending | "Run `/pm-reconcile [area]` to continue." |
 | Open divergences block confidence | "Decide DIV-NN with the team before marking rules Final; they are listed above." |
-| All areas done, verify not yet ✅ | "Run `/pm-reconcile verify` to prove the source is fully captured (and incorporate any gaps) before retiring it." |
-| All areas done + verify ✅ | "Reconciliation complete, source safe to archive. Review `reconciliation_report.md` with the team, then `/pm-stripe` for JIT delivery." |
+| All areas done, verify not yet ✅ | "Content first: run `/pm-reconcile verify` to prove the source is fully captured **and incorporate any gaps** before retiring it." |
+| All areas done + verify ✅ | "Source safe to archive. Now form: `/pm-product-roadmap` (phases over the complete set) → `/pm-audit` (naming, metadata, descriptions - covers what verify added) → `/pm-stripe` for JIT delivery. Review `reconciliation_report.md` with the team." |
 
 ---
 
@@ -89,7 +89,7 @@ Rules for "NEXT":
 **Čo si teraz má:** Aktuálny obraz rekonciliácie - čo hotové, čo zostáva, ktoré divergencie čakajú na rozhodnutie tímu.
 
 **Ďalší krok:** `/pm-reconcile [oblasť]` podľa NEXT vyššie.
-Keď sú všetky oblasti hotové → `/pm-reconcile verify` (dôkaz pokrytia + doplnenie medzier pred zahodením zdroja), až potom `/pm-stripe` pre JIT delivery.
+Keď sú všetky oblasti hotové, poradie je obsah→plán→forma: `/pm-reconcile verify` (dôkaz pokrytia + doplnenie medzier) → `/pm-product-roadmap` (fázy) → `/pm-audit` (forma nad kompletným setom) → `/pm-stripe`.
 
 **Môžeš preskočiť ak:** rekonciliácia ešte nezačala — vtedy spusti `/pm-reconcile` (plán) najprv.
 ```
