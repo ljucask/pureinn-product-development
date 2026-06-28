@@ -1,10 +1,10 @@
 ---
 name: pm-mvp-scope
-description: Define MVP scope and delivery plan from the prioritized FDD Feature List. Makes the IN/POST-MVP/CUT decision per feature, assigns each feature to a Delivery Stripe. Updates feature_list.md and stub Feature Card frontmatter (stripe field). After user approval, updates Notion Feature entries with MVP flag and stripe assignment. Phase 5 exit artifact. Required input for pm-stripe JIT cycle.
+description: Define MVP scope and delivery plan from the prioritized FDD Feature List. Makes the IN/POST-MVP/CUT decision per feature (recorded in the single `phase` field, never a separate `mvp` flag), assigns each feature to a Delivery Stripe. Updates feature_list.md and Feature Card frontmatter (phase + stripe). If features already carry a phase (Rebuild where roadmap split phases), reads it instead of re-deciding the cut and only assigns stripes. After user approval, updates Notion Feature entries with phase and stripe assignment. Phase 5 exit artifact. Required input for pm-stripe JIT cycle.
 license: MIT
 metadata:
   author: https://github.com/ljucask
-  version: "2.0.0"
+  version: "2.1.0"
   domain: product-management
   triggers: MVP scope, delivery stripes, MVP cut, feature prioritization, stripe assignment, Phase 5
   role: specialist
@@ -19,11 +19,17 @@ metadata:
 
 Phase 5 / Steps 4-5. Takes the prioritized, dependency-mapped FDD Feature List (Live Register 4, output of `pm-features-list`) and produces the delivery structure:
 
-1. **MVP Scope Decision** - what is IN (MVP), what is POST-MVP, what is CUT. Decision is **per Feature** - not per Feature Set. Feature Sets are grouping only and do not affect the MVP cut.
+1. **MVP Scope Decision** - what is IN (MVP), what is POST-MVP, what is CUT. Decision is **per Feature** - not per Feature Set. Feature Sets are grouping only and do not affect the MVP cut. **MVP membership is recorded in the `phase` field, NOT a separate `mvp` boolean** - see the next section.
 2. **Delivery Stripes** - parallel development tracks (not time-boxed sprints). Each stripe is an isolated channel for a coherent domain slice (e.g., stripe-checkout, stripe-auth). Features are assigned to stripes based on domain affinity and dependencies.
 3. **Stripe assignment** - updates `stripe:` field in each Feature Card frontmatter and in feature_list.md.
 
-After user approval: update Notion Feature entries with MVP flag and stripe assignment.
+After user approval: update Notion Feature entries with phase and stripe assignment.
+
+### `phase` is the single axis for MVP membership - no separate `mvp` flag
+
+The canonical Feature Card carries one field for this: **`phase`** (`MVP` / `MVP+` / `Phase 1` / … - or a project's own labels like `P0` / `P1`). MVP membership **is** the phase value: IN-MVP = `phase: MVP` (or the project's first/`P0` phase); POST-MVP = a later phase; CUT = removed / `What we are NOT building`. **Never write a separate `mvp: true/false` (or `roadmap_phase`) field** - that duplicates `phase` on the same axis and the two drift apart. One field, one source of truth.
+
+**If features already carry a `phase` (a Rebuild where `/pm-product-roadmap` already split phases, e.g. P0 Pilot = MVP):** the cut is already decided - **read it, do not re-litigate IN/POST**. This skill's remaining job is then only **stripe assignment** (delivery channels + dependency order). Confirm the phase-derived cut with the user, then assign stripes.
 
 This is the Phase 5 exit artifact. pm-stripe uses this structure to orchestrate the JIT cycle - picking the next ready feature in each stripe and routing to pm-feature-design + build.
 
@@ -40,11 +46,11 @@ This is the Phase 5 exit artifact. pm-stripe uses this structure to orchestrate 
 - `pm-business-case` - revenue model and runway inform how aggressive the MVP cut should be
 
 **Produces artifacts used by:**
-- `features/feature_list.md` - updated with MVP flag and stripe per feature
-- `/features/cards/FEAT-*.md` - `stripe:` field updated in each stub Feature Card
+- `features/feature_list.md` - updated with `phase` and stripe per feature
+- `/features/cards/FEAT-*.md` - `phase:` and `stripe:` fields updated in each stub Feature Card
 - `pm-product-roadmap` v3 - delivery view populated
 - `pm-stripe` - uses stripe assignments to orchestrate JIT cycle per feature
-- Notion - Feature entries enriched with MVP flag and stripe assignment
+- Notion - Feature entries enriched with phase and stripe assignment
 
 ---
 
@@ -269,8 +275,8 @@ For each stripe, list the execution order based on dependencies:
 
 After user approves the MVP Scope and Stripe assignment:
 
-1. For each feature, update the `stripe:` field in the Feature Card frontmatter at `/features/cards/[FEAT-ID].md`
-2. Update `features/feature_list.md` - fill in the Stripe column per feature, mark MVP column true/false
+1. For each feature, update the `stripe:` field **and the `phase:` field** in the Feature Card frontmatter at `/features/cards/[FEAT-ID].md`. The MVP decision is written as the `phase` value (`MVP` / `MVP+` / `Phase N` - or the project's `P0`/`P1`…), **not** a separate `mvp` field.
+2. Update `features/feature_list.md` - fill in the Stripe column and the `phase` value per feature. **Do not add a separate MVP true/false column** - `phase` carries it (IN-MVP = first/`MVP`/`P0` phase). If the list already has a stray `mvp` or `roadmap_phase` column, collapse it into `phase`.
 
 ---
 

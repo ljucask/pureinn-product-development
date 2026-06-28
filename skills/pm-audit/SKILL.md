@@ -4,9 +4,9 @@ description: Health check for an existing Pureinn workspace. Scans the framework
 license: MIT
 metadata:
   author: https://github.com/ljucask
-  version: "1.0.0"
+  version: "1.1.0"
   domain: product-management
-  triggers: audit, health check, consistency check, workspace check, framework drift, version migration, fix inconsistencies, sanity check
+  triggers: audit, health check, consistency check, workspace check, framework drift, version migration, fix inconsistencies, sanity check, naming check, anti-pattern
   role: specialist
   scope: validation
   output-format: document
@@ -106,13 +106,13 @@ Read every artifact **in scope** (Step 0) and run the checks below - for an area
 | Dimension | What is checked |
 |---|---|
 | **Structure** | Feature Cards match the canonical template (sections 1-4 + Subtasks; frontmatter: id, title, status, stripe, feature_set, actor, owner, priority, estimate, prd_ref, feature_flag, flag_default). Registers match current format and header. |
-| **ID & naming** | FEAT/BR/TBL/FS IDs well-formed (`FEAT-[DOMAIN]-NNN`, `BR-[DOMAIN]-NNN`, `TBL-[DOMAIN]-NN`, `FS-NN`) and unique. Feature names follow `<action> <result> <object>`, strong verb, object = entity. The 7 anti-patterns flagged. |
+| **ID & naming** | FEAT/BR/TBL/FS IDs well-formed (`FEAT-[DOMAIN]-NNN`, `BR-[DOMAIN]-NNN`, `TBL-[DOMAIN]-NN`, `FS-NN`) and unique. **The naming check is mandatory and must actually run over every feature name - report its result explicitly (even "0 anti-patterns found") so a silent skip is visible.** Each name must be `<action verb> <result> <object>` with a **strong verb** and an **object = a domain entity**. Flag every violation: (a) **vague/banned verbs** `Process` / `Manage` / `Handle` (and similar non-specific verbs); (b) **technical objects** - the object is an implementation construct not a domain entity (e.g. "...state machine", "...FSM", "...queue", "...flag", "...handler"); (c) the other FDD anti-patterns (bundled multi-op, missing object, CRUD-as-feature, etc.). A naming anti-pattern on an active feature is a P1 finding. Report each as `[FEAT-ID] "name" → [which anti-pattern] → suggested rename`. |
 | **Cross-references** | Every `BR-ID` / `TBL-ID` / entity link in a Feature Card resolves to the register. `feature_set` matches feature_list. `stripe` is a real stripe. No dangling links. |
 | **Lifecycle** | `status` is one of the canonical 6 (`1_Backlog`..`6_Shipped`). No orphaned or invalid states. |
 | **Version drift** | Any of the Step 0 drift signals → migration finding. |
 | **Completeness** | Every feature in feature_list has a card; every card has its required sections; registers are initialized; state.json flags match reality. |
 | **Description present** | Every feature has a non-blank Description - both its `feature_list.md` entry and its card's `## Description` section, for **every status** (including `6_Shipped` lean stubs and `1_Backlog`). A feature with no description is a P2 finding (orientation gap). |
-| **Feature metadata complete** | Every feature carries the full property set in frontmatter + feature_list + Notion: `layer` (frontend/backend/system), `phase` (MVP/MVP+/Phase 1...), `kano`, `vxc`, `stripe` (Dev Stripe), `has_subtasks`. Also check **value consistency**: `has_subtasks` matches whether the card's Subtasks section actually has items; values are from the allowed sets (e.g. layer ∈ {frontend,backend,system}). Missing or inconsistent = P2. |
+| **Feature metadata complete** | Every feature carries the full property set in frontmatter + feature_list + Notion: `layer` (frontend/backend/system), `phase` (MVP/MVP+/Phase 1... or the project's P0/P1…), `kano`, `vxc`, `stripe` (Dev Stripe), `has_subtasks`. Also check **value consistency**: `has_subtasks` matches whether the card's Subtasks section actually has items; values are from the allowed sets (e.g. layer ∈ {frontend,backend,system}). Missing or inconsistent = P2. **Canonical-field check:** `phase` is the **single axis for MVP membership** - flag and consolidate any duplicate/non-canonical field that encodes the same thing (`mvp: true/false`, `roadmap_phase`, an "MVP" column) into `phase` (IN-MVP = the first/`MVP`/`P0` phase). Two fields on one axis drift apart - a stray `mvp`/`roadmap_phase` is a P2 finding, migrate it to `phase`. |
 | **Notion sync** (if configured) | Local `status` vs Notion `Status` mismatch surfaced (drift log, like pm-stripe). |
 
 ---
@@ -153,8 +153,8 @@ Present the score and P0/P1 summary to the user before fixing.
 
 ## Step 3: Fix
 
-- **Mechanical (auto-fix):** ID format normalization, old → new lifecycle state names, missing `feature_set`/`estimate`/`Subtasks` scaffolding added, `notion.*` → `notion_ids.*`, path-slash convention, dead-link repair where the target is unambiguous. Apply in place; report a diff summary.
-- **Judgment (ask):** anything where the fix changes meaning - a naming anti-pattern rewrite, an ambiguous dangling reference, a feature that may need splitting, a missing card that may be intentional. Batch these via the grouped AskUserQuestion pattern (CLAUDE.md), 2-4 per round, confirm, apply.
+- **Mechanical (auto-fix):** ID format normalization, old → new lifecycle state names, missing `feature_set`/`estimate`/`Subtasks` scaffolding added, `notion.*` → `notion_ids.*`, path-slash convention, dead-link repair where the target is unambiguous, **collapsing a stray `mvp`/`roadmap_phase` field or "MVP" column into the canonical `phase`** (one axis). Apply in place; report a diff summary.
+- **Judgment (ask):** anything where the fix changes meaning - a naming anti-pattern rewrite (always propose a concrete client-valued rename, e.g. "Drive order state machine" → "Submit order for matching"; never leave a flagged name unaddressed), an ambiguous dangling reference, a feature that may need splitting, a missing card that may be intentional. Batch these via the grouped AskUserQuestion pattern (CLAUDE.md), 2-4 per round, confirm, apply.
 **The `feature_list.md` is the whole-list orientation surface - backfill writes there FIRST, for every feature, then mirrors to the card and Notion.** Do not fill individual cards while leaving the list incomplete - the list is what the team reads to understand the backlog at a glance. Every feature in the list must end up with a Description and the full property set; iterate across the whole list, not card-by-card in isolation.
 
 - **Missing / weak descriptions (backfill from evidence):** for every feature whose Description is missing OR too terse (a few words / a single clause), draft a proper one from the card's Evidence / code references / linked rules: **2-3 clear, genuinely orientational sentences - what it does, who uses it, the value/role.** Not a one-liner restating the title. Batch via AskUserQuestion, then write to **the `feature_list.md` entry AND the card's `## Description`**. The list entry can be a tight 1-2 sentences; the card carries the fuller version - but neither is blank or trivial.

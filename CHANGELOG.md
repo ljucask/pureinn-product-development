@@ -1,5 +1,15 @@
 # Changelog
 
+## [5.13.4] - 2026-06-29
+
+### Fixed
+
+- **`phase` is the single axis for MVP membership - no more separate `mvp` / `roadmap_phase` field.** v5.12.0 already made `phase` replace the old MVP boolean on the card, but `pm-mvp-scope` still wrote an "MVP true/false" column and an `mvp` flag, so a real Vezmee audit ended up with **both** `roadmap_phase` and `mvp` on cards - two fields for one axis, drifting apart (exactly the duplication the user flagged). Fixed: `pm-mvp-scope` now records the IN/POST-MVP/CUT decision **as the `phase` value** (IN-MVP = `MVP`/`P0`), writes `phase` + `stripe` to frontmatter and feature_list, and **if features already carry a `phase`** (a Rebuild where `/pm-product-roadmap` already split phases) it **reads the cut instead of re-deciding it** and only assigns stripes. `pm-audit` gained a canonical-field check: a stray `mvp`/`roadmap_phase`/"MVP" column is a P2 finding, mechanically collapsed into `phase`.
+- **`pm-audit` naming check hardened so it actually fires.** On the Vezmee run the naming check silently produced **zero** findings despite obvious violations (`ORD-004 "Drive order state machine"` - technical object; an `ID-/ORD-/NOT- "Manage X"` cluster - banned vague verb). The check is now **mandatory and must report its result explicitly** (even "0 anti-patterns found", so a silent skip is visible), with the anti-pattern set spelled out: vague/banned verbs (`Process`/`Manage`/`Handle`), technical objects (`...state machine`/`FSM`/`queue`/`flag`/`handler`), and the other FDD anti-patterns. Each violation is reported as `[FEAT-ID] "name" → anti-pattern → suggested rename`, and the judgment-fix step must always propose a concrete client-valued rename rather than leaving a flagged name unaddressed.
+
+---
+
+
 ## [5.13.3] - 2026-06-28
 
 ### Fixed
