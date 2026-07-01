@@ -483,7 +483,7 @@ title: "[Action] [Result] [Object]"
 status: 1_Backlog
 stripe: TBD
 feature_set: "FS-NN: [Feature Set name]"
-layer: [frontend / backend / system]
+layer: [one or more of frontend / backend / system - list all layers a cross-layer feature spans (e.g. "frontend, backend"), never "fullstack"]
 phase: [MVP / MVP+ / Phase 1 / ...]
 actor: [User / Host / Admin / System]
 owner: unassigned
@@ -553,7 +553,7 @@ properties:
   FEAT-ID: FEAT-[DOMAIN]-[NUMBER]
   Short Description: [1-sentence description]
   Status: 1_Backlog
-  Layer: [Frontend / Backend / System]
+  Layer: [one or more of Frontend / Backend / System - multi-select; never "fullstack"]
   Phase: [MVP / MVP+ / Phase 1 / ...]
   Priority: [P1 - Critical / P2 - High / P3 - Medium / P4 - Low]
   KANO Category: [Must-be / Performance / Delighter / Indifferent]

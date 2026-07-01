@@ -194,9 +194,10 @@ Save to: `pureinn-workspace/[project-slug]/features/feature_list.md`
 
 ### FEAT-[DOMAIN]-001: [Feature Name]
 **Description:** [1-2 clear, orientational sentences - what this feature does, who uses it, and its role/value. NOT a few words restating the title. **MANDATORY for every feature, every status** (Built/Shipped and Backlog). This whole-list view is the team's first orientation; never blank or trivial.]
-**Layer:** frontend / backend / system   ·   **Phase:** MVP / MVP+ / Phase 1 / ...   ·   **Actor:** [User / Host / Admin / System]
+**Layer:** [one or more of frontend / backend / system - list all layers a cross-layer feature spans, e.g. "frontend, backend"; never "fullstack"]   ·   **Phase:** MVP / MVP+ / Phase 1 / ...   ·   **Actor:** [User / Host / Admin / System]
 **KANO:** Must-be / Performance / Delighter / Indifferent   ·   **V×C:** Quick Win / Big Bet / Fill-in / Time Waster
-**Status:** Done / In Progress / Planned / Unclear   ·   **Dev Stripe:** [Dev Stripe 1 / ...]   ·   **Subtasks:** yes / no
+**Status:** [canonical only: `6_Shipped` / `4_In_Build` / `1_Backlog` - the SAME vocabulary as the card frontmatter, mapped from the code reality below]   ·   **Dev Stripe:** [Dev Stripe 1 / ...]   ·   **Subtasks:** yes / no
+**Build reality:** Done / In Progress / Planned / Unclear   *(human label only - the code reality that maps to the canonical Status above; not a second status axis)*
 **Spec coverage:** [Feature Card exists: Yes/No | Sections 1-3: Complete/Partial/None]
 **Notes:** [any relevant context]
 
@@ -241,7 +242,7 @@ title: "[Action] [Result] [Object]"
 status: 1_Backlog
 stripe: [stripe-name]
 feature_set: "FS-NN: [Feature Set name - group during planning]"
-layer: [frontend / backend / system - from code evidence]
+layer: [one or more of frontend / backend / system - from code evidence; list all layers a cross-layer feature spans (e.g. "frontend, backend"), never "fullstack"]
 phase: [MVP / MVP+ / Phase 1 / ...]
 actor: [User / Host / Admin / System]
 owner: unassigned
@@ -333,8 +334,8 @@ properties:
   Artefact Type: Feature
   FEAT-ID: FEAT-[DOMAIN]-NNN
   Short Description: [1-sentence description]
-  Status: [mapped status]
-  Layer: [Frontend / Backend / System - from code evidence]
+  Status: [mapped canonical status - 6_Shipped / 4_In_Build / 1_Backlog, per the mapping table above]
+  Layer: [one or more of Frontend / Backend / System - multi-select; list all layers the feature spans, never "fullstack"]
   Phase: [MVP / MVP+ / Phase 1 / ...]
   KANO Category: [Must-be / Performance / Delighter / Indifferent]
   V×C Quadrant: [Quick Win / Big Bet / Fill-in / Time Waster]

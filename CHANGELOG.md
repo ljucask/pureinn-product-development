@@ -1,5 +1,15 @@
 # Changelog
 
+## [5.13.5] - 2026-07-01
+
+### Fixed
+
+- **One status vocabulary everywhere - the canonical lifecycle (`1_Backlog`..`6_Shipped`).** A real Vezmee inconsistency: the feature_list carried the reconcile reality words (`Built` / `In Progress` / `Backlog`) as the per-feature `Status`, while the cards used the canonical lifecycle - two vocabularies on one axis, which drift and can't map cleanly to a single Notion `Status` property. Fixed: `pm-reverse-extract` now writes the **canonical status** in the feature_list block (mapped: `Built`→`6_Shipped`, `In Progress`→`4_In_Build`, `Planned/Backlog`→`1_Backlog`) and keeps the code reality only as a separate **Build reality** human label, never a second status axis. `pm-audit` lifecycle check now flags reality words used as a status as P1 drift and maps them. Same lesson as the `mvp`/`roadmap_phase` fix (5.13.4): one field per axis.
+- **`layer` is a multi-value field from `{frontend, backend, system}` - `fullstack` is not a layer.** A genuinely cross-layer feature (e.g. an ops dashboard = UI + new aggregation endpoints) lists the actual layers it spans (`frontend, backend`), rather than being forced into one value or a meaningless `fullstack`. Updated the canonical Feature Card, `pm-features-list`, `pm-reverse-extract` (feature_list block + card stub + Notion push), and the `pm-audit` metadata check (a value outside the set - especially `fullstack` - is a P2 finding, replace with the real layers). Matches a multi-select Notion `Layer` property.
+
+---
+
+
 ## [5.13.4] - 2026-06-29
 
 ### Fixed

@@ -120,8 +120,8 @@ title: "[Action] [Result] [Object]"
 status: 1_Backlog
 stripe: [stripe-name]
 feature_set: "FS-NN: [Feature Set name]"
-layer: [frontend / backend / system]
-phase: [MVP / MVP+ / Phase 1 / ...]
+layer: [one or more of frontend / backend / system - e.g. "backend" or "frontend, backend" for a genuinely cross-layer feature. NEVER "fullstack" - that is not a layer, list the actual layers]
+phase: [MVP / MVP+ / Phase 1 / ... or a project's P0 / P1 - the SINGLE axis for MVP membership; IN-MVP = the first / MVP / P0 phase. Never a separate mvp flag]
 actor: [User / Host / Admin / System]
 owner: unassigned
 priority: P1
