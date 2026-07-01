@@ -1,5 +1,14 @@
 # Changelog
 
+## [5.13.6] - 2026-07-01
+
+### Added
+
+- **Optional `2b_In_Design` lifecycle state** - the visual/Figma design step, between `2_Spec_Done` and `3_Ready_to_Build`. It is **layer-gated**: only a feature whose `layer` includes `frontend` passes through it (`2_Spec_Done → 2b_In_Design → 3_Ready_to_Build`); a pure `backend`/`system` feature has nothing to design and skips it (`2_Spec_Done → 3_Ready_to_Build`). `pm-feature-design` sets `2b_In_Design` when it finishes the spec of a UI feature whose Figma design still has to be produced; `pm-stripe` routes it; `pm-audit` accepts it and flags a pure backend/system feature sitting in `2b_In_Design` as drift. Reflected in the lifecycle tables of `pm-feature-card` and `pm-stripe`. Matches the real workflow where UI features go through design before build.
+
+---
+
+
 ## [5.13.5] - 2026-07-01
 
 ### Fixed

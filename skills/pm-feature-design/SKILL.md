@@ -36,7 +36,7 @@ Produces the Just-In-Time technical design for a single feature immediately befo
 6. Writes Feature Card Section 2 (Acceptance Criteria) - derived from register state + business rules
 7. Writes Feature Card Subtasks - lightweight nuance helpers captured in discovery
 8. Generates Mermaid.js sequence diagram + files to modify - writes to Feature Card Section 3
-9. Pushes description + Sections 1-3 + Subtasks to Notion; sets Feature Card status to `2_Spec_Done`
+9. Pushes description + Sections 1-3 + Subtasks to Notion; sets Feature Card status to `2_Spec_Done` (or `2b_In_Design` if it is a frontend feature whose Figma design still has to be produced - see Step 4d)
 
 **Atomic commit protocol (parallel Stripe safety):**
 All register updates (steps 2-3) are committed BEFORE any code generation begins. This prevents merge conflicts when multiple Stripes run in parallel.
@@ -367,7 +367,15 @@ If feature is backend/API-only: omit Section 3b entirely.
 
 **4d. Update Feature Card frontmatter status**
 
+Spec (Sections 1-3) is complete → `2_Spec_Done`. Then branch on `layer`:
+
+- **Feature has a UI (`layer` includes `frontend`) and the Figma design is not yet done** (no Figma URL in Section 3b, design still to be produced): set `2b_In_Design` - the feature is spec'd but waiting on / in visual design. It advances to `3_Ready_to_Build` once the design is approved.
+- **Backend / system feature, or the UI design is already provided/approved:** set `2_Spec_Done` (goes straight to `3_Ready_to_Build` at Design Inspection - nothing to design).
+
 ```yaml
+# frontend feature, design still to be produced:
+status: 2b_In_Design
+# backend/system feature, or design already in hand:
 status: 2_Spec_Done
 ```
 

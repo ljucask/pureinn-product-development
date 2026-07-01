@@ -31,7 +31,8 @@ pm-stripe reads the current state of all active stripes, detects where each acti
 | Status | Meaning | Who sets it |
 |---|---|---|
 | `1_Backlog` | In queue, design not started | pm-features-list (auto) |
-| `2_Spec_Done` | JIT design complete (Sections 1-3 written), awaiting design inspection | pm-feature-design |
+| `2_Spec_Done` | JIT spec complete (Sections 1-3 written), awaiting design inspection | pm-feature-design |
+| `2b_In_Design` | **(optional - frontend features only)** UI / Figma design being produced | pm-feature-design / designer |
 | `3_Ready_to_Build` | Design inspection approved, ready to enter build | pm-stripe (human confirms) |
 | `4_In_Build` | Build skills actively working on this feature | pm-stripe |
 | `5_In_Review` | Build complete, code review in progress | pm-stripe |
@@ -40,6 +41,7 @@ pm-stripe reads the current state of all active stripes, detects where each acti
 **JIT cycle (per feature, per stripe):**
 1. `1_Backlog` → run `/pm-feature-design FEAT-[ID]` → `2_Spec_Done`
 2. `2_Spec_Done` → design inspection (human review of Sections 1-3) → `3_Ready_to_Build`
+   - **frontend feature whose Figma design is not yet done:** `2_Spec_Done → 2b_In_Design` (produce/approve the UI design) → `3_Ready_to_Build`. Backend/system features skip `2b_In_Design` - nothing to design.
 3. `3_Ready_to_Build` → run build skills → `4_In_Build`
 4. `4_In_Build` → build complete → `5_In_Review`
 5. `5_In_Review` → code review passed, Section 4 filled → `6_Shipped`

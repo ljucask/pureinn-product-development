@@ -4,9 +4,9 @@ description: Create and manage Feature Cards for individual features (FEAT-ID). 
 license: MIT
 metadata:
   author: https://github.com/ljucask
-  version: "2.0.0"
+  version: "2.1.0"
   domain: product-management
-  triggers: feature card, FEAT-ID, feature spec, feature lifecycle, cards
+  triggers: feature card, FEAT-ID, feature spec, feature lifecycle, cards, in design, figma state
   role: specialist
   scope: specification
   output-format: document
@@ -24,11 +24,16 @@ Manages Feature Cards in the FDD+SDD framework. A Feature Card is the atomic del
 | Status | Meaning | Who sets it |
 |---|---|---|
 | `1_Backlog` | Stub created, feature defined | pm-features-list (auto) |
-| `2_Spec_Done` | JIT design complete (Sections 1-3 populated) | pm-feature-design |
-| `3_Ready_to_Build` | Human approved design | Human (Delivery Team) / Human solo confirm |
+| `2_Spec_Done` | JIT spec complete (Sections 1-3 populated) | pm-feature-design |
+| `2b_In_Design` | **(optional - frontend features only)** UI / Figma design being created before build | pm-feature-design / designer |
+| `3_Ready_to_Build` | Human approved spec (and design, if UI) | Human (Delivery Team) / Human solo confirm |
 | `4_In_Build` | Build in progress | pm-stripe |
 | `5_In_Review` | Code review in progress | Human / AI guardrail |
 | `6_Shipped` | Complete - immutable history | pm-stripe after CI pass |
+
+**`2b_In_Design` is optional and layer-gated.** Only a feature whose `layer` includes `frontend` passes through it (it has a UI to design in Figma). A pure `backend` / `system` feature goes straight `2_Spec_Done → 3_Ready_to_Build` - it has nothing to design. So the path is:
+- **frontend feature:** `2_Spec_Done → 2b_In_Design → 3_Ready_to_Build`
+- **backend / system feature:** `2_Spec_Done → 3_Ready_to_Build` (skips design)
 
 **This skill handles:**
 - Creating stub Feature Cards manually (when not created by pm-features-list)
