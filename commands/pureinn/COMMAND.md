@@ -652,6 +652,7 @@ Create `pureinn-workspace/[project-slug]/pureinn-variables.md` with the followin
 
 | Key | Type | Skill | URL |
 |---|---|---|---|
+| PRD Master | Page | pm-prd | |
 | Product Roadmap | Page | pm-product-roadmap | |
 | Elevator Pitch | Page | design-thinking | |
 | Lean Canvas | Page | pm-lean-canvas | |

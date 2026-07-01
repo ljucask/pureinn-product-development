@@ -1,5 +1,14 @@
 # Changelog
 
+## [5.13.7] - 2026-07-01
+
+### Fixed
+
+- **`pureinn-variables.md` template was missing a `PRD Master` row.** `pm-prd` produces `product/PRD_master.md`, but no Notion variable pointed to it, so the PRD had no configured Notion home. Added `PRD Master | Page | pm-prd` to the Product (Phase 2-3) section of the template in `commands/pureinn`.
+
+---
+
+
 ## [5.13.6] - 2026-07-01
 
 ### Added
