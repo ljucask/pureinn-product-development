@@ -666,6 +666,19 @@ pureinn-workspace/[project-slug]/initiatives/[slug]/value-complexity-matrix.md  
 - KANO + V×C saved to initiative folder (not overwriting master phase-5/ analysis)
 - Dependency map section in feature_list.md updated with cross-initiative dependencies (if any)
 
+**Re-check mode (post-research re-prioritization):**
+
+When re-run with new personas or market analysis to re-check KANO/VxC/phase:
+1. Do NOT rewrite feature_list.md in full - show only proposed changes in diff format:
+   `FEAT-ID | field | current value → proposed value | reason (from research)`
+2. Wait for user approval of the diff before writing any changes
+3. After approval: update feature_list.md for approved changes only
+4. **Feature Card frontmatter sync (mandatory after any KANO/VxC/phase change):**
+   - For each FEAT-ID where kano, vxc, phase, or priority changed: update the corresponding frontmatter field in `/features/cards/FEAT-[ID].md`
+   - Do NOT touch Section 1, 2, 3, or 4 - spec content is defined by domain logic, not prioritization
+   - Cards at `6_Shipped` status: update kano/vxc/phase in frontmatter only (Section 4 remains immutable)
+5. Report: N features re-classified, N Feature Cards frontmatter synced
+
 ---
 
 ## Handoff

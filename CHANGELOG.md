@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.13.9] - 2026-07-02
+
+### pm-features-list: re-check mode with Feature Card frontmatter sync after KANO/VxC/phase changes
+
+---
+
+
 ## [5.13.8] - 2026-07-02
 
 ### Multi-source conflict handling + delta mode re-run standard (CLAUDE.md + pm-personas)
