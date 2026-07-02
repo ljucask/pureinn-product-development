@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.13.8] - 2026-07-02
+
+### Multi-source conflict handling + delta mode re-run standard (CLAUDE.md + pm-personas)
+
+---
+
+
 ## [5.13.7] - 2026-07-01
 
 ### Fixed

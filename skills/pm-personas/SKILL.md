@@ -71,6 +71,22 @@ B) Guided elicitation
 
 **Gaps check:** personas without direct quotes, segments without pain intensity ranking, early adopter profile missing "where to find them" - flag but do not block.
 
+**Multi-source handling (Path A with multiple research files):**
+Before synthesizing, assess source alignment per dimension:
+- Where sources **agree**: cite as high-confidence signal ("X sources confirm...")
+- Where sources **conflict**: do NOT force resolution. Surface as:
+  `[CONFLICT - [Source A] says X / [Source B] says Y → hypothesis, validate with more data]`
+  A conflict between tools (e.g., deep research vs. synthetic interviews) often reflects a real segment split or methodology bias - name it, do not paper over it.
+
+**Re-run with new data (delta mode):**
+If existing persona artifacts are present and user is adding new research:
+1. State what was in the previous version (key claims per persona/segment)
+2. Compare new inputs against previous version
+3. Update only what new evidence supports - mark each change: `[UPDATED - previous: X / new evidence: Y]`
+4. Preserve claims that new evidence neither confirms nor contradicts - mark: `[UNCHANGED - not addressed in new data]`
+5. At the end of the artifact, add a **Delta Summary**: what changed, what was confirmed, what is now in conflict
+6. Surface cascade: which downstream artifacts should be re-checked (jtbd-building, pm-problem-validation, PRD personas sections, feature KANO/VxC classifications)
+
 ---
 
 ## Step 1: Gather inputs
