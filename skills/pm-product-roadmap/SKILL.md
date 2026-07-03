@@ -4,7 +4,7 @@ description: Generate or update the Product Roadmap. Living document - v1 create
 license: MIT
 metadata:
   author: https://github.com/ljucask
-  version: "1.1.0"
+  version: "1.2.0"
   domain: product-management
   triggers: product roadmap, roadmap, strategic roadmap, roadmap v1 v2 v3, delivery plan
   role: specialist
@@ -72,6 +72,18 @@ Also check: what Phase 3b artifacts exist (Business Model Canvas, KPIs, Business
 Look for: roadmap that jumps straight to features without strategic context, phases without success criteria, missing "not now" section, timeline without explicit assumptions, v1 being updated with feature detail before Phase 5 is complete.
 
 Apply the standard skill interaction pattern (CLAUDE.md).
+
+---
+
+### Re-run with new inputs (delta mode)
+
+If a roadmap already exists and you are re-running it because new upstream evidence arrived (updated personas, market analysis, re-prioritization), do NOT rewrite from scratch. Operate in delta mode (CLAUDE.md universal standard) - this is distinct from the v1/v2/v3 version steps below, which add planned detail; delta mode re-validates existing strategic content against new research:
+
+1. **Read the current roadmap first** and capture its claims in the sections most sensitive to the new input: Vision, Strategic Phases (Problem&Market context, Segments), phase success criteria, "What We Are Not Building".
+2. **Re-validate against the new upstream sources:** `personas.md`, `market-analysis.md`, `PRD_master.md`, `business-model-canvas.md`, hypotheses register.
+3. **Change only what the new evidence supports.** Mark each change `[UPDATED - previous: X / new: Y - reason: which input drove it]`; leave what the new input does not address `[UNCHANGED]`.
+4. **Show the delta and wait for confirmation before writing** - never silently overwrite a prior strategic conclusion, and never re-assign phases/deliverables without explicit sign-off.
+5. **Surface the cascade:** after updating, name the downstream artifacts now possibly inconsistent - `/pm-features-list` (feature `phase` assignments), `/pm-mvp-scope` (stripes), `/pm-prd` (roadmap summary section) - and recommend `/pm-audit strategy` to verify the whole strategic layer still agrees.
 
 ---
 

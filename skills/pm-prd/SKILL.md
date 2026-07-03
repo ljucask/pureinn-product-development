@@ -4,7 +4,7 @@ description: Two modes. (1) Product PRD - Phase 3b exit artifact synthesizing al
 license: MIT
 metadata:
   author: https://github.com/ljucask
-  version: "1.0.0"
+  version: "1.1.0"
   domain: product-management
   triggers: PRD, product requirements document, Phase 3b exit, product consolidation, product specification
   role: specialist
@@ -128,6 +128,18 @@ If critical inputs are missing (Problem Validation Summary, Business Model Canva
 Look for: PRD without a clear problem statement, value proposition not tied to validated pains, success criteria not tied to NSM, roadmap section not consistent with pm-product-roadmap v1, missing "out of scope" section, regulatory constraints not surfaced.
 
 Apply the standard skill interaction pattern (CLAUDE.md).
+
+---
+
+### Re-run with new inputs (delta mode)
+
+If the PRD already exists and you are re-running it because new upstream evidence arrived (updated personas, market analysis, re-prioritization), do NOT rewrite from scratch. Operate in delta mode (CLAUDE.md universal standard):
+
+1. **Read the current PRD first** and capture its claims in the sections most sensitive to the new input: §1 Problem Statement, §2 Target Customer, §3 Value Proposition, §4 Market Context, §5 Business Model.
+2. **Re-validate against the new upstream sources:** `personas.md`, `customer-segments.md`, `market-analysis.md`, JTBD analysis, `business-model-canvas.md`.
+3. **Change only what the new evidence supports.** Mark each change `[UPDATED - previous: X / new: Y - reason: which input drove it]`; leave what the new input does not address `[UNCHANGED]`.
+4. **Show the delta and wait for confirmation before writing** - never silently overwrite a prior strategic conclusion.
+5. **Surface the cascade:** after updating, name the downstream artifacts now possibly inconsistent - `/pm-product-roadmap` (Problem&Market, Segments), `/pm-features-list` (KANO/VxC/phase if scope shifted), `/pm-business-model` (if pricing moved) - and recommend `/pm-audit strategy` to verify the whole strategic layer still agrees.
 
 ---
 

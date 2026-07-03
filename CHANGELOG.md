@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.14.0] - 2026-07-03
+
+### pm-audit Tier 2 strategic consistency (read-only, routes fixes) + delta mode re-run in pm-prd/pm-product-roadmap/pm-market-analysis/pm-business-model
+
+---
+
+
 ## [5.13.9] - 2026-07-02
 
 ### pm-features-list: re-check mode with Feature Card frontmatter sync after KANO/VxC/phase changes

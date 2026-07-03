@@ -401,7 +401,7 @@ Mandatory when building onto a product that already has users. (Greenfield has n
 |---|---|
 | `/pm-glossary` | Start early, update when new terminology surfaces |
 | `/pm-diagrams` | When a visual is needed (User Flow, Architecture, JTBD Forces) |
-| `/pm-audit` | Workspace health check - scans Pureinn artifacts against current conventions, fixes drift/errors, migrates older-version workspaces. Run after reconcile/extract or any time before continuing. |
+| `/pm-audit` | Workspace health check, two tiers. **Tier 1 (form):** scans Pureinn artifacts against current conventions, fixes drift/errors, migrates older-version workspaces. **Tier 2 (strategic consistency):** cross-checks PRD ↔ personas ↔ roadmap ↔ market ↔ business model ↔ feature phases, surfaces contradictions read-only and routes each fix to its authoring skill (which re-runs in delta mode). Run after reconcile/extract, after a research injection / re-prioritization, or before a build commitment or pitch. `/pm-audit strategy` = Tier 2 only. |
 
 ---
 

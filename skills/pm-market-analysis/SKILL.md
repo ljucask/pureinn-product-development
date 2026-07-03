@@ -4,7 +4,7 @@ description: Generate Market Size Analysis (TAM/SAM/SOM), Competitor Analysis, S
 license: MIT
 metadata:
   author: https://github.com/ljucask
-  version: "1.0.0"
+  version: "1.1.0"
   domain: product-management
   triggers: market analysis, TAM SAM SOM, competitor analysis, SWOT, market sizing, competitive landscape
   role: specialist
@@ -55,6 +55,18 @@ Also check: does a Project Charter exist? Cross-reference target segment and geo
 Look for: market size estimates with no source or low confidence, competitors without pricing data, SWOT without strategic implications, "Why now" not specifically argued.
 
 Apply the standard skill interaction pattern (CLAUDE.md).
+
+---
+
+### Re-run with new inputs (delta mode)
+
+If market analysis already exists and you are re-running it because new research arrived (competitor teardown, bottom-up TAM, new sources), do NOT rewrite from scratch and do NOT duplicate existing content. Append + operate in delta mode (CLAUDE.md universal standard):
+
+1. **Read the current analysis first** and capture its claims in the sections most sensitive to the new input: Market Definition, TAM/SAM/SOM, Competitor landscape, SWOT, "Why Now".
+2. **Re-validate against the new sources:** new market research, competitor teardown, TAM build-up, any new pricing evidence.
+3. **Change only what the new evidence supports.** Append genuinely new findings; where new data revises a prior figure or claim, mark `[UPDATED - previous: X / new: Y - reason: which source drove it]`; leave what the new input does not address `[UNCHANGED]`. Where sources conflict, surface `[CONFLICT]` rather than averaging.
+4. **Show the delta and wait for confirmation before writing** - never silently overwrite a prior market conclusion or TAM figure.
+5. **Surface the cascade:** after updating, name the downstream artifacts now possibly inconsistent - `/pm-prd` (Market Context), `/pm-product-roadmap` (Problem&Market), `/pm-business-model` (revenue potential + pricing/WTP) - and recommend `/pm-audit strategy` to verify the whole strategic layer still agrees.
 
 ---
 

@@ -1,12 +1,12 @@
 ---
 name: pm-audit
-description: Health check for an existing Pureinn workspace. Scans the framework's own artifacts - the 4 Live Registers, feature_list, Feature Cards, roadmap, glossary, state.json - against the current Pureinn conventions, finds inconsistencies, drift, and errors, then fixes the mechanical ones and asks about the judgment calls. Detects framework-version drift (artifacts produced by an older Pureinn version) and offers to migrate them. Use when a workspace was built with an older version, after pm-reconcile or pm-reverse-extract, or any time you want to confirm the workspace is internally consistent before continuing. Takes an optional area argument to scope the audit (/pm-audit domain | rules | features), or audits the whole workspace by default. Distinct from pm-reconcile (code vs legacy docs) and pm-reverse-extract (code to inventory) - this checks Pureinn artifacts against Pureinn conventions.
+description: Health check for an existing Pureinn workspace. Scans the framework's own artifacts - the 4 Live Registers, feature_list, Feature Cards, roadmap, glossary, state.json - against the current Pureinn conventions, finds inconsistencies, drift, and errors, then fixes the mechanical ones and asks about the judgment calls. Detects framework-version drift (artifacts produced by an older Pureinn version) and offers to migrate them. Use when a workspace was built with an older version, after pm-reconcile or pm-reverse-extract, or any time you want to confirm the workspace is internally consistent before continuing. Takes an optional area argument to scope the audit (/pm-audit domain | rules | features), or audits the whole workspace by default. Distinct from pm-reconcile (code vs legacy docs) and pm-reverse-extract (code to inventory) - this checks Pureinn artifacts against Pureinn conventions (Tier 1: form) and cross-checks the strategic layer (PRD, roadmap, personas, market, business model) for semantic consistency, surfacing contradictions read-only and routing each fix to its authoring skill (Tier 2: substance).
 license: MIT
 metadata:
   author: https://github.com/ljucask
-  version: "1.2.0"
+  version: "1.3.0"
   domain: product-management
-  triggers: audit, health check, consistency check, workspace check, framework drift, version migration, fix inconsistencies, sanity check, naming check, anti-pattern
+  triggers: audit, health check, consistency check, workspace check, framework drift, version migration, fix inconsistencies, sanity check, naming check, anti-pattern, strategic consistency, cross-artifact check, re-check
   role: specialist
   scope: validation
   output-format: document
@@ -18,6 +18,11 @@ metadata:
 ## What this skill does
 
 Scans an existing Pureinn workspace and reports - then fixes - where its own artifacts drifted from the current framework conventions. It is the productized version of a manual consistency pass: ID and naming integrity, cross-reference resolution, structural conformance, lifecycle validity, completeness, and **framework-version drift** (artifacts from an older Pureinn version that miss newer fields or use old names).
+
+**Two tiers, two different jobs:**
+
+- **Tier 1 - Form.** Naming, IDs, cross-refs, lifecycle, schema, metadata parity. Mechanical - auto-fixed in place. This is the classic audit.
+- **Tier 2 - Strategic consistency (substance).** Does the strategic layer still agree with itself and with the research it was built on - PRD Target Customer vs. personas, value prop vs. research pains, roadmap phases vs. feature phases, pricing vs. WTP? This tier is **read-only**: it never auto-edits strategic content (that is a business decision). It surfaces each contradiction as `[CONFLICT]` and routes the fix to the authoring skill (`pm-prd`, `pm-product-roadmap`, `pm-business-model`, ...), which re-runs in delta mode. Run Tier 2 after a research injection or strategic pivot, and before a build commitment or pitch.
 
 Run it when:
 - A workspace was built with an older Pureinn version and you want it brought current
@@ -48,7 +53,7 @@ Run it when:
 ## What this skill does NOT do
 
 - Read the codebase or legacy documents (that is reconcile / reverse-extract)
-- Change business decisions or rule values - only structure, naming, references, and conformance
+- Change business decisions or rule values - only structure, naming, references, and conformance. **Tier 2 may report a strategic contradiction, but it never resolves it** - resolving means choosing between two business claims, which belongs to the authoring skill in delta mode.
 - Generate new artifacts that do not exist - it audits what is there (a missing artifact is a finding, not something it invents)
 
 ---
@@ -71,7 +76,10 @@ If no workspace is found, do not guess. Tell the user to run `/pureinn` first (g
 | `/pm-audit domain` | `domain/entities.md` + `domain/domain-model.md` (structure, entity/state naming, ERD ↔ entities consistency) |
 | `/pm-audit rules` | `domain/business_rules.md` + `domain/decision_models.md` (BR/TBL IDs, rule↔entity refs, decision-table completeness) |
 | `/pm-audit features` | `features/feature_list.md` + `features/cards/` (card structure, FS-NN, Section-1 BR-ID refs resolve, lifecycle status) |
+| `/pm-audit strategy` | **Tier 2 only** - cross-artifact strategic consistency (PRD ↔ personas ↔ roadmap ↔ market ↔ business model ↔ feature phases). Read-only, routes fixes to authoring skills. |
 | `/pm-audit [other]` | any single artifact the user names |
+
+**Tier scoping:** area scopes (`domain`, `rules`, `features`) run Tier 1 only. `strategy` runs Tier 2 only. The default whole-workspace run does **both** tiers.
 
 When an area is given, scan and report only that area's artifacts (plus their direct cross-references - e.g. `features` checks that BR-IDs in cards resolve into `business_rules.md`, without auditing the rules themselves). When no area is given, audit everything. If the user states a scope in plain language, honour it (per the Adaptive-execution standard).
 
@@ -115,6 +123,26 @@ Read every artifact **in scope** (Step 0) and run the checks below - for an area
 | **Feature metadata complete** | Every feature carries the full property set in frontmatter + feature_list + Notion: `layer` (frontend/backend/system), `phase` (MVP/MVP+/Phase 1... or the project's P0/P1…), `kano`, `vxc`, `stripe` (Dev Stripe), `has_subtasks`. Also check **value consistency**: `has_subtasks` matches whether the card's Subtasks section actually has items; values are from the allowed sets. **`layer` is one or more of `{frontend, backend, system}`** (a cross-layer feature lists several, e.g. `frontend, backend`) - flag any value outside the set, especially **`fullstack`** (not a layer → replace with the actual layers), P2. Missing or inconsistent = P2. **Canonical-field check:** `phase` is the **single axis for MVP membership** - flag and consolidate any duplicate/non-canonical field that encodes the same thing (`mvp: true/false`, `roadmap_phase`, an "MVP" column) into `phase` (IN-MVP = the first/`MVP`/`P0` phase). Two fields on one axis drift apart - a stray `mvp`/`roadmap_phase` is a P2 finding, migrate it to `phase`. |
 | **Notion sync** (if configured) | Local `status` vs Notion `Status` mismatch surfaced (drift log, like pm-stripe). |
 
+The table above is **Tier 1 (form)**. For a whole-workspace run or `/pm-audit strategy`, also run Tier 2 below.
+
+### Tier 2: Strategic consistency (read-only, cross-artifact)
+
+Does NOT check form - checks whether the strategic layer's *content* still agrees with itself and with the research it was built on. It **never auto-fixes** (changing a value prop or a segment is a business decision). It surfaces each conflict and routes the fix to the authoring skill, which re-runs in delta mode.
+
+Read the strategic artifacts that exist - `product/PRD_master.md`, roadmap, `personas.md`, `customer-segments.md`, `market-analysis.md`, `business-model-canvas.md`, `feature_list.md` - and check these cross-artifact pairs:
+
+| Check | Conflict looks like | Route fix to |
+|---|---|---|
+| **Primary segment coherence** | PRD Target Customer, personas, customer-segments, roadmap Segments, business-model Customer Segments do not all name the same primary segment | `/pm-prd` or `/pm-personas` (whichever is stale) |
+| **Value prop ↔ pains** | A PRD Value Proposition claim addresses a pain no persona actually has, or a top persona pain has no value-prop answer | `/pm-prd` |
+| **Problem coherence** | PRD Problem Statement, roadmap Problem&Market, market-analysis problem framing describe different problems | `/pm-prd` / `/pm-product-roadmap` |
+| **Phase ↔ feature phase** | A `phase` value in feature_list has no matching phase in the roadmap, or a roadmap MVP phase has no features carrying it | `/pm-product-roadmap` / `/pm-features-list` |
+| **Market numbers** | PRD Market Context TAM/SAM/SOM figures differ from market-analysis.md | `/pm-market-analysis` |
+| **Pricing ↔ WTP** | business-model take-rate / pricing contradicts WTP evidence in personas/research or the PRD Business Model section | `/pm-business-model` |
+| **KANO ↔ persona pain** | A feature classified Must-be addresses no pain of the primary persona (soft flag) | `/pm-features-list` |
+
+For each conflict, record: `[CONFLICT] Artifact A says X (location) / Artifact B says Y (location) → route: /pm-[skill]`. Do not resolve it - the authoring skill resolves it against real evidence in delta mode. If a referenced strategic artifact is absent, note it as "not present - check skipped", do not invent it.
+
 ---
 
 ## Step 2: Audit report
@@ -145,9 +173,17 @@ Score and group every finding by severity:
 
 ## Version migration (if drift detected)
 [what older-version patterns were found and the migration applied/proposed]
+
+## Strategic consistency (Tier 2 - read-only, not auto-fixed)
+[If clean: "No strategic conflicts - the strategic layer is coherent."]
+| Conflict | Artifact A (says) | Artifact B (says) | Route fix to |
+|---|---|---|---|
+| [check name] | [claim + location] | [claim + location] | `/pm-[skill]` |
 ```
 
-Present the score and P0/P1 summary to the user before fixing.
+Tier 2 conflicts are listed separately and are **not** scored P0-P3 - they are not mechanical findings and are never auto-fixed. They are routed, not resolved.
+
+Present the score, P0/P1 summary, **and any Tier 2 conflicts** to the user before fixing.
 
 ---
 
@@ -165,6 +201,8 @@ Present the score and P0/P1 summary to the user before fixing.
   Write confirmed values to **the `feature_list.md` entry, the card frontmatter, and Notion** - keep all three in sync (the v4.11.0 parity rule). The list is not done until every feature carries the full set.
 
 Never silently change a rule value, an acceptance criterion, or a business decision - those are out of scope (route to `pm-feature-design` / `pm-business-rules-library`).
+
+**Tier 2 (strategic consistency) is report-only.** Never auto-edit PRD / roadmap / personas / market / business-model content to resolve a strategic conflict - choosing between two strategic claims is a business decision. List each `[CONFLICT]` with its route and stop. The user runs the routed authoring skill (which re-runs in delta mode) to resolve it against real evidence. Auditing must not silently pick a winner.
 
 For version migration: show the old→new mapping, confirm once, then apply across all affected artifacts in one pass.
 
@@ -199,12 +237,14 @@ Plus in-place fixes to the affected artifacts (registers, feature_list, Feature 
 
 ```
 ---
-**Čo si teraz má:** Workspace zladený s aktuálnymi Pureinn konvenciami - opravené ID, naming,
-cross-refs, lifecycle a doplnená novšia štruktúra. Audit report ukazuje čo bolo a čo zostáva.
+**Čo si teraz má:** Workspace zladený s konvenciami (Tier 1) a obraz strategickej koherencie
+(Tier 2) - opravené ID/naming/refs/lifecycle + zoznam strategických konfliktov s routovaním.
 
-**Ďalší krok:** `/pm-stripe` — pokračuj v JIT delivery na čistom workspace.
-Alebo `/pureinn` pre phase gate check.
+**Ďalší krok:**
+- Ak Tier 2 našiel `[CONFLICT]`: spusti routovaný authoring skill (`/pm-prd`, `/pm-product-roadmap`,
+  `/pm-business-model`...) - opraví to v delta mode voči reálnym dátam. Audit ich nerieši.
+- Ak je čisto: `/pm-stripe` — pokračuj v JIT delivery. Alebo `/pureinn` pre phase gate check.
 
-**Môžeš preskočiť ak:** Workspace práve vznikol aktuálnou verziou frameworku (greenfield) - drift
-neexistuje, audit nepridáva hodnotu.
+**Môžeš preskočiť ak:** Workspace práve vznikol aktuálnou verziou frameworku a strategická vrstva
+sa od poslednej validácie nezmenila - drift ani strategický konflikt neexistuje.
 ```

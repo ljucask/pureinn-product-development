@@ -4,7 +4,7 @@ description: Generate a Business Model Canvas from Phase 2 discovery outputs and
 license: MIT
 metadata:
   author: https://github.com/ljucask
-  version: "1.0.0"
+  version: "1.1.0"
   domain: product-management
   triggers: business model, revenue model, pricing strategy, monetization
   role: specialist
@@ -50,6 +50,18 @@ Also check: does a Problem Validation Summary exist? Does a Market Analysis exis
 Look for: revenue streams without pricing evidence, value proposition not tied to validated pains, cost structure missing AI/infrastructure costs, no channel strategy defined, customer relationships undefined (self-serve vs. sales-led).
 
 Apply the standard skill interaction pattern (CLAUDE.md).
+
+---
+
+### Re-run with new inputs (delta mode)
+
+If a Business Model Canvas already exists and you are re-running it because new evidence arrived (WTP insights from user research, updated market analysis, re-prioritization), do NOT rewrite from scratch. Operate in delta mode (CLAUDE.md universal standard):
+
+1. **Read the current canvas first** and capture its claims in the blocks most sensitive to the new input: Value Propositions, Customer Segments, Revenue Streams (pricing / take-rate), Channels, Cost Structure.
+2. **Re-validate against the new sources:** WTP evidence in `personas.md` / research, `market-analysis.md` revenue potential, updated segments.
+3. **Change only what the new evidence supports.** Mark each change `[UPDATED - previous: X / new: Y - reason: which input drove it]`; leave what the new input does not address `[UNCHANGED]`. Pricing/take-rate moves only on real WTP signal, not intuition.
+4. **Show the delta and wait for confirmation before writing** - never silently overwrite a prior monetization decision.
+5. **Surface the cascade:** after updating, name the downstream artifacts now possibly inconsistent - `/pm-prd` (Business Model section), `/pm-product-roadmap` (revenue assumptions), `/pm-features-list` (if monetization features shift priority) - and recommend `/pm-audit strategy` to verify the whole strategic layer still agrees.
 
 ---
 
