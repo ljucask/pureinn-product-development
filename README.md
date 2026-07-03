@@ -112,6 +112,7 @@ If FEAT-ID doesn't exist yet: add it to `feature_list.md`, create stub card, the
 | `/pm-team-roster` | Team Roster, Decision Rights Matrix, Skill Gap Assessment |
 | `/pm-comms-charter` | Communication Charter, Meeting Rhythm |
 | `/pm-stakeholder-map` | Stakeholder Map, RACI Matrix, Escalation Tree |
+| `/pm-onboarding` | Role-specific Onboarding Brief for new team members (Developer, PM, Designer, Stakeholder) - product context, settled decisions, artifact map, current delivery state, who to ask |
 
 ### Phase 2 - Discovery
 | Skill | Output |

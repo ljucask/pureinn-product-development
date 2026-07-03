@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.15.0] - 2026-07-03
+
+### Added pm-onboarding skill: role-specific Onboarding Brief for new team members (Developer, PM, Designer, Stakeholder)
+
+---
+
+
 ## [5.14.0] - 2026-07-03
 
 ### pm-audit Tier 2 strategic consistency (read-only, routes fixes) + delta mode re-run in pm-prd/pm-product-roadmap/pm-market-analysis/pm-business-model
