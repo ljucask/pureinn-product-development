@@ -4,7 +4,7 @@ description: Cross-phase prototyping engine. Turns a scoped chunk of the product
 license: MIT
 metadata:
   author: https://github.com/ljucask
-  version: "1.0.0"
+  version: "1.1.0"
   domain: product-management
   triggers: prototype, prototyping, proof of concept, POC, spike, validate before build, lovable, base44, v0, figma make, clickable prototype, mockup, throwaway, quick validation
   role: specialist
@@ -35,6 +35,18 @@ The scope is whatever you point at, with **no limit**:
 | **Result mode** (re-run) | The prototype exists, you have a result | Capture what the prototype proved/disproved → decision → cascade to Feature Card / hypotheses |
 
 **What the skill is NOT:** it does not replace `pm-feature-design` (JIT production spec) and it does not build the prototype's production version. A prototype is a throwaway or a reference, not the build.
+
+---
+
+## Hard rule: the skill does not guess
+
+**The prototype spec is only as good as its inputs, and a guessed input produces a wrong prototype that validates the wrong thing.** So:
+
+- **Never fabricate** screens, flows, entities, fields, features, personas, or copy. Every element in the spec must trace to a real artifact (Feature Card, process-flows, personas, entities) or to something the user stated.
+- **When an input is missing or thin, ASK - do not fill the gap with a plausible-sounding invention.** Use AskUserQuestion with concrete candidate options drawn from context (the PREREQ graceful-degradation pattern). If the user genuinely does not know, offer options and let them choose; then mark the choice `[ASSUMED - confirm before build]`.
+- This mirrors the prompting tool's own weakness: an under-specified prompt makes the tool hallucinate scope. The skill's job is to remove ambiguity, not add invented certainty.
+
+A spec with three well-sourced screens beats a spec with ten invented ones.
 
 ---
 
@@ -246,9 +258,41 @@ Generate `[scope]-prototype-spec.md`. It has two layers:
 
 13. **Fidelity calibration.** Match tool effort to the intent (Step 2). State it in the prompt: static clickable click-through vs. functional CRUD with real data.
 
+14. **The spec IS the Knowledge Base.** Lovable's biggest lever is its project Knowledge Base (PRD, app/user flow, tech stack, frontend guidelines, backend structure). Our spec sections 1-5 map onto exactly those. Load the spec into the project Knowledge Base (`set_project_knowledge` via MCP), not only the first message - it grounds every subsequent prompt and cuts hallucination + credits.
+
+15. **Confirm understanding before code.** The first message ends with: `Before writing any code, review the Knowledge Base and tell me your understanding of what to build and what is out of scope. Do not write code yet.` Only after the tool plays scope back correctly do you let it build. This is the anti-hallucination gate, paired with `plan_mode=true`.
+
 **Multi-variant validation (UX hypothesis with competing directions):** when the intent is to compare directions, instruct: `Build N versions of [screen], each with a different [layout/visual approach], deploy all N, and return the live URLs.` (Lovable `create_project` per variant, then `deploy_project`.)
 
-**Iterating a prototype (send_message):** scope-lock every follow-up - `Change only [X]. Do not alter [Y or Z]. Test that nothing else regresses.` Use `plan_mode=true` for delicate changes.
+**Iterating a prototype (send_message):** scope-lock every follow-up - `Change only [X]. Do not alter [Y or Z]. Test that nothing else regresses.` Use `plan_mode=true` for delicate changes. For a visual-only tweak: `Make only visual changes. Do not touch logic, state, or APIs.`
+
+---
+
+## Lovable operational tactics (from the Bible)
+
+These govern **how the run behaves** once the prompt is in Lovable - the skill applies them during handoff and iteration, and surfaces the relevant ones to the user.
+
+**Credit economics (do not waste the user's credits):**
+- **Free:** "Try to Fix" and publishing/deploy do **not** cost credits. Use "Try to Fix" first on any build error.
+- **Costs credits:** each build message, and especially SQL / database scripts. When the prototype needs DB work, ask Lovable to output **all** SQL first (in one go) rather than running it piecemeal.
+- One instruction at a time - piling 5 asks into one message burns credits and causes hallucination loops.
+
+**Chat/plan mode vs build mode:**
+- Use `plan_mode=true` (discuss, no code changes) for: the initial scope confirmation, weighing approaches, and any delicate change. It does not modify the project.
+- Use normal build mode only once scope is confirmed.
+
+**Debugging ladder (when a build breaks - climb in order, stop when fixed):**
+1. **"Try to Fix"** up to 3 times (free).
+2. Still broken → copy the error into a `plan_mode` message: `Use chain-of-thought reasoning to find the root cause. Do not edit code yet - investigate logs, flow and dependencies first, then propose a fix.`
+3. UI bug → attach a **screenshot** (`files` on `send_message`) showing actual vs. intended.
+4. Persistent → `Map the full flow (auth, data, integrations, state, redirects), document expected vs actual, and identify the root cause with evidence before changing anything.`
+5. Debugging spiral → **revert to the last working version** rather than digging deeper.
+
+**Reduce hallucination with visuals:** pass wireframes / Figma screenshots / reference UIs as `files` attachments on the message. A picture fences the design far better than prose.
+
+**Reverse-meta (feed learnings back):** when a prototype iteration surfaces a fix or a scope correction, capture it in the spec's `## Result` (Step 8) as a reusable note - so the next prototype/spec starts one degree more precise.
+
+**Note on scope:** the Lovable Bible also carries extensive refactoring / codebase-audit / production-maintenance prompts. Those are for mature production codebases and are **out of scope for a throwaway prototype** - do not apply them here. If a prototype graduates to real build, that is `pm-feature-design` + the build skills, not this skill.
 
 ---
 
@@ -261,9 +305,11 @@ Confirm before any live call - MCP calls run on the user's real account and spen
 **Lovable (mcp.lovable.dev):**
 1. Warn once: `Lovable MCP = celý účet, live kredity, deploy je verejný na Free/Pro. Pokračovať?`
 2. `create_project(initial_message = compiled build prompt, plan_mode = true)` - plan mode first so the tool confirms scope before spending build credits.
-3. Return the **preview URL** and the tool's plan for the user to approve.
-4. On approval, let the tool build; iterate via `send_message` with scope-locked follow-ups.
-5. When the user is happy: `deploy_project` → capture the **live URL** for the prototype reference.
+3. **Load the Knowledge Base:** push spec sections 1-5 into the project via `set_project_knowledge` so every later prompt is grounded (rule 14). Do this right after project creation.
+4. **Confirm-understanding gate (rule 15):** the plan-mode reply must play the scope + out-of-scope back correctly. If it invented anything, correct it in `plan_mode` before allowing any code. Do not proceed on a wrong readback.
+5. Return the **preview URL** and the tool's plan for the user to approve.
+6. On approval, let the tool build; iterate via `send_message` with scope-locked follow-ups (attach screenshots as `files` for UI direction/bugs). Apply the debugging ladder if a build breaks.
+7. When the user is happy: `deploy_project` → capture the **live URL** for the prototype reference.
 
 **v0 / Vercel:** push the compiled prompt, return the deploy URL.
 
@@ -335,9 +381,11 @@ When the user comes back with an outcome, operate in **delta mode** - do not rew
 - [ ] Intent gate ran (prototype justified, or user chose to proceed anyway)
 - [ ] MCP warning shown before any live call
 - [ ] Feature Card prototype reference written (if feature-scoped) - reference only, spec sections untouched
+- [ ] Lovable target: Knowledge Base loaded (`set_project_knowledge`) + confirm-understanding gate passed before any code
 
-**Never invented:**
-- Screens, flows, entities must come from real artifacts or user input - not fabricated
+**Never guessed (hard rule):**
+- Screens, flows, entities, fields, features, copy must come from real artifacts or user input - never fabricated
+- Missing input → asked via AskUserQuestion, not filled with invention; assumptions marked `[ASSUMED - confirm before build]`
 - FEAT-ID verified against feature_list.md if referenced
 
 ---

@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.17.1] - 2026-07-04
+
+### Hardened pm-prototype: full Lovable Prompting Bible incorporation (Knowledge Base via set_project_knowledge, confirm-understanding gate, credit economics, debugging ladder, chat/plan mode, minimal-change iteration, screenshots-as-attachment) + hard no-guessing rule (ask, never fabricate)
+
+---
+
+
 ## [5.17.0] - 2026-07-04
 
 ### Added pm-prototype - cross-phase prototyping engine (Lovable/v0/Figma Make MCP, Lovable Prompting Bible baked into spec compiler, intent gate, result-mode feedback to Feature Card + hypotheses)
