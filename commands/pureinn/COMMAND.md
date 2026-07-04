@@ -589,9 +589,10 @@ pureinn-workspace/[slug]/
   team/                                          ← operational, created on demand
     onboarding/                                  ← pm-onboarding (role-specific briefs)
   meetings/                                      ← pm-meeting (per-meeting notes, created on demand)
+  prototypes/                                    ← pm-prototype (prototype specs + results, created on demand)
 ```
 
-`team/` and `meetings/` are cross-cutting operational folders - created on demand by `pm-onboarding` / `pm-meeting`, not part of the phase artifact flow.
+`team/`, `meetings/` and `prototypes/` are cross-cutting operational folders - created on demand by `pm-onboarding` / `pm-meeting` / `pm-prototype`, not part of the phase artifact flow.
 
 **Feature Implementation:**
 ```
@@ -729,6 +730,17 @@ Create `pureinn-workspace/[project-slug]/pureinn-variables.md` with the followin
 |---|---|---|
 | figma_project_url | Figma project URL - root of the product design file. Read by pm-feature-design when Figma MCP is connected. | |
 | figma_design_system_url | Figma design system / component library URL (if separate from main project file). | |
+
+## Prototyping (cross-phase)
+
+Prototyping tool endpoints read by pm-prototype. You may configure more than one - pm-prototype lets you pick which to target per run. Leave blank to use manual copy-paste (spec is always paste-ready).
+
+| Key | Description | Value |
+|---|---|---|
+| lovable_mcp | Lovable MCP endpoint (https://mcp.lovable.dev) - functional full-stack prototypes. Live account access + real credits. | |
+| v0_mcp | v0 / Vercel endpoint - fast UI generation + deploy URL. | |
+| figma_make_mcp | Figma Make endpoint - design-native prototypes. | |
+| prototype_default_tool | Which tool pm-prototype should suggest first (lovable / v0 / figma_make). | |
 
 ## AI Research
 

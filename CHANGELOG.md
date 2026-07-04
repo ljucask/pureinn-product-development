@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.17.0] - 2026-07-04
+
+### Added pm-prototype - cross-phase prototyping engine (Lovable/v0/Figma Make MCP, Lovable Prompting Bible baked into spec compiler, intent gate, result-mode feedback to Feature Card + hypotheses)
+
+---
+
+
 ## [5.16.1] - 2026-07-04
 
 ### pm-meeting hardening: detect-first flow (fixed backwards Step1/Step2), deep source ingestion, graceful recall path, Notion schema-first push; framework consistency: skill count 42->44, register team/ + meetings/ folders
