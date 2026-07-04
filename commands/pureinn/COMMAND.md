@@ -586,7 +586,12 @@ pureinn-workspace/[slug]/
     phase-3-define/_index.md                     ← Define & Validation
     phase-4-domain/_index.md                     ← Domain Modeling + Register Setup
     phase-5-planning/_index.md                   ← Feature Planning
+  team/                                          ← operational, created on demand
+    onboarding/                                  ← pm-onboarding (role-specific briefs)
+  meetings/                                      ← pm-meeting (per-meeting notes, created on demand)
 ```
+
+`team/` and `meetings/` are cross-cutting operational folders - created on demand by `pm-onboarding` / `pm-meeting`, not part of the phase artifact flow.
 
 **Feature Implementation:**
 ```

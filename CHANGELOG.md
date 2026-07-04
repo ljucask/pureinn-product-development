@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.16.1] - 2026-07-04
+
+### pm-meeting hardening: detect-first flow (fixed backwards Step1/Step2), deep source ingestion, graceful recall path, Notion schema-first push; framework consistency: skill count 42->44, register team/ + meetings/ folders
+
+---
+
+
 ## [5.16.0] - 2026-07-04
 
 ### Added pm-meeting skill: structured meeting notes, decisions, action items with destination tagging, Notion push

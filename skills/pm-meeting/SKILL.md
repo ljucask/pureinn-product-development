@@ -4,7 +4,7 @@ description: Structured meeting notes, summary, and action items from raw notes 
 license: MIT
 metadata:
   author: https://github.com/ljucask
-  version: "1.0.0"
+  version: "1.1.0"
   domain: product-management
   triggers: meeting, notes, transcript, summary, action items, action points, standup, retro, retrospective, planning, grooming, customer interview, discovery call, strategic review
   role: specialist
@@ -49,6 +49,7 @@ Takes raw meeting notes or a transcript and produces:
 
 **Recommended:**
 - `pm-team-roster` - to resolve names to real team members when assigning action items
+- `pm-comms-charter` - defines the Meeting Rhythm (which meetings happen, cadence, expected output); `pm-meeting` captures each individual instance. Complementary, not overlapping.
 - `pureinn-variables.md` - key "Meetings" must contain the Notion DB URL for push
 
 ---
@@ -62,47 +63,40 @@ Read `pureinn-variables.md`:
 
 If "Meetings" URL is blank: proceed, save locally, remind user to push manually.
 
+Apply the standard skill interaction pattern (CLAUDE.md).
+
 ---
 
 ## Step 1: Intake
 
-Ask as plain text:
+**The input is whatever the user points to** - pasted notes, a pasted transcript, or a reference to a file/folder (e.g. "sumár z ranného meetingu", a transcript export from Otter / Fireflies, a notes file). Handle all three:
 
-Paste your meeting notes or transcript below. Include participants if you have them.
+- **Pasted notes / transcript:** use directly.
+- **File or folder reference:** read it in **full** (deep source ingestion - the whole file, and every file in a folder, recursively). Never summarize from a partial read. Confirm coverage: "Read [file] ([N] lines) / [N] files across [folder]."
+- **No notes at all:** do not block. Offer guided recall - ask 3-4 targeted questions (what was the meeting about, who was there, what was decided, what needs to happen next) and reconstruct from the answers. Mark the output `> Reconstructed from recall - not from notes/transcript.`
 
-Then ask:
+Then capture (ask as plain text, only what is not already evident from the notes):
 
-```
-[Use AskUserQuestion - meeting type]
+- Date of the meeting (YYYY-MM-DD)
+- Participants (names + roles - or paste from the calendar invite)
 
-What type of meeting was this?
-
-A) Customer Discovery - call or interview with a user, prospect, or customer
-B) Product Review - team reviewing a feature, spec, design, or PRD
-C) Planning / Grooming - sprint planning, backlog grooming, stripe assignment
-D) Strategic Review - roadmap, investor update, stakeholder alignment, business model
-```
-
-If Standup or Retro, or Partner / Vendor - offer as "Other" option / user describes.
-
-Then ask as plain text:
-
-Date and time of the meeting? (YYYY-MM-DD)
-
-Who attended? (names + roles if known - or paste from calendar invite)
+Apply the standard skill interaction pattern (CLAUDE.md).
 
 ---
 
-## Step 2: Auto-detect + confirm type
+## Step 2: Detect meeting type
 
-If the notes contain strong type signals (see signal keywords in the routing table), state the detected type before asking:
+Meeting type drives the template and the action-item routing. **Detect first, ask only if ambiguous** (adaptive execution - do not force a fixed question when the notes already answer it).
 
-```
-Detected meeting type: [Type] (based on: [signal found])
-Is this correct?
-```
+1. Scan the notes/transcript for the type signals in the routing table above (customer/user/pain → Discovery; FEAT-/AC-/spec → Product Review; sprint/stripe/priority → Planning; roadmap/investor/revenue → Strategic; yesterday/blocker/retro → Standup/Retro; partner/vendor/contract → Partner/Vendor).
 
-Confirm with a simple yes/no before proceeding.
+2. **If one type is clearly dominant:** state it and confirm.
+   ```
+   Detected: [Type] (signal: [what was found]). Correct?
+   ```
+   Proceed on yes.
+
+3. **If ambiguous or mixed:** use the **AskUserQuestion** tool. Offer the (up to 4) most likely types given the signals found - each with a one-line description - plus "Other" for the remaining types. Mark the most likely as (Recommended), reasoning from the signals actually present.
 
 ---
 
@@ -394,20 +388,20 @@ Read `pureinn-variables.md` key "Meetings" → Notion DB URL.
 
 **If URL present:**
 
-Create a new page in the Meetings DB via `notion-create-pages`:
+**Read the DB schema first** (via `notion-fetch` on the DB / `notion-query-data-sources`) - the user's Meetings DB may have templates per meeting type and its own property names. Map to the **actual** properties; do not assume names. The fields below are the expected mapping - match them to whatever the DB really calls them (e.g. a "Type" select, a relation to Tasks):
 
-| Notion property | Value |
+| Expected field | Value |
 |---|---|
-| `Title` | `[YYYY-MM-DD] [Meeting type] - [Topic]` |
-| `Type` | `[Meeting type]` (select) |
-| `Date` | `[meeting date]` |
-| `Participants` | `[names]` (multi-select or text) |
-| `Status` | `Notes captured` |
+| Title / Name | `[YYYY-MM-DD] [Meeting type] - [Topic]` |
+| Type (select) | `[Meeting type]` - if the DB has per-type templates, pick the matching one |
+| Date | `[meeting date]` |
+| Participants | `[names]` (multi-select or text, per DB schema) |
+| Status | first available "captured/new" state, or leave default |
 
-Push meeting notes content as the page body (full artifact above).
+Create the page via `notion-create-pages` and push the meeting notes content as the page body (full artifact above).
 
 **Tasks:** For each action item tagged `[Notion Task]`:
-- Create a linked task in Notion connected to this meeting record
+- Create a task linked to this meeting record via the DB's **existing task relation** (the user's DB links each meeting record to tasks - use that relation, do not invent a new one)
 - Set: task name, assignee (from participants), due date
 
 **Feature Card action items:** Do not auto-edit Feature Cards. List them in the push confirmation and remind user to update manually or run the relevant skill.
