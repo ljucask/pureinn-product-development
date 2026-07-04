@@ -715,7 +715,7 @@ Create `pureinn-workspace/[project-slug]/pureinn-variables.md` with the followin
 | Key | Type | Skill | URL |
 |---|---|---|---|
 | Glossary | DB | pm-glossary | |
-| Meetings | DB | pm-comms-charter | |
+| Meetings | DB | pm-meeting | |
 | Open Questions | DB | pm-hypotheses | |
 
 ## Design (Phase 6-7)

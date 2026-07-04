@@ -113,6 +113,7 @@ If FEAT-ID doesn't exist yet: add it to `feature_list.md`, create stub card, the
 | `/pm-comms-charter` | Communication Charter, Meeting Rhythm |
 | `/pm-stakeholder-map` | Stakeholder Map, RACI Matrix, Escalation Tree |
 | `/pm-onboarding` | Role-specific Onboarding Brief for new team members (Developer, PM, Designer, Stakeholder) - product context, settled decisions, artifact map, current delivery state, who to ask |
+| `/pm-meeting` | Structured meeting notes, decisions, and action items from raw notes or transcript. Auto-detects meeting type (Customer Discovery, Product Review, Planning, Strategic, Standup/Retro, Partner). Tags each action item with destination (Notion Task / Feature Card / follow-up meeting / framework skill). Pushes to Notion Meetings DB with linked tasks. |
 
 ### Phase 2 - Discovery
 | Skill | Output |

@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.16.0] - 2026-07-04
+
+### Added pm-meeting skill: structured meeting notes, decisions, action items with destination tagging, Notion push
+
+---
+
+
 ## [5.15.0] - 2026-07-03
 
 ### Added pm-onboarding skill: role-specific Onboarding Brief for new team members (Developer, PM, Designer, Stakeholder)
