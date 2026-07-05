@@ -19,7 +19,7 @@ A structured methodology for building products - from zero to launch. Implemente
 
 ## What this is
 
-**45 active skills + 2 commands** covering the full product lifecycle: discovery, validation, prototyping, domain modeling, process & user-flow mapping, feature planning, prioritization, FDD delivery, reconciliation-based rebuild, workspace health-check, team onboarding, and meeting capture.
+**46 active skills + 2 commands** covering the full product lifecycle: discovery, validation, prototyping, stakeholder pushback rehearsal, domain modeling, process & user-flow mapping, feature planning, prioritization, FDD delivery, reconciliation-based rebuild, workspace health-check, team onboarding, and meeting capture.
 
 Three playbooks:
 
@@ -174,6 +174,7 @@ If FEAT-ID doesn't exist yet: add it to `feature_list.md`, create stub card, the
 | `/pm-glossary` | Start in Phase 1, update continuously |
 | `/pm-diagrams` | Any phase - Domain Model Overview, User Flow, System Architecture, JTBD Forces |
 | `/pm-prototype` | Any phase - validate before real build. Turns a feature / PRD initiative / whole product / slice into a tool-ready prototype spec (Lovable, v0/Vercel, Figma Make, Base44). Gate-checks whether a prototype is worth it, compiles a tool-optimized build prompt (Lovable Prompting Bible baked in), pushes via MCP or hands a paste-ready block. On re-run, captures the result and feeds it back to the Feature Card / hypothesis register. |
+| `/pm-stress-test` | Before any high-stakes room - exec review, investor pitch, board meeting, budget defense, contentious feature push. Plays a specific skeptical stakeholder (investor, CFO, board, CTO, legal, DPO, sales, product lead, and more) and stress-tests your proposal in multiple rounds - not one shot. Runs a silent weakness diagnosis first, fires the sharpest questions that persona actually asks, and ends with a prep summary: what held, what's thin, unresolved blind spots, robustness score, and a pre-meeting checklist. Baked-in bank of real objections, adversarial methods (pre-mortem, red team, murder board), and failure patterns. |
 
 ### Feature Implementation - migration path
 | Skill | Purpose |

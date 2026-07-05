@@ -590,9 +590,10 @@ pureinn-workspace/[slug]/
     onboarding/                                  ← pm-onboarding (role-specific briefs)
   meetings/                                      ← pm-meeting (per-meeting notes, created on demand)
   prototypes/                                    ← pm-prototype (prototype specs + results, created on demand)
+  stress-tests/                                  ← pm-stress-test (pushback rehearsals + prep summaries, created on demand)
 ```
 
-`team/`, `meetings/` and `prototypes/` are cross-cutting operational folders - created on demand by `pm-onboarding` / `pm-meeting` / `pm-prototype`, not part of the phase artifact flow.
+`team/`, `meetings/`, `prototypes/` and `stress-tests/` are cross-cutting operational folders - created on demand by `pm-onboarding` / `pm-meeting` / `pm-prototype` / `pm-stress-test`, not part of the phase artifact flow.
 
 **Feature Implementation:**
 ```

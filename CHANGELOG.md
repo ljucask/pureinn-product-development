@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.18.0] - 2026-07-05
+
+### Added pm-stress-test - adversarial stakeholder pushback simulator (15 persona profiles, 13-dimension challenge bank, 12 adversarial methods, weakness catalogue + robustness rubric, iterative multi-round rehearsal, silent weakness diagnosis, prep summary)
+
+---
+
+
 ## [5.17.1] - 2026-07-04
 
 ### Hardened pm-prototype: full Lovable Prompting Bible incorporation (Knowledge Base via set_project_knowledge, confirm-understanding gate, credit economics, debugging ladder, chat/plan mode, minimal-change iteration, screenshots-as-attachment) + hard no-guessing rule (ask, never fabricate)
