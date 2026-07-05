@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.19.0] - 2026-07-05
+
+### Added pm-root-cause - in-flight anomaly diagnostic engine (11 methods + selection guide, 12-anomaly cause differential library, measurement-trap catalogue, 12-item bias catalogue + validation checklist, evidence-vs-guess discipline, testable-hypothesis output)
+
+---
+
+
 ## [5.18.0] - 2026-07-05
 
 ### Added pm-stress-test - adversarial stakeholder pushback simulator (15 persona profiles, 13-dimension challenge bank, 12 adversarial methods, weakness catalogue + robustness rubric, iterative multi-round rehearsal, silent weakness diagnosis, prep summary)
