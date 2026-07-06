@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.20.0] - 2026-07-06
+
+### Added stage-keyword shortcuts (/pureinn define|discover|model|plan|build...) - enter the framework at any phase, scaffolds a workspace on the fly with graceful PREREQ handling; fixed stale roadmap path in pm-onboarding
+
+---
+
+
 ## [5.19.0] - 2026-07-05
 
 ### Added pm-root-cause - in-flight anomaly diagnostic engine (11 methods + selection guide, 12-anomaly cause differential library, measurement-trap catalogue, 12-item bias catalogue + validation checklist, evidence-vs-guess discipline, testable-hypothesis output)

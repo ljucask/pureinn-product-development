@@ -51,6 +51,14 @@ Resume a paused project. Omit slug to list all available projects.
 
 Full framework overview - all playbooks, phases, skills, and artifact chains.
 
+```bash
+/pureinn define                        # jump into a stage of the current project
+/pureinn vezmee model                  # jump into a stage of a named project
+/pureinn discover "food delivery app"  # fresh project, straight into a stage
+```
+
+Jump straight to one part of the framework with a **stage keyword** - useful when you only need Pureinn for a slice (e.g. you already did your own research and just want the `define` work). Keywords: `setup` · `discover` · `validate` · `define` · `model` · `plan` · `build` (aliases accepted). The engine checks the inputs that stage needs (offers options if something's missing - never hard-blocks), and if no workspace exists yet it scaffolds the full project first, so everything downstream keeps working. For a single artifact, run its skill directly (`/jtbd-building`, `/pm-features-list`) - no stage needed.
+
 ---
 
 ## Fast Track

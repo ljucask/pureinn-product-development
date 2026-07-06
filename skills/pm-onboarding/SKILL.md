@@ -153,7 +153,7 @@ These have been decided. They can be changed - but only with new data or a speci
 | Artifact | Location | What it contains |
 |---|---|---|
 | PRD Master | `/product/PRD_master.md` | Problem, value prop, target customer, scope |
-| Product Roadmap | `/artifacts/phase-3-strategy/product-roadmap.md` | Phases, deliverables, exit criteria |
+| Product Roadmap | `/artifacts/phase-5-planning/product-roadmap.md` (latest version; earlier drafts in `phase-3-define/`) | Phases, deliverables, exit criteria |
 | Feature List | `/features/feature_list.md` | All features with KANO/VxC/phase/stripe |
 | Feature Cards | `/features/cards/FEAT-[ID].md` | Per-feature spec, ACs, technical design |
 | Domain Model | `/domain/entities.md` | Entities, state machines, guard conditions |

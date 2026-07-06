@@ -49,6 +49,32 @@ Greenfield and Rebuild are **entry paths** (how you get into the framework). Fea
 
 Run `/pureinn [product idea or name]` - the engine runs this decision tree automatically and routes you.
 
+## Stage shortcuts - enter one part of the framework
+
+You don't have to start at the top. A **stage keyword** jumps straight into one part of the framework - useful when you only need Pureinn for a slice (e.g. you already ran your own discovery and just want the `define` work, or you're onboarding an existing project and want `model`).
+
+```
+/pureinn define                        # current project → Commercial Definition
+/pureinn vezmee model                  # named project → Domain Modeling
+/pureinn discover "food delivery app"  # fresh project → straight into Discovery
+```
+
+| Keyword (aliases) | Enters | You walk out with |
+|---|---|---|
+| `setup` (foundation, kickoff) | Phase 1 - Foundation | Project skeleton |
+| `discover` (discovery, research) | Phase 2 - Discovery | Market / personas / JTBD / domain understanding |
+| `validate` (validation, test) | Phase 3a - Validation | Go/No-Go verdict |
+| `define` (definition, prd) | Phase 3b - Commercial Definition | Value prop, business model, KPIs, PRD |
+| `model` (domain, modeling, erd) | Phase 4 - Domain Modeling | Entities, rules, flows blueprint |
+| `plan` (planning, features, scope) | Phase 5 - Feature Planning | Feature list, KANO/V×C, MVP scope |
+| `build` (deliver, ship, jit) | Phase 6+7 - JIT Delivery | Per-feature spec + delivery |
+
+Playbook keywords also work: `reconcile`, `bootstrap`, `feature`.
+
+**How it behaves:** the engine resolves the keyword to its phase, checks the inputs that phase needs (if something upstream is missing it offers options - proceed with what you have marked `[ASSUMED]`, jump back to build the input, or proceed anyway - it never hard-blocks except the Phase 3a GO gate), and if no workspace exists yet it **scaffolds the full project first** (folder tree + `state.json` + variables) and ingests whatever research you point it at - so the project is fully operational and everything downstream still works. This reuses the existing "done elsewhere" rule; it does not change the engine.
+
+**Two tiers.** Stage keywords enter a whole *chunk* of work. For a single artifact, run its skill directly (`/jtbd-building`, `/pm-features-list`) - no stage needed.
+
 ---
 
 # Playbook 1: Greenfield

@@ -1,6 +1,6 @@
 ---
-description: Pureinn workflow engine entry point. Reads existing documents, evaluates current state, maps to phases, and routes to the correct starting point. Run with a product idea or name to start. Run with 'map' for the full framework overview. Run with a known project slug to resume.
-argument-hint: "[product idea or name | map | help | project-slug]"
+description: Pureinn workflow engine entry point. Reads existing documents, evaluates current state, maps to phases, and routes to the correct starting point. Run with a product idea or name to start. Run with 'map' for the full framework overview. Run with a known project slug to resume. Run with a stage keyword (setup / discover / validate / define / model / plan / build) to jump straight into that part of the framework - scaffolds a workspace first if none exists.
+argument-hint: "[product idea | stage keyword | map | help | project-slug]"
 ---
 
 # Pureinn - Workflow Engine
@@ -40,6 +40,14 @@ Engine vyberie Feature playbook. Ak Phase 0 nie je hotová, začne kontextovým 
 ```
 Engine prečíta `state.json`, obnoví kontext z `assessment.md`, zobrazí dashboard s aktuálnou fázou.
 
+### Skok do konkrétnej časti (stage shortcut)
+```
+/pureinn define                       # aktuálny projekt: skoč do Commercial Definition
+/pureinn vezmee model                 # projekt vezmee: skoč do Domain Modeling
+/pureinn discover "food delivery app" # nový projekt: rovno do Discovery (Pureinn založí workspace)
+```
+Keywordy: `setup` · `discover` · `validate` · `define` · `model` · `plan` · `build` (+ aliasy). Engine rozlíši keyword, over si podklad pre danú časť (ak chýba, ponúkne možnosti - nikdy nezablokuje), a ak workspace ešte neexistuje, najprv ho celý založí. Pre jeden konkrétny artefakt spusti priamo daný skill (`/jtbd-building`, `/pm-features-list`) - stage netreba.
+
 ### Prehľad celého frameworku
 ```
 /pureinn map
@@ -51,14 +59,35 @@ Zobrazí Framework Map - všetky playbooki, fázy, skills a artifact chains na j
 
 ## Special Commands
 
-If $ARGUMENTS is `map` or `help`:
-→ Skip all steps. Go directly to **FRAMEWORK MAP** at the bottom of this skill.
+Evaluate `$ARGUMENTS` in this order (first match wins):
 
-If $ARGUMENTS matches a known project slug and a `state.json` exists:
-→ Go to **STEP 1B (Resume path)**.
+1. **`map` / `help`** → Skip all steps. Go directly to **FRAMEWORK MAP** at the bottom of this skill.
 
-Otherwise:
-→ Go to **STEP 1A (New / intake path)**.
+2. **First token is a stage/playbook keyword** (see Stage Keyword Resolver below) → Go to **STEP 1C (Stage Entry)**.
+   The keyword may stand alone (`/pureinn define`), be preceded by a project slug (`/pureinn vezmee define`), or be followed by a fresh product idea (`/pureinn discover "food delivery app"`).
+
+3. **Matches a known project slug with an existing `state.json`** → Go to **STEP 1B (Resume path)**.
+
+4. **Otherwise** → Go to **STEP 1A (New / intake path)**.
+
+### Stage Keyword Resolver
+
+A stage keyword is a user-facing shortcut into one part of the framework. It never changes the engine - it resolves to an existing phase and hands control to the normal dashboard/routing. Match case-insensitively; accept any alias.
+
+| Keyword (+ aliases) | Resolves to |
+|---|---|
+| `setup` · foundation · kickoff · start | Phase 1 - Foundation |
+| `discover` · discovery · research | Phase 2 - Discovery |
+| `validate` · validation · test | Phase 3a - Validation |
+| `define` · definition · prd | Phase 3b - Commercial Definition |
+| `model` · domain · modeling · domain modeling · build domain model · erd | Phase 4 - Domain Modeling |
+| `plan` · planning · features · scope | Phase 5 - Feature Planning |
+| `build` · deliver · ship · jit | Phase 6 + 7 - JIT Delivery |
+| `reconcile` | Rebuild playbook A1 (entry: `/pm-reconcile`) |
+| `bootstrap` | Rebuild playbook A2 (entry: `/pm-entity-registry` chain) |
+| `feature` | Feature Implementation playbook |
+
+**Two-tier model:** stage keywords enter a whole *chunk* of work. For a single artifact (just JTBD, just KANO), the user runs the existing per-skill command directly (`/jtbd-building`, `/pm-features-list`) - no stage needed. Do not invent cross-phase stages; the per-skill commands already cover pinpoint needs.
 
 ---
 
@@ -103,6 +132,43 @@ Store the answer. Save as `"guidance_mode": true` or `false` in state.json.
 ## STEP 1B - Resume Path
 
 A state.json exists for this project. Read it and go directly to **STEP 7 (Dashboard)**.
+
+---
+
+## STEP 1C - Stage Entry
+
+The user jumped straight to a part of the framework via a stage keyword (e.g. `/pureinn define`). Goal: get them into that stage cleanly, with a fully-formed workspace behind them - never a half-set-up project. This reuses existing logic; it does not duplicate the engine.
+
+**a) Resolve the keyword** → target phase (Stage Keyword Resolver above). For playbook keywords (`reconcile` / `bootstrap` / `feature`), route to that playbook's entry instead of a phase.
+
+**b) Establish workspace context:**
+
+- **A `state.json` exists** (current dir, or the named slug) → read it. Load context as in STEP 1B.
+- **No workspace exists yet** (fresh project + stage - a first-class path, e.g. "I already have my own research, I just want to use Pureinn for `define`"):
+  1. Run a **minimal intake** - only what this stage needs: product name/slug, and "Do you have research or inputs for this stage? Point me at them." Do NOT run the full 9-question intake.
+  2. **Scaffold the full workspace** exactly as STEP 6 does: create `pureinn-workspace/[slug]/` with the complete tree (`domain/`, `features/`, `product/`, `artifacts/`, `initiatives/`), `state.json`, `pureinn-variables.md`, `assessment.md`. The project must be fully operational for everything downstream - not a partial folder.
+  3. In `state.json`: set `playbook` (infer from context - default Greenfield), `starting_phase` = the entered phase, and record every phase *before* it in `phases_skipped`.
+  4. **Deep-ingest** whatever the user pointed at (apply the Deep source ingestion standard - full recursive read), so the stage has real inputs, not emptiness.
+
+**c) PREREQ check for the target phase** (graceful degradation - never hard-block):
+
+| Stage | Requires upstream | If missing |
+|---|---|---|
+| `setup` / `discover` | nothing | proceed |
+| `validate` | Problem Validation Summary | offer options below |
+| `define` | Phase 3a GO verdict + validated inputs | offer options below |
+| `model` | PRD frozen | offer options below |
+| `plan` | entities.md + business_rules.md | offer options below |
+| `build` | feature_list.md + registers | offer options below |
+
+When upstream is missing or thin, use **AskUserQuestion**:
+- A) Proceed in [stage] now - treat skipped upstream as "done elsewhere" / imported from the ingested research, mark genuine gaps `[ASSUMED - replace when real data available]` *(Recommended when the user brought their own research for this stage)*
+- B) Jump back to [upstream stage] to build the missing input first
+- C) Proceed anyway, I accept the risk
+
+This is the existing **"done elsewhere"** rule (used for Phase 3a) generalized to stage entry: if work was genuinely done outside the framework, collect the minimum evidence to confirm the exit criteria, mark the phase complete, and continue. Do not force re-running skills for work already done. Note the hard gate still holds: `define` (Phase 3b) requires a GO verdict - if none exists, collect it via the "done elsewhere" import (verdict + evidence) before proceeding.
+
+**d) Set state + hand off:** write `current_phase_name` (and `current_phase_index` aligned to the existing scheme) to `state.json`, then go to **STEP 7 (Dashboard)**. The dashboard already renders the phase, its skills queue, and the guidance intro - no new dashboard logic.
 
 ---
 
