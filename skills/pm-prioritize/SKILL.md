@@ -3,6 +3,7 @@ name: pm-prioritize
 description: Re-runnable prioritization engine for the feature backlog. Works at ANY point - after the feature list is created, after the MVP cut, or any time later when priorities shift. Takes flexible input - align to a roadmap, follow a directive you give ("X first", "revenue first"), apply a prioritization lens, or let the skill propose a basis with reasoning. Always reconciles with the dependency map (cannot rank a feature ahead of its blocker), is non-destructive (proposes, you confirm before it writes), and explains the rationale and trade-offs. The canonical prioritization logic that pm-features-list offers for the first-time scoring.
 license: MIT
 metadata:
+  agent-mode: decision
   author: https://github.com/ljucask
   version: "1.0.0"
   domain: product-management
@@ -14,6 +15,17 @@ metadata:
 ---
 
 # PM - Prioritize (Backlog Prioritization Engine)
+
+
+## Agent mode (`--agent`)
+
+Podporuje `--agent`: beží autonómne v subagentovi, nadraftuje artefakt z existujúcich vstupov, vráti krátky súhrn + coverage note.
+
+- **Bez flagu** → interaktívne (default); pri ťažkých vstupoch ponúkni agent režim.
+- **`--agent`** → poslúchni. Najprv over úplnosť vstupov. Čo chýba: NEVYMÝŠĽAJ - označ `[ASSUMED - čo/prečo]` vo výstupe aj v súhrne. Nikdy nehalucinuj medzeru.
+- **Review povinný:** artefakt obsahuje záväzky - po drafte vynúť review používateľa pred finalizáciou; nezavieraj rozhodnutia autonómne.
+
+---
 
 ## What this skill does
 

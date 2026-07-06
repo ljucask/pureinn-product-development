@@ -3,6 +3,7 @@ name: design-thinking
 description: Synthesize Phase 2 discovery outputs through Design Thinking (Define + Ideate stages). Produces Problem Statement, POV, HMW questions, and Ideation synthesis. Run in Phase 3a as the first step - feeds directly into pm-hypotheses. Takes Phase 2 outputs as input - no new research.
 license: MIT
 metadata:
+  agent-mode: never
   author: https://github.com/ljucask
   version: "1.0.0"
   domain: product-management
@@ -14,6 +15,13 @@ metadata:
 ---
 
 # PM - Design Thinking (Define + Ideate)
+
+
+## Agent mode (`--agent`)
+
+Hodnota tohto skillu je živý dialóg - `--agent` nie je podporený. Pri `--agent` raz varuj ("tento skill potrebuje interakciu, agent režim ho vyprázdni") a pokračuj interaktívne.
+
+---
 
 ## What this skill does
 

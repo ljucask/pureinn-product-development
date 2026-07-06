@@ -3,6 +3,7 @@ name: pm-product-roadmap
 description: Generate or update the Product Roadmap. Living document - v1 created in Phase 3b (vision + problem + business model), v2 updated in Phase 4 (domain constraints), v3 updated in Phase 5 (feature and delivery view). Run this skill at each update point.
 license: MIT
 metadata:
+  agent-mode: synthesis
   author: https://github.com/ljucask
   version: "1.2.0"
   domain: product-management
@@ -14,6 +15,16 @@ metadata:
 ---
 
 # PM - Product Roadmap
+
+
+## Agent mode (`--agent`)
+
+Podporuje `--agent`: beží autonómne v subagentovi, nadraftuje artefakt z existujúcich vstupov, vráti krátky súhrn + coverage note.
+
+- **Bez flagu** → interaktívne (default); pri ťažkých vstupoch ponúkni agent režim.
+- **`--agent`** → poslúchni. Najprv over úplnosť vstupov. Čo chýba: NEVYMÝŠĽAJ - označ `[ASSUMED - čo/prečo]` vo výstupe aj v súhrne. Nikdy nehalucinuj medzeru.
+
+---
 
 ## What this skill does
 

@@ -3,6 +3,7 @@ name: pm-business-case
 description: Generate a Business Case. Phase 3b skill. Synthesizes market size, business model, and KPIs into financial projections and investment rationale. Requires pm-lean-canvas and pm-kpis.
 license: MIT
 metadata:
+  agent-mode: synthesis
   author: https://github.com/ljucask
   version: "1.0.0"
   domain: product-management
@@ -14,6 +15,16 @@ metadata:
 ---
 
 # PM - Business Case
+
+
+## Agent mode (`--agent`)
+
+Podporuje `--agent`: beží autonómne v subagentovi, nadraftuje artefakt z existujúcich vstupov, vráti krátky súhrn + coverage note.
+
+- **Bez flagu** → interaktívne (default); pri ťažkých vstupoch ponúkni agent režim.
+- **`--agent`** → poslúchni. Najprv over úplnosť vstupov. Čo chýba: NEVYMÝŠĽAJ - označ `[ASSUMED - čo/prečo]` vo výstupe aj v súhrne. Nikdy nehalucinuj medzeru.
+
+---
 
 ## What this skill does
 

@@ -3,6 +3,7 @@ name: pm-meeting
 description: Structured meeting notes, summary, and action items from raw notes or a transcript. Detects meeting type (Customer Discovery, Product Review, Planning/Grooming, Strategic Review, Standup/Retro, Partner/Vendor) and applies the correct summary template. Tags each action item with its destination (Notion Task, Feature Card, follow-up meeting, framework skill). Pushes to Notion Meetings DB with linked tasks. Run after any meeting where notes or a transcript exist.
 license: MIT
 metadata:
+  agent-mode: synthesis
   author: https://github.com/ljucask
   version: "1.1.0"
   domain: product-management
@@ -14,6 +15,16 @@ metadata:
 ---
 
 # PM - Meeting Notes & Action Items
+
+
+## Agent mode (`--agent`)
+
+Podporuje `--agent`: beží autonómne v subagentovi, nadraftuje artefakt z existujúcich vstupov, vráti krátky súhrn + coverage note.
+
+- **Bez flagu** → interaktívne (default); pri ťažkých vstupoch ponúkni agent režim.
+- **`--agent`** → poslúchni. Najprv over úplnosť vstupov. Čo chýba: NEVYMÝŠĽAJ - označ `[ASSUMED - čo/prečo]` vo výstupe aj v súhrne. Nikdy nehalucinuj medzeru.
+
+---
 
 ## What this skill does
 

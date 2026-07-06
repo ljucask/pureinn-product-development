@@ -3,6 +3,7 @@ name: pm-stripe
 description: JIT Delivery Stripe session orchestrator. Run every time you sit down to work on Phase 6-7. Reads current state across all active stripes, detects where each feature is in the lifecycle, surfaces the right next action, and routes you to the correct skill. One stripe = one isolated development channel. Features process one at a time per stripe in dependency order.
 license: MIT
 metadata:
+  agent-mode: never
   author: https://github.com/ljucask
   version: "3.0.0"
   domain: product-management
@@ -14,6 +15,13 @@ metadata:
 ---
 
 # PM - Delivery Stripe
+
+
+## Agent mode (`--agent`)
+
+Hodnota tohto skillu je živý dialóg - `--agent` nie je podporený. Pri `--agent` raz varuj ("tento skill potrebuje interakciu, agent režim ho vyprázdni") a pokračuj interaktívne.
+
+---
 
 ## What this skill does
 

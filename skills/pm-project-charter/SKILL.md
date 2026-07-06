@@ -3,6 +3,7 @@ name: pm-project-charter
 description: Generate a Project Charter and Assumptions & Risks Register for a new product initiative. Use when starting Phase 1 of a Greenfield project.
 license: MIT
 metadata:
+  agent-mode: decision
   author: https://github.com/ljucask
   version: "1.0.0"
   domain: product-management
@@ -14,6 +15,17 @@ metadata:
 ---
 
 # PM - Project Charter
+
+
+## Agent mode (`--agent`)
+
+Podporuje `--agent`: beží autonómne v subagentovi, nadraftuje artefakt z existujúcich vstupov, vráti krátky súhrn + coverage note.
+
+- **Bez flagu** → interaktívne (default); pri ťažkých vstupoch ponúkni agent režim.
+- **`--agent`** → poslúchni. Najprv over úplnosť vstupov. Čo chýba: NEVYMÝŠĽAJ - označ `[ASSUMED - čo/prečo]` vo výstupe aj v súhrne. Nikdy nehalucinuj medzeru.
+- **Review povinný:** artefakt obsahuje záväzky - po drafte vynúť review používateľa pred finalizáciou; nezavieraj rozhodnutia autonómne.
+
+---
 
 ## What this skill does
 

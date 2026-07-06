@@ -3,6 +3,7 @@ name: pm-reconcile
 description: Rebuild playbook for an existing product onboarded to Pureinn. Reconciles the actual codebase against a folder of legacy documents (BRD, FSD, domain/entity models, business rules) that may contain logical, semantic and structural inconsistencies. Runs in two phases - first PLAN (inspect docs + code, define which areas to reconcile, in what order, into which Pureinn artifacts), then per-area EXECUTION (/pm-reconcile domain | rules | features ...) one layer at a time. Produces a living Reconciliation Report and rebuilds the 4 Live Registers + feature inventory clean. A closing verify pass (/pm-reconcile verify) re-reads the source one last time, proves every unit was transposed, incorporates any gaps it finds (not just reports them), and rules whether the legacy source is safe to archive - the source-disposal gate. The source is whatever the user points to (any format), never a hardcoded BRD. Use when a product was built outside the framework, has stale or conflicting docs, and the (often new) team needs one consistent source of truth that matches the code. Multi-session - track progress with pm-reconcile-status.
 license: MIT
 metadata:
+  agent-mode: never
   author: https://github.com/ljucask
   version: "1.2.0"
   domain: product-management
@@ -14,6 +15,13 @@ metadata:
 ---
 
 # PM - Reconcile (Rebuild from Existing Product)
+
+
+## Agent mode (`--agent`)
+
+Hodnota tohto skillu je živý dialóg - `--agent` nie je podporený. Pri `--agent` raz varuj ("tento skill potrebuje interakciu, agent režim ho vyprázdni") a pokračuj interaktívne.
+
+---
 
 ## What this skill does
 

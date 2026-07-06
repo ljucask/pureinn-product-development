@@ -3,6 +3,7 @@ name: pm-reconcile-status
 description: Progress dashboard for an in-flight reconciliation rebuild. Reads the Reconciliation Plan and state.json, shows which areas are done, in progress, and pending, surfaces open business-logic divergences that still need the team's decision, and routes to the next area command. Run it every time you sit down to a multi-session reconcile. Read-only - it changes nothing.
 license: MIT
 metadata:
+  agent-mode: synthesis
   author: https://github.com/ljucask
   version: "1.1.0"
   domain: product-management
@@ -14,6 +15,16 @@ metadata:
 ---
 
 # PM - Reconcile Status
+
+
+## Agent mode (`--agent`)
+
+Podporuje `--agent`: beží autonómne v subagentovi, nadraftuje artefakt z existujúcich vstupov, vráti krátky súhrn + coverage note.
+
+- **Bez flagu** → interaktívne (default); pri ťažkých vstupoch ponúkni agent režim.
+- **`--agent`** → poslúchni. Najprv over úplnosť vstupov. Čo chýba: NEVYMÝŠĽAJ - označ `[ASSUMED - čo/prečo]` vo výstupe aj v súhrne. Nikdy nehalucinuj medzeru.
+
+---
 
 ## What this skill does
 

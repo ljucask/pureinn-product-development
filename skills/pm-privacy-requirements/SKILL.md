@@ -3,6 +3,7 @@ name: pm-privacy-requirements
 description: Generate a PII Inventory, Privacy Requirements document, and GDPR Action Plan for Phase 4. Runs after Domain Model - maps personal data to entities, identifies processing purposes, and produces a concrete compliance action list before build starts.
 license: MIT
 metadata:
+  agent-mode: synthesis
   author: https://github.com/ljucask
   version: "1.0.0"
   domain: product-management
@@ -14,6 +15,16 @@ metadata:
 ---
 
 # PM - Privacy Requirements
+
+
+## Agent mode (`--agent`)
+
+Podporuje `--agent`: beží autonómne v subagentovi, nadraftuje artefakt z existujúcich vstupov, vráti krátky súhrn + coverage note.
+
+- **Bez flagu** → interaktívne (default); pri ťažkých vstupoch ponúkni agent režim.
+- **`--agent`** → poslúchni. Najprv over úplnosť vstupov. Čo chýba: NEVYMÝŠĽAJ - označ `[ASSUMED - čo/prečo]` vo výstupe aj v súhrne. Nikdy nehalucinuj medzeru.
+
+---
 
 ## What this skill does
 

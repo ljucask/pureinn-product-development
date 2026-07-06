@@ -3,6 +3,7 @@ name: pm-feature-design
 description: JIT Design by Feature - Phase 6 skill. Just-In-Time technical design for a single feature before it enters build. Enriches the 4 live registers with guard conditions and finalized rules, generates a Mermaid.js sequence diagram, writes Acceptance Criteria, and completes Feature Card Sections 1-3. Replaces upfront Feature-Set design documents with JIT per-feature design. Run once per feature, triggered by pm-stripe when the feature is next in its Stripe.
 license: MIT
 metadata:
+  agent-mode: decision
   author: https://github.com/ljucask
   version: "2.0.0"
   domain: product-management
@@ -14,6 +15,17 @@ metadata:
 ---
 
 # PM - Feature Design (JIT)
+
+
+## Agent mode (`--agent`)
+
+Podporuje `--agent`: beží autonómne v subagentovi, nadraftuje artefakt z existujúcich vstupov, vráti krátky súhrn + coverage note.
+
+- **Bez flagu** → interaktívne (default); pri ťažkých vstupoch ponúkni agent režim.
+- **`--agent`** → poslúchni. Najprv over úplnosť vstupov. Čo chýba: NEVYMÝŠĽAJ - označ `[ASSUMED - čo/prečo]` vo výstupe aj v súhrne. Nikdy nehalucinuj medzeru.
+- **Review povinný:** artefakt obsahuje záväzky - po drafte vynúť review používateľa pred finalizáciou; nezavieraj rozhodnutia autonómne.
+
+---
 
 ## What this skill does
 

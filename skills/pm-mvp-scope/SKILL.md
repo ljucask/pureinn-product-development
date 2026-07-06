@@ -3,6 +3,7 @@ name: pm-mvp-scope
 description: Define MVP scope and delivery plan from the prioritized FDD Feature List. Makes the IN/POST-MVP/CUT decision per feature (recorded in the single `phase` field, never a separate `mvp` flag), assigns each feature to a Delivery Stripe. Updates feature_list.md and Feature Card frontmatter (phase + stripe). If features already carry a phase (Rebuild where roadmap split phases), reads it instead of re-deciding the cut and only assigns stripes. After user approval, updates Notion Feature entries with phase and stripe assignment. Phase 5 exit artifact. Required input for pm-stripe JIT cycle.
 license: MIT
 metadata:
+  agent-mode: decision
   author: https://github.com/ljucask
   version: "2.1.0"
   domain: product-management
@@ -14,6 +15,17 @@ metadata:
 ---
 
 # PM - MVP Scope
+
+
+## Agent mode (`--agent`)
+
+Podporuje `--agent`: beží autonómne v subagentovi, nadraftuje artefakt z existujúcich vstupov, vráti krátky súhrn + coverage note.
+
+- **Bez flagu** → interaktívne (default); pri ťažkých vstupoch ponúkni agent režim.
+- **`--agent`** → poslúchni. Najprv over úplnosť vstupov. Čo chýba: NEVYMÝŠĽAJ - označ `[ASSUMED - čo/prečo]` vo výstupe aj v súhrne. Nikdy nehalucinuj medzeru.
+- **Review povinný:** artefakt obsahuje záväzky - po drafte vynúť review používateľa pred finalizáciou; nezavieraj rozhodnutia autonómne.
+
+---
 
 ## What this skill does
 

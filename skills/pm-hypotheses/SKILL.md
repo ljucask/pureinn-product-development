@@ -3,6 +3,7 @@ name: pm-hypotheses
 description: Structure validation hypotheses, design low-cost experiments, track results, and produce a Go/No-Go decision. Runs in Phase 3a: Plan mode structures hypotheses and experiments, Results mode records outcomes and issues the Go/No-Go verdict (hard gate before Phase 3b). Based on a 5-stage SaaS validation framework.
 license: MIT
 metadata:
+  agent-mode: never
   author: https://github.com/ljucask
   version: "1.0.0"
   domain: product-management
@@ -14,6 +15,13 @@ metadata:
 ---
 
 # PM - Hypothesis Validation
+
+
+## Agent mode (`--agent`)
+
+Hodnota tohto skillu je živý dialóg - `--agent` nie je podporený. Pri `--agent` raz varuj ("tento skill potrebuje interakciu, agent režim ho vyprázdni") a pokračuj interaktívne.
+
+---
 
 ## What this skill does
 

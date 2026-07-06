@@ -59,6 +59,12 @@ Full framework overview - all playbooks, phases, skills, and artifact chains.
 
 Jump straight to one part of the framework with a **stage keyword** - useful when you only need Pureinn for a slice (e.g. you already did your own research and just want the `define` work). Keywords: `setup` · `discover` · `validate` · `define` · `model` · `plan` · `build` (aliases accepted). The engine checks the inputs that stage needs (offers options if something's missing - never hard-blocks), and if no workspace exists yet it scaffolds the full project first, so everything downstream keeps working. For a single artifact, run its skill directly (`/jtbd-building`, `/pm-features-list`) - no stage needed.
 
+```bash
+/pm-prd --agent          # draft the artifact autonomously, review after
+```
+
+**Agent mode (`--agent`).** Any skill can be run with `--agent` to draft its artifact autonomously from existing inputs (in a subagent, keeping your main session clean) and return a short summary you review after - instead of building it interactively. Each skill declares how it behaves: **synthesis** skills run fully, **decision** skills draft then require your review before anything is final, and a few dialogue-driven skills (stress-test, root-cause, hypotheses...) decline agent mode. Missing inputs are never invented - they're marked `[ASSUMED]` for you to fill. No flag = interactive (the default); the flag = obey.
+
 ---
 
 ## Fast Track

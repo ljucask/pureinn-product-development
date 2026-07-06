@@ -3,6 +3,7 @@ name: pm-prototype
 description: Cross-phase prototyping engine. Turns a scoped chunk of the product (a feature, a PRD initiative, the whole product, or any slice) into a tool-ready prototype spec that a prototyping tool (Lovable, v0/Vercel, Base44, Figma Make) can build with minimal loss of context. Gate-checks whether a prototype is worth it, ingests your ACs / flows / process / screens / feature card / brain dump, then compiles a tool-optimized build prompt. Pushes to the selected tool via MCP or hands you a paste-ready block. On re-run, captures the prototype result and feeds it back to the Feature Card / hypothesis register. Use anytime you want to validate before real build.
 license: MIT
 metadata:
+  agent-mode: synthesis
   author: https://github.com/ljucask
   version: "1.1.0"
   domain: product-management
@@ -14,6 +15,16 @@ metadata:
 ---
 
 # PM - Prototype (validate before real build)
+
+
+## Agent mode (`--agent`)
+
+Podporuje `--agent`: beží autonómne v subagentovi, nadraftuje artefakt z existujúcich vstupov, vráti krátky súhrn + coverage note.
+
+- **Bez flagu** → interaktívne (default); pri ťažkých vstupoch ponúkni agent režim.
+- **`--agent`** → poslúchni. Najprv over úplnosť vstupov. Čo chýba: NEVYMÝŠĽAJ - označ `[ASSUMED - čo/prečo]` vo výstupe aj v súhrne. Nikdy nehalucinuj medzeru.
+
+---
 
 ## What this skill does
 

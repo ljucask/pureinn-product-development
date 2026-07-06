@@ -3,6 +3,7 @@ name: pm-prd
 description: Two modes. (1) Product PRD - Phase 3b exit artifact synthesizing all Phase 2+3a+3b outputs. Saves to product/PRD_master.md. Frozen after creation. (2) Initiative PRD - Feature Implementation context, after Track B discovery for a large new domain. Leaner document focused on Business Capabilities for that domain only. Saves to initiatives/[slug]/prd.md.
 license: MIT
 metadata:
+  agent-mode: synthesis
   author: https://github.com/ljucask
   version: "1.1.0"
   domain: product-management
@@ -14,6 +15,16 @@ metadata:
 ---
 
 # PM - Product Requirements Document (PRD)
+
+
+## Agent mode (`--agent`)
+
+Podporuje `--agent`: beží autonómne v subagentovi, nadraftuje artefakt z existujúcich vstupov, vráti krátky súhrn + coverage note.
+
+- **Bez flagu** → interaktívne (default); pri ťažkých vstupoch ponúkni agent režim.
+- **`--agent`** → poslúchni. Najprv over úplnosť vstupov. Čo chýba: NEVYMÝŠĽAJ - označ `[ASSUMED - čo/prečo]` vo výstupe aj v súhrne. Nikdy nehalucinuj medzeru.
+
+---
 
 ## What this skill does
 

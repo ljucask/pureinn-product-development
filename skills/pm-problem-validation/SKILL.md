@@ -3,6 +3,7 @@ name: pm-problem-validation
 description: Generate a Problem Validation Summary by synthesizing all Phase 2 research outputs (Tech Feasibility, Domain Analysis, Market Analysis, Personas, JTBD). Use at end of Phase 2 as convergence artifact. No new research - pure synthesis.
 license: MIT
 metadata:
+  agent-mode: decision
   author: https://github.com/ljucask
   version: "1.0.0"
   domain: product-management
@@ -14,6 +15,17 @@ metadata:
 ---
 
 # PM - Problem Validation Summary
+
+
+## Agent mode (`--agent`)
+
+Podporuje `--agent`: beží autonómne v subagentovi, nadraftuje artefakt z existujúcich vstupov, vráti krátky súhrn + coverage note.
+
+- **Bez flagu** → interaktívne (default); pri ťažkých vstupoch ponúkni agent režim.
+- **`--agent`** → poslúchni. Najprv over úplnosť vstupov. Čo chýba: NEVYMÝŠĽAJ - označ `[ASSUMED - čo/prečo]` vo výstupe aj v súhrne. Nikdy nehalucinuj medzeru.
+- **Review povinný:** artefakt obsahuje záväzky - po drafte vynúť review používateľa pred finalizáciou; nezavieraj rozhodnutia autonómne.
+
+---
 
 ## What this skill does
 

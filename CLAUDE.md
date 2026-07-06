@@ -4,7 +4,7 @@ This file provides guidance to Claude Code when working in this repository.
 
 ## What this repository is
 
-The Pureinn product development framework published as a Claude Code plugin. Contains 47 active skills and 2 commands covering the full product lifecycle (FDD+SDD hybrid with JIT per-feature design, intuitive Feature Card lifecycle states, Figma MCP integration, a cross-phase pm-prototype engine that compiles tool-ready prototype specs for Lovable/v0/Figma Make, a cross-phase pm-stress-test adversarial stakeholder-pushback simulator, a cross-phase pm-root-cause diagnostic engine for in-flight anomalies, a reconciliation-based Rebuild playbook for onboarding existing products, a pm-audit workspace health check, a re-runnable pm-prioritize backlog engine, pm-process-flows user-type + process/user-flow mapping, and stage-keyword shortcuts (`/pureinn define`, `/pureinn model`...) that enter the framework at any phase and scaffold a workspace on the fly).
+The Pureinn product development framework published as a Claude Code plugin. Contains 47 active skills and 2 commands covering the full product lifecycle (FDD+SDD hybrid with JIT per-feature design, intuitive Feature Card lifecycle states, Figma MCP integration, a cross-phase pm-prototype engine that compiles tool-ready prototype specs for Lovable/v0/Figma Make, a cross-phase pm-stress-test adversarial stakeholder-pushback simulator, a cross-phase pm-root-cause diagnostic engine for in-flight anomalies, a reconciliation-based Rebuild playbook for onboarding existing products, a pm-audit workspace health check, a re-runnable pm-prioritize backlog engine, pm-process-flows user-type + process/user-flow mapping, stage-keyword shortcuts (`/pureinn define`, `/pureinn model`...) that enter the framework at any phase and scaffold a workspace on the fly, and a universal `--agent` execution mode (every skill tagged synthesis/decision/never) that drafts an artifact autonomously in a subagent with an anti-hallucination input guard, review-after for decisions, and interactive-only for dialogue skills).
 
 **Plugin repo is the master copy.** The `AI Workflow/.claude/commands/` folder in the personal framework repo is secondary. Always edit here first.
 
@@ -296,6 +296,50 @@ Every skill that reads provided documents, a source folder, or a codebase MUST i
 5. **Reconcile multi-source conflicts explicitly.** When ingesting multiple sources covering the same domain (e.g., multiple research files from different tools, multiple interview rounds), do NOT silently pick one view or average them. Identify where sources **align** (strong signal - cite convergence) and where they **conflict** (surface as `[CONFLICT - Source A says X / Source B says Y → open hypothesis for validation]`). Resolve conflicts only with new evidence, not editorial judgment. This applies at every level: per segment, per persona, per market claim. A conflict between tools often reflects a real segment split or methodology bias - name it, do not paper over it.
 
 Never generate an artifact from a partial read. If the source is large, batch the reading and say so - but cover all of it. When a skill asks the user to "point me at the docs", it owns reading them **completely**, depth included - it does not wait to be told about the subfolder.
+
+---
+
+## Agent execution mode (universal standard)
+
+Every skill declares how it may run when invoked with the `--agent` flag - i.e. dispatched to an autonomous subagent that drafts the artifact from existing inputs and returns a short summary, instead of running interactively in the main session.
+
+**Runtime delivery (critical).** A plugin's `CLAUDE.md` is **not loaded at end-user runtime** - it is author-facing only. So this behavior cannot live only here. It must reach the user through the **skill itself**. Every skill therefore carries:
+
+1. A frontmatter tag: `metadata.agent-mode: synthesis | decision | never`
+2. A compact `## Agent mode (--agent)` block inline near the top of `SKILL.md` (the runtime-reaching copy of the rule below).
+
+This section is the **single authoring source of truth**; the inline block is the runtime instance. Keep them in sync when the rule changes.
+
+**The three categories** (classify by: "if an agent drafted this alone from the inputs and showed it to the user only when finished, would we lose something important?"):
+
+| Category | Meaning | `--agent` behavior |
+|---|---|---|
+| `synthesis` | Assembles/structures existing artifacts; no genuine user-decision content | Runs fully. Drafts + returns summary. |
+| `decision` | User commits to something (scope, priorities, strategy, rule values) | Drafts, then **requires user review/finalization** before the artifact is treated as final. Never closes decisions autonomously. |
+| `never` | The value **is** the live dialogue (adversarial, investigative, ideation, gated) | `--agent` ignored. Warn once, proceed interactively. |
+
+**Invariant mechanics (all categories):**
+- **Flag = obedience, no flag = proposal.** With no flag, the skill runs interactively and may *offer* agent mode when inputs are heavy. With `--agent`, obey.
+- **Input-completeness guard (safety).** A subagent cannot ask the user for a missing input. When `--agent` runs with thin inputs, it does **not** invent - it marks every gap `[ASSUMED - what/why]` in both the artifact and the summary. Never hallucinate to fill a gap. This is a safety rule; it must always be present in the inline block.
+- **Return compact.** Agent runs return a short summary + coverage note (files/folders read), not the full artifact dumped back into the main session.
+
+**Compact inline block templates** (paste near the top of each SKILL.md, after the H1):
+
+*synthesis / decision:*
+```
+## Agent mode (`--agent`)
+Podporuje `--agent`: beží autonómne v subagentovi, nadraftuje artefakt z existujúcich vstupov, vráti krátky súhrn + coverage note.
+- Bez flagu → interaktívne (default); pri ťažkých vstupoch ponúkni agent režim.
+- `--agent` → poslúchni. Over úplnosť vstupov. Čo chýba: NEVYMÝŠĽAJ - označ `[ASSUMED - čo/prečo]`. Nikdy nehalucinuj medzeru.
+- [len decision:] Review povinný: artefakt obsahuje záväzky - po drafte vynúť review pred finalizáciou.
+```
+*never:*
+```
+## Agent mode (`--agent`)
+Hodnota tohto skillu je živý dialóg - `--agent` nie je podporený. Pri `--agent` raz varuj a pokračuj interaktívne.
+```
+
+Every new skill MUST declare `agent-mode` and carry the matching block. The mechanism was validated by a spike (a synthesis skill run end-to-end as a subagent, with the input guard producing `[ASSUMED]` markers rather than fabrication).
 
 ---
 

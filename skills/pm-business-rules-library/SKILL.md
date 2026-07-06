@@ -3,6 +3,7 @@ name: pm-business-rules-library
 description: Build the Business Rules Library and Decision Models Matrix - Live Registers 2 and 3 of 4 in the FDD+SDD framework. Centralizes all business rules with unique IDs (BR-XXX-001) and decision tables into /domain/business_rules.md and /domain/decision_models.md. Replaces the upfront monolithic BRD with two continuously-maintained registers. Phase 4-5 skill - initial draft at Phase 5, enriched JIT in Phase 6 per feature.
 license: MIT
 metadata:
+  agent-mode: decision
   author: https://github.com/ljucask
   version: "2.0.0"
   domain: product-management
@@ -14,6 +15,17 @@ metadata:
 ---
 
 # PM - Business Rules Library
+
+
+## Agent mode (`--agent`)
+
+Podporuje `--agent`: beží autonómne v subagentovi, nadraftuje artefakt z existujúcich vstupov, vráti krátky súhrn + coverage note.
+
+- **Bez flagu** → interaktívne (default); pri ťažkých vstupoch ponúkni agent režim.
+- **`--agent`** → poslúchni. Najprv over úplnosť vstupov. Čo chýba: NEVYMÝŠĽAJ - označ `[ASSUMED - čo/prečo]` vo výstupe aj v súhrne. Nikdy nehalucinuj medzeru.
+- **Review povinný:** artefakt obsahuje záväzky - po drafte vynúť review používateľa pred finalizáciou; nezavieraj rozhodnutia autonómne.
+
+---
 
 ## What this skill does
 

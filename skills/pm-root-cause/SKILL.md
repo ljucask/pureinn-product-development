@@ -3,6 +3,7 @@ name: pm-root-cause
 description: Diagnostic engine for in-flight anomalies. When something live behaves unexpectedly - a metric dropped, churn spiked, a feature isn't adopted, conversion fell, tickets are rising - you describe the symptom and the skill drills to the real root cause, not the first plausible one. Runs a structured investigation: is it real or a measurement artifact, where does it concentrate (segment/funnel), what changed, candidate causes across categories, 5-Whys drill, evidence-vs-guess separation, and the cheapest test to confirm. Baked-in diagnostic methods, an anomaly-to-cause differential library, measurement traps, and a bias catalogue. Ends with testable hypotheses that feed pm-hypotheses. Cross-phase.
 license: MIT
 metadata:
+  agent-mode: never
   author: https://github.com/ljucask
   version: "1.0.0"
   domain: product-management
@@ -14,6 +15,13 @@ metadata:
 ---
 
 # PM - Root Cause (diagnose an in-flight anomaly)
+
+
+## Agent mode (`--agent`)
+
+Hodnota tohto skillu je živý dialóg - `--agent` nie je podporený. Pri `--agent` raz varuj ("tento skill potrebuje interakciu, agent režim ho vyprázdni") a pokračuj interaktívne.
+
+---
 
 ## What this skill does
 

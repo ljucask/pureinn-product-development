@@ -75,6 +75,25 @@ Playbook keywords also work: `reconcile`, `bootstrap`, `feature`.
 
 **Two tiers.** Stage keywords enter a whole *chunk* of work. For a single artifact, run its skill directly (`/jtbd-building`, `/pm-features-list`) - no stage needed.
 
+## Agent mode - draft autonomously, review after
+
+Any skill accepts `--agent`. Instead of building the artifact interactively, the skill drafts it autonomously from existing inputs (in a subagent, so your main session stays clean) and returns a short summary you review afterward.
+
+```
+/pm-prd --agent          # consolidate the PRD from Phase 2/3 artifacts, review after
+/pm-market-analysis --agent
+```
+
+Each skill declares its `agent-mode`, which governs what `--agent` does:
+
+| `agent-mode` | Skills | `--agent` behavior |
+|---|---|---|
+| **synthesis** | Assemble/structure existing artifacts (prd, market/domain/tech-analysis, kpis, business-case, roadmap, pitch-deck, onboarding, audit, diagrams...) | Runs fully. Drafts + returns summary. |
+| **decision** | You commit to something (personas, jtbd, lean-canvas, business-model, mvp-scope, prioritize, feature-design, business-rules...) | Drafts, then **requires your review** before anything is final. |
+| **never** | The value is the live dialogue (stress-test, root-cause, design-thinking, hypotheses, reconcile, stripe) | Declines agent mode. Warns once, stays interactive. |
+
+Two rules hold across all of them: **the flag is obeyed** (no flag = interactive default; `--agent` = run autonomously), and **missing inputs are never invented** - a subagent can't ask you, so any gap is marked `[ASSUMED - what/why]` in the output for you to fill, never hallucinated. Use `--agent` when you have solid inputs and want a fast first draft; skip it when you're still thinking the artifact through.
+
 ---
 
 # Playbook 1: Greenfield

@@ -3,6 +3,7 @@ name: pm-feature-card
 description: Create and manage Feature Cards for individual features (FEAT-ID). In the FDD+SDD framework, Feature Cards are the atomic delivery unit - one card per feature, living in /features/cards/. Cards are created as stubs by pm-features-list, populated in Sections 1-3 by pm-feature-design (JIT), and completed in Section 4 after build. This skill manages the card lifecycle and can create cards manually when needed.
 license: MIT
 metadata:
+  agent-mode: synthesis
   author: https://github.com/ljucask
   version: "2.1.0"
   domain: product-management
@@ -14,6 +15,16 @@ metadata:
 ---
 
 # PM - Feature Card
+
+
+## Agent mode (`--agent`)
+
+Podporuje `--agent`: beží autonómne v subagentovi, nadraftuje artefakt z existujúcich vstupov, vráti krátky súhrn + coverage note.
+
+- **Bez flagu** → interaktívne (default); pri ťažkých vstupoch ponúkni agent režim.
+- **`--agent`** → poslúchni. Najprv over úplnosť vstupov. Čo chýba: NEVYMÝŠĽAJ - označ `[ASSUMED - čo/prečo]` vo výstupe aj v súhrne. Nikdy nehalucinuj medzeru.
+
+---
 
 ## What this skill does
 

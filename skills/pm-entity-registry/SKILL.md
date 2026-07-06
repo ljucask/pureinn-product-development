@@ -3,6 +3,7 @@ name: pm-entity-registry
 description: Build the Entity & State Registry - Live Register 1 of 4 in the FDD+SDD framework. Extracts business entities from PRD Business Capabilities, defines their states and transitions in Mermaid.js, and writes to /domain/entities.md. Phase 4 skill - runs after PRD is complete. This is the operational register; pm-domain-model is the optional higher-level companion (cross-domain ERD and domain boundaries) that sits above it.
 license: MIT
 metadata:
+  agent-mode: synthesis
   author: https://github.com/ljucask
   version: "2.0.0"
   domain: product-management
@@ -14,6 +15,16 @@ metadata:
 ---
 
 # PM - Entity Registry
+
+
+## Agent mode (`--agent`)
+
+Podporuje `--agent`: beží autonómne v subagentovi, nadraftuje artefakt z existujúcich vstupov, vráti krátky súhrn + coverage note.
+
+- **Bez flagu** → interaktívne (default); pri ťažkých vstupoch ponúkni agent režim.
+- **`--agent`** → poslúchni. Najprv over úplnosť vstupov. Čo chýba: NEVYMÝŠĽAJ - označ `[ASSUMED - čo/prečo]` vo výstupe aj v súhrne. Nikdy nehalucinuj medzeru.
+
+---
 
 ## What this skill does
 

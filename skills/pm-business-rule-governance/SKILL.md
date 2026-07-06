@@ -3,6 +3,7 @@ name: pm-business-rule-governance
 description: JIT helper - add a single Compliance or Policy rule to domain/business_rules.md. For GDPR, regulatory obligations, admin constraints, data handling policies, and UX behavioral rules. Use when pm-privacy-requirements or pm-domain-analysis surfaces a regulatory requirement that needs a BR-ID for referencing in Feature Cards.
 license: MIT
 metadata:
+  agent-mode: decision
   author: https://github.com/ljucask
   version: "2.0.0"
   domain: product-management
@@ -14,6 +15,17 @@ metadata:
 ---
 
 # PM - Business Rule: Compliance / Policy Rule (JIT Helper)
+
+
+## Agent mode (`--agent`)
+
+Podporuje `--agent`: beží autonómne v subagentovi, nadraftuje artefakt z existujúcich vstupov, vráti krátky súhrn + coverage note.
+
+- **Bez flagu** → interaktívne (default); pri ťažkých vstupoch ponúkni agent režim.
+- **`--agent`** → poslúchni. Najprv over úplnosť vstupov. Čo chýba: NEVYMÝŠĽAJ - označ `[ASSUMED - čo/prečo]` vo výstupe aj v súhrne. Nikdy nehalucinuj medzeru.
+- **Review povinný:** artefakt obsahuje záväzky - po drafte vynúť review používateľa pred finalizáciou; nezavieraj rozhodnutia autonómne.
+
+---
 
 ## What this skill does
 

@@ -3,6 +3,7 @@ name: pm-onboarding
 description: Generate a role-specific Onboarding Brief for a new team member. Reads the existing workspace and distills the right subset of artifacts for the role (Developer, PM, Designer, Stakeholder/Investor). Produces a single navigable brief with product context, settled decisions, where-things-live map, current delivery state, and who to talk to. Run when a new person joins the team. Skip if solo builder with no team.
 license: MIT
 metadata:
+  agent-mode: synthesis
   author: https://github.com/ljucask
 
   version: "1.0.0"
@@ -15,6 +16,16 @@ metadata:
 ---
 
 # PM - Onboarding Brief
+
+
+## Agent mode (`--agent`)
+
+Podporuje `--agent`: beží autonómne v subagentovi, nadraftuje artefakt z existujúcich vstupov, vráti krátky súhrn + coverage note.
+
+- **Bez flagu** → interaktívne (default); pri ťažkých vstupoch ponúkni agent režim.
+- **`--agent`** → poslúchni. Najprv over úplnosť vstupov. Čo chýba: NEVYMÝŠĽAJ - označ `[ASSUMED - čo/prečo]` vo výstupe aj v súhrne. Nikdy nehalucinuj medzeru.
+
+---
 
 ## What this skill does
 

@@ -3,6 +3,7 @@ name: pm-reverse-extract
 description: Migration path skill for products built outside the framework. Reads existing codebase, docs, and Feature Cards (if any) to extract the full feature inventory. Outputs feature_list.md (Live Register 4, FEAT-[DOMAIN]-NNN IDs) + stub Feature Cards in features/cards/ + Notion push. Run after pm-entity-registry and pm-business-rules-library have initialized the domain registers. Run instead of pm-features-list + pm-mvp-scope for existing products.
 license: MIT
 metadata:
+  agent-mode: synthesis
   author: https://github.com/ljucask
   version: "2.0.0"
   domain: product-management
@@ -14,6 +15,16 @@ metadata:
 ---
 
 # PM - Reverse Extract (Existing Product Sync)
+
+
+## Agent mode (`--agent`)
+
+Podporuje `--agent`: beží autonómne v subagentovi, nadraftuje artefakt z existujúcich vstupov, vráti krátky súhrn + coverage note.
+
+- **Bez flagu** → interaktívne (default); pri ťažkých vstupoch ponúkni agent režim.
+- **`--agent`** → poslúchni. Najprv over úplnosť vstupov. Čo chýba: NEVYMÝŠĽAJ - označ `[ASSUMED - čo/prečo]` vo výstupe aj v súhrne. Nikdy nehalucinuj medzeru.
+
+---
 
 ## What this skill does
 

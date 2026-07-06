@@ -3,6 +3,7 @@ name: pm-features-list
 description: Generate the complete Features List in FDD format, organized by Domain > Feature Set (grouping label) > Feature. Runs Dependency Map, KANO Analysis, and Value vs. Complexity Matrix. Creates stub Feature Cards in /features/cards/ for each feature. After user approval, pushes features to Notion as the initial backlog. Output is the prioritized, dependency-mapped feature inventory and Live Register 4 ready for MVP scoping in pm-mvp-scope.
 license: MIT
 metadata:
+  agent-mode: decision
   author: https://github.com/ljucask
   version: "2.0.0"
   domain: product-management
@@ -14,6 +15,17 @@ metadata:
 ---
 
 # PM - Features List
+
+
+## Agent mode (`--agent`)
+
+Podporuje `--agent`: beží autonómne v subagentovi, nadraftuje artefakt z existujúcich vstupov, vráti krátky súhrn + coverage note.
+
+- **Bez flagu** → interaktívne (default); pri ťažkých vstupoch ponúkni agent režim.
+- **`--agent`** → poslúchni. Najprv over úplnosť vstupov. Čo chýba: NEVYMÝŠĽAJ - označ `[ASSUMED - čo/prečo]` vo výstupe aj v súhrne. Nikdy nehalucinuj medzeru.
+- **Review povinný:** artefakt obsahuje záväzky - po drafte vynúť review používateľa pred finalizáciou; nezavieraj rozhodnutia autonómne.
+
+---
 
 ## What this skill does
 

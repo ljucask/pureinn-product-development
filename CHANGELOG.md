@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.21.0] - 2026-07-06
+
+### Added universal --agent execution mode: all 47 skills tagged agent-mode (25 synthesis / 16 decision / 6 never) with a runtime-reaching inline block; anti-hallucination input guard ([ASSUMED] on missing inputs), review-after for decision skills, interactive-only for dialogue skills; agent-mode universal standard added to CLAUDE.md
+
+---
+
+
 ## [5.20.0] - 2026-07-06
 
 ### Added stage-keyword shortcuts (/pureinn define|discover|model|plan|build...) - enter the framework at any phase, scaffolds a workspace on the fly with graceful PREREQ handling; fixed stale roadmap path in pm-onboarding

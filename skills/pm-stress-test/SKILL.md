@@ -3,6 +3,7 @@ name: pm-stress-test
 description: Adversarial stakeholder pushback simulator. Stress-tests a proposal, plan, decision, or point of view BEFORE the real room. You paste what you want challenged; the skill plays a specific skeptical stakeholder (investor, CFO, board, CTO, legal, DPO, sales, product lead, and more), fires the sharpest questions that stakeholder actually asks, and presses in multiple rounds - not one shot. Runs a silent weakness diagnosis first, calibrates questions to persona x focus area, and ends with a prep summary: what held, what is thin, unresolved blind spots, and a concrete pre-meeting checklist. Use before any exec review, investor pitch, board meeting, budget defense, or contentious feature push. Cross-phase.
 license: MIT
 metadata:
+  agent-mode: never
   author: https://github.com/ljucask
   version: "1.0.0"
   domain: product-management
@@ -14,6 +15,13 @@ metadata:
 ---
 
 # PM - Stress Test (stakeholder pushback simulator)
+
+
+## Agent mode (`--agent`)
+
+Hodnota tohto skillu je živý dialóg - `--agent` nie je podporený. Pri `--agent` raz varuj ("tento skill potrebuje interakciu, agent režim ho vyprázdni") a pokračuj interaktívne.
+
+---
 
 ## What this skill does
 
