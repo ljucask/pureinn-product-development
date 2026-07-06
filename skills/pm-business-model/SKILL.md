@@ -19,11 +19,11 @@ metadata:
 
 ## Agent mode (`--agent`)
 
-Podporuje `--agent`: beží autonómne v subagentovi, nadraftuje artefakt z existujúcich vstupov, vráti krátky súhrn + coverage note.
+Supports `--agent`: runs autonomously in a subagent, drafts the artifact from existing inputs, and returns a short summary + coverage note.
 
-- **Bez flagu** → interaktívne (default); pri ťažkých vstupoch ponúkni agent režim.
-- **`--agent`** → poslúchni. Najprv over úplnosť vstupov. Čo chýba: NEVYMÝŠĽAJ - označ `[ASSUMED - čo/prečo]` vo výstupe aj v súhrne. Nikdy nehalucinuj medzeru.
-- **Review povinný:** artefakt obsahuje záväzky - po drafte vynúť review používateľa pred finalizáciou; nezavieraj rozhodnutia autonómne.
+- **No flag** → interactive (default); if inputs are heavy, offer agent mode.
+- **`--agent`** → obey. First check inputs are complete. Anything missing: do NOT invent it - mark `[ASSUMED - what/why]` in the output and summary. Never hallucinate to fill a gap.
+- **Review required:** the artifact contains commitments - after drafting, require the user's review before finalizing; do not close decisions autonomously.
 
 ---
 
@@ -61,13 +61,13 @@ Also check: does a Problem Validation Summary exist? Does a Market Analysis exis
 
 Look for: revenue streams without pricing evidence, value proposition not tied to validated pains, cost structure missing AI/infrastructure costs, no channel strategy defined, customer relationships undefined (self-serve vs. sales-led).
 
-Apply the standard skill interaction pattern (CLAUDE.md).
+**Interaction:** Group related questions (2-4 per round) and confirm before moving on. For any A/B/C/D choice, use the AskUserQuestion tool with one option marked **(Recommended)** - never print options as plain text. Keep open-ended questions free-text (don't fake options). If the user is unsure, propose 3-4 concrete options plus "Other". Surface an assumption the moment you make one; never fabricate to fill a gap. (Full standard: CLAUDE.md.)
 
 ---
 
 ### Re-run with new inputs (delta mode)
 
-If a Business Model Canvas already exists and you are re-running it because new evidence arrived (WTP insights from user research, updated market analysis, re-prioritization), do NOT rewrite from scratch. Operate in delta mode (CLAUDE.md universal standard):
+If a Business Model Canvas already exists and you are re-running it because new evidence arrived (WTP insights from user research, updated market analysis, re-prioritization), do NOT rewrite from scratch. Operate in delta mode (on re-run: compare against the prior artifact, update only what new evidence supports, and show the delta before finalizing; never silently overwrite - full standard in CLAUDE.md):
 
 1. **Read the current canvas first** and capture its claims in the blocks most sensitive to the new input: Value Propositions, Customer Segments, Revenue Streams (pricing / take-rate), Channels, Cost Structure.
 2. **Re-validate against the new sources:** WTP evidence in `personas.md` / research, `market-analysis.md` revenue potential, updated segments.

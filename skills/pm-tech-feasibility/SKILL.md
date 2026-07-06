@@ -19,10 +19,10 @@ metadata:
 
 ## Agent mode (`--agent`)
 
-Podporuje `--agent`: beží autonómne v subagentovi, nadraftuje artefakt z existujúcich vstupov, vráti krátky súhrn + coverage note.
+Supports `--agent`: runs autonomously in a subagent, drafts the artifact from existing inputs, and returns a short summary + coverage note.
 
-- **Bez flagu** → interaktívne (default); pri ťažkých vstupoch ponúkni agent režim.
-- **`--agent`** → poslúchni. Najprv over úplnosť vstupov. Čo chýba: NEVYMÝŠĽAJ - označ `[ASSUMED - čo/prečo]` vo výstupe aj v súhrne. Nikdy nehalucinuj medzeru.
+- **No flag** → interactive (default); if inputs are heavy, offer agent mode.
+- **`--agent`** → obey. First check inputs are complete. Anything missing: do NOT invent it - mark `[ASSUMED - what/why]` in the output and summary. Never hallucinate to fill a gap.
 
 ---
 
@@ -55,7 +55,7 @@ Also check: does a Project Charter exist? Cross-reference tech constraints and b
 
 Look for: sections marked TBD, open questions not yet resolved, stack recommendation that conflicts with known constraints, AI cost modeling missing if product has AI components.
 
-Apply the standard skill interaction pattern (CLAUDE.md).
+**Interaction:** Group related questions (2-4 per round) and confirm before moving on. For any A/B/C/D choice, use the AskUserQuestion tool with one option marked **(Recommended)** - never print options as plain text. Keep open-ended questions free-text (don't fake options). If the user is unsure, propose 3-4 concrete options plus "Other". Surface an assumption the moment you make one; never fabricate to fill a gap. (Full standard: CLAUDE.md.)
 
 ---
 

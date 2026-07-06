@@ -328,16 +328,18 @@ This section is the **single authoring source of truth**; the inline block is th
 *synthesis / decision:*
 ```
 ## Agent mode (`--agent`)
-Podporuje `--agent`: beží autonómne v subagentovi, nadraftuje artefakt z existujúcich vstupov, vráti krátky súhrn + coverage note.
-- Bez flagu → interaktívne (default); pri ťažkých vstupoch ponúkni agent režim.
-- `--agent` → poslúchni. Over úplnosť vstupov. Čo chýba: NEVYMÝŠĽAJ - označ `[ASSUMED - čo/prečo]`. Nikdy nehalucinuj medzeru.
-- [len decision:] Review povinný: artefakt obsahuje záväzky - po drafte vynúť review pred finalizáciou.
+Supports `--agent`: runs autonomously in a subagent, drafts the artifact from existing inputs, and returns a short summary + coverage note.
+- No flag → interactive (default); if inputs are heavy, offer agent mode.
+- `--agent` → obey. First check inputs are complete. Anything missing: do NOT invent it - mark `[ASSUMED - what/why]` in the output and summary. Never hallucinate to fill a gap.
+- [decision only:] Review required: the artifact contains commitments - after drafting, require the user's review before finalizing.
 ```
 *never:*
 ```
 ## Agent mode (`--agent`)
-Hodnota tohto skillu je živý dialóg - `--agent` nie je podporený. Pri `--agent` raz varuj a pokračuj interaktívne.
+This skill's value is the live dialogue - `--agent` is not supported. If invoked with `--agent`, warn once and proceed interactively.
 ```
+
+The inline blocks and the interaction-pattern rule ship in English (SKILL.md bodies are English); this section is the author-facing source of truth.
 
 Every new skill MUST declare `agent-mode` and carry the matching block. The mechanism was validated by a spike (a synthesis skill run end-to-end as a subagent, with the input guard producing `[ASSUMED]` markers rather than fabrication).
 

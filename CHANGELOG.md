@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.22.0] - 2026-07-06
+
+### Runtime-reaching universal standards + English consistency: inlined a self-contained interaction/question-pattern block into all 44 skills that previously only referenced CLAUDE.md, plus delta-mode (4); converted all agent-mode runtime blocks from Slovak to English; CLAUDE.md templates aligned to English. Closes the gap where standards did not reach end-user runtime.
+
+---
+
+
 ## [5.21.0] - 2026-07-06
 
 ### Added universal --agent execution mode: all 47 skills tagged agent-mode (25 synthesis / 16 decision / 6 never) with a runtime-reaching inline block; anti-hallucination input guard ([ASSUMED] on missing inputs), review-after for decision skills, interactive-only for dialogue skills; agent-mode universal standard added to CLAUDE.md

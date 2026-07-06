@@ -19,7 +19,7 @@ metadata:
 
 ## Agent mode (`--agent`)
 
-Hodnota tohto skillu je živý dialóg - `--agent` nie je podporený. Pri `--agent` raz varuj ("tento skill potrebuje interakciu, agent režim ho vyprázdni") a pokračuj interaktívne.
+This skill's value is the live dialogue - `--agent` is not supported. If invoked with `--agent`, warn once ("this skill needs interactive back-and-forth; agent mode would hollow it out") and proceed interactively.
 
 ---
 

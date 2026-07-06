@@ -19,10 +19,10 @@ metadata:
 
 ## Agent mode (`--agent`)
 
-Podporuje `--agent`: beží autonómne v subagentovi, nadraftuje artefakt z existujúcich vstupov, vráti krátky súhrn + coverage note.
+Supports `--agent`: runs autonomously in a subagent, drafts the artifact from existing inputs, and returns a short summary + coverage note.
 
-- **Bez flagu** → interaktívne (default); pri ťažkých vstupoch ponúkni agent režim.
-- **`--agent`** → poslúchni. Najprv over úplnosť vstupov. Čo chýba: NEVYMÝŠĽAJ - označ `[ASSUMED - čo/prečo]` vo výstupe aj v súhrne. Nikdy nehalucinuj medzeru.
+- **No flag** → interactive (default); if inputs are heavy, offer agent mode.
+- **`--agent`** → obey. First check inputs are complete. Anything missing: do NOT invent it - mark `[ASSUMED - what/why]` in the output and summary. Never hallucinate to fill a gap.
 
 ---
 

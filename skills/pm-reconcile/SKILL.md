@@ -19,7 +19,7 @@ metadata:
 
 ## Agent mode (`--agent`)
 
-Hodnota tohto skillu je živý dialóg - `--agent` nie je podporený. Pri `--agent` raz varuj ("tento skill potrebuje interakciu, agent režim ho vyprázdni") a pokračuj interaktívne.
+This skill's value is the live dialogue - `--agent` is not supported. If invoked with `--agent`, warn once ("this skill needs interactive back-and-forth; agent mode would hollow it out") and proceed interactively.
 
 ---
 
@@ -132,7 +132,7 @@ Runs on `/pm-reconcile` (when no plan exists) or `/pm-reconcile plan`.
 
 Show a state table: codebase accessible? old-docs folder found (and which doc types)? do any registers already exist? does `reconciliation_plan.md` exist? If a plan exists, ask whether to keep it (route to status) or rebuild it.
 
-Apply the standard skill interaction pattern (CLAUDE.md).
+**Interaction:** Group related questions (2-4 per round) and confirm before moving on. For any A/B/C/D choice, use the AskUserQuestion tool with one option marked **(Recommended)** - never print options as plain text. Keep open-ended questions free-text (don't fake options). If the user is unsure, propose 3-4 concrete options plus "Other". Surface an assumption the moment you make one; never fabricate to fill a gap. (Full standard: CLAUDE.md.)
 
 ## Step P1: Inspect (do not deep-reconcile yet)
 
@@ -253,7 +253,7 @@ Runs on `/pm-reconcile verify [area]`. The closing pass of a rebuild: before the
 - Confirm the rebuilt registers exist (`entities.md`, `business_rules.md`, `decision_models.md`, `feature_list.md` + cards). If a register is missing, that area was never reconciled - say so and route back to `/pm-reconcile [area]` first; do not "verify" a non-existent target.
 - Determine scope (default all; `verify domain | rules | features` scopes to one layer).
 
-Apply the standard skill interaction pattern (CLAUDE.md).
+**Interaction:** Group related questions (2-4 per round) and confirm before moving on. For any A/B/C/D choice, use the AskUserQuestion tool with one option marked **(Recommended)** - never print options as plain text. Keep open-ended questions free-text (don't fake options). If the user is unsure, propose 3-4 concrete options plus "Other". Surface an assumption the moment you make one; never fabricate to fill a gap. (Full standard: CLAUDE.md.)
 
 ## Step V1: Deep re-ingest the source
 
