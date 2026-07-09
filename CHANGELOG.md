@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.23.0] - 2026-07-09
+
+### Added docs/ framework documentation + website content-sync pipeline; release.sh now tags/publishes GitHub Releases and auto-syncs skill/command counts
+
+---
+
+
 ## [5.22.0] - 2026-07-06
 
 ### Runtime-reaching universal standards + English consistency: inlined a self-contained interaction/question-pattern block into all 44 skills that previously only referenced CLAUDE.md, plus delta-mode (4); converted all agent-mode runtime blocks from Slovak to English; CLAUDE.md templates aligned to English. Closes the gap where standards did not reach end-user runtime.
