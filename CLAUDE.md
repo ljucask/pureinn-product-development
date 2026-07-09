@@ -74,9 +74,16 @@ Every release - in this order:
 git add .
 git commit -m "Release vX.Y.Z - [summary]"
 git push
+
+# 5. Tag the release and publish it on GitHub (required - the pureinn CLI installs/updates from tags)
+git tag -a vX.Y.Z -m "Release vX.Y.Z - [summary]"
+git push origin vX.Y.Z
+gh release create vX.Y.Z --title "vX.Y.Z" --notes "[summary]"
 ```
 
 Never push a release without bumping the version. Users will not receive updates unless the version changes.
+
+Never skip the tag/GitHub Release step (5). The `pureinn` CLI (separate npm package) fetches skill updates from GitHub Release tags, not from `main` directly - an untagged version is invisible to `pureinn update`.
 
 ### Adding a new skill
 
