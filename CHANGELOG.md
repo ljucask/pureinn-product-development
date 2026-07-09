@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.24.0] - 2026-07-09
+
+### Added how-it-remembers documentation page (framework memory model)
+
+---
+
+
 ## [5.23.0] - 2026-07-09
 
 ### Added docs/ framework documentation + website content-sync pipeline; release.sh now tags/publishes GitHub Releases and auto-syncs skill/command counts
