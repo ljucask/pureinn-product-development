@@ -65,6 +65,33 @@ with open('$MARKETPLACE_JSON', 'w') as f:
     f.write('\n')
 EOF
 
+# Sync skill/command counts everywhere they're hardcoded (plugin.json,
+# marketplace.json, README.md, CLAUDE.md) so a release never ships a stale count.
+ACTUAL_SKILLS=$(find skills -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ')
+ACTUAL_COMMANDS=$(find commands -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ')
+
+python3 - <<EOF
+import re
+
+files = ["$PLUGIN_JSON", "$MARKETPLACE_JSON", "README.md", "CLAUDE.md"]
+changed = []
+
+for path in files:
+    with open(path, "r") as f:
+        content = f.read()
+    new_content = re.sub(r"\d+(?= active skills)", "$ACTUAL_SKILLS", content)
+    new_content = re.sub(r"\d+(?= commands)", "$ACTUAL_COMMANDS", new_content)
+    if new_content != content:
+        with open(path, "w") as f:
+            f.write(new_content)
+        changed.append(path)
+
+if changed:
+    print(f"Synced skill/command counts ({$ACTUAL_SKILLS} skills, {$ACTUAL_COMMANDS} commands) in: " + ", ".join(changed))
+else:
+    print(f"Skill/command counts already correct ({$ACTUAL_SKILLS} skills, {$ACTUAL_COMMANDS} commands).")
+EOF
+
 # Prepend to CHANGELOG.md
 CHANGELOG_ENTRY="## [$NEW_VERSION] - $TODAY
 
@@ -89,7 +116,7 @@ echo ""
 echo "Done. Version updated to $NEW_VERSION."
 echo ""
 echo "Next steps:"
-echo "  1. Review: plugin.json, marketplace.json, CHANGELOG.md"
+echo "  1. Review: plugin.json, marketplace.json, CHANGELOG.md, README.md, CLAUDE.md (skill/command count)"
 echo "  2. git add ."
 echo "  3. git commit -m \"Release v$NEW_VERSION - $MESSAGE\""
 echo "  4. git push"
