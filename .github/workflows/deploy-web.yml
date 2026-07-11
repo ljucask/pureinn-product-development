@@ -1,0 +1,25 @@
+# When a GitHub Release is published in this (framework) repo, ping the
+# Vercel deploy hook so the website (pureinn-web) rebuilds and pulls the
+# new release content via its build-time sync.
+#
+# Requires a repo secret VERCEL_DEPLOY_HOOK = the deploy hook URL from
+# Vercel (pureinn-web project -> Settings -> Git -> Deploy Hooks).
+
+name: Rebuild website on release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  trigger-vercel:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Vercel deploy hook
+        run: |
+          if [ -z "${{ secrets.VERCEL_DEPLOY_HOOK }}" ]; then
+            echo "VERCEL_DEPLOY_HOOK secret not set - skipping."
+            exit 0
+          fi
+          curl -sf -X POST "${{ secrets.VERCEL_DEPLOY_HOOK }}"
+          echo "Triggered Vercel rebuild of pureinn-web for release ${{ github.event.release.tag_name }}"
