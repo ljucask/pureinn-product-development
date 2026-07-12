@@ -1,17 +1,27 @@
 #!/usr/bin/env bash
-# Usage: ./scripts/release.sh <patch|minor|major> "Description of changes"
+# Usage: ./scripts/release.sh <patch|minor|major> "Description of changes" [--yes]
+#   --yes  publish without the interactive confirmation prompt
 
 set -e
 
-BUMP=${1:-patch}
-MESSAGE=${2:-""}
+# Parse args: bump + message in order, --yes / -y anywhere.
+AUTO_YES=false
+POSITIONAL=()
+for arg in "$@"; do
+  case "$arg" in
+    --yes|-y) AUTO_YES=true ;;
+    *) POSITIONAL+=("$arg") ;;
+  esac
+done
+BUMP=${POSITIONAL[0]:-patch}
+MESSAGE=${POSITIONAL[1]:-""}
 PLUGIN_JSON=".claude-plugin/plugin.json"
 MARKETPLACE_JSON=".claude-plugin/marketplace.json"
 CHANGELOG="CHANGELOG.md"
 
 if [[ -z "$MESSAGE" ]]; then
   echo "Error: release message required."
-  echo "Usage: ./scripts/release.sh <patch|minor|major> \"Description of changes\""
+  echo "Usage: ./scripts/release.sh <patch|minor|major> \"Description of changes\" [--yes]"
   exit 1
 fi
 
@@ -113,13 +123,29 @@ echo -e "# Changelog\n\n$CHANGELOG_ENTRY\n---\n" > "$CHANGELOG"
 echo "$EXISTING" | tail -n +2 >> "$CHANGELOG"
 
 echo ""
-echo "Done. Version updated to $NEW_VERSION."
+echo "Version prepared: $CURRENT -> $NEW_VERSION"
 echo ""
-echo "Next steps:"
-echo "  1. Review: plugin.json, marketplace.json, CHANGELOG.md, README.md, CLAUDE.md (skill/command count)"
-echo "  2. git add ."
-echo "  3. git commit -m \"Release v$NEW_VERSION - $MESSAGE\""
-echo "  4. git push"
-echo "  5. git tag -a v$NEW_VERSION -m \"Release v$NEW_VERSION - $MESSAGE\""
-echo "  6. git push origin v$NEW_VERSION"
-echo "  7. gh release create v$NEW_VERSION --title \"v$NEW_VERSION\" --notes \"$MESSAGE\""
+echo "Changed files:"
+git --no-pager diff --stat
+echo ""
+
+# Confirm before publishing, unless --yes was passed.
+if [[ "$AUTO_YES" != true ]]; then
+  read -r -p "Publish v$NEW_VERSION? (commit + push + tag + GitHub Release) [y/N] " REPLY
+  if [[ ! "$REPLY" =~ ^[Yy]$ ]]; then
+    echo "Aborted. Version files are updated but nothing was committed."
+    echo "Review the changes, then re-run with --yes, or commit manually."
+    exit 0
+  fi
+fi
+
+# Publish: commit, push, tag, push tag, create GitHub Release.
+git add .
+git commit -m "Release v$NEW_VERSION - $MESSAGE"
+git push
+git tag -a "v$NEW_VERSION" -m "Release v$NEW_VERSION - $MESSAGE"
+git push origin "v$NEW_VERSION"
+gh release create "v$NEW_VERSION" --title "v$NEW_VERSION" --notes "$MESSAGE"
+
+echo ""
+echo "Released v$NEW_VERSION. The website will rebuild automatically (deploy-web Action)."
