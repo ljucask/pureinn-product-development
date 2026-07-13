@@ -421,11 +421,8 @@ Covered [x] / [N]  ·  gaps [x]  ·  conflicts [x]  ·  altered [x]  ·  dropped
 
 ## Handoff
 
-```
 ---
-**Čo si teraz má:** [Po PLANE] plán rekonciliácie - ktoré oblasti, v akom poradí, do akej Pureinn
-štruktúry. [Po oblasti] tá vrstva je zladená s kódom, jej sekcia je v Reconciliation Reporte,
-register prestavaný.
+**Čo si teraz má:** [Po PLANE] plán rekonciliácie - ktoré oblasti, v akom poradí, do akej Pureinn štruktúry. [Po oblasti] tá vrstva je zladená s kódom, jej sekcia je v Reconciliation Reporte, register prestavaný.
 
 **Ďalší krok:** `/pm-reconcile [ďalšia oblasť podľa plánu]` — pokračuj v poradí.
 Stav kedykoľvek cez `/pm-reconcile-status`.
@@ -437,6 +434,4 @@ Reconciliation Report prejdi s tímom kvôli otvoreným divergenciám.
 
 **Pozor - Rebuild nezachytil strategickú vrstvu:** preskočil si Phase 1-3, takže vízia / NSM / biznis model / success kritériá fáz neexistujú. `/pm-product-roadmap` ti preto postaví **delivery-driven** roadmapu (hranice fáz diktuje rozostavanosť kódu, nie stratégia). Ak chceš **strategy-driven** fázovanie (MVP hranica podľa toho čo biznis musí dokázať), backfilluj strategickú vrstvu lean **pred** roadmapou: `/pm-business-model` (ak je zapojený PSP ako Stripe, take-rate model je knowable teraz - nedeferuj ho) + NSM + 12-mes. cieľ. Inak pusti roadmapu rovno a strategickú vrstvu nechaj TBD.
 
-**Môžeš preskočiť ak:** žiadne staré docs neexistujú (len kód) — vtedy stačí naivná migračná cesta
-(`/pm-entity-registry` + `/pm-business-rules-library` + `/pm-reverse-extract`) bez rekonciliácie.
-```
+**Môžeš preskočiť ak:** žiadne staré docs neexistujú (len kód) — vtedy stačí naivná migračná cesta (`/pm-entity-registry` + `/pm-business-rules-library` + `/pm-reverse-extract`) bez rekonciliácie.

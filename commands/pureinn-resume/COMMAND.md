@@ -116,11 +116,12 @@ State says Phase [N] is complete, but I don't see these expected artifacts:
 
   - [artifact name] (expected in phase-N/)
   - [artifact name]
-
-Options:
-  A) Proceed anyway - I have the outputs, just not in this directory
-  B) Re-open Phase [N] and complete the missing artifacts
 ```
+
+Then use the AskUserQuestion tool:
+- Question: "How do you want to proceed?"
+  - Option A: "Proceed anyway (Recommended if you know the outputs exist elsewhere)" — description: "I have the outputs, just not in this directory"
+  - Option B: "Re-open Phase [N] and complete the missing artifacts" — description: "Route back to the phase's skills queue"
 
 Wait for user choice before proceeding.
 
@@ -213,15 +214,12 @@ Run /pureinn [slug] after completing this phase to run the exit gate and advance
 
 ## STEP 7 - Options
 
-After displaying the dashboard and queue, always offer:
+After displaying the dashboard and queue, always offer via the AskUserQuestion tool:
 
-```
-What do you want to do?
-
-  A) Continue from where I left off - run the next skill
-  B) Review what was produced in a previous phase
-  C) Something specific: [describe]
-```
+- Question: "What do you want to do?"
+  - Option A: "Continue from where I left off (Recommended)" — description: "Run the next skill in the current phase's queue"
+  - Option B: "Review what was produced in a previous phase" — description: "Read and summarize a completed phase's artifacts"
+  - Option C: "Something specific" — description: "I'll describe"
 
 **If B:**
 ```
@@ -240,15 +238,11 @@ Do you want to update any of these, or continue to Phase [current]?
 
 ## Guidance Mode Toggle
 
-If the user mentions wanting to change guidance mode during the session:
+If the user mentions wanting to change guidance mode during the session, use the AskUserQuestion tool:
 
-```
-Toggle guidance mode?
-  Current: [On / Off]
-
-  A) On  - explain the why behind each phase and skill
-  B) Off - just route me, no explanations
-```
+- Question: "Toggle guidance mode? (Current: [On / Off])"
+  - Option A: "On" — description: "Explain the why behind each phase and skill"
+  - Option B: "Off" — description: "Just route me, no explanations"
 
 On change: update `guidance_mode` in state.json immediately.
 
@@ -258,15 +252,14 @@ On change: update `guidance_mode` in state.json immediately.
 
 If the user states the current phase is done, or runs /pureinn-resume after announcing completion:
 
-Run the exit gate using thresholds from the playbook file:
-`Framework know-how/Upstream activities - Playbooks/Playbook [playbook].md`
+Run the exit gate using the thresholds from the "Exit Gate Thresholds (default reference)" table in `commands/pureinn/COMMAND.md` (same source `/pureinn`'s own Exit Gate step uses - keep both commands' exit-gate logic in sync). As there, adjust the thresholds if the product's context clearly warrants different numbers (regulated industry, hardware, enterprise-only, pre-revenue research) before checking against them.
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 EXIT GATE - Phase [N]: [Phase Name]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-[Quantitative thresholds from playbook - Phase [N] exit criteria]
+[Quantitative thresholds from the Exit Gate Thresholds table in commands/pureinn/COMMAND.md - Phase [N] exit criteria]
 
 | Criterion | Required | Status |
 |---|---|---|
@@ -282,15 +275,15 @@ Exit gate passed.
 Type GO to advance to Phase [N+1].
 ```
 
-If criteria not met:
+If criteria not met, show:
 ```
 Exit gate not passed. Unmet conditions:
   ❌ [Condition] - [what's missing]
-
-  A) Go back and address the gaps
-     Recommended: [skills that address the gap]
-  B) Proceed anyway - I acknowledge the risk (FORCE)
 ```
+Then use the AskUserQuestion tool:
+- Question: "How do you want to proceed?"
+  - Option A: "Go back and address the gaps (Recommended)" — description: "Run: [skills that address the gap]"
+  - Option B: "Proceed anyway - I acknowledge the risk (FORCE)" — description: "Advances the phase with the gaps still open"
 
 On GO or FORCE:
 1. Add current phase to `phases_completed` in state.json
@@ -347,6 +340,6 @@ Run /pm-stripe to see the stripe dashboard and advance the first feature.
 - Do not re-run intake questions. The product is already defined.
 - Do not re-run document scan. State is already established.
 - Guidance is restored from state.json - do not ask again unless user requests toggle.
-- For Phase 6-7: show Stripe-level view (above). Individual feature status lives in Notion, not in state.json.
+- For Phase 6-7: show Stripe-level view (above). Individual feature status lives in Feature Card frontmatter (the `status` field, mirrored to Notion when connected) and `feature_list.md` - not in state.json. Re-derive the stripe view from `features/cards/` frontmatter, as Step "Phase 6-7 Handling" above does.
 - Always persist state changes to state.json immediately - never defer writes.
 - If state.json is outdated (missing fields like `product_shape`, `current_stripes`, or `registers`): fill with defaults and continue without blocking.

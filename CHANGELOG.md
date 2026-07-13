@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.25.0] - 2026-07-13
+
+### Framework hardening: 4-phase audit across all 47 skills + structural validator gated into every release
+
+---
+
+
 ## [5.24.0] - 2026-07-09
 
 ### Added how-it-remembers documentation page (framework memory model)

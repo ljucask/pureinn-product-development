@@ -61,6 +61,8 @@ Also check: did Go/No-Go verdict produce a GO? If the hypothesis register shows 
 
 Check for Design Thinking synthesis and Personas - these are the primary inputs. If missing, output quality will be lower.
 
+**Re-run behavior (delta mode):** If a Five Levels artifact already exists and inputs changed (new differentiators, revised positioning), do not rewrite from scratch. Read the current version first, update only what changed per level (`[UPDATED - previous: X / new: Y]`), and mark what is unaddressed `[UNCHANGED]`. Show the delta before finalizing.
+
 **Interaction:** Group related questions (2-4 per round) and confirm before moving on. For any A/B/C/D choice, use the AskUserQuestion tool with one option marked **(Recommended)** - never print options as plain text. Keep open-ended questions free-text (don't fake options). If the user is unsure, propose 3-4 concrete options plus "Other". Surface an assumption the moment you make one; never fabricate to fill a gap. (Full standard: CLAUDE.md.)
 
 ---
@@ -214,7 +216,7 @@ Generate the structured output. For each level, include:
 After generating the artifact, surface:
 
 1. **Internal consistency check:** Does Level 4 (differentiators) actually differentiate, or does it overlap with Level 3 (expected)? If expected by the market, it is not a differentiator.
-2. **Scope signal:** How many features are implied across Levels 2+3? If the list is long, flag it - Phase 5 will need to be strict about what actually goes into MVP.
+2. **Scope signal:** How many features are implied across Levels 2+3? If the list is long, flag it - Phase 5 will need to be strict about what actually goes into MVP. Apply the **early-adopter test** to every Level 3 attribute: it is Expected only if its absence would make the *early adopter* (not the average mainstream user) reject the product. Early adopters tolerate far more roughness - test Level 3 against the Early Adopter Profile, not the mainstream persona. Level 3 inflation is the single most common cause of oversized MVPs; every attribute that fails the early-adopter test moves to Level 4 or post-MVP.
 3. **Vision coherence:** Is Level 5 a natural extension of Level 4, or a pivot? A pivot at Level 5 suggests unclear product identity.
 
 ---

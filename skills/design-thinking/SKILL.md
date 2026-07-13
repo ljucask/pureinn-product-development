@@ -69,6 +69,8 @@ Also check: does a Problem Validation Summary exist? Does a JTBD Analysis exist?
 
 Look for: POV that describes features rather than user needs, HMW questions that are too broad ("HMW improve the experience") or too narrow ("HMW add a sync button"), ideation that jumped to solutions before framing, problem statement that describes symptoms rather than root cause.
 
+**Re-run behavior (delta mode):** If a Design Thinking Synthesis already exists and Phase 2 inputs changed, do not rewrite from scratch. Read the current Problem Statement / POV / HMW / Ideation first, re-validate against the new inputs, update only what changed (`[UPDATED - previous: X / new: Y]`), and mark what is unaddressed `[UNCHANGED]`. Show the delta before finalizing. Surface the cascade: `/pm-hypotheses`, `/pm-business-model`, `/pm-prd` may need re-check.
+
 **Interaction:** Group related questions (2-4 per round) and confirm before moving on. For any A/B/C/D choice, use the AskUserQuestion tool with one option marked **(Recommended)** - never print options as plain text. Keep open-ended questions free-text (don't fake options). If the user is unsure, propose 3-4 concrete options plus "Other". Surface an assumption the moment you make one; never fabricate to fill a gap. (Full standard: CLAUDE.md.)
 
 ---
@@ -318,6 +320,9 @@ After ideation, these are the solution directions that best address the validate
 
 **Recommended direction to pursue:**
 [Which direction and why - this informs the Business Model Canvas and PRD]
+
+**What would prove this direction wrong:**
+[The observable signal that should redirect us - a specific customer behavior, a failed commitment test, a force that doesn't materialize. Carry this into `/pm-hypotheses` as the falsification experiment. A direction without a falsification condition is a belief, not a hypothesis.]
 
 ---
 

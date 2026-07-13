@@ -378,6 +378,8 @@ What the product must enable, written as business capabilities. This section is 
 
 **Format:** "The system must enable [actor] to [business outcome]." No User Stories. No technical implementation. No "As a user I want..." format.
 
+**Granularity test (apply to every capability - this section drives the entire Phase 4/5 decomposition, so miscalibration here compounds):** a well-sized capability decomposes into roughly 1-5 features in Phase 5. If a capability implies 10+ features ("The system must enable users to manage their business"), it is a domain in disguise - split it. If it names a UI control or a single interaction ("...to click confirm"), it is a feature fragment - lift it to the outcome level. Each capability should also name at least one **actor** and imply at least one **entity** - a capability from which no entity can be extracted will produce nothing in `pm-entity-registry`.
+
 **[Domain 1: e.g., Order Management]**
 - The system must enable customers to create, confirm, and manage orders.
 - The system must enable customers to track order fulfillment status in real time.
@@ -673,7 +675,7 @@ Save to: `pureinn-workspace/[project-slug]/initiatives/[slug]/prd.md`
 
 What this initiative must enable. Primary input for pm-entity-registry (append), pm-business-rules-library (append), and pm-features-list (FI append).
 
-**Format:** Use numbered BC-NN blocks. Each block is a named capability group (not a single action). Block names become `prd_ref` anchor targets in Feature Cards (e.g., `prd_ref: "initiatives/[slug]/prd.md#bc-01-[name]"`). No User Stories.
+**Format:** Use numbered BC-NN blocks. Each block is a named capability group (not a single action). Block names become `prd_ref` anchor targets in Feature Cards (e.g., `prd_ref: "/initiatives/[slug]/prd.md#bc-01-[name]"`). No User Stories.
 
 **[Domain: e.g., Employee Onboarding]**
 
@@ -686,7 +688,7 @@ What this initiative must enable. Primary input for pm-entity-registry (append),
 **BC-03: [Capability group name]**
 [Continue for all capability groups in this domain.]
 
-> BC-IDs are used as anchors: Feature Cards reference `prd_ref: "initiatives/[slug]/prd.md#bc-01-[slug]"` so Claude Code reads only the relevant capability during JIT design.
+> BC-IDs are used as anchors: Feature Cards reference `prd_ref: "/initiatives/[slug]/prd.md#bc-01-[slug]"` so Claude Code reads only the relevant capability during JIT design.
 
 ---
 

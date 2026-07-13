@@ -108,11 +108,15 @@ Determine the **scope** first (from the argument or the user's request - default
 | product/PRD_master.md | |
 | roadmap, glossary | |
 
-**Version-drift signals** (detect an older-framework workspace):
+**Version-drift signals** (detect an older-framework workspace). This is the concrete migration checklist - an artifact produced by an older Pureinn version will carry one or more of these; scan for each literally, not just "convention drift" in the abstract:
 - Old lifecycle state names (`1_Walkthrough`, `2_Design`, `3_Design_Inspection_Passed`, `4_Build`, `5_Code_Inspection`, `6_Promoted_to_Build`)
 - Old hierarchy terms (`Subject Area`, `Major Feature Set`) or bare `FS-ID` without `FS-NN: Name`
 - Missing newer Feature Card fields (`feature_set`, `estimate`) or the `## Subtasks` section
 - Notion cache key `notion.*` instead of `notion_ids.*`
+- **Feature Card `prd_ref` pointing at the old PRD path** - `prd_ref: /product/PRD.md#...` (or the missing-slash variants `product/PRD.md#...` / bare `PRD.md#...`). Older versions saved the PRD as `PRD.md`; the canonical save path is now `product/PRD_master.md`, so every old card carries a **dead reference to a file that no longer exists**. Migrate to `prd_ref: /product/PRD_master.md#...` (preserve the `#section` anchor). Initiative-PRD refs (`/initiatives/[slug]/prd.md#bc-...`) are a separate valid form - leave them.
+- A separate MVP-membership field (`mvp: true/false`, `roadmap_phase:`, or an "MVP" column) instead of the single canonical `phase` axis
+- `layer: fullstack` instead of the explicit layer set (`frontend`, `backend`, `system`)
+- Reconcile-reality words (`Built` / `In Progress` / `Backlog`) sitting in a `status`/`Status` field instead of a canonical lifecycle value
 
 **Interaction:** Group related questions (2-4 per round) and confirm before moving on. For any A/B/C/D choice, use the AskUserQuestion tool with one option marked **(Recommended)** - never print options as plain text. Keep open-ended questions free-text (don't fake options). If the user is unsure, propose 3-4 concrete options plus "Other". Surface an assumption the moment you make one; never fabricate to fill a gap. (Full standard: CLAUDE.md.)
 
@@ -126,7 +130,7 @@ Read every artifact **in scope** (Step 0) and run the checks below - for an area
 |---|---|
 | **Structure** | Feature Cards match the canonical template (sections 1-4 + Subtasks; frontmatter: id, title, status, stripe, feature_set, actor, owner, priority, estimate, prd_ref, feature_flag, flag_default). Registers match current format and header. |
 | **ID & naming** | FEAT/BR/TBL/FS IDs well-formed (`FEAT-[DOMAIN]-NNN`, `BR-[DOMAIN]-NNN`, `TBL-[DOMAIN]-NN`, `FS-NN`) and unique. **The naming check is mandatory and must actually run over every feature name - report its result explicitly (even "0 anti-patterns found") so a silent skip is visible.** Each name must be `<action verb> <result> <object>` with a **strong verb** and an **object = a domain entity**. Flag every violation: (a) **vague/banned verbs** `Process` / `Manage` / `Handle` (and similar non-specific verbs); (b) **technical objects** - the object is an implementation construct not a domain entity (e.g. "...state machine", "...FSM", "...queue", "...flag", "...handler"); (c) the other FDD anti-patterns (bundled multi-op, missing object, CRUD-as-feature, etc.). A naming anti-pattern on an active feature is a P1 finding. Report each as `[FEAT-ID] "name" → [which anti-pattern] → suggested rename`. |
-| **Cross-references** | Every `BR-ID` / `TBL-ID` / entity link in a Feature Card resolves to the register. `feature_set` matches feature_list. `stripe` is a real stripe. No dangling links. |
+| **Cross-references** | Every `BR-ID` / `TBL-ID` / entity link in a Feature Card resolves to the register. `feature_set` matches feature_list. `stripe` is a real stripe. **`prd_ref` resolves** - it must point at `product/PRD_master.md` (or an `/initiatives/[slug]/prd.md` for an Initiative PRD); a `prd_ref` still pointing at `/product/PRD.md` (or `product/PRD.md` / bare `PRD.md`) is a dead reference to the old PRD path and is drift (P1 - JIT design reads this file). No dangling links. |
 | **Lifecycle** | `status` is one of the canonical states (`1_Backlog`, `2_Spec_Done`, `2b_In_Design`, `3_Ready_to_Build`, `4_In_Build`, `5_In_Review`, `6_Shipped`) **everywhere - frontmatter, feature_list, and Notion use the same single vocabulary**. No orphaned or invalid states. `2b_In_Design` is valid **only for a feature whose `layer` includes `frontend`** - a pure backend/system feature in `2b_In_Design` is drift (P2: it has no UI to design). **Reconcile-reality words (`Built` / `In Progress` / `Backlog`) are NOT status values** - if a feature_list or Notion `Status` still carries them, that is drift: map to canonical (`Built`→`6_Shipped`, `In Progress`→`4_In_Build`, `Backlog`→`1_Backlog`) and keep the reality word only as a human label in the card's `Current state (extracted)` section. Mixed vocabularies on the status axis = P1. |
 | **Version drift** | Any of the Step 0 drift signals → migration finding. |
 | **Completeness** | Every feature in feature_list has a card; every card has its required sections; registers are initialized; state.json flags match reality. |
@@ -167,7 +171,7 @@ Score and group every finding by severity:
 | **P0** | Broken - blocks work | Dangling BR-ID reference, invalid status value, feature_list entry with no card |
 | **P1** | Drift that causes errors | Old lifecycle state names, inconsistent FS-NN, naming anti-pattern on an active feature |
 | **P2** | Missing newer structure | No `feature_set`/`estimate` field, no `## Subtasks` section, incomplete card |
-| **P3** | Cosmetic | Formatting, path-slash convention, optional field gaps |
+| **P3** | Cosmetic | Formatting, path-slash convention, optional field gaps, a prose block (e.g. a handoff/routing note) wrapped in a stray ` ``` ` code fence that suppresses its own markdown rendering |
 
 ```markdown
 # Workspace Audit - [Product Name]
@@ -200,7 +204,7 @@ Present the score, P0/P1 summary, **and any Tier 2 conflicts** to the user befor
 
 ## Step 3: Fix
 
-- **Mechanical (auto-fix):** ID format normalization, old → new lifecycle state names, missing `feature_set`/`estimate`/`Subtasks` scaffolding added, `notion.*` → `notion_ids.*`, path-slash convention, dead-link repair where the target is unambiguous, **collapsing a stray `mvp`/`roadmap_phase` field or "MVP" column into the canonical `phase`** (one axis). Apply in place; report a diff summary.
+- **Mechanical (auto-fix):** ID format normalization, old → new lifecycle state names, missing `feature_set`/`estimate`/`Subtasks` scaffolding added, `notion.*` → `notion_ids.*`, **`prd_ref: /product/PRD.md#anchor` (and the `product/PRD.md` / bare `PRD.md` variants) → `/product/PRD_master.md#anchor`, anchor preserved** (an Initiative-PRD `/initiatives/[slug]/prd.md#bc-...` ref is left untouched), path-slash convention, `layer: fullstack` → the explicit layer set derived from evidence, dead-link repair where the target is unambiguous, **collapsing a stray `mvp`/`roadmap_phase` field or "MVP" column into the canonical `phase`** (one axis). Apply in place; report a diff summary.
 - **Judgment (ask):** anything where the fix changes meaning - a naming anti-pattern rewrite (always propose a concrete client-valued rename, e.g. "Drive order state machine" → "Submit order for matching"; never leave a flagged name unaddressed), an ambiguous dangling reference, a feature that may need splitting, a missing card that may be intentional. Batch these via the grouped AskUserQuestion pattern (CLAUDE.md), 2-4 per round, confirm, apply.
 **The `feature_list.md` is the whole-list orientation surface - backfill writes there FIRST, for every feature, then mirrors to the card and Notion.** Do not fill individual cards while leaving the list incomplete - the list is what the team reads to understand the backlog at a glance. Every feature in the list must end up with a Description and the full property set; iterate across the whole list, not card-by-card in isolation.
 
@@ -246,16 +250,11 @@ Plus in-place fixes to the affected artifacts (registers, feature_list, Feature 
 
 ## Handoff
 
-```
 ---
-**Čo si teraz má:** Workspace zladený s konvenciami (Tier 1) a obraz strategickej koherencie
-(Tier 2) - opravené ID/naming/refs/lifecycle + zoznam strategických konfliktov s routovaním.
+**Čo si teraz má:** Workspace zladený s konvenciami (Tier 1) a obraz strategickej koherencie (Tier 2) - opravené ID/naming/refs/lifecycle + zoznam strategických konfliktov s routovaním.
 
 **Ďalší krok:**
-- Ak Tier 2 našiel `[CONFLICT]`: spusti routovaný authoring skill (`/pm-prd`, `/pm-product-roadmap`,
-  `/pm-business-model`...) - opraví to v delta mode voči reálnym dátam. Audit ich nerieši.
+- Ak Tier 2 našiel `[CONFLICT]`: spusti routovaný authoring skill (`/pm-prd`, `/pm-product-roadmap`, `/pm-business-model`...) - opraví to v delta mode voči reálnym dátam. Audit ich nerieši.
 - Ak je čisto: `/pm-stripe` — pokračuj v JIT delivery. Alebo `/pureinn` pre phase gate check.
 
-**Môžeš preskočiť ak:** Workspace práve vznikol aktuálnou verziou frameworku a strategická vrstva
-sa od poslednej validácie nezmenila - drift ani strategický konflikt neexistuje.
-```
+**Môžeš preskočiť ak:** Workspace práve vznikol aktuálnou verziou frameworku a strategická vrstva sa od poslednej validácie nezmenila - drift ani strategický konflikt neexistuje.

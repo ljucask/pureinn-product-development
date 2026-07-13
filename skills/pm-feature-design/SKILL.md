@@ -226,6 +226,8 @@ Example:
 | Draft | Confirmed | payment.success | order.confirmed | card.luhn_valid == true AND BR-PAY-001 == pass |
 ```
 
+**Regression check before tightening a shared guard:** if the transition already has a finalized guard (not `TBD`) because an earlier, already-`6_Shipped` feature set it, adding a new condition to that same guard can silently break the shipped feature's behavior. Before finalizing, grep `/features/cards/` for other Feature Cards referencing this same entity transition. If any are `6_Shipped`, surface it explicitly: "This guard is already used by [FEAT-ID] (shipped). Tightening it to add [new condition] may change its behavior - confirm this is intended, or scope the new condition to this feature only (e.g. an additional guard on a different transition/branch)." Never silently narrow a guard that another shipped feature depends on.
+
 **3b. Finalize rules in business_rules.md**
 
 For each BR-ID this feature enforces:
@@ -553,17 +555,14 @@ Call `mcp__claude_ai_Notion__notion-update-page` with `command: "update_properti
 
 ## Handoff
 
-```
 ---
-**Čo si teraz má:** Feature Card Sections 1-3 kompletné + domain registers finalizované.
-Feature [FEAT-ID] je ready na Design Inspection. Status: 2_Spec_Done.
+**Čo si teraz má:** Feature Card Sections 1-3 kompletné + domain registers finalizované. Feature [FEAT-ID] je ready na Design Inspection. Status: 2_Spec_Done.
 
 **Ďalší krok:** Design Inspection
 - Tím: reviewni Sections 1-3, potvrď že ACs sú testovateľné a sequence diagram pokrýva happy path + guard failures.
 - Solo: prejdi Sections 1-3, potvrď alebo oprav, potom nastav status na 3_Ready_to_Build.
-Použite /pm-stripe pre tracking.
+Použite `/pm-stripe` pre tracking.
 
-**Po Design Inspection:** /pm-stripe → routuje na build skills pre [FEAT-ID].
+**Po Design Inspection:** `/pm-stripe` → routuje na build skills pre [FEAT-ID].
 
 **Spec gate - nezačínaj build kým:** Status nie je 3_Ready_to_Build.
-```

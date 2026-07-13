@@ -58,6 +58,8 @@ If it is a compliance, regulatory, or policy rule → use `pm-business-rule-gove
 
 ## Step 0: Current state check
 
+If `domain/business_rules.md` does not exist yet, do not attempt to create it here - tell the user to run `/pm-business-rules-library` first (it initializes the register), then return to this skill.
+
 Read `domain/business_rules.md`.
 
 List existing rules in the relevant domain. Identify the next available BR-[DOMAIN]-NNN.

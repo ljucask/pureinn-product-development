@@ -300,9 +300,9 @@ Next in [stripe-name]:
 
 ## Step 1F: Impact Analysis
 
-Triggered when a business rule changes in `business_rules.md`.
+Triggered when a business rule changes in `business_rules.md` - **and equally when an entity state machine changes in `entities.md`** (new state, removed transition, changed guard). A state-machine change is just as capable of breaking shipped features as a rule change, and is easy to under-trigger because it doesn't carry a BR-ID to search for - scan Section 1 entity links, not just BR-ID references, when the change originated in `entities.md`.
 
-**User provides:** Which rule changed (BR-ID) and what changed.
+**User provides:** Which rule or entity transition changed (BR-ID or Entity + transition) and what changed.
 
 **Analysis steps:**
 

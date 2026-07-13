@@ -58,6 +58,8 @@ Also check: does a Project Charter exist? Cross-reference budget constraints vs.
 
 Look for: unfilled roles (TBD), gaps without mitigation plan, decision areas with no clear owner, skill gaps that block Phase 6 start.
 
+**Re-run behavior (delta mode):** If these artifacts already exist, do not redraft blank. Compare new answers against the existing roster/matrix/assessment, show what changed (new hires, filled gaps, new decision owners), and update only what the new input supports.
+
 **Interaction:** Group related questions (2-4 per round) and confirm before moving on. For any A/B/C/D choice, use the AskUserQuestion tool with one option marked **(Recommended)** - never print options as plain text. Keep open-ended questions free-text (don't fake options). If the user is unsure, propose 3-4 concrete options plus "Other". Surface an assumption the moment you make one; never fabricate to fill a gap. (Full standard: CLAUDE.md.)
 
 ---
@@ -135,6 +137,11 @@ Generate all documents in English.
 **Peak capacity (Phase 6-7 Build):** [Y] FTE
 **Critical dependency:** [If one person leaves / gets sick, what breaks]
 ```
+
+**Compute effective FTE honestly - do not sum the stated percentages.** Apply these discounts and show the math in the table:
+- Context switching: a person at 50% on this project delivers ~35-40% (the switch cost is real); anyone split across 3+ projects counts at max 25% here regardless of what they say.
+- Wearing multiple hats: a founder doing PM + sales + support counts only the hours left for this project's execution, not their total time.
+- If discounted **peak build capacity** looks insufficient for Phase 6-7 (as a rough floor: less than ~1.5 effective FTE of engineering for an MVP build), flag it now as a 🔴 gap in the Skill Gap Assessment - discovering it in Phase 6 costs months.
 
 ---
 

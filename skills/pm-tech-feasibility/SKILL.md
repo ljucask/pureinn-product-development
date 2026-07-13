@@ -59,6 +59,18 @@ Look for: sections marked TBD, open questions not yet resolved, stack recommenda
 
 ---
 
+### Re-run with new inputs (delta mode)
+
+If a Tech Feasibility Report already exists and you are re-running it because new research arrived (new spike results, updated Tech Lead analysis, new vendor evaluation), do NOT rewrite from scratch and do NOT duplicate existing content:
+
+1. **Read the current report first** and capture its claims in the sections most sensitive to new input: Recommended Stack, Technical Risks, Build vs Buy vs Partner, Confidence Level.
+2. **Re-validate against the new sources.**
+3. **Change only what the new evidence supports.** Append genuinely new findings; where new data revises a prior claim (e.g., a stack choice or risk rating), mark `[UPDATED - previous: X / new: Y - reason]`; leave what the new input does not address `[UNCHANGED]`. Where sources conflict, surface `[CONFLICT]` rather than picking one silently.
+4. **Show the delta and wait for confirmation before writing** - never silently overwrite a prior feasibility verdict.
+5. **Surface the cascade:** name downstream artifacts now possibly inconsistent - `/pm-domain-model` (tech stack context), `/pm-prd` (constraints), `common-ground` (tech stack finalization) - and recommend `/pm-audit strategy` to verify the strategic layer still agrees.
+
+---
+
 ## Step 1: Gather inputs
 
 First, ask:
@@ -163,6 +175,11 @@ Note at the top of every generated artifact: `> Assumption-based - built from fo
 ## Step 2: Generate artifact
 
 Generate in English.
+
+**Feasibility judgment rules (apply when writing the verdict):**
+- Feasibility is **relative, not absolute**. The question is never "can this be built" (almost everything can) - it is "can THIS team build it within THIS budget and timeline." Anchor the verdict to the team-experience answer and the charter's constraints, and state what would flip it (e.g. "🟢 with a senior BE hire, 🟡 without").
+- Any risk rated High probability × High impact - or anything driving a 🟡/🔴 verdict - must name a **time-boxed spike** (days, not weeks) in "Next validation step." Committing to Phase 3b with an unspiked fatal technical risk is how projects die quietly in Phase 6.
+- Build vs Buy default: **buy or rent everything that is not the core differentiator.** Every "Build" row must state why that component is differentiating. "We can build it cheaper" is almost always false once maintenance, security patching, and opportunity cost are counted.
 
 ---
 

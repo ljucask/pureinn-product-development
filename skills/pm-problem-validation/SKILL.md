@@ -75,6 +75,10 @@ If tracks are incomplete, inform the user which are missing and let them decide 
 
 Look for (in existing summary): problem statement not specific enough, pains without evidence count, open questions not listed, Phase 1 assumption status not updated.
 
+**Multi-source handling:** This skill synthesizes 4 tracks (A-D) at once. Where tracks agree, cite convergence as high-confidence signal. Where tracks conflict (e.g., Track C says market is small while Track D shows high pain intensity), do not silently pick one - surface as `[CONFLICT - Track X says A / Track Y says B → open question for Phase 3a]` in the Open Questions section. Never average or paper over a conflict.
+
+**Re-run with new data (delta mode):** If a Problem Validation Summary already exists and a Track was updated, do not rewrite from scratch. Read the current summary first, re-validate against the updated track(s), update only what the new evidence supports (`[UPDATED - previous: X / new: Y]`), and mark what is unaddressed `[UNCHANGED]`. Show the delta before finalizing. Surface the cascade: `/pm-prd`, `/design-thinking`, `/pm-product-roadmap` may need re-check.
+
 **Interaction:** Group related questions (2-4 per round) and confirm before moving on. For any A/B/C/D choice, use the AskUserQuestion tool with one option marked **(Recommended)** - never print options as plain text. Keep open-ended questions free-text (don't fake options). If the user is unsure, propose 3-4 concrete options plus "Other". Surface an assumption the moment you make one; never fabricate to fill a gap. (Full standard: CLAUDE.md.)
 
 ---
@@ -211,6 +215,11 @@ Before generating, Claude must:
 2. Check for contradictions between tracks (e.g., market too small vs. high customer pain)
 3. Confirm the JTBD matches the identified personas
 4. Flag any track that is incomplete or has low confidence
+
+**Verdict discipline (this is the single most consequential judgment in Phase 2):**
+- "✅ Validated" requires all three: (1) evidence from real customers, not only founder knowledge; (2) the top pain confirmed by multiple independent sources; (3) no unresolved `[CONFLICT]` on problem, customer, or urgency. Missing any one → the honest verdict is ⚠️ Partially validated, and that is a normal, useful outcome - not a failure.
+- Do not soften a deserved ❌ to ⚠️ out of politeness. A ❌ verdict here saves more money than any other single output in the framework - it stops months of Phase 3-6 work on an unvalidated premise. State plainly what evidence would be needed to change it.
+- Watch for confirmation bias in the inputs themselves: if every track was authored from the same founder assumptions (all Path B), convergence between tracks is NOT independent confirmation - say so in the Evidence basis.
 
 ---
 

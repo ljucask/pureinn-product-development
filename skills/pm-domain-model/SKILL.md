@@ -92,6 +92,8 @@ If a Domain Model exists: identify version and completeness. Check for entities 
 
 Look for: entities without a clear domain owner, missing external/integration entities, relationships without cardinality, enums not listed, events not mapped, no ERD diagram.
 
+**Re-run behavior (delta mode, standard mode only):** If a Domain Model already exists and new scope arrived (new features, new integration), do not rewrite from scratch. Read the current model first, add/update only the domains and entities the new scope supports (`[UPDATED - previous: X / new: Y]`), and leave unaffected domains `[UNCHANGED]`. Show the delta before finalizing. This is separate from reconciled mode above, which has its own non-negotiation rule.
+
 **Interaction:** Group related questions (2-4 per round) and confirm before moving on. For any A/B/C/D choice, use the AskUserQuestion tool with one option marked **(Recommended)** - never print options as plain text. Keep open-ended questions free-text (don't fake options). If the user is unsure, propose 3-4 concrete options plus "Other". Surface an assumption the moment you make one; never fabricate to fill a gap. (Full standard: CLAUDE.md.)
 
 ---
@@ -167,6 +169,7 @@ Generate in English.
 **Principles:**
 - Each entity has one owner domain - the source of truth.
 - Domains communicate via references (IDs) and events, not direct data access.
+- Boundary smell test: if two domains constantly need each other's data synchronously to do anything, the boundary is drawn wrong - merge them or move the entity. A good boundary is one you could assign to a separate team (or separate service) without daily coordination.
 - [Product-specific boundary principle, e.g., "Booking domain does not own pricing logic"]
 
 ---

@@ -156,6 +156,12 @@ Before generating:
 3. In draft mode: formulas and exact conditions can be TBD - capture the intent and apply domain clearly
 4. Every rule must map to at least one entity from entities.md
 
+**Rule quality gate (apply to every candidate rule before it gets an ID):**
+- **Testability:** a rule must be violable and checkable. If you cannot describe one concrete scenario in which the system would break the rule, it is a design principle or an aspiration, not a business rule - keep it out of the register.
+- **MUST, not should:** rules are written MUST / MUST NOT. "Should" language signals a preference; either harden it to MUST (and confirm the user really means it) or downgrade it out of the register.
+- **Enforcement point:** every Critical rule names where it is enforced (which entity transition or guard blocks the violation) - a best-guess is acceptable in Draft, blank is not. A Critical rule nobody can point to in the state machine is unenforced by definition.
+- **One rule, one register entry:** if a candidate combines two conditions with different owners or exceptions, split it - compound rules are where silent conflicts hide.
+
 Generate in English.
 
 ---

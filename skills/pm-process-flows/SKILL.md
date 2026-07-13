@@ -232,6 +232,17 @@ flowchart TD
 
 ---
 
+## Step 4: Coverage cross-check (before saving)
+
+Two quick reconciliations that catch the classic gaps:
+
+1. **Every process step has an owner.** Walk each 2A process map: every step names a user type (or System) as its actor. A step nobody owns is either automated (name System explicitly) or a hole in the process - ask, don't guess.
+2. **Every user-type goal has a flow.** Walk `user_types.md`: each "primary goal in the system" is served by at least one 2B flow. A goal with no flow means either the goal is wrong or a flow is missing - surface it. (The reverse also matters: a flow serving no stated goal is a scope-creep signal.)
+
+Report both checks in one line each before saving ("All steps owned / step X in [process] has no actor").
+
+---
+
 ## Save to
 
 ```

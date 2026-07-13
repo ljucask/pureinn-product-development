@@ -62,6 +62,8 @@ If it is standard operational logic → use `pm-business-rule-core`.
 
 ## Step 0: Current state check
 
+If `domain/business_rules.md` does not exist yet, do not attempt to create it here - tell the user to run `/pm-business-rules-library` first (it initializes the register), then return to this skill.
+
 Read `domain/business_rules.md` - specifically the Regulatory/Compliance and User/Authorization sections.
 
 List existing compliance rules. Identify the next available BR-REG-NNN (or BR-USR-NNN for user/auth rules).
@@ -76,7 +78,7 @@ Use AskUserQuestion to confirm rule category (REG / USR / policy) before proceed
 
 ## Step 1: Gather inputs
 
-Use AskUserQuestion for structured choices. Gather via text prompt:
+Ask as plain text first:
 
 ```
 I need inputs to define a Compliance / Policy Rule for business_rules.md.
@@ -88,12 +90,19 @@ I need inputs to define a Compliance / Policy Rule for business_rules.md.
     "Admin actions on user accounts must be logged with the acting admin's ID and reason",
     "User data must be fully deleted within 30 days of an erasure request",
     "All payment transactions must be logged for 7 years for tax compliance")
+```
 
-2. RULE CATEGORY
-   a) REG - Regulatory/Legal (GDPR, PSD2, tax law, local regulation)
-   b) USR - User rights / Authorization (consent, data access, admin constraints)
-   c) POL - Internal policy (company standard, operational guideline)
+Then use AskUserQuestion tool (this is a classification of the rule just described, not a preference - no option is inherently "better", so none is marked Recommended; if the rule text makes the category obvious, state your read and let the user confirm instead of asking cold):
 
+- Question: "Which category does this rule belong to?"
+  - Option A: "REG - Regulatory/Legal (GDPR, PSD2, tax law, local regulation)"
+  - Option B: "USR - User rights / Authorization (consent, data access, admin constraints)"
+  - Option C: "POL - Internal policy (company standard, operational guideline)"
+  - Option D: "Not sure - help me decide"
+
+Then continue as plain text:
+
+```
 3. REGULATION / SOURCE
    Which specific regulation or policy does this stem from?
    (e.g., GDPR Article 17 / PSD2 SCA / ePrivacy Directive / local tax law / company policy)

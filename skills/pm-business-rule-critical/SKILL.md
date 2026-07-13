@@ -57,6 +57,8 @@ If it is a compliance or policy rule → use `pm-business-rule-governance`.
 
 ## Step 0: Current state check
 
+If `domain/business_rules.md` does not exist yet, do not attempt to create it here - tell the user to run `/pm-business-rules-library` first (it initializes the register), then return to this skill.
+
 Read `domain/business_rules.md`.
 
 List existing Critical rules and their IDs. Identify the next available BR-[DOMAIN]-NNN for the relevant domain.
@@ -107,6 +109,8 @@ I need inputs to define a Critical Invariant rule for business_rules.md.
 ## Step 2: Generate rule entry
 
 Generate the BR-[DOMAIN]-NNN ID as the next available number in that domain section of business_rules.md.
+
+**Detection, not just enforcement:** if the invariant protects money or legal standing, state in the Enforcement point line how a violation would be *detected* in production (audit query, alert, reconciliation job). An invariant with enforcement but no detection is enforced only by hope - the guard can have a bug, and nobody would know.
 
 Generate in English.
 

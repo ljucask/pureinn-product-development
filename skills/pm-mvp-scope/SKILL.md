@@ -155,6 +155,8 @@ Then ask as plain text:
 
 Are Notion Feature entries already created from pm-features-list? (yes / no - if yes, I'll update existing entries; if no, Notion update is skipped)
 
+**Capacity reconciliation (run before finalizing - this is where most MVPs actually blow their timeline):** cross-check the Group 1 IN-list size against Group 2's team size and timeline constraint. Rough heuristic: a solo developer clears roughly 2-4 Quick-Win-sized features per week, less for Big Bets; scale with team size but apply a coordination discount (a 4-person team is not 4x a solo dev - closer to 2.5-3x once integration and review overhead is counted). If the IN-list divided by this rate exceeds the stated deadline or runway, say so explicitly and force a second cut pass before generating the artifact: "At [team size], this MVP list is ~[X] weeks of work against a [Y]-week constraint. Which gives: cut more features, extend timeline, or add capacity?" Do not generate an MVP Scope that is silently unrealistic against its own stated constraint - that is the single most common way MVPs slip.
+
 After answers, show the finalized MVP scope proposal combining Group 1 alignment + Group 2 constraints. Ask for final confirmation before generating the full MVP Scope artifact with Feature Sets and Delivery Stripes.
 
 ---

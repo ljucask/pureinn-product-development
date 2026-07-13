@@ -150,6 +150,8 @@ Things that were settled in this meeting. Do not re-open without new evidence.
 
 [If no decisions were made: "No decisions made - discussion only."]
 
+**Reversal check:** if an onboarding brief (`pm-onboarding`) or a prior meeting note in `/meetings/` exists, cross-check each new decision against it. A decision that contradicts a previously "settled" one is not just noted here - flag it explicitly (`⚠️ Reverses earlier decision: [what, when, why it's changing now]`) so it doesn't silently create two conflicting sources of truth for the next reader.
+
 ---
 
 ## Action Items

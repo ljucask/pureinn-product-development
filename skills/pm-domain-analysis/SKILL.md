@@ -60,6 +60,18 @@ Look for: regulatory requirements marked TBD, missing legal professional validat
 
 ---
 
+### Re-run with new inputs (delta mode)
+
+If a Domain Analysis Report or Legal & Regulatory Requirements already exists and you are re-running it because new research arrived (new legal opinion, updated regulation, new domain research), do NOT rewrite from scratch and do NOT duplicate existing content:
+
+1. **Read the current artifacts first** and capture their claims in the sections most sensitive to new input: Domain-Specific Constraints, Regulatory Requirements, Licensing Requirements, Showstoppers.
+2. **Re-validate against the new sources.**
+3. **Change only what the new evidence supports.** Append genuinely new findings; where new data revises a prior claim, mark `[UPDATED - previous: X / new: Y - reason]`; leave what the new input does not address `[UNCHANGED]`. Where sources conflict, surface `[CONFLICT]` rather than picking one silently.
+4. **Show the delta and wait for confirmation before writing** - never silently overwrite a prior regulatory conclusion.
+5. **Surface the cascade:** name downstream artifacts now possibly inconsistent - `/pm-business-rules-library` (domain constraints), `/pm-privacy-requirements` (legal requirements), `/pm-prd` (constraints section) - and recommend `/pm-audit strategy` to verify the strategic layer still agrees.
+
+---
+
 ## Step 1: Gather inputs
 
 First, ask:
@@ -118,7 +130,7 @@ What industry or domain does this product operate in?
 
 Which markets are you launching in first?
 
-  A) Slovakia / Czech Republic only
+  A) Slovakia / Czech Republic only (Recommended - narrowest regulatory surface for a first launch; expand once the domain/legal picture is proven)
   B) Central and Eastern Europe (multiple CEE countries)
   C) EU-wide from launch
   D) US or global from launch
@@ -215,6 +227,8 @@ Generate in English.
 | [e.g., Host identity verification required] | Regulatory / Business / Technical | High / Med / Low | [detail] |
 | ... | | | |
 
+> Tag every constraint the **product itself must enforce** (not just the team must know) as `[CANDIDATE-BR]`. These seed `/pm-business-rules-library` in Phase 4-5 - this tag is how a regulatory obligation survives the trip from discovery into the rules register instead of being rediscovered during build.
+
 ---
 
 ## Established Industry Norms
@@ -272,6 +286,8 @@ Generate in English.
 | GDPR | EU | High | Data processing consent, right to erasure, DPA if applicable | Before launch |
 | [Local regulation] | [SK/CZ/...] | High / Med / Low | [what is required] | [when it applies] |
 | ... | | | | |
+
+> Classify each requirement's severity honestly: **showstopper** (cannot launch without it), **cost-raiser** (launch possible, adds cost or time), **hygiene** (standard practice, low effort). The two classic failure modes are over-classifying hygiene items as showstoppers (freezes the project) and under-classifying a licensing requirement as hygiene (discovered in Phase 7, months of delay). When in doubt on a licensing question, it is a showstopper until a lawyer says otherwise.
 
 ---
 

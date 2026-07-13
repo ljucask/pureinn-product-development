@@ -144,6 +144,12 @@ Before generating:
 - Guard conditions are NOT added here - they come JIT in pm-feature-design
 - Phase 1 states only: clean states. Example: `Draft | Confirmed | Cancelled` - not conditions like "if payment > 0"
 
+**State-quality heuristics (apply to every state machine before finalizing):**
+- **Behavior test:** a state earns its existence only if the system behaves differently in it (different allowed actions, different visibility, different rules). If nothing behaves differently, it is an attribute, not a state - drop it.
+- **Not a wizard:** UI steps ("step 2 of onboarding") and process checkpoints are not lifecycle states. Model the business object's life, not the screen flow.
+- **Merge twins:** two states with identical allowed transitions and identical rules are one state wearing two names.
+- **Adversarial pass (do this last, per entity):** walk the unhappy paths explicitly - what happens on payment failure, timeout, user abandonment, admin override, external-system error, reversal/refund? Most production bugs live in missing unhappy transitions, not in the happy path. Every terminal-looking situation needs either a transition or an entry in Illegal transitions - never silence.
+
 Generate in English.
 
 ---

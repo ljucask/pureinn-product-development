@@ -116,7 +116,7 @@ Creating Feature Card for: [FEAT-ID]
 
 3. PRD REFERENCE
    Which section of PRD covers this feature's business capability?
-   [PRD.md#section or PRD_Domain.md#section]
+   [/product/PRD_master.md#section or /product/PRD_[Domain].md#section]
 
 4. FEATURE FLAG
    Flag name (format: domain.feature-name): [name]
@@ -145,7 +145,7 @@ kano: [Must-be / Performance / Delighter / Indifferent]
 vxc: [Quick Win / Big Bet / Fill-in / Time Waster]
 estimate: "[S / M / L - informational sizing for roadmap, NOT the atomicity test]"
 has_subtasks: false
-prd_ref: /product/PRD.md#[section]
+prd_ref: /product/PRD_master.md#[section]
 feature_flag: [domain.feature-name]
 flag_default: off
 ---
@@ -210,6 +210,8 @@ flag_default: off
 *Lightweight nuance / spec helpers for the developer - NOT deliverables, NOT sub-features, they never break the feature's atomicity. Added during pm-feature-design discovery, by the team while writing the card, or folded from too-granular legacy features by pm-reconcile. A subtask that hardens into a testable condition becomes an AC; one that becomes reusable non-negotiable logic becomes a business rule (BR-ID).*
 
 - [ ] [nuance / spec detail - e.g. "reset link expires in 15 min", "reuse existing EmailService", "show skeleton loader while fetching"]
+
+> **Subtask-count signal:** more than ~6-8 subtasks on one card is usually not a detail-rich feature - it is an under-split feature wearing one FEAT-ID. Re-run the atomicity test from `pm-features-list` (one coherent result?) before adding more subtasks; if it fails, split the feature instead of growing the list.
 
 ---
 

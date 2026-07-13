@@ -65,6 +65,8 @@ Also check: does a Personas document exist? JTBD without personas context will p
 
 Look for: job stories that describe features rather than motivations ("I want to sync my calendar" is a feature request, not a job), Forces Diagram without evidence from actual interviews, push forces that are really just product features of the new solution, switching trigger not identified.
 
+**Re-run with new data (delta mode):** If a JTBD Analysis already exists and new interview data or personas arrive, do not rewrite from scratch. Read the current job stories and Forces Diagram first, re-validate against the new data, update only what the new evidence supports (`[UPDATED - previous: X / new evidence: Y]`), and mark what is unaddressed `[UNCHANGED]`. Show the delta before finalizing. Surface the cascade: `/pm-problem-validation` and `/design-thinking` may need re-check if the dominant forces or switching trigger changed.
+
 **Interaction:** Group related questions (2-4 per round) and confirm before moving on. For any A/B/C/D choice, use the AskUserQuestion tool with one option marked **(Recommended)** - never print options as plain text. Keep open-ended questions free-text (don't fake options). If the user is unsure, propose 3-4 concrete options plus "Other". Surface an assumption the moment you make one; never fabricate to fill a gap. (Full standard: CLAUDE.md.)
 
 ---
@@ -192,6 +194,7 @@ Before generating, Claude must:
 3. Check that pull forces are about expected outcomes (not product features)
 4. Identify the switching trigger - the specific moment that broke the status quo
 5. Identify the anxiety - what makes switching feel risky
+6. **Weigh the balance and state a verdict.** Switching happens only when Push + Pull outweigh Anxiety + Habit. If the anxiety/habit side dominates, say so explicitly in Key Insight - and note that the product answer is usually *reducing friction* (migration path, free trial, familiar patterns, reversibility), not adding more pull features. Teams instinctively respond to a weak forces balance by piling on features; the diagram exists precisely to catch that mistake.
 
 Generate in English.
 

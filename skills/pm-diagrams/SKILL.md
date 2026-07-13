@@ -83,7 +83,7 @@ Use AskUserQuestion tool with:
 - Question: "What diagram do you want to create?"
 - Option A: "Entity State Machine (Mermaid.js) - states and transitions for a specific entity"
 - Option B: "Sequence Diagram (Mermaid.js) - data flow between services for a specific feature"
-- Option C: "Domain Model Overview (Excalidraw) - entities and relationships, high-level"
+- Option C: "Domain Model Overview (Excalidraw) - entities and relationships, high-level (Recommended if unsure - state machines and sequence diagrams are normally auto-generated inside pm-entity-registry/pm-feature-design, so this is the most common reason to call pm-diagrams standalone)"
 - Option D: "User Flow, Business Process, System Architecture, JTBD Forces, or other - I'll describe"
 
 ---
@@ -218,6 +218,8 @@ For the JTBD Four Forces diagram, I need:
 ---
 
 ## Step 2: Generate diagram
+
+**Source-of-truth rule:** when the content being diagrammed lives in a register (`entities.md`, `business_rules.md`, `feature_list.md`, process-flows), read the register first and diagram what it says - never render from memory or from the user's paraphrase alone. If the user's description conflicts with the register, flag the divergence before drawing; a polished diagram of stale content is worse than no diagram, because people trust visuals more than they trust files.
 
 Generate the Excalidraw diagram using `mcp__claude_ai_Excalidraw__create_view`.
 

@@ -243,6 +243,10 @@ Always end here - this is what the user takes to the real room.
 
 ---
 
+**Route the blind spots (offer, don't impose):** any item in "Unresolved blind spots" that is an untested assumption belongs in a register, not just in this prep file. Offer to append them: validation-stage assumptions → Hypothesis Register (`/pm-hypotheses`), project-level risks → Assumptions & Risks Register (from `/pm-project-charter`). A blind spot that only lives in meeting-prep notes gets rediscovered by the next skeptic; one in a register gets tested.
+
+---
+
 ## Internal completeness checklist
 
 <!-- Claude reference only -->

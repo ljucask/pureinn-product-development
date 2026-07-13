@@ -186,6 +186,7 @@ Before generating:
 4. Assign each feature: unique ID (FEAT-[DOMAIN]-[NUMBER], e.g., FEAT-ORD-001), user role, rough complexity
 5. Flag features that are likely too large for one delivery cycle (mark for atomic split)
 6. Domain and Feature Set are GROUPING ONLY - no execution logic at those levels
+7. **Entity-coverage cross-check (closes the loop between Register 1 and Register 4):** walk every state transition in `entities.md` - some feature must be the thing that triggers it. A transition no feature triggers is either a dead state or a missing feature; surface it. Run the reverse too: a feature whose action maps to no entity operation or transition is a scope-creep candidate - question it before it gets an ID.
 
 **ID format:** `FEAT-[DOMAIN]-[NUMBER]`
 Domain codes match business_rules.md: ORD (order), PAY (payment), USR (user/auth), INV (inventory), etc.
@@ -504,7 +505,7 @@ kano: [Must-be / Performance / Delighter / Indifferent]
 vxc: [Quick Win / Big Bet / Fill-in / Time Waster]
 estimate: "[S / M / L - informational sizing, NOT the atomicity test]"
 has_subtasks: false
-prd_ref: /product/PRD.md#[relevant-section]
+prd_ref: /product/PRD_master.md#[relevant-section]
 feature_flag: [domain.feature-name]
 flag_default: off
 ---

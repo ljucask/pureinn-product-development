@@ -5,7 +5,6 @@ license: MIT
 metadata:
   agent-mode: synthesis
   author: https://github.com/ljucask
-
   version: "1.0.0"
   domain: product-management
   triggers: onboarding, new team member, new developer, new designer, new pm, role brief, team brief, joining
@@ -71,6 +70,10 @@ Inventory the workspace artifacts:
 | Team Roster | |
 | Stakeholder Map | |
 | pureinn-variables.md (Notion URLs) | |
+
+**Deep read:** Do not stop at file headers or index tables - read each relevant artifact in full (Feature Cards, entities.md, business_rules.md, personas.md, roadmap) and traverse subfolders (`/features/cards/`, `/domain/`, `/artifacts/`). Before generating, state coverage: "Read N artifacts across M folders: [list]." Anything unreadable or out of scope - flag it rather than skip silently.
+
+**Staleness check (critical for this skill):** the reader of this brief is the one person least able to spot outdated information - so never present stale content as current. Cross-check artifact dates and content against `state.json` (current phase) and the Feature Cards (actual delivery state). If the roadmap says "Phase 4" but state.json says Phase 6, or a persona doc predates a major re-run recorded elsewhere, either reconcile with the user before generating or mark the section `[STALE - artifact dated X, current state says Y - verify with PM]`. The Settled Decisions table may only contain decisions consistent with the *current* state - a decision later reversed is not settled, it is history.
 
 **Interaction:** Group related questions (2-4 per round) and confirm before moving on. For any A/B/C/D choice, use the AskUserQuestion tool with one option marked **(Recommended)** - never print options as plain text. Keep open-ended questions free-text (don't fake options). If the user is unsure, propose 3-4 concrete options plus "Other". Surface an assumption the moment you make one; never fabricate to fill a gap. (Full standard: CLAUDE.md.)
 

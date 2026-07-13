@@ -61,6 +61,8 @@ Also check: Go/No-Go verdict. If PIVOT or STOP, flag before proceeding - canvas 
 
 Check for Design Thinking synthesis and Personas - these are the primary inputs. Note missing inputs in the state table.
 
+**Re-run behavior (delta mode):** If a Lean Canvas already exists and inputs changed (new evidence, pivot, updated Go/No-Go), do not rewrite from scratch. Read the current canvas first, update only the blocks the new evidence supports (`[UPDATED - previous: X / new: Y]`), and mark unaddressed blocks `[UNCHANGED]`. Show the delta before finalizing. Surface the cascade: `/pm-prd`, `/pm-business-case`, `/pm-product-roadmap` may need re-check.
+
 **Interaction:** Group related questions (2-4 per round) and confirm before moving on. For any A/B/C/D choice, use the AskUserQuestion tool with one option marked **(Recommended)** - never print options as plain text. Keep open-ended questions free-text (don't fake options). If the user is unsure, propose 3-4 concrete options plus "Other". Surface an assumption the moment you make one; never fabricate to fill a gap. (Full standard: CLAUDE.md.)
 
 ---
@@ -93,14 +95,14 @@ Use AskUserQuestion tool for these two questions:
 
 What is the primary channel to reach your early adopters?
 
-  A) Product-led - product itself drives acquisition (self-serve, viral, free tier)
+  A) Product-led - product itself drives acquisition (self-serve, viral, free tier) (Recommended - fastest, cheapest signal for validation-stage products before there is a marketing budget)
   B) Content / inbound - SEO, community, thought leadership
   C) Outbound / sales - direct outreach, demos, relationship selling
   D) Partnership or ecosystem - integrations, resellers, platform distribution
 
 What is the revenue model?
 
-  A) Subscription - flat monthly or annual
+  A) Subscription - flat monthly or annual (Recommended - most predictable revenue and cleanest early unit economics; move to usage-based only if cost scales directly with usage)
   B) Usage-based - pay per action, transaction, or volume
   C) Freemium - free tier with paid upgrade trigger
   D) One-time or marketplace cut
@@ -283,6 +285,7 @@ After generating, surface the three most important tensions:
 1. **UVP vs. Problem match:** Does the UVP directly address Problem 1 (the highest severity)? If not, the positioning is misaligned.
 2. **Segment vs. Channel match:** Can you actually reach the early adopter profile via the primary channel at a reasonable cost?
 3. **Unfair advantage:** If the unfair advantage block is empty or generic, flag it explicitly. A business with no unfair advantage is one that anyone can copy once validated. Ask the user to pressure-test this block.
+4. **Runway math:** monthly burn × months-to-PMF-signal must fit inside available funding. If it does not, the canvas describes a plan to run out of money - say so plainly and name the two levers (cut burn or find an earlier, cheaper PMF signal) rather than letting the mismatch pass into `/pm-business-case`.
 
 ---
 

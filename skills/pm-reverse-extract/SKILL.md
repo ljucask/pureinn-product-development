@@ -148,6 +148,8 @@ For each feature found:
   - New domain with no entity → assign a descriptive code (e.g., NTF for notifications, SRC for search)
 - Assign FEAT-[DOMAIN]-NNN ID (sequential per domain, start from 001)
 - Determine status: Done / In Progress / Planned / Unclear
+
+**"Done" means reachable in production, not merely present in code.** A route or controller existing is not evidence of Done - check for a feature flag gating it (if OFF by default and no evidence it was ever flipped on, treat as In Progress, not Done), dead code with no UI entry point, or a route only reachable in test/staging config. When evidence is ambiguous, mark `Unclear` and say why rather than defaulting to Done - an inflated Done count understates the real backlog and misleads the stripe dashboard about what's actually shippable.
 - Identify actor: who initiates or benefits from this feature
 - Note spec coverage: does a Feature Card exist? Any spec doc section?
 

@@ -240,6 +240,11 @@ Note at the top of every generated artifact: `> Assumption-based - built from fo
 
 Generate in English.
 
+**Segmentation quality gate (apply before writing the Segment Map):**
+- A segment is valid only if it **changes a decision** - a different need, buying behavior, or usage context. If two "segments" would get the same product, the same price, and the same message, they are one segment: merge them and say so.
+- Demographic labels (company size, industry, geography) are proxies, not segments. Name the underlying need or behavior difference behind the label, or drop the split.
+- For MVP work, cap at 2-3 personas. A fourth persona almost always signals unwillingness to choose - force-rank instead and park the rest as `[LATER]`.
+
 ---
 
 ### ARTIFACT 1: Customer Segments
@@ -528,13 +533,10 @@ pureinn-workspace/[project-slug]/artifacts/phase-2-discovery/early-adopters-prof
 
 ## Handoff
 
-```
 ---
 **Čo si teraz má:** Segmenty, persony a early adopter profil. JTBD analysis môže začať.
 
-**Ďalší krok:** /jtbd-building — analyzuje Jobs-to-be-Done a Forces diagram pre každú personu.
-Alebo spusti /pureinn pre Phase 2 gate check ak sú hotové aj ostatné Track A-C.
+**Ďalší krok:** `/jtbd-building` — analyzuje Jobs-to-be-Done a Forces diagram pre každú personu.
+Alebo spusti `/pureinn` pre Phase 2 gate check ak sú hotové aj ostatné Track A-C.
 
-**Môžeš preskočiť /jtbd-building ak:** Máš jasné JTBD insights z rozhovorov
-a nepotrebuješ formálny Forces diagram pre fázu 3a.
-```
+**Môžeš preskočiť `/jtbd-building` ak:** Máš jasné JTBD insights z rozhovorov a nepotrebuješ formálny Forces diagram pre fázu 3a.

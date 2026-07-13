@@ -95,7 +95,6 @@ Rules for "NEXT":
 
 ## Handoff
 
-```
 ---
 **Čo si teraz má:** Aktuálny obraz rekonciliácie - čo hotové, čo zostáva, ktoré divergencie čakajú na rozhodnutie tímu.
 
@@ -103,4 +102,3 @@ Rules for "NEXT":
 Keď sú všetky oblasti hotové, poradie je obsah→plán→forma: `/pm-reconcile verify` (dôkaz pokrytia + doplnenie medzier) → `/pm-product-roadmap` (fázy) → `/pm-audit` (forma nad kompletným setom) → `/pm-stripe`.
 
 **Môžeš preskočiť ak:** rekonciliácia ešte nezačala — vtedy spusti `/pm-reconcile` (plán) najprv.
-```

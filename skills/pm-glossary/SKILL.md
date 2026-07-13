@@ -115,6 +115,8 @@ I will identify terms that should be in the glossary:
 
 Generate in English.
 
+**Collision guard (ubiquitous language):** if a new term duplicates an existing entry with a *different* meaning, do NOT silently overwrite and do NOT add a second row with the same name. Surface the conflict to the user - one term carries one meaning per domain, or the shared language breaks down exactly where it matters most. If both senses are genuinely real, qualify the names (e.g. `Booking (guest reservation)` vs `BookingRequest (pre-confirmation)`) and cross-link them in Connected Entities. Also check the reverse: two differently-named entries with the same meaning are a synonym pair - keep one canonical, mark the other "synonym of X".
+
 Apply glossary name types consistently:
 
 | Type | Definition | Examples |

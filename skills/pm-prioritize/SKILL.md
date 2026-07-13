@@ -101,6 +101,8 @@ Apply the chosen basis to produce a ranked order. Then **reconcile against the D
 
 Map the resulting order onto Priority bands (P1/P2/P3) and an explicit sequence.
 
+**P1 inflation check:** if more than roughly a third of scored features land in P1, priority has stopped doing its job - "everything is critical" is functionally identical to "nothing is prioritized." Surface this explicitly and force a harder cut within P1 (e.g., split into P1a/P1b, or push the weakest P1s to P2) rather than letting the band silently absorb every feature the user is emotionally attached to.
+
 ---
 
 ## Step 3: Present + confirm (non-destructive)

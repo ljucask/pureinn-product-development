@@ -54,6 +54,8 @@ Also check: does a Team Roster exist? Cross-reference team size and timezones vs
 
 Look for: tools no longer in use, meeting cadence that doesn't match current project phase, missing async alternatives, escalation path not defined.
 
+**Re-run behavior (delta mode):** If a Communication Charter already exists, do not redraft blank. Compare new answers against the existing version, show what changed (tools, cadence, working style), and update only what the new input supports.
+
 **Interaction:** Group related questions (2-4 per round) and confirm before moving on. For any A/B/C/D choice, use the AskUserQuestion tool with one option marked **(Recommended)** - never print options as plain text. Keep open-ended questions free-text (don't fake options). If the user is unsure, propose 3-4 concrete options plus "Other". Surface an assumption the moment you make one; never fabricate to fill a gap. (Full standard: CLAUDE.md.)
 
 ---
@@ -77,14 +79,14 @@ What is the team's working arrangement?
 
 What is the primary async communication tool?
 
-  A) Slack
+  A) Slack (Recommended - most flexible default for async-first startup teams; skip if you already have a tool in place)
   B) Microsoft Teams
   C) Email as primary (no dedicated async tool)
   D) Other - describe
 
 What is the project management tool?
 
-  A) Linear
+  A) Linear (Recommended - fastest to set up, lowest overhead for small/lean teams; skip if you already have a tool in place)
   B) Jira
   C) Notion or Google Sheets
   D) Other - describe
@@ -105,7 +107,7 @@ What best describes the team's natural working style?
 
   A) Async-first - minimize meetings, communicate in writing
   B) Meeting-heavy - prefer frequent syncs and verbal alignment
-  C) Balanced - async for execution, syncs for decisions
+  C) Balanced - async for execution, syncs for decisions (Recommended - matches this charter's own Async-by-default rule: async for routine work, sync reserved for decisions and phase gates)
   D) No clear preference yet - needs to be established
 
 How large is the team?
@@ -128,6 +130,18 @@ After answers, show complete Communication Charter inputs summary. Ask for final
 ## Step 2: Generate artifacts
 
 Generate all documents in English.
+
+**Right-size the rhythm before generating - the templates below are the mid-size default, not the answer.** Adapt them to the Group 1-2 answers:
+
+| Situation (from answers) | Adjustment |
+|---|---|
+| 2-3 people (founders only) | Cut Steering Committee and Weekly Review as separate meetings - merge into one weekly founder sync (30 min). Daily standup async only. A 3-person team with 5 recurring meetings is an anti-pattern. |
+| 4-7 people | Default templates fit. Steering Committee only if there are external investors/board. |
+| 8-15+ people | Add per-workstream syncs only where a workstream has 3+ people; keep the all-hands surface small (weekly memo, not weekly meeting). |
+| Distributed across timezones | Define the overlap window explicitly in the charter (e.g. "13:00-16:00 CET"), schedule all sync meetings inside it, and extend decision threads to a 24h async comment window so no timezone is structurally excluded from decisions. |
+| Meeting-heavy preference stated | Keep the async-first rule (it is the charter's spine) but add a 4-week transition note: convert one recurring meeting to async per week, review at first retro. Forcing a cold-turkey switch fails. |
+
+**Past problems become rules:** every communication problem the user named in Group 2 MUST appear in the charter as an explicit rule with a countermeasure (e.g. "decisions made without key people" → decision log + named Consulted list per decision type; "things fall between the cracks" → single owner per task, no shared ownership). Do not generate a charter that ignores the failure modes the user just told you about.
 
 ---
 

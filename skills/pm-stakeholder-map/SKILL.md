@@ -55,6 +55,8 @@ Check for existing artifacts:
 
 Look for: missing stakeholders, RACI gaps (decisions with no single Accountable), conflicts with Project Charter or Team Roster if those exist.
 
+**Re-run behavior (delta mode):** If these artifacts already exist, do not redraft blank. Compare new answers against the existing map/matrix/tree, show what changed (new stakeholders, power/interest shifts, new decisions), and update only what the new input supports.
+
 **Interaction:** Group related questions (2-4 per round) and confirm before moving on. For any A/B/C/D choice, use the AskUserQuestion tool with one option marked **(Recommended)** - never print options as plain text. Keep open-ended questions free-text (don't fake options). If the user is unsure, propose 3-4 concrete options plus "Other". Surface an assumption the moment you make one; never fabricate to fill a gap. (Full standard: CLAUDE.md.)
 
 ---
@@ -72,6 +74,8 @@ Ask all as plain text:
 List the internal team - roles involved in this project. For each, briefly describe their interest and how much influence they have over project outcomes.
 
 Who outside the team has a stake in or influence over this project? List external stakeholders: investors, customer segments, partners, regulators, vendors. For each, what do they care about and how much power do they have? (can kill it, can block it, can slow it, or can simply be ignored)
+
+**Late-veto check (ask explicitly - this is the most common stakeholder-mapping failure):** "Who can veto this project at the END - close to or at launch?" Typical late vetoers: legal, compliance/DPO, security review, procurement, works council, app-store review, a key integration partner's approval process. They show zero interest for months, then block the release. Anyone identified here goes into **Keep Satisfied** with a scheduled early touchpoint (Phase 1-2, not Phase 7) noted in their engagement strategy.
 
 After answers, confirm: "Is this a complete picture of who matters for this project?"
 
@@ -92,6 +96,11 @@ After answers, show complete stakeholder inputs summary. Ask for final confirmat
 ## Step 2: Generate artifacts
 
 Generate all documents in English.
+
+**Placement heuristics (apply when classifying, and explain your placement if it differs from the user's):**
+- Power = can they kill, block, or materially slow the project - not seniority. A junior compliance officer who signs off releases has high power; a VP with no touchpoint does not.
+- When unsure between two quadrants, classify one power level **higher** - the cost of over-managing a stakeholder is a few updates; the cost of under-managing one is a blocked launch.
+- Payer ≠ user (B2B): if the person who pays is not the person who uses the product, they are two stakeholders with different interests - map both, never merge them.
 
 ---
 

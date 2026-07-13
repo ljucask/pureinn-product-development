@@ -99,6 +99,8 @@ How would your primary user feel if this feature did NOT exist?
 
 If D: ask "Who is the user for this feature and what are they trying to accomplish?" then analyze and suggest the most likely KANO category with reasoning.
 
+**Loss-aversion check (apply even when the answer is A):** internal requesters systematically over-report Must-be because the request itself feels urgent to them - this is the most common source of MVP bloat. Before accepting "Must-be," ask one pressure-test question: "Has a real user asked for this, or is this the team's judgment of what they'd need?" A Must-be with no user evidence behind it is a hypothesis, not a classification - proceed, but note it as `[UNVALIDATED Must-be]` in the summary so it gets revisited if build capacity tightens.
+
 Use AskUserQuestion tool for this follow-up:
 
 Given this classification, what should we do?

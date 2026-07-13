@@ -215,6 +215,11 @@ Generate in English.
 4. Click-through from paid traffic (shows intent, not commitment)
 5. Verbal agreement - weakest, do not count as validation
 
+**Signal validity rules (apply in both modes):**
+- A conversion metric needs a **minimum denominator** before it means anything: ≥100 visitors from targeted (not friends/family) traffic for a landing-page rate, ≥10 ICP interviews for a qualitative pass, a full natural decision cycle (or ≥2 weeks) for pre-order tests. Below the floor, record the result as **Unclear** - never Pass or Fail. "5% conversion" from 20 visitors is one person; it is noise.
+- **No moving the goalposts:** the Results-mode verdict is judged against the success criteria recorded in Plan mode. If a criterion was genuinely mis-set, revise it explicitly as a new register version (`HYP-00X v2`, with the reason) - never silently reinterpret a miss as a pass.
+- **Watch the substitution error:** engagement (clicks, likes, "sounds great") substituting for commitment. Only commitment levels 1-3 above count toward a Market or Solution pass.
+
 ---
 
 ### ARTIFACT 1: Hypothesis Register
@@ -435,30 +440,21 @@ pureinn-workspace/[project-slug]/artifacts/phase-3-define/go-no-go.md
 ## Handoff
 
 **Plan mode:**
-```
+
 ---
-**Čo si teraz má:** Štruktúrovaný experiment plán s pre-definovanými success criteria.
-Hypotézy sú pripravené na testovanie - nezačínaj experimenty bez tohto registra.
+**Čo si teraz má:** Štruktúrovaný experiment plán s pre-definovanými success criteria. Hypotézy sú pripravené na testovanie - nezačínaj experimenty bez tohto registra.
 
-**Ďalší krok:** 👤 Spusti experimenty podľa plánu (landing page / smoke test / pre-order / concierge MVP).
-Po dokončení experimentov: /pm-hypotheses [Results mode] pre Go/No-Go verdikt.
+**Ďalší krok:** 👤 Spusti experimenty podľa plánu (landing page / smoke test / pre-order / concierge MVP). Po dokončení experimentov: `/pm-hypotheses` [Results mode] pre Go/No-Go verdikt.
 
-**Môžeš preskočiť experimenty a ísť priamo na Results mode ak:**
-Máš už výsledky z predchádzajúcej validácie (externý workshop, Miro, iný nástroj) -
-povedz /pureinn "Phase 3a done elsewhere" a dodaj verdikt + kľúčové evidencie.
-```
+**Môžeš preskočiť experimenty a ísť priamo na Results mode ak:** Máš už výsledky z predchádzajúcej validácie (externý workshop, Miro, iný nástroj) - povedz `/pureinn` "Phase 3a done elsewhere" a dodaj verdikt + kľúčové evidencie.
 
 **Results mode:**
-```
+
 ---
 **Čo si teraz má:** Go/No-Go verdikt s evidenciou.
 
-**GO → Ďalší krok:** /pm-kotler — začíname Phase 3b Commercial Definition.
-Spusti /pureinn pre gate check a potvrdenie.
+**GO → Ďalší krok:** `/pm-kotler` — začíname Phase 3b Commercial Definition. Spusti `/pureinn` pre gate check a potvrdenie.
 
-**PIVOT → Ďalší krok:** /pm-hypotheses [Plan mode] — prepracuj riskiest assumption
-a navrhni nový experiment. Ktorú hypotézu meníš?
+**PIVOT → Ďalší krok:** `/pm-hypotheses` [Plan mode] — prepracuj riskiest assumption a navrhni nový experiment. Ktorú hypotézu meníš?
 
-**STOP → Ďalší krok:** Zaznamenaj learnings. Projekt sa ukončuje.
-Čo ste sa naučili? (toto má hodnotu pre budúce projekty)
-```
+**STOP → Ďalší krok:** Zaznamenaj learnings. Projekt sa ukončuje. Čo ste sa naučili? (toto má hodnotu pre budúce projekty)

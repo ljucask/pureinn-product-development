@@ -137,7 +137,7 @@ Use AskUserQuestion tool for these two questions:
 
 What is the target geography for this product?
 
-  A) One country - focused single market
+  A) One country - focused single market (Recommended - concentrated launch reduces localization and regulatory surface, gets you to real market signal fastest; expand once validated)
   B) Regional - 2 to 5 countries with similar characteristics
   C) Global from day one
   D) Other - describe
@@ -268,6 +268,14 @@ Note at the top of every generated artifact: `> AI-researched - market data retr
 ## Step 2: Generate artifacts
 
 Generate in English.
+
+**Sizing sanity rules (apply before writing any number):**
+- Prefer **bottom-up** (count of reachable target customers × realistic ARPU) over top-down ("X% of a $NB market"). If only top-down data exists, still compute a rough bottom-up cross-check from whatever unit counts are available and mark the figure `[TOP-DOWN - verify bottom-up]` if they diverge.
+- **SOM is not "X% of SAM."** Derive it from acquisition capacity: which channels the team can actually operate, sales cycle length, and budget. If the SOM implies acquiring more customers per month than the named channels can plausibly deliver, cut the number and say why.
+- The reverse error is also real: a small niche with intense pain and proven willingness to pay can beat a giant commodity market. Do not penalize a well-argued narrow SAM.
+- If the user's numbers fail these checks, show your corrected estimate **next to** theirs with the reasoning and let them choose - never silently accept or silently replace.
+
+**"We have no competitors" is never accepted at face value.** The status quo (spreadsheets, manual process, hiring someone, doing nothing) is a competitor - it currently wins 100% of the market. If no direct competitor exists, that means either the problem is not valuable enough or nobody has cracked the model - both are claims that must be argued in Market Timing, not celebrated. Always include the do-nothing/status-quo alternative as a column in the Head-to-Head comparison.
 
 ---
 

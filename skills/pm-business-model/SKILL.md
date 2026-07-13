@@ -96,7 +96,7 @@ Who is the primary paying customer?
 
 What is the primary revenue model?
 
-  A) Subscription - flat monthly or annual fee
+  A) Subscription - flat monthly or annual fee (Recommended - most predictable revenue and cleanest early-stage unit economics; move to usage-based only if cost scales directly with customer usage)
   B) Usage-based - pay per action, transaction, or volume
   C) Freemium - free tier with paid upgrade
   D) One-time purchase or marketplace cut
@@ -119,7 +119,7 @@ Use AskUserQuestion tool for these two questions:
 
 What is the primary customer acquisition motion?
 
-  A) Product-led - product itself drives acquisition and conversion (self-serve, viral loops)
+  A) Product-led - product itself drives acquisition and conversion (self-serve, viral loops) (Recommended - lowest CAC and fastest iteration loop for an early-stage, resource-constrained team; shift toward sales-led as average contract value rises)
   B) Content / inbound - SEO, community, thought leadership drives leads
   C) Outbound / sales-led - direct outreach, demos, relationship selling
   D) Partnership or channel - resellers, integrations, ecosystem distribution
@@ -127,7 +127,7 @@ What is the primary customer acquisition motion?
 What type of relationship do customers expect with this product?
 
   A) Self-serve tool - they figure it out themselves, low-touch
-  B) Assisted onboarding - guided setup, then self-serve
+  B) Assisted onboarding - guided setup, then self-serve (Recommended - best default until data shows customers succeed fully self-serve or need continuous high-touch support; balances activation rate against support cost)
   C) Ongoing managed relationship - CSM, regular check-ins, high-touch
   D) Community-led - peer support and network is the core relationship
 
@@ -158,6 +158,11 @@ After answers, show complete Business Model summary across all 3 groups. Ask for
 ---
 
 ## Step 2: Generate artifact
+
+**Coherence checks (run on the Group 1-3 answers before generating - a canvas whose blocks contradict each other is worse than no canvas):**
+- **ACV ↔ motion fit:** low price point (roughly < $1-2k/year per customer) cannot afford sales-led acquisition or a high-touch CSM relationship - the math never closes. Enterprise ACV rarely closes self-serve. If the revenue answer and the acquisition/relationship answers mismatch, flag it and resolve before writing the canvas.
+- **Price anchoring:** anchor the price to the **quantified cost of the problem** (from personas/JTBD economic impact - time lost, money lost, risk), not to competitor list prices alone. Rule of thumb: the customer should perceive value ≥10x the price. If nobody has quantified the problem cost yet, that is a `[NEEDS VALIDATION]` assumption in the Assumptions table, not a footnote.
+- **Freemium honesty:** freemium is an acquisition channel with a real COGS, not a pricing tier. If chosen, the upgrade trigger must be a concrete usage limit tied to value delivery, and the free-tier serving cost must appear in Cost Structure.
 
 Generate in English.
 

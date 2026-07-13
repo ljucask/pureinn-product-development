@@ -174,7 +174,7 @@ This is the existing **"done elsewhere"** rule (used for Phase 3a) generalized t
 
 ## STEP 2 - Document Scan and Intake
 
-First, scan the entire working directory recursively for any existing documents (.md, .txt, .pdf, .docx, .csv, notes, research files - anything that could be product or research material). Exclude code files, system files, and this framework's own files (`.claude/`, `Framework know-how/`, `docs - product framing/`, `pureinn-workspace/`).
+First, scan the entire working directory recursively for any existing documents (.md, .txt, .pdf, .docx, .csv, notes, research files - anything that could be product or research material). Exclude code files, system files, dependency/build directories (`node_modules/`, `.git/`, `dist/`, `build/`), and this framework's own operational files (`.claude/`, `pureinn-workspace/`).
 
 **If documents are found outside the framework:**
 
@@ -419,23 +419,6 @@ BUSINESS MODEL
 OPEN QUESTIONS
   - [What is unclear, missing, or contradictory - and why it matters]
 ```
-
-**5. Confirmation**
-
-```
-Review the above. For each section:
-
-  ✅ Confirm - correct
-  ✗  Reject   - wrong, here's what's right: [correction]
-  ~  Adjust   - partially right, here's the nuance: [adjustment]
-
-Add anything I missed.
-```
-
-Wait for user response. Update the assessment based on corrections before proceeding.
-
-After confirmation, save the finalized assessment to:
-`pureinn-workspace/[slug]/assessment.md`
 
 **5. Confirmation prompt**
 
@@ -821,19 +804,14 @@ After creating the file, tell the user:
 
 ```
 pureinn-variables.md created.
-
-To connect Notion, you have two options:
-
-  A) Use the Pureinn Notion template (recommended)
-     Duplicate it to your workspace, then paste the URLs here.
-     Template + setup guide: see NOTION_TEMPLATE.md in the plugin folder.
-
-  B) Use your own Notion setup
-     Open pureinn-variables.md and paste the URLs of your existing pages and databases.
-     Leave rows blank - skills will ask when they first need each item.
-
 Skills read pureinn-variables.md automatically. No need to re-enter URLs during skill runs.
 ```
+
+Then use the AskUserQuestion tool to help the user connect Notion now (or defer):
+- Question: "How do you want to connect Notion?"
+  - Option A: "Use the Pureinn Notion template (Recommended)" — description: "Duplicate it to your workspace, then paste the URLs into pureinn-variables.md. Template + setup guide: see NOTION_TEMPLATE.md in the plugin folder."
+  - Option B: "Use your own Notion setup" — description: "Open pureinn-variables.md and paste the URLs of your existing pages and databases."
+  - Option C: "Skip for now" — description: "Leave rows blank - skills will ask when they first need each item."
 
 **How skills read pureinn-variables.md:**
 
@@ -1183,6 +1161,54 @@ State "Phase 3b partially done elsewhere" and list which artifacts exist.
                          [Excalidraw - secondary for human communication: Domain Model Overview,
                           User Flow, Business Process Model, System Architecture, JTBD Four Forces]
                          [Excalidraw types require: Excalidraw MCP connected]
+
+/pm-process-flows      → System user types + business process maps (2A) + per-user screen-connected
+                         user flows (2B, designer brief)
+                         [Phase 4-5 bridge into design - re-runnable per domain/module]
+                         [Feeds pm-feature-design's UX context (Section 3b) and the designer]
+
+/pm-prioritize         → Re-runnable backlog prioritization engine (align to roadmap / your directive /
+                          a named lens / propose-and-confirm), dependency-reconciled, non-destructive
+                         [Run any time priorities shift - after pm-features-list, after MVP cut, or later]
+
+/pm-audit              → Workspace health check - Tier 1 form (IDs, naming, cross-refs, lifecycle,
+                          version drift) auto-fixed + Tier 2 strategic consistency (read-only, routes conflicts)
+                         [Optional area argument: /pm-audit domain | rules | features | strategy]
+                         [Run after pm-reconcile/pm-reverse-extract, after a framework version upgrade,
+                          or any time to confirm the workspace is internally consistent]
+
+/pm-onboarding         → Role-specific Onboarding Brief for a new team member (Developer / PM / Designer /
+                          Stakeholder), distilled from the existing workspace
+                         [Run when a new person joins. Skip if solo builder with no team.]
+
+/pm-meeting            → Structured meeting notes, decisions log, and tagged action items from raw
+                          notes or a transcript
+                         [Run after any meeting where notes or a transcript exist]
+
+/pm-prototype          → Tool-ready prototype spec (Lovable / v0 / Figma Make) to validate a flow, UX
+                          hypothesis, or concept before real build; result mode feeds back to the
+                          Feature Card / hypothesis register
+                         [Cross-phase - use anytime there is genuine uncertainty worth de-risking cheaply]
+
+/pm-stress-test        → Adversarial stakeholder pushback simulator (investor / CFO / board / CTO / DPO...)
+                         [Run before any exec review, investor pitch, board meeting, or contentious push]
+
+/pm-root-cause         → Diagnostic engine for an in-flight anomaly (metric dropped, churn spiked,
+                          feature not adopted) - drills to the real root cause, ends with testable hypotheses
+                         [Cross-phase - feeds /pm-hypotheses]
+
+/pm-feature-viability  → Lightweight KANO/MDP/success-metric check before a new feature enters JIT design
+                         [Skip if the feature is already scoped, committed, or in a validated roadmap]
+
+/pm-decision-model     → JIT helper - add a single decision table (TBL-ID) to decision_models.md
+                          without re-running the full pm-business-rules-library skill
+                         [Typically triggered from pm-feature-design when a multi-condition decision surfaces]
+
+/pm-business-rule-core / -critical / -governance
+                       → JIT helpers - add a single business rule (operational / critical invariant /
+                          compliance) to business_rules.md by priority class, without re-running the
+                          full pm-business-rules-library skill
+                         [Typically triggered from pm-feature-design when a rule not yet in the register surfaces]
 ```
 
 ---
@@ -1197,24 +1223,24 @@ MIGRATION PATH (existing product built outside the framework)
   /impeccable document     → design context (design system, components) → PRODUCT.md + DESIGN.md
   /pm-glossary          → start domain glossary
 
-  TWO SUB-PATHS:
+  TWO SUB-PATHS (reference only - resolved interactively in STEP 4's Rebuild playbook note):
 
-  A) Legacy docs exist and may conflict with the code (old BRD/FSD/domain models),
-     and/or the team is changing - you need one reconciled source of truth:
-     /pm-reconcile       → scans code, parses old docs, reconciles (code = structural truth,
-                            docs = business logic, conflicts → AskUserQuestion)
-                          → Reconciliation Report (the team's "where are we" brief)
-                          → then orchestrates the rebuild below in reconciled mode.
-                          This is the entry point - run it instead of the three skills standalone.
+  - Legacy docs exist and may conflict with the code (old BRD/FSD/domain models),
+    and/or the team is changing - you need one reconciled source of truth:
+    /pm-reconcile       → scans code, parses old docs, reconciles (code = structural truth,
+                           docs = business logic, conflicts → AskUserQuestion)
+                         → Reconciliation Report (the team's "where are we" brief)
+                         → then orchestrates the rebuild below in reconciled mode.
+                         This is the entry point - run it instead of the three skills standalone.
 
-  B) Docs already clean or absent - just bootstrap from code:
-     /pm-entity-registry   → entities.md (extract from existing codebase/docs)
-     /pm-business-rules-library → business_rules.md + decision_models.md (extract existing rules)
-     /pm-reverse-extract   → reads existing Feature Cards/codebase
-                          → extracts feature inventory in FDD format (FEAT-[DOMAIN]-[NUMBER])
-                          → Notion: creates Feature hierarchy (primary: team visibility)
-                          → generates feature_list.md, delivery-stripes.md
-                          Use INSTEAD of pm-features-list + pm-mvp-scope.
+  - Docs already clean or absent - just bootstrap from code:
+    /pm-entity-registry   → entities.md (extract from existing codebase/docs)
+    /pm-business-rules-library → business_rules.md + decision_models.md (extract existing rules)
+    /pm-reverse-extract   → reads existing Feature Cards/codebase
+                         → extracts feature inventory in FDD format (FEAT-[DOMAIN]-[NUMBER])
+                         → Notion: creates Feature hierarchy (primary: team visibility)
+                         → generates feature_list.md, delivery-stripes.md
+                         Use INSTEAD of pm-features-list + pm-mvp-scope.
 
   Both then proceed to Phase 6 + 7 (JIT per feature) directly.
 
@@ -1378,18 +1404,36 @@ OPTIONAL SPEC SUPPORT
 
 ---
 
+## Exit Gate Thresholds (default reference)
+
+Concrete, phase-by-phase thresholds - self-contained in this repo so the exit gate never has to point at a document that does not exist. These are **defensible defaults for a general commercial SaaS/AI product**, not universal truths - they are drawn from the same benchmark logic already used inside `pm-hypotheses`, `pm-problem-validation`, `pm-kpis`, and `pm-business-case` elsewhere in this framework, gathered here so the gate has one place to read them from. **Adjust per product context** (regulated industries, hardware, enterprise-only B2B, and pre-revenue research products all warrant different numbers) - the gate always offers FORCE with an acknowledged-risk note for exactly this reason.
+
+| Phase | Threshold | Why this number |
+|---|---|---|
+| **1 - Foundation** | Project Charter has a success criterion tied to retention/revenue/repeated usage (not a vanity metric) + at least one named risk with an owner + decision authority named | Completeness gate, not a numeric one - Phase 1 has no market signal yet to threshold against |
+| **2 - Discovery** | ≥10 customer interviews (or synthetic-interview equivalent, clearly marked) completed for Track D + all 4 tracks (A-D) have produced output + Problem Validation verdict is ✅ Validated or ⚠️ Partially validated (not ❌) | 10 interviews is the standard qualitative-saturation floor used by `pm-problem-validation`'s own completeness checklist; a ❌ verdict means the premise itself is unconfirmed - proceeding past it is the single most expensive mistake in the framework |
+| **3a - Validation** | Go/No-Go verdict = **GO** from `pm-hypotheses` (Results mode) | Hard gate, already enforced below with no FORCE bypass - listed here for completeness, not re-implemented |
+| **3b - Commercial Definition** | PRD exists and covers all 12 sections + Business Case has Conservative/Base/Optimistic scenarios with the Conservative scenario surviving to the first milestone (or the risk is explicitly acknowledged) + North Star Metric is defined with a Month-3/6/12 target | A scenario that dies before the milestone under Conservative assumptions is a real risk the team must see, not bury in a spreadsheet |
+| **4 - Domain Modeling** | `entities.md`, `business_rules.md`, `decision_models.md` all initialized + every Critical business rule has a stated enforcement point (no blanks) | Guard-condition and enforcement-point completeness is what makes Phase 6 JIT design possible without re-litigating the domain model mid-build |
+| **5 - Feature Planning** | `feature_list.md` complete with KANO + V×C on every feature + MVP cut made (every feature has a `phase` value, not just some) + dependency map has zero cycles + `pm-mvp-scope`'s capacity reconciliation shows the MVP list fits the stated team/timeline (or the mismatch is acknowledged) | An MVP list nobody checked against capacity is the most common way delivery timelines silently fail |
+| **6-7 - Build (per Stripe close)** | Every feature in the stripe is `6_Shipped` + spec gate was never bypassed (Sections 1-3 complete before any `4_In_Build`) + feature flags default OFF verified | Mirrors the framework's own non-negotiable rules (spec gate, flag-OFF default) rather than inventing a new bar |
+
+Numeric thresholds above (10 interviews, scenario survival, etc.) are **starting points, always shown to the user as adjustable** - never enforced silently. A regulated-industry or hardware product may need a materially different Phase 2 interview count or a longer Phase 3a runway; the gate's job is to make the team consciously choose a number, not to gatekeep on a number that doesn't fit the product.
+
+---
+
 ## Exit Gate (when user runs /pureinn after completing a phase)
 
 Check state.json: if `current_phase_index` has increased or user states a phase is done, run exit gate.
 
-Read exit gate thresholds from the relevant playbook file.
+Read the thresholds for the completed phase from the table above. If the product's context clearly warrants different numbers (regulated industry, hardware, enterprise-only, pre-revenue research), say so and propose adjusted thresholds before checking against them - do not force a SaaS-shaped bar onto a product that isn't one.
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 EXIT GATE - Phase [N]: [Phase Name]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-[Show quantitative thresholds from playbook]
+[Show quantitative thresholds from the table above, adjusted for context if flagged]
 
 For each threshold, did you meet it? (yes / no / unknown)
 ```
@@ -1401,16 +1445,16 @@ Exit gate passed. Phase [N] complete.
 Type GO to advance to Phase [N+1], or tell me what to revisit first.
 ```
 
-If thresholds not met:
+If thresholds not met, show:
 ```
 Exit gate not passed. Conditions unmet:
   ❌ [Condition 1] - [brief note on what's missing]
   ❌ [Condition 2]
-
-Options:
-  A) Go back and address the gaps (recommended skills: [list])
-  B) Proceed anyway - I acknowledge the risk (FORCE)
 ```
+Then use the AskUserQuestion tool:
+- Question: "How do you want to proceed?"
+  - Option A: "Go back and address the gaps (Recommended)" — description: "Run: [recommended skills, from the unmet conditions]"
+  - Option B: "Proceed anyway - I acknowledge the risk (FORCE)" — description: "Advances the phase with the gaps still open"
 
 On GO or FORCE: update state.json - add phase to `phases_completed`, advance `current_phase_index`.
 
@@ -1422,11 +1466,11 @@ Current status: [PIVOT / STOP / not run]
 
 Phase 3b is commercial commitment work - business case, roadmap, and PRD.
 Starting it without validated problem-market fit means those documents are built on unconfirmed assumptions.
-
-Options:
-  A) Return to Phase 3a - run /pm-hypotheses [Results mode] with your experiment data
-  B) Phase 3a was done outside this framework - provide Go/No-Go verdict and evidence
 ```
+Then use the AskUserQuestion tool:
+- Question: "How do you want to resolve this?"
+  - Option A: "Return to Phase 3a (Recommended if no experiments have run yet)" — description: "Run /pm-hypotheses [Results mode] with your experiment data"
+  - Option B: "Phase 3a was done outside this framework" — description: "Provide the Go/No-Go verdict and evidence via the 'done elsewhere' handler below"
 
 **"Done elsewhere" handler (for any phase):**
 If user states a phase was done outside this framework, collect the minimum evidence needed to confirm the phase exit criteria were met, then mark it complete. For Phase 3a specifically: collect Go/No-Go verdict + which hypothesis types were tested + key evidence signal per type. Do not require re-running skills if the work was genuinely done.

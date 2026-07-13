@@ -65,6 +65,8 @@ Also check: does a Domain Model exist? Without it, the PII inventory will be inc
 
 Look for: PII inventory without sensitivity classification, no legal basis per processing purpose, retention periods missing, user rights (erasure, portability) not addressed, no action plan with owners and dates.
 
+**Re-run behavior (delta mode):** If these artifacts already exist (e.g., Domain Model changed - new entities/attributes added), do not rewrite from scratch. Read the current PII Inventory / Privacy Requirements / GDPR Action Plan first, re-map only the changed entities, update only what the new domain model supports (`[UPDATED - previous: X / new: Y]`), and mark what is unaddressed `[UNCHANGED]`. Show the delta before finalizing.
+
 **Interaction:** Group related questions (2-4 per round) and confirm before moving on. For any A/B/C/D choice, use the AskUserQuestion tool with one option marked **(Recommended)** - never print options as plain text. Keep open-ended questions free-text (don't fake options). If the user is unsure, propose 3-4 concrete options plus "Other". Surface an assumption the moment you make one; never fabricate to fill a gap. (Full standard: CLAUDE.md.)
 
 ---
@@ -81,7 +83,7 @@ Use AskUserQuestion tool for these two questions:
 
 Which markets / jurisdictions does this product launch in?
 
-  A) EU only (GDPR applies)
+  A) EU only (GDPR applies) (Recommended - narrowest compliance surface for a first launch; expand once GDPR compliance is proven, if this hasn't already been fixed by an earlier phase)
   B) EU + US (GDPR + state-level US privacy laws)
   C) Global from launch
   D) Non-EU only (no GDPR obligation)
@@ -350,6 +352,23 @@ These must be addressed in architecture and feature specification:
 This action plan is based on PM and desk research. It does not constitute legal advice.
 Validate all items with qualified legal counsel before launch.
 ```
+
+---
+
+## Step 3: Emit candidate business rules
+
+The Dependencies section promises that privacy rules land in `business_rules.md` - make that real, do not leave it implicit. After the three artifacts are approved, extract every privacy requirement the **product itself must enforce** (not just the team must do) and list them as candidate rules ready for `/pm-business-rules-library`:
+
+```
+Candidate business rules from privacy requirements:
+- [CANDIDATE-BR] Account deletion cascades to all PII across entities: [list] (Art. 17)
+- [CANDIDATE-BR] Marketing consent = opt-in, unchecked by default, withdrawable in one step
+- [CANDIDATE-BR] [Data type] auto-purged after [retention period]
+- [CANDIDATE-BR] PII never written to logs / analytics events
+...
+```
+
+Show the list to the user and note: "These go into `/pm-business-rules-library` as governance rules - that is how a privacy obligation becomes an enforceable, testable rule referenced by Feature Cards instead of a forgotten checklist item."
 
 ---
 

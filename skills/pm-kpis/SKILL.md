@@ -62,6 +62,8 @@ Also check: does a Business Model Canvas exist? Cross-reference the revenue mode
 
 Look for: North Star that measures activity not value (e.g., "DAU" vs. "properties actively managed"), AARRR metrics without conversion rate benchmarks, OKRs without measurable Key Results (vague KRs like "improve retention" are invalid), missing leading indicators.
 
+**Re-run behavior (delta mode):** If these artifacts already exist and the business model or growth motion changed, do not rewrite from scratch. Read the current framework first, update only the metrics the new input supports (`[UPDATED - previous: X / new: Y - reason]`), and mark unaffected metrics `[UNCHANGED]`. Show the delta before finalizing. Surface the cascade: `/pm-prd`, `/pm-business-case` may need re-check.
+
 **Interaction:** Group related questions (2-4 per round) and confirm before moving on. For any A/B/C/D choice, use the AskUserQuestion tool with one option marked **(Recommended)** - never print options as plain text. Keep open-ended questions free-text (don't fake options). If the user is unsure, propose 3-4 concrete options plus "Other". Surface an assumption the moment you make one; never fabricate to fill a gap. (Full standard: CLAUDE.md.)
 
 ---
@@ -78,14 +80,14 @@ Use AskUserQuestion tool for these two questions:
 
 What is the revenue model?
 
-  A) Subscription - flat monthly or annual fee
+  A) Subscription - flat monthly or annual fee (Recommended - most predictable revenue and cleanest early-stage unit economics; pick usage-based only if cost scales directly with usage)
   B) Usage-based - pay per action, transaction, or volume
   C) Freemium - free tier with paid upgrade
   D) Marketplace cut or one-time purchase
 
 What is the primary growth motion?
 
-  A) Product-led - product itself drives acquisition and conversion
+  A) Product-led - product itself drives acquisition and conversion (Recommended - lowest CAC and fastest feedback loop for an early-stage team; shift toward sales-led as ACV rises)
   B) Sales-led - outbound, demos, relationship selling
   C) Marketing-led - content, SEO, paid ads drive inbound leads
   D) Community-led - peer network and ecosystem drive growth
@@ -143,6 +145,8 @@ Generate in English.
 
 **What it is NOT:**
 [Common trap metric that might be confused with NSM - and why we rejected it]
+
+**Gaming risk (Goodhart's Law):** once a metric becomes a target, it stops being a good measure - the team will optimize the number, not the underlying value, unless a counter-metric catches it. Name the most likely way this NSM gets gamed (e.g., "properties connected" inflated by throwaway test listings, "activation" inflated by lowering the bar) and one counter-metric or guardrail that would catch it (e.g., pair with a quality/retention metric that would drop if the primary metric were gamed).
 
 ---
 

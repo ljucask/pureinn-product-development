@@ -61,6 +61,8 @@ Also check: does a Business Model Canvas exist? Does a KPIs framework exist? Doe
 
 Look for: projections without explicit assumptions, cost model missing AI/infrastructure costs, runway calculation missing, no Go/No-Go recommendation, risks listed without mitigation.
 
+**Re-run behavior (delta mode):** If a Business Case already exists and upstream inputs changed (updated Business Model, Market Analysis, or KPIs), do not rewrite from scratch. Read the current case first, update only the sections the new evidence supports (`[UPDATED - previous: X / new: Y - reason]`), and mark unaddressed sections `[UNCHANGED]`. Show the delta before finalizing. Surface the cascade: `/pm-prd`, `/pm-product-roadmap` may need re-check.
+
 **Interaction:** Group related questions (2-4 per round) and confirm before moving on. For any A/B/C/D choice, use the AskUserQuestion tool with one option marked **(Recommended)** - never print options as plain text. Keep open-ended questions free-text (don't fake options). If the user is unsure, propose 3-4 concrete options plus "Other". Surface an assumption the moment you make one; never fabricate to fill a gap. (Full standard: CLAUDE.md.)
 
 ---
@@ -86,7 +88,7 @@ What is the basis for your customer volume targets?
 
   A) Bottom-up - derived from channel capacity and conversion rates
   B) Top-down - percentage of TAM/SAM
-  C) Both - cross-validated with bottom-up and top-down
+  C) Both - cross-validated with bottom-up and top-down (Recommended - triangulating both methods catches errors either one alone would miss and gives the projection more credibility with investors/stakeholders)
   D) Intuition / comparable benchmarks only
 
 Then ask as plain text:
@@ -116,6 +118,11 @@ After answers, show complete Business Case inputs summary. Ask for final confirm
 ---
 
 ## Step 2: Generate artifact
+
+**Projection sanity rules (apply to the user's assumptions before building the tables):**
+- Benchmark reality: sustained MoM growth >15% for 12+ months is top-decile SaaS; monthly churn <2% for SMB-facing products is rare in year 1 (3-6% is normal); freemium free→paid conversion baseline is 2-5%. An assumption that beats top-decile benchmarks is not forbidden - but it must be marked `[OPTIMISTIC - above benchmark]` and it belongs in the **Optimistic scenario, not Base**. Base uses benchmark-level values unless the user has empirical evidence.
+- The three scenarios must be genuinely different models, not ±20% on the same curve. Conservative = the named risk triggers fire (churn 2x, growth half); if Conservative still shows survival to the milestone, the case is robust - say so. If Conservative means death before the milestone, the Go recommendation must carry that condition explicitly.
+- Every number in the projection tables must trace to a row in Financial Assumptions. A number with no assumption behind it gets removed, not defended.
 
 Generate in English.
 

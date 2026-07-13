@@ -505,17 +505,13 @@ Do NOT attempt to use a regular (non-template) gamma as a template - it will fai
 
 ## Maintenance mode
 
-If an existing `pitch-deck-brief.md` is found in Step 0, offer:
+If an existing `pitch-deck-brief.md` is found in Step 0, a brief already exists for this project. Use AskUserQuestion tool:
 
-```
-A pitch deck brief already exists for this project.
-
-What do you want to do?
-  A) Update specific slides (tell me which ones changed)
-  B) Create a new version (e.g. post-traction update, Series A version)
-  C) Full review against the quality rules checklist
-  D) Regenerate from scratch
-```
+- Question: "What do you want to do with the existing pitch deck brief?"
+  - A) "Update specific slides (Recommended if something specific changed)" — description: "Tell me which ones changed; fastest path, keeps everything else intact"
+  - B) "Create a new version" — description: "e.g. post-traction update, Series A version"
+  - C) "Full review against the quality rules checklist" — description: "Re-check every slide, even unchanged ones"
+  - D) "Regenerate from scratch" — description: "Discards the existing brief entirely"
 
 For updates: apply the quality rules to the changed slides only. Note the version and what changed.
 
@@ -538,6 +534,6 @@ pureinn-workspace/[project-slug]/artifacts/phase-3-define/pitch-deck-brief.md
 
 **Čo si teraz má:** Pitch Deck content brief - štruktúrovaný príbeh pre investorov alebo partnerov.
 
-**Ďalší krok:** `/pm-prd` (ak ešte nie je) na uzavretie Phase 3b, potom Phase 4 (`/pm-domain-model` → `/pm-entity-registry`).
+**Ďalší krok:** Pred reálnym pitchom spusti `/pm-stress-test` (persona: VC / investor) - deck ti dá príbeh, stress test ti dá odpovede na otázky, ktoré prídu po ňom. Potom `/pm-prd` (ak ešte nie je) na uzavretie Phase 3b, potom Phase 4 (`/pm-domain-model` → `/pm-entity-registry`).
 
 **Môžeš preskočiť ak:** Nezháňaš kapitál a nepitchuješ partnerom - tento skill je voliteľný, preskoč ho.

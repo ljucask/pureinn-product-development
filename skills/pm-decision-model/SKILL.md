@@ -59,6 +59,8 @@ If the logic is a single condition → one output, it is a **business rule**, no
 
 ## Step 0: Current state check
 
+If `domain/decision_models.md` does not exist yet, do not attempt to create it here - tell the user to run `/pm-business-rules-library` first (it initializes the register), then return to this skill.
+
 Read `domain/decision_models.md`.
 
 List existing tables in the relevant domain. Identify the next available `TBL-[DOMAIN]-NN`.

@@ -5,3 +5,5 @@ inputs-no-git/
 # Loose reference material dropped in for skill authoring - not part of the framework
 lovable-mcp
 lovable-prompt-bible
+# Local git worktrees created by the agent harness - never part of the framework
+.claude/worktrees/
