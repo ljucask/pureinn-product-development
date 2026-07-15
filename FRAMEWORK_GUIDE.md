@@ -151,6 +151,16 @@ Four tracks run in parallel, converge at the end.
 
 **"Bring your data" rule:** Claude structures and formalizes - it does not hallucinate market data or interview insights. Research is done externally first, then fed in. Exception: `/pm-market-analysis` Path C runs AI-powered web research via OpenAI (requires OPENAI_API_KEY in pureinn-variables.md).
 
+**Client discovery layer (when someone commissioned the work).** If a client, sponsor, or exec defines what gets built, discovery gains a plane above the end users - the commissioner's business, trigger, benefit, budget, constraints, references. Same phases, added tooling:
+
+| Step | Skill / Material | Output |
+|---|---|---|
+| Before each session | `/pm-discovery-interview` (carries the full discovery question bank inline) | Session agenda targeting the biggest gaps (`meetings/prep/`) |
+| After each session | `/pm-meeting` (Client Discovery type) | Structured findings: requirements, references classified directive/hypothesis, constraints, `[CANDIDATE-BR]` exceptions |
+| Continuously | `/pm-discovery-report` | Client-facing "what we heard, what we recommend" - incremental, re-runnable; final version accompanies the Problem Validation Summary |
+
+The client's claims about their own users enter Track D tagged `[CLIENT-ASSERTED]` - input, not evidence. Three user populations get discovered, not one: the client's customers, the client's **staff** (daily operators), and the client's own oversight needs.
+
 ### Phase 3a - Validation
 
 **Character: externally-paced.** Tempo is set by the market. AI accelerates experiment design and hypothesis structuring, but the signal - whether people show up, convert, pre-order, confirm the pain - comes from the real world on its own schedule.
@@ -158,6 +168,8 @@ Four tracks run in parallel, converge at the end.
 **Can start in parallel with late Phase 2** once the Problem Validation Summary exists.
 
 **"Done elsewhere" rule:** if Design Thinking and hypothesis validation were done outside the framework, import results into `/pureinn` (Go/No-Go verdict, evidence per hypothesis, riskiest assumptions). Phase 3a is then complete.
+
+**Skip if the mandate is given:** when the build is already committed - a client commissioned it, an exec directed it - Phase 3a would re-answer an answered question. Skip it and go from the Discovery Report to `/pm-scope-brief` (Phase 3b alternative below). The market risk sits with the commissioner, not with you; what you owe them is a precise definition, not a Go/No-Go. Speculative products (your own market bet) do NOT skip.
 
 | Step | Skill / Activity | Output |
 |---|---|---|
@@ -183,11 +195,15 @@ Four tracks run in parallel, converge at the end.
 | `/pm-business-case` | 3-year projections, unit economics, Go/No-Go |
 | `/pm-product-roadmap` | Product Roadmap v1 |
 | `/pm-prd` | PRD - Phase 3b exit artifact (synthesizes Phase 2+3a+3b) |
+| `/pm-scope-brief` | Scope Brief - **alternative exit artifact** for commissioned builds (mandate already given): definition of what exactly gets built, with Business Capabilities, edge cases, acceptance criteria. Replaces the PRD slot; Phase 4-5 consume it identically |
 | `/pm-pitch-deck` | Pitch Deck content brief (optional - if raising capital) |
 
 **Exit:** PRD frozen + Business Case complete + Roadmap v1 complete. `PRD_master.md` is immutable after this point.
+**Exit (commissioned build):** Scope Brief baselined (`product/scope_brief.md`) - the canvas/KPI/business-case skills are optional here; the commercial model belongs to the commissioner. Scope changes after baseline go through the brief's Change Log.
 
 ### Phase 4 - Domain Modeling + Register Setup (3-5 days)
+
+> Phase 4-5 skills read Business Capabilities from `product/PRD_master.md` - or from `product/scope_brief.md` on commissioned builds (same contract, same extraction). The Scope Brief's `[CANDIDATE-BR]` edge cases seed `/pm-business-rules-library`.
 
 | Skill | Output |
 |---|---|
@@ -474,12 +490,16 @@ Artifacts are not independent documents. Each phase feeds the next:
 
 ```
 Phase 2 (JTBD, Personas, Market Analysis, Problem Validation)
+  [client discovery layer: pm-discovery-interview → pm-meeting Client Discovery
+   → Discovery Report (client-facing, incremental)]
   ↓
-Phase 3a (Design Thinking, Go/No-Go verdict)
+Phase 3a (Design Thinking, Go/No-Go verdict)          [skipped when mandate given]
   ↓
-Phase 3b (Lean Canvas, KPIs, Business Case)
+Phase 3b (Lean Canvas, KPIs, Business Case)           [optional on commissioned builds]
   ↓
 PRD - consolidates Phase 2+3a+3b; Business Capabilities drive Phase 4+
+  │  (commissioned builds: Scope Brief fills this slot - same
+  │   Business Capabilities contract for Phase 4+)
   ↓
 Product Roadmap v1  →  Domain Model + ERD
   ↓
@@ -558,6 +578,11 @@ pureinn-workspace/
       reconciliation_report.md    - drift, divergences, decisions (living, appended per area)
     product/
       PRD_master.md               - pm-prd Phase 3b output (frozen, never overwritten)
+      scope_brief.md              - pm-scope-brief Phase 3b alternative (commissioned builds; Change Log after baseline)
+    meetings/
+      [YYYY-MM-DD]-[type]-[topic].md - pm-meeting outputs (7 types incl. client-discovery)
+      prep/
+        [YYYY-MM-DD]-[audience]-agenda.md - pm-discovery-interview session agendas
     domain/                       - 4 living registers (source of truth in Phase 6-7)
       entities.md                 - Register 1 (pm-entity-registry)
       business_rules.md           - Register 2 (pm-business-rules-library)

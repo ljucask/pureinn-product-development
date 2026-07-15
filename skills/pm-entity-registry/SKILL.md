@@ -45,7 +45,7 @@ This register is the architectural foundation of the FDD+SDD framework. It defin
 | 3. Decision Models Matrix | `/domain/decision_models.md` | Decision tables (pm-business-rules-library) |
 | 4. FDD Feature List | `/features/feature_list.md` | Feature hierarchy + planning (pm-features-list) |
 
-**Source:** PRD Business Capabilities section. AI extracts nouns from capabilities → entities. State machines reflect the business lifecycle of each entity.
+**Source:** PRD Business Capabilities section - or `product/scope_brief.md` Business Capabilities section on commissioned builds (same table contract; the Scope Brief's `[CANDIDATE-BR]` edge cases additionally seed the rules register). AI extracts nouns from capabilities → entities. State machines reflect the business lifecycle of each entity.
 
 **Domain overview diagram:** Generated in Excalidraw (high-level visual for the team). State machines per entity: Mermaid.js (embedded in entities.md - readable by Claude Code).
 
@@ -60,7 +60,7 @@ If `reconcile/reconciliation_report.md` exists, it is the authoritative input - 
 ## Dependencies
 
 **Required before running:**
-- `pm-prd` - PRD must include a Business Capabilities section
+- `pm-prd` - PRD must include a Business Capabilities section (or `pm-scope-brief` on commissioned builds - `product/scope_brief.md` carries the same Business Capabilities contract)
 
 **Produces artifacts used by:**
 - `pm-business-rules-library` - entities define the scope of rules
@@ -88,7 +88,7 @@ Check for existing artifacts:
   - Option A: "Initiative PRD at initiatives/[slug]/prd.md - Business Capabilities section (Recommended)"
   - Option B: "Paste capabilities directly"
 
-Also check: does a PRD or Initiative PRD with a Business Capabilities section exist? Without it, entity extraction is guesswork.
+Also check: does a PRD, Initiative PRD, or Scope Brief (`product/scope_brief.md`, commissioned builds) with a Business Capabilities section exist? Without one, entity extraction is guesswork.
 
 Look for: entities defined as technical components (not business objects), states that are technical statuses (not business lifecycle states), missing state machines for entities with complex lifecycles, transitions without triggers.
 
@@ -104,7 +104,8 @@ Ask as plain text:
 I need inputs for the Entity & State Registry.
 
 1. PRD BUSINESS CAPABILITIES
-   Paste the Business Capabilities section from the PRD or Initiative PRD,
+   Paste the Business Capabilities section from the PRD, Initiative PRD,
+   or Scope Brief (product/scope_brief.md - commissioned builds),
    or confirm it is in context.
    This is the primary source for entity extraction.
    (For append mode: paste only the capabilities for the new domain/initiative)

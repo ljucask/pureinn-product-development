@@ -420,5 +420,6 @@ pureinn-workspace/[project-slug]/artifacts/phase-2-discovery/problem-validation-
 **Čo si teraz má:** Problem Validation Summary - Phase 2 je uzavretá, máš validovaný problém ako základ pre validáciu a commercial definition.
 
 **Ďalší krok:** `/design-thinking` (Phase 3a) — ideácia a validačné hypotézy. Alebo `/pureinn` pre Phase 2 gate.
+Ak máš externého zadávateľa (klient, sponzor): `/pm-discovery-report` — klientská verzia týchto zistení (naratívna, bez interného scaffoldingu); pri danom mandáte potom `/pm-scope-brief` namiesto plnej Phase 3a+3b.
 
 **Môžeš preskočiť ak:** Problém je už silne validovaný reálnymi dátami - choď rovno na `/pm-hypotheses` [Plan mode].

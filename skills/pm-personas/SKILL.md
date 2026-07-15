@@ -1,11 +1,11 @@
 ---
 name: pm-personas
-description: Generate Customer Segments, Personas, and Early Adopter Profile from raw VOC data (interview transcripts, synthetic interviews, survey data). Use in Phase 2 (Track D, Step 1) before running jtbd-building.
+description: Generate Customer Segments, Personas (with Empathy Map and as-is journey), and Early Adopter Profile from raw VOC data (interview transcripts, synthetic interviews, survey data, discovery meeting notes). Tracks provenance - real VOC vs. [CLIENT-ASSERTED] client claims vs. assumptions. In commissioned builds also covers staff/operator personas. Use in Phase 2 (Track D, Step 1) before running jtbd-building.
 license: MIT
 metadata:
   agent-mode: decision
   author: https://github.com/ljucask
-  version: "1.0.0"
+  version: "1.1.0"
   domain: product-management
   triggers: personas, customer segments, early adopters, VOC, customer profile, user research, interviews
   role: specialist
@@ -37,6 +37,10 @@ Takes raw VOC (Voice of Customer) data - interview transcripts, synthetic interv
 This is a "bring your data" skill. Claude synthesizes, structures, and formalizes patterns from the input. No invented personas without data.
 
 Run this before `jtbd-building` - JTBD analysis uses personas as input.
+
+**Provenance discipline:** every persona claim carries its source class - real VOC (interviews, surveys, observation), `[CLIENT-ASSERTED]` (a client/sponsor described their own users - input, not evidence), or `[ASSUMED]` (our inference). In commissioned builds the client's description of their users is the most common input - treat it as a hypothesis to validate with real users, never as validated research.
+
+**Three populations (commissioned builds):** the client's *customers* are not the only users. The client's *staff* (admins, operators, support - they use the product daily) are legitimate personas too, and skipping them is the classic launch failure. If discovery captured staff roles (see Client Discovery meeting notes), produce staff personas alongside customer personas.
 
 ---
 
@@ -134,6 +138,11 @@ I need VOC data for Customer Segments + Personas.
 
    Other insights (forums, reviews, support tickets...):
    [paste here]
+
+   Or point me at files/folders - e.g. the workspace meetings/ folder
+   (customer-discovery and client-discovery notes). I read them in full,
+   recursively. Client claims about users from client-discovery notes
+   enter as [CLIENT-ASSERTED], not as VOC.
 
 3. CONTEXT
    How many interviews / respondents do you have in total?
@@ -369,6 +378,23 @@ Generate in English.
 > "[Direct quote illustrating their main pain]"
 
 > "[Direct quote illustrating what they want]"
+
+### Empathy Map
+
+| Quadrant | Findings |
+|---|---|
+| **Says** | [direct quotes, public statements] |
+| **Thinks** | [internal thoughts, hopes, fears - often contradicts what they say] |
+| **Does** | [observed behaviors, workarounds, actual usage] |
+| **Feels** | [emotional states around the problem - frustration, anxiety, pride] |
+| **Sees** | [their environment - what competitors' users have, what peers do] |
+| **Hears** | [influencers, colleagues, reviews - who shapes their opinion] |
+
+[Fill from research data; mark quadrants without evidence `[TODO - insufficient input]` rather than inventing. For the primary persona this map is required; for secondary personas optional.]
+
+### Current Journey (as-is)
+
+[Step-by-step: how they handle the problem today - where they lose time, money, or energy, and the emotional low points. 3-6 steps, from research. This seeds pm-process-flows in Phase 4.]
 
 ### What Success Looks Like for Them
 

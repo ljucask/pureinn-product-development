@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.26.0] - 2026-07-15
+
+### Client discovery layer: pm-discovery-interview (self-contained question bank), pm-discovery-report, pm-scope-brief + Client Discovery meeting type, commissioned-build path through Phase 3, and discovery gap-fills across 5 skills
+
+---
+
+
 ## [5.25.0] - 2026-07-13
 
 ### Framework hardening: 4-phase audit across all 47 skills + structural validator gated into every release

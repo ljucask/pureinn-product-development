@@ -1,6 +1,6 @@
 # Pureinn Documentation
 
-Pureinn is an AI-native product development framework for Claude Code. It covers the full product lifecycle - from the first idea to a shipped product - through 47 skills and a structured three-playbook engine.
+Pureinn is an AI-native product development framework for Claude Code. It covers the full product lifecycle - from the first idea to a shipped product - through 50 skills and a structured three-playbook engine.
 
 ---
 

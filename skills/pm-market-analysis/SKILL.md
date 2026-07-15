@@ -5,9 +5,9 @@ license: MIT
 metadata:
   agent-mode: synthesis
   author: https://github.com/ljucask
-  version: "1.1.0"
+  version: "1.2.0"
   domain: product-management
-  triggers: market analysis, TAM SAM SOM, competitor analysis, SWOT, market sizing, competitive landscape
+  triggers: market analysis, TAM SAM SOM, competitor analysis, SWOT, market sizing, competitive landscape, client market
   role: specialist
   scope: research
   output-format: document
@@ -37,6 +37,8 @@ Takes raw research input (Perplexity/ChatGPT market data, competitor research, m
 Three input paths: (A) paste your own research, (B) guided elicitation from domain knowledge, (C) AI-powered research via OpenAI web search (requires OPENAI_API_KEY in pureinn-variables.md).
 
 Path A and C produce research-backed artifacts. Path B produces assumption-based output marked for validation.
+
+**Commissioned builds - whose market?** When the build is commissioned by a client, this analysis targets the **client's market and the client's competitors** - not yours. TAM/SAM/SOM sizes their opportunity; the competitor set is who they compete with (and who their users compare them against). State this reframing explicitly at the top of the artifacts. Client-discovery meeting notes in `meetings/` often already contain competitor mentions and market claims - read them (client claims tagged `[CLIENT-ASSERTED]`).
 
 ---
 
@@ -377,6 +379,24 @@ Generate in English.
 | [Differentiator] | | | | |
 
 Legend: ✅ = strong / 🔧 = partial / ❌ = absent
+
+---
+
+## Competitor Profiles (key competitors - depth per competitor)
+
+### [Competitor 1]
+
+| Dimension | Finding | Source |
+|---|---|---|
+| **Pricing model** | [tiers, price points, free tier, contract terms] | |
+| **Go-to-market** | [how they acquire: sales-led / PLG / partners / marketplaces] | |
+| **Customer feedback** | [what reviews (G2, Capterra, app stores, forums) praise and complain about - complaints are our opportunity map] | |
+| **Origin & trajectory** | [founded, funding, growth signal - stagnant or accelerating] | |
+| **Key weaknesses → our opportunity** | [specific gaps, each mapped to what we could do about it] | |
+
+### [Competitor 2]
+
+[same structure - profile the 2-4 competitors that matter most; skip long-tail players]
 
 ---
 

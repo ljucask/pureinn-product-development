@@ -5,9 +5,9 @@ license: MIT
 metadata:
   agent-mode: synthesis
   author: https://github.com/ljucask
-  version: "1.0.0"
+  version: "1.1.0"
   domain: product-management
-  triggers: domain analysis, legal requirements, regulatory, compliance, industry analysis, Phase 2
+  triggers: domain analysis, legal requirements, regulatory, compliance, industry analysis, certifications, Phase 2
   role: specialist
   scope: research
   output-format: document
@@ -99,6 +99,11 @@ I need inputs for the Domain Analysis + Legal Requirements.
 
    Manual notes (PM, legal, domain expert):
    [paste here]
+
+   Or point me at files/folders - including the workspace meetings/ folder
+   (client-discovery notes often capture domain constraints, licensing
+   mentions, and the client's own compliance obligations). I read them
+   in full, recursively.
 
 3. SPECIFIC AREAS
    Does the product handle personal data? (GDPR relevant)
@@ -297,6 +302,17 @@ Generate in English.
 |---|---|---|---|---|
 | [e.g., Payment institution license] | EU | [if we process payments ourselves] | [via NBS / BaFin / ...] | [6-18 months] |
 | [e.g., None - using payment provider] | - | [explanation] | - | - |
+
+---
+
+## Certifications for B2B / Enterprise Sales
+
+[Only if selling to enterprise or regulated buyers - otherwise state "Not applicable - no enterprise sales motion planned."]
+
+| Certification | Required by | Timeline | Est. Cost | When to Start |
+|---|---|---|---|---|
+| [e.g., SOC 2 Type II] | [enterprise security reviews] | [6-12 months] | [$30-100k] | [before first enterprise deal, not after] |
+| [e.g., ISO 27001] | | | | |
 
 ---
 

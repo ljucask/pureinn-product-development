@@ -5,9 +5,9 @@ license: MIT
 metadata:
   agent-mode: synthesis
   author: https://github.com/ljucask
-  version: "1.0.0"
+  version: "1.1.0"
   domain: product-management
-  triggers: tech feasibility, technology assessment, stack feasibility, technical risks, Phase 2 Track A
+  triggers: tech feasibility, technology assessment, stack feasibility, technical risks, no-code, disruption, Phase 2 Track A
   role: specialist
   scope: research
   output-format: document
@@ -102,6 +102,9 @@ I need inputs for the Tech Feasibility Report.
    Any tech stack preferences? (framework, language, cloud provider)
    Are integrations with existing systems required? Which ones?
    Any security / compliance requirements? (GDPR, SOC2, HIPAA...)
+   (Commissioned builds: the workspace meetings/ client-discovery notes
+    often already capture the client's systems, IT policy, and hosting
+    constraints - point me there and I read them in full.)
 
 4. CRITICAL QUESTIONS
    What are the biggest technical risks / unknowns?
@@ -269,6 +272,18 @@ Generate in English.
 | [e.g., Authentication] | Buy (Clerk) | [reason - cost, time, security] |
 | [e.g., Core matching algorithm] | Build | [reason - core differentiator] |
 | [e.g., Analytics] | Buy (Mixpanel) | [reason] |
+
+---
+
+## Technology Disruption Check
+
+[Honest answer to: could something existing or emerging make this build unnecessary or obsolete?]
+
+| Threat | Assessment | Implication |
+|---|---|---|
+| **No-code / low-code delivers this** | [Could Webflow / Airtable / Bubble / an off-the-shelf SaaS cover the core need? If largely yes: custom build must justify itself - or recommend the cheaper path honestly, especially on commissioned builds] | |
+| **AI commoditizes the core** | [Could a general AI assistant/agent do the job the product does? Timeline?] | |
+| **Platform shift** | [Dependency on a platform/API that could change terms or deprecate?] | |
 
 ---
 

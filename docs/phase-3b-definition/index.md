@@ -12,6 +12,8 @@ Synthesize validated inputs into commercial strategy: value proposition, busines
 
 Enters **only after** a GO verdict from Phase 3a. The GO verdict is required - there is no workaround.
 
+**Exception - commissioned builds:** when the mandate is already given (a client commissioned the build, an exec directed it), Phase 3a is skipped and this phase reduces to `/pm-scope-brief` - the market risk sits with the commissioner, and the definition (not a Go/No-Go) is what you owe them. Canvas/KPI/business-case skills are optional in that mode.
+
 **"Done elsewhere" rule:** if you have an existing Lean Canvas or business model from prior work, bring it via Path A in the relevant skill. You don't need to rebuild from scratch.
 
 ---
@@ -35,6 +37,7 @@ Enters **only after** a GO verdict from Phase 3a. The GO verdict is required - t
 | [pm-business-case](pm-business-case.md) | 3-year financial projections, unit economics, Go/No-Go investment decision | Business Case |
 | [pm-product-roadmap](pm-product-roadmap.md) | Phase 3b version: product roadmap based on validated strategy | Product Roadmap v1 |
 | [pm-prd](pm-prd.md) | Synthesizes Phase 2+3a+3b into the PRD - the primary product specification | PRD (Phase 3b exit artifact) |
+| [pm-scope-brief](pm-scope-brief.md) | Alternative exit for commissioned builds (mandate already given): what exactly gets built - Business Capabilities, edge-case register, non-goals, acceptance criteria + Change Log. Phase 4-5 consume it exactly like a PRD | Scope Brief (`product/scope_brief.md`) |
 | [pm-pitch-deck](pm-pitch-deck.md) | Pitch deck content brief (optional - only if raising capital or pitching to partners) | Pitch Deck brief |
 
 **Recommended order:**

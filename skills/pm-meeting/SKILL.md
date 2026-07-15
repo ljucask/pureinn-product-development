@@ -1,17 +1,17 @@
 ---
 name: pm-meeting
-description: Structured meeting notes, summary, and action items from raw notes or a transcript. Detects meeting type (Customer Discovery, Product Review, Planning/Grooming, Strategic Review, Standup/Retro, Partner/Vendor) and applies the correct summary template. Tags each action item with its destination (Notion Task, Feature Card, follow-up meeting, framework skill). Pushes to Notion Meetings DB with linked tasks. Run after any meeting where notes or a transcript exist.
+description: Structured meeting notes, summary, and action items from raw notes or a transcript. Detects meeting type (Customer Discovery, Client/Requirements Discovery, Product Review, Planning/Grooming, Strategic Review, Standup/Retro, Partner/Vendor) and applies the correct summary template. Tags each action item with its destination (Notion Task, Feature Card, follow-up meeting, framework skill). Pushes to Notion Meetings DB with linked tasks. Run after any meeting where notes or a transcript exist.
 license: MIT
 metadata:
   agent-mode: synthesis
   author: https://github.com/ljucask
-  version: "1.1.0"
+  version: "1.2.0"
   domain: product-management
-  triggers: meeting, notes, transcript, summary, action items, action points, standup, retro, retrospective, planning, grooming, customer interview, discovery call, strategic review
+  triggers: meeting, notes, transcript, summary, action items, action points, standup, retro, retrospective, planning, grooming, customer interview, discovery call, strategic review, client discovery, requirements session, client brief
   role: specialist
   scope: documentation
   output-format: document
-  related-skills: pm-personas, jtbd-building, pm-problem-validation, pm-stripe, pm-feature-card, pm-product-roadmap, pm-prd, pm-team-roster
+  related-skills: pm-personas, jtbd-building, pm-problem-validation, pm-stripe, pm-feature-card, pm-product-roadmap, pm-prd, pm-team-roster, pm-discovery-interview, pm-discovery-report, pm-scope-brief
 ---
 
 # PM - Meeting Notes & Action Items
@@ -34,16 +34,19 @@ Takes raw meeting notes or a transcript and produces:
 3. Action items - each tagged with its destination and owner
 4. Notion push - new record in Meeting DB + linked tasks
 
-**Six meeting types, six routing paths:**
+**Seven meeting types, seven routing paths:**
 
 | Type | Signal keywords | Primary output destination |
 |---|---|---|
 | **Customer Discovery** | customer, user, prospect, "they said", pain, interview | Insights → personas / jtbd / problem-validation |
+| **Client / Requirements Discovery** | client, brief, requirements, "they want", budget, "like [company]", scope, quote, proposal | Discovery Report / Scope Brief / personas `[CLIENT-ASSERTED]` |
 | **Product Review** | FEAT-, AC-, spec, design review, Section, Figma | Feature Card update / pm-feature-design re-run |
 | **Planning / Grooming** | sprint, stripe, priority, backlog, phase, who takes what | feature_list update / pm-stripe / pm-mvp-scope |
 | **Strategic Review** | roadmap, investor, revenue, phase gate, business model, PRD | pm-prd / pm-product-roadmap delta |
 | **Standup / Retro** | yesterday, today, blocker, retrospective, what went well | pm-stripe (blockers) / Notion tasks (retro actions) |
 | **Partner / Vendor** | partner, vendor, contract, integration, API, SLA | Notion tasks + Google Calendar follow-up |
+
+**Customer vs. Client Discovery disambiguation:** Customer Discovery = a session with an END USER of the product (research: their pains, jobs, behavior). Client Discovery = a session with **whoever commissioned the build** (a client, sponsor, exec) - requirements extraction, budget, references, constraints. If one session mixes both (the client also demoed their own workflow as a future user), use Client Discovery as the primary type and fill the Customer Insights block inside it for the user-research fragments.
 
 **Action item tags (applied to every action item regardless of type):**
 
@@ -99,7 +102,7 @@ Then capture (ask as plain text, only what is not already evident from the notes
 
 Meeting type drives the template and the action-item routing. **Detect first, ask only if ambiguous** (adaptive execution - do not force a fixed question when the notes already answer it).
 
-1. Scan the notes/transcript for the type signals in the routing table above (customer/user/pain → Discovery; FEAT-/AC-/spec → Product Review; sprint/stripe/priority → Planning; roadmap/investor/revenue → Strategic; yesterday/blocker/retro → Standup/Retro; partner/vendor/contract → Partner/Vendor).
+1. Scan the notes/transcript for the type signals in the routing table above (customer/user/pain → Customer Discovery; client/brief/budget/"like [company]" → Client Discovery; FEAT-/AC-/spec → Product Review; sprint/stripe/priority → Planning; roadmap/investor/revenue → Strategic; yesterday/blocker/retro → Standup/Retro; partner/vendor/contract → Partner/Vendor). For the Customer vs. Client Discovery boundary, apply the disambiguation rule above (end user vs. commissioner).
 
 2. **If one type is clearly dominant:** state it and confirm.
    ```
@@ -366,6 +369,86 @@ Things raised but not resolved. Not action items yet - but need a decision.
 
 ---
 
+### Type block G: Client / Requirements Discovery
+
+A session with whoever commissioned the build (client, sponsor, exec). The full question set and techniques live inline in `/pm-discovery-interview` (Question bank section). Populate only the sections the session actually covered - omit empty ones.
+
+```markdown
+## Client Discovery Findings
+
+**Commissioner:** [name, role, company]
+**Session focus:** [modules covered: M1 commissioner / M2 users / M2b process / M3 scope]
+**Session [N] of discovery** [if known - supports the incremental Discovery Report]
+
+### Trigger and business context
+
+- **Why now:** [what triggered this, why not earlier/later]
+- **The product's job in their business:** [earn more / spend less / reduce risk / comply / status - with their words]
+- **Success in their terms:** [the number/outcome they named; how they'd call it a failure]
+- **Value alignment note:** [client benefit vs. user benefit - aligned / tension: what]
+
+### Requirements and requests (their words → probed need)
+
+| # | What they asked for | Underlying need (probed) | Priority signal | Provenance |
+|---|---|---|---|---|
+| 1 | [verbatim request] | [the job/outcome behind it] | [must / nice / unclear] | STATED / PROBED |
+
+### References ("like company XY")
+
+Every reference leaves the session classified. Directive → Scope Brief as a bounded requirement. Hypothesis → assumptions/hypothesis rail - never into the spec as settled.
+
+| Reference | What exactly (visual / UX / function / biz model) | Job behind it | Fidelity (used / seen / heard-of) | Classification | Explicitly NOT copying |
+|---|---|---|---|---|---|
+| [company/product] | | | | **Directive / Hypothesis** | |
+
+### Claims about their users
+
+Tag `[CLIENT-ASSERTED]` - input to pm-personas, not evidence.
+
+| Claim about users | Their evidence | Validate with real users or accept as directive? |
+|---|---|---|
+| | [research / analytics / gut feel] | |
+
+### Process walkthroughs (if M2b ran)
+
+| Process | Actors | Key steps / handoffs | Friction points | Volume |
+|---|---|---|---|---|
+
+**Exceptions found (Exception sweep):** [failure / role / volume / lifecycle / migration edges. Tag product-enforced ones `[CANDIDATE-BR]` - they seed the business rules register.]
+
+### Constraints and environment
+
+| Area | Finding |
+|---|---|
+| Integrations | [systems they run; what must connect] |
+| Data | [what exists, quality, migration, ownership] |
+| Content | [who supplies what, by when] |
+| Brand / design | |
+| IT / security | |
+| Operations post-launch | [who administers, skill level] |
+| Replacement / migration | [what this replaces, switchover] |
+| Time / budget | [deadlines; what flexes first] |
+
+### Budget and decision process
+
+- **Value / budget signal:** [range, anchor, or "still shaping"]
+- **Decision makers and approval chain:** [who signs off, process, timeline]
+- **Late-veto risks:** [who can block near launch - early touchpoint planned?]
+
+### Scope signals
+
+- **Must have:** / **Nice to have:** / **Non-goals:** / **Acceptance model:** [who signs off, demo cadence]
+
+### Recommended next skills
+
+- `/pm-discovery-interview` - prep the next session against the remaining gaps
+- `/pm-discovery-report` - update the incremental client-facing report after each session
+- `/pm-personas` - if `[CLIENT-ASSERTED]` user claims were captured
+- `/pm-scope-brief` - when discovery has converged and scope shaping is done
+```
+
+---
+
 ## Step 4: Action item triage
 
 After generating the summary, present action items grouped by destination:
@@ -459,6 +542,8 @@ Saved locally. To push: add the URL and re-run /pm-meeting push.
 pureinn-workspace/[project-slug]/meetings/[YYYY-MM-DD]-[type]-[topic-slug].md
 ```
 
+**Type slugs (fixed - other skills scan the meetings/ folder by these exact slugs):** `customer-discovery` · `client-discovery` (Client / Requirements Discovery) · `product-review` · `planning` · `strategic-review` · `standup` / `retro` · `partner-vendor`. Never derive a different slug from the type name.
+
 ---
 
 ## Handoff
@@ -467,6 +552,7 @@ pureinn-workspace/[project-slug]/meetings/[YYYY-MM-DD]-[type]-[topic-slug].md
 
 **Ďalší krok (podľa typu meetingu):**
 - Customer Discovery → `/pm-personas` alebo `/jtbd-building` ak insights menia persony
+- Client Discovery → `/pm-discovery-report` (update priebežného reportu), `/pm-discovery-interview` (príprava ďalšieho sedenia), po konvergencii `/pm-scope-brief`
 - Product Review → oprav Feature Card alebo re-run `/pm-feature-design [FEAT-ID]`
 - Planning → `/pm-stripe` na ďalšej dev session
 - Strategic Review → authoring skill v delta mode + `/pm-audit strategy`

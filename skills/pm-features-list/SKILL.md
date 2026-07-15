@@ -77,7 +77,7 @@ KANO tells you *what* to include. V×C tells you *in what order* to deliver it. 
 ## Dependencies
 
 **Required before running:**
-- `pm-prd` - PRD Business Capabilities section is the primary input for feature extraction
+- `pm-prd` - PRD Business Capabilities section is the primary input for feature extraction (or `pm-scope-brief` on commissioned builds - `product/scope_brief.md` carries the same Business Capabilities contract)
 - `pm-entity-registry` - entities.md informs what operations are needed per domain
 
 **Recommended before running:**
@@ -107,7 +107,7 @@ Check for existing artifacts:
 
 | Condition | Mode | Behavior |
 |---|---|---|
-| `feature_list.md` does NOT exist | Create mode | Generate full feature list from PRD_master Business Capabilities |
+| `feature_list.md` does NOT exist | Create mode | Generate full feature list from PRD_master Business Capabilities (or `product/scope_brief.md` Business Capabilities on commissioned builds) |
 | `feature_list.md` EXISTS + `initiatives/[slug]/` exists | FI Append mode | Add new initiative features, preserve existing list |
 | `feature_list.md` EXISTS, no initiatives | Update mode | Refresh or extend the existing list (use Step 1 option C) |
 

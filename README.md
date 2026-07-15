@@ -19,7 +19,7 @@ A structured methodology for building products - from zero to launch. Implemente
 
 ## What this is
 
-**47 active skills + 2 commands** covering the full product lifecycle: discovery, validation, prototyping, stakeholder pushback rehearsal, anomaly root-cause diagnosis, domain modeling, process & user-flow mapping, feature planning, prioritization, FDD delivery, reconciliation-based rebuild, workspace health-check, team onboarding, and meeting capture.
+**50 active skills + 2 commands** covering the full product lifecycle: client discovery, discovery, validation, prototyping, stakeholder pushback rehearsal, anomaly root-cause diagnosis, domain modeling, process & user-flow mapping, feature planning, prioritization, FDD delivery, reconciliation-based rebuild, workspace health-check, team onboarding, and meeting capture.
 
 Three playbooks:
 
@@ -127,7 +127,7 @@ If FEAT-ID doesn't exist yet: add it to `feature_list.md`, create stub card, the
 | `/pm-comms-charter` | Communication Charter, Meeting Rhythm |
 | `/pm-stakeholder-map` | Stakeholder Map, RACI Matrix, Escalation Tree |
 | `/pm-onboarding` | Role-specific Onboarding Brief for new team members (Developer, PM, Designer, Stakeholder) - product context, settled decisions, artifact map, current delivery state, who to ask |
-| `/pm-meeting` | Structured meeting notes, decisions, and action items from raw notes or transcript. Auto-detects meeting type (Customer Discovery, Product Review, Planning, Strategic, Standup/Retro, Partner). Tags each action item with destination (Notion Task / Feature Card / follow-up meeting / framework skill). Pushes to Notion Meetings DB with linked tasks. |
+| `/pm-meeting` | Structured meeting notes, decisions, and action items from raw notes or transcript. Auto-detects meeting type (Customer Discovery, Client/Requirements Discovery, Product Review, Planning, Strategic, Standup/Retro, Partner). Tags each action item with destination (Notion Task / Feature Card / follow-up meeting / framework skill). Pushes to Notion Meetings DB with linked tasks. |
 
 ### Phase 2 - Discovery
 | Skill | Output |
@@ -135,8 +135,10 @@ If FEAT-ID doesn't exist yet: add it to `feature_list.md`, create stub card, the
 | `/pm-tech-feasibility` | Tech Feasibility Report |
 | `/pm-domain-analysis` | Domain Analysis, Legal & Regulatory Requirements |
 | `/pm-market-analysis` | Market Size (TAM/SAM/SOM), Competitor Analysis, SWOT - three input paths: paste research (A), guided elicitation (B), AI-powered via OpenAI (C) |
-| `/pm-personas` | Customer Segments, Personas, Early Adopters Profile |
-| `/jtbd-building` | JTBD Analysis, Forces Diagram |
+| `/pm-personas` | Customer Segments, Personas (with Empathy Map, provenance-tracked incl. `[CLIENT-ASSERTED]`), Early Adopters Profile |
+| `/jtbd-building` | JTBD Analysis, Forces Diagram (+ Commissioner Job on commissioned builds) |
+| `/pm-discovery-interview` | Session agenda for a live client/user discovery session - reads what discovery already covered, targets the biggest gaps, compiles questions from its built-in discovery question bank (two planes: commissioner + real users; three user populations) |
+| `/pm-discovery-report` | Client-facing Discovery Report - "what we heard, what we recommend", incremental and re-runnable across sessions; narrative companion to the internal Problem Validation Summary |
 | `/pm-problem-validation` | Problem Validation Summary (Phase 2 exit) |
 
 ### Phase 3a - Validation
@@ -155,6 +157,7 @@ If FEAT-ID doesn't exist yet: add it to `feature_list.md`, create stub card, the
 | `/pm-business-case` | Business Case (3-year projections, Go/No-Go) |
 | `/pm-product-roadmap` | Product Roadmap v1 |
 | `/pm-prd` | PRD - Phase 3b exit artifact (frozen after creation) |
+| `/pm-scope-brief` | Scope Brief - alternative Phase 3b exit for commissioned builds (client/exec mandate already given): what exactly gets built, Business Capabilities, edge cases `[CANDIDATE-BR]`, non-goals, acceptance criteria + Change Log. Phase 4-5 consume it exactly like a PRD |
 | `/pm-pitch-deck` | Pitch Deck content brief (+ Gamma visual deck if MCP connected) |
 
 ### Phase 4 - Domain Modeling + Register Setup

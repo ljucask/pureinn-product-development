@@ -156,8 +156,8 @@ The user jumped straight to a part of the framework via a stage keyword (e.g. `/
 |---|---|---|
 | `setup` / `discover` | nothing | proceed |
 | `validate` | Problem Validation Summary | offer options below |
-| `define` | Phase 3a GO verdict + validated inputs | offer options below |
-| `model` | PRD frozen | offer options below |
+| `define` | Phase 3a GO verdict + validated inputs — OR a given mandate (commissioned build: client/exec decided) + Discovery Report → route to `/pm-scope-brief` | offer options below |
+| `model` | PRD frozen — or Scope Brief baselined (`product/scope_brief.md`, commissioned builds) | offer options below |
 | `plan` | entities.md + business_rules.md | offer options below |
 | `build` | feature_list.md + registers | offer options below |
 
@@ -166,7 +166,7 @@ When upstream is missing or thin, use **AskUserQuestion**:
 - B) Jump back to [upstream stage] to build the missing input first
 - C) Proceed anyway, I accept the risk
 
-This is the existing **"done elsewhere"** rule (used for Phase 3a) generalized to stage entry: if work was genuinely done outside the framework, collect the minimum evidence to confirm the exit criteria, mark the phase complete, and continue. Do not force re-running skills for work already done. Note the hard gate still holds: `define` (Phase 3b) requires a GO verdict - if none exists, collect it via the "done elsewhere" import (verdict + evidence) before proceeding.
+This is the existing **"done elsewhere"** rule (used for Phase 3a) generalized to stage entry: if work was genuinely done outside the framework, collect the minimum evidence to confirm the exit criteria, mark the phase complete, and continue. Do not force re-running skills for work already done. Note the hard gate still holds: `define` (Phase 3b) requires a GO verdict - if none exists, collect it via the "done elsewhere" import (verdict + evidence) before proceeding. **Exception - commissioned builds:** when the mandate is already given (a client commissioned the build, an exec directed it), the GO gate does not apply - the market risk sits with the commissioner. Phase 3a is skipped (record it in `phases_skipped` with reason "mandate given") and Phase 3b runs as `/pm-scope-brief` instead of the canvas → PRD chain.
 
 **d) Set state + hand off:** write `current_phase_name` (and `current_phase_index` aligned to the existing scheme) to `state.json`, then go to **STEP 7 (Dashboard)**. The dashboard already renders the phase, its skills queue, and the guidance intro - no new dashboard logic.
 
@@ -616,6 +616,7 @@ pureinn-workspace/[slug]/
   glossary.md                                    ← pm-glossary (cross-phase)
   product/
     PRD_master.md                                ← pm-prd [Product PRD - frozen after Phase 3b]
+    scope_brief.md                               ← pm-scope-brief [commissioned builds - Phase 3b alternative]
   domain/                                        ← 4 living registers (append per initiative)
     entities.md                                  ← pm-entity-registry (Live Register 1)
     business_rules.md                            ← pm-business-rules-library (Live Register 2)
@@ -638,6 +639,7 @@ pureinn-workspace/[slug]/
   team/                                          ← operational, created on demand
     onboarding/                                  ← pm-onboarding (role-specific briefs)
   meetings/                                      ← pm-meeting (per-meeting notes, created on demand)
+    prep/                                        ← pm-discovery-interview (session agendas, created on demand)
   prototypes/                                    ← pm-prototype (prototype specs + results, created on demand)
   stress-tests/                                  ← pm-stress-test (pushback rehearsals + prep summaries, created on demand)
   root-cause/                                    ← pm-root-cause (anomaly investigations, created on demand)
@@ -855,6 +857,8 @@ When a skill needs a Notion URL, it:
 | pm-market-analysis | market-size-analysis.md, competitor-analysis.md, swot-analysis.md, market-timing-rationale.md | artifacts/phase-2-discovery/ |
 | pm-personas | customer-segments.md, personas.md, early-adopters-profile.md | artifacts/phase-2-discovery/ |
 | jtbd-building | jtbd-analysis.md | artifacts/phase-2-discovery/ |
+| pm-discovery-interview | [YYYY-MM-DD]-[audience]-agenda.md | meetings/prep/ |
+| pm-discovery-report | discovery-report.md (incremental, re-runnable) | artifacts/phase-2-discovery/ |
 | pm-problem-validation | problem-validation-summary.md | artifacts/phase-2-discovery/ |
 | design-thinking | design-thinking-synthesis.md | artifacts/phase-3-define/ |
 | pm-hypotheses | hypothesis-register.md, go-no-go.md | artifacts/phase-3-define/ |
@@ -864,6 +868,7 @@ When a skill needs a Notion URL, it:
 | pm-kpis | north-star-metric.md, aarrr-metrics.md, okrs.md | artifacts/phase-3-define/ |
 | pm-business-case | business-case.md | artifacts/phase-3-define/ |
 | pm-prd | PRD_master.md (Greenfield, frozen) / initiatives/[slug]/prd.md (FI Initiative mode) | product/ or initiatives/[slug]/ |
+| pm-scope-brief | scope_brief.md (commissioned builds - Phase 3b exit alternative; Change Log after baseline) | product/ |
 | pm-product-roadmap | product-roadmap-v1.md | artifacts/phase-3-define/ |
 | pm-pitch-deck | pitch-deck-brief.md | artifacts/phase-3-define/ |
 | pm-domain-model | domain-model.md | artifacts/phase-4-domain/ |
@@ -942,7 +947,7 @@ Fields updated by `/pm-stripe` during Phase 6-7:
 Note: individual feature status is tracked in Feature Card frontmatter (`status` field) and `feature_list.md`, not state.json.
 Note: `registers` flags are set to `true` by pm-entity-registry and pm-business-rules-library after first initialization.
 Note: `phases_completed` uses string identifiers - "1", "2", "3a", "3b", "4", "5", "6-7". Phase 3 split is tracked as two separate entries.
-Note: `phase_3a_verdict` stores the Go/No-Go outcome: "GO", "PIVOT", or "STOP". Set by /pm-hypotheses [Results mode] or by "done elsewhere" import. Phase 3b entry is blocked until this field is "GO".
+Note: `phase_3a_verdict` stores the Go/No-Go outcome: "GO", "PIVOT", or "STOP". Set by /pm-hypotheses [Results mode] or by "done elsewhere" import. Phase 3b entry is blocked until this field is "GO" - except commissioned builds (mandate given), where Phase 3a sits in `phases_skipped` and the field stays unset.
 
 ---
 
@@ -1065,6 +1070,18 @@ Team with defined roles / Corporate:
                          [Run after /pm-personas - uses personas as input]
 /pm-problem-validation → Problem Validation Summary (Phase 2 exit artifact)
                          [Synthesizes all Track A-D outputs - run last in Phase 2]
+
+Client discovery layer (commissioned builds - someone else defines what gets built):
+/pm-discovery-interview → Session agenda before each live client/user session
+                          [Reads meetings/ + artifacts, targets biggest gaps; the full
+                           question bank is embedded inline in the skill - self-contained]
+/pm-meeting             → Client Discovery type - structured capture after each session
+                          [References classified directive/hypothesis, constraints,
+                           [CANDIDATE-BR] exceptions, [CLIENT-ASSERTED] user claims]
+/pm-discovery-report    → Client-facing "what we heard, what we recommend"
+                          [Incremental across sessions; narrative companion to the
+                           internal Problem Validation Summary. If mandate is given,
+                           feeds /pm-scope-brief directly - Phase 3a skipped]
 ```
 
 ### Phase 3a - Validation
@@ -1095,6 +1112,7 @@ riskiest assumptions tested. Phase 3a is then marked complete and 3b can start.
 Character: AI-assisted synthesis sprint. With clean Phase 3a inputs, this is
 Quality depends entirely on Phase 3a rigor.
 Condition: only starts after GO verdict from Phase 3a. No FORCE bypass for this gate.
+(Exception: commissioned builds skip 3a - mandate given - and run /pm-scope-brief here.)
 
 "Done elsewhere" path: if you already have a Lean Canvas, financial model, or
 existing commercial strategy artifacts, bring them via Path A in each skill.
@@ -1108,6 +1126,10 @@ State "Phase 3b partially done elsewhere" and list which artifacts exist.
 /pm-product-roadmap    → Product Roadmap v1
 /pm-prd                → PRD - Phase 3b exit artifact (synthesizes all Phase 2+3a+3b)
                          [PRD_master.md is frozen after creation - immutable from this point]
+/pm-scope-brief        → Scope Brief - Phase 3b exit ALTERNATIVE for commissioned builds
+                         [mandate already given (client/exec decided): Phase 3a skipped, canvas/KPI
+                          skills optional. Business Capabilities section = same downstream contract
+                          as PRD Section 7; Phase 4-5 consume it identically. Change Log after baseline]
 /pm-pitch-deck         → Pitch Deck content brief (slide-by-slide spec → Gamma visual deck)
                          [Optional - run if raising capital, selling to customers, or pitching partners]
                          [Requires: pm-lean-canvas + pm-business-case + pm-problem-validation]
@@ -1412,8 +1434,8 @@ Concrete, phase-by-phase thresholds - self-contained in this repo so the exit ga
 |---|---|---|
 | **1 - Foundation** | Project Charter has a success criterion tied to retention/revenue/repeated usage (not a vanity metric) + at least one named risk with an owner + decision authority named | Completeness gate, not a numeric one - Phase 1 has no market signal yet to threshold against |
 | **2 - Discovery** | ≥10 customer interviews (or synthetic-interview equivalent, clearly marked) completed for Track D + all 4 tracks (A-D) have produced output + Problem Validation verdict is ✅ Validated or ⚠️ Partially validated (not ❌) | 10 interviews is the standard qualitative-saturation floor used by `pm-problem-validation`'s own completeness checklist; a ❌ verdict means the premise itself is unconfirmed - proceeding past it is the single most expensive mistake in the framework |
-| **3a - Validation** | Go/No-Go verdict = **GO** from `pm-hypotheses` (Results mode) | Hard gate, already enforced below with no FORCE bypass - listed here for completeness, not re-implemented |
-| **3b - Commercial Definition** | PRD exists and covers all 12 sections + Business Case has Conservative/Base/Optimistic scenarios with the Conservative scenario surviving to the first milestone (or the risk is explicitly acknowledged) + North Star Metric is defined with a Month-3/6/12 target | A scenario that dies before the milestone under Conservative assumptions is a real risk the team must see, not bury in a spreadsheet |
+| **3a - Validation** | Go/No-Go verdict = **GO** from `pm-hypotheses` (Results mode). Commissioned builds (mandate given) skip this phase entirely - recorded in `phases_skipped`, gate not evaluated | Hard gate, already enforced below with no FORCE bypass - listed here for completeness, not re-implemented. The gate protects YOUR market bet; a commissioner's mandate carries their own risk |
+| **3b - Commercial Definition** | PRD exists and covers all 12 sections + Business Case has Conservative/Base/Optimistic scenarios with the Conservative scenario surviving to the first milestone (or the risk is explicitly acknowledged) + North Star Metric is defined with a Month-3/6/12 target. **Commissioned-build alternative:** Scope Brief exists, is Baselined, and its mandatory sections are filled (Business Capabilities, Scope IN/OUT with acceptance signals, Acceptance) | A scenario that dies before the milestone under Conservative assumptions is a real risk the team must see, not bury in a spreadsheet. For the Scope Brief: an unbaselined brief means the scope cut was never confirmed - Phase 4 would model an unagreed product |
 | **4 - Domain Modeling** | `entities.md`, `business_rules.md`, `decision_models.md` all initialized + every Critical business rule has a stated enforcement point (no blanks) | Guard-condition and enforcement-point completeness is what makes Phase 6 JIT design possible without re-litigating the domain model mid-build |
 | **5 - Feature Planning** | `feature_list.md` complete with KANO + V×C on every feature + MVP cut made (every feature has a `phase` value, not just some) + dependency map has zero cycles + `pm-mvp-scope`'s capacity reconciliation shows the MVP list fits the stated team/timeline (or the mismatch is acknowledged) | An MVP list nobody checked against capacity is the most common way delivery timelines silently fail |
 | **6-7 - Build (per Stripe close)** | Every feature in the stripe is `6_Shipped` + spec gate was never bypassed (Sections 1-3 complete before any `4_In_Build`) + feature flags default OFF verified | Mirrors the framework's own non-negotiable rules (spec gate, flag-OFF default) rather than inventing a new bar |
@@ -1459,18 +1481,20 @@ Then use the AskUserQuestion tool:
 On GO or FORCE: update state.json - add phase to `phases_completed`, advance `current_phase_index`.
 
 **Special rule - Phase 3a → 3b transition:**
-This gate cannot be bypassed with FORCE. The Go/No-Go verdict from /pm-hypotheses [Results mode] is the only valid exit from Phase 3a. If the verdict is PIVOT or STOP, Phase 3b cannot start. If user attempts to proceed to Phase 3b without a GO verdict, block with:
+This gate cannot be bypassed with FORCE. The Go/No-Go verdict from /pm-hypotheses [Results mode] is the only valid exit from Phase 3a **for a speculative product** (your own market bet). If the verdict is PIVOT or STOP, Phase 3b cannot start. One carve-out exists: a **commissioned build** (a client/exec already decided the build - the market risk is theirs) skips Phase 3a legitimately. If user attempts to proceed to Phase 3b without a GO verdict, block with:
 ```
 Phase 3b requires a GO verdict from Phase 3a hypothesis validation.
 Current status: [PIVOT / STOP / not run]
 
 Phase 3b is commercial commitment work - business case, roadmap, and PRD.
 Starting it without validated problem-market fit means those documents are built on unconfirmed assumptions.
+(Exception: if this build was commissioned - a client or exec already decided it - the gate does not apply to you.)
 ```
 Then use the AskUserQuestion tool:
 - Question: "How do you want to resolve this?"
   - Option A: "Return to Phase 3a (Recommended if no experiments have run yet)" — description: "Run /pm-hypotheses [Results mode] with your experiment data"
   - Option B: "Phase 3a was done outside this framework" — description: "Provide the Go/No-Go verdict and evidence via the 'done elsewhere' handler below"
+  - Option C: "This is a commissioned build - the mandate is given" — description: "Client/exec decided the build; skip Phase 3a (recorded in phases_skipped with reason 'mandate given') and run /pm-scope-brief as the Phase 3b exit"
 
 **"Done elsewhere" handler (for any phase):**
 If user states a phase was done outside this framework, collect the minimum evidence needed to confirm the phase exit criteria were met, then mark it complete. For Phase 3a specifically: collect Go/No-Go verdict + which hypothesis types were tested + key evidence signal per type. Do not require re-running skills if the work was genuinely done.
@@ -1581,15 +1605,18 @@ Output: Go/No-Go verdict (hard gate - only GO unlocks Phase 3b).
     Input:  Experiment results vs. pre-defined success criteria
     Output: Hypothesis Register (updated), Go/No-Go Decision (Go / Pivot / Stop)
     Note:   HARD GATE - GO required to enter Phase 3b. PIVOT loops back. STOP ends project.
-            No FORCE bypass on this gate.
+            No FORCE bypass on this gate. (Commissioned builds skip Phase 3a entirely -
+            mandate given - so this gate is never evaluated for them.)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 PHASE 3b - COMMERCIAL DEFINITION
 Goal: Translate validated problem-market fit into commercial strategy and product specification.
 Character: AI-assisted synthesis sprint. Quality of output depends entirely on Phase 3a signal quality.
-Condition: Phase 3a GO verdict required. Non-negotiable.
+Condition: Phase 3a GO verdict required. Non-negotiable for speculative products.
+           (Commissioned builds enter directly - Phase 3a skipped, mandate given.)
 Output: PRD (frozen after creation) + Business Case + Roadmap v1.
+        Commissioned builds: Scope Brief baselined (product/scope_brief.md) instead.
 "Done elsewhere": accepted - bring existing Lean Canvas, financial model, or strategy artifacts via Path A.
 ─────────────────────────────────────────────
   /pm-kotler
@@ -1616,6 +1643,15 @@ Output: PRD (frozen after creation) + Business Case + Roadmap v1.
   /pm-prd  [Phase 3b exit artifact]
     Input:  All Phase 2 + Phase 3a + Phase 3b outputs
     Output: PRD (full product-level consolidation document - frozen after creation)
+
+  /pm-scope-brief  [Phase 3b exit alternative - commissioned builds]
+    Input:  Discovery Report (primary), client-discovery meeting notes, Track artifacts
+    Output: Scope Brief (product/scope_brief.md) - what exactly gets built: Business
+            Capabilities (same downstream contract as PRD Section 7), scope IN/OUT/deferred,
+            edge cases [CANDIDATE-BR], acceptance criteria + Change Log after baseline
+    Note:   Used when the mandate is already given (client/exec decided) - Phase 3a is
+            skipped and the canvas/KPI/business-case skills are optional. Phase 4-5
+            consume the Scope Brief exactly as they consume a PRD.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 

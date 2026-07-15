@@ -5,9 +5,9 @@ license: MIT
 metadata:
   agent-mode: decision
   author: https://github.com/ljucask
-  version: "1.0.0"
+  version: "1.1.0"
   domain: product-management
-  triggers: JTBD, jobs to be done, forces diagram, switching logic, job stories, customer motivation
+  triggers: JTBD, jobs to be done, forces diagram, switching logic, job stories, customer motivation, commissioner job
   role: specialist
   scope: analysis
   output-format: document
@@ -37,6 +37,8 @@ Applies Jobs-to-be-Done theory to the validated customer research and personas t
 JTBD analysis goes deeper than persona pain points. It explains the causal mechanism behind why someone would switch - the forces operating on their decision. This is the input for design decisions in Phase 3a (Design Thinking).
 
 Run this after `pm-personas`. Personas give you who - JTBD gives you why.
+
+**Commissioned builds - two levels of job:** the commissioner (client/sponsor) has their own job - they "hire" the product at business level (earn more / spend less / reduce risk / comply / status). That is distinct from the end users' jobs analyzed here. Record it as a separate, clearly labeled **Commissioner Job** story (source: client-discovery notes) - it governs prioritization and the engagement's success measure, while user jobs govern design. Never average the two into one job story.
 
 ---
 
@@ -98,7 +100,9 @@ I need inputs for the JTBD Analysis.
    - What triggered them to start looking for something new?
    - What made them hesitate before switching?
    - What they expected the new solution to do for them?
-   [paste relevant excerpts, or describe what you heard]
+   - How often the job occurs, and in what context (where, when, under what pressure)?
+   [paste relevant excerpts, or describe what you heard - or point me at the
+    workspace meetings/ folder; I read discovery notes in full, recursively]
 
 3. CURRENT SOLUTION
    What does the primary persona use today to get this job done?
@@ -220,6 +224,12 @@ Generate in English.
 
 **The job in plain language:**
 [2-3 sentences: what is this person really trying to accomplish in their life or work? Not what feature they want - what progress are they trying to make?]
+
+**Frequency and context:** [how often the job occurs (daily / weekly / event-triggered) and in what situation - where, when, under what pressure. Frequency shapes retention expectations; context shapes UX.]
+
+[Commissioned build only:]
+**Commissioner Job (separate level):**
+When [business situation], [the client] wants to [business motivation - earn more / spend less / reduce risk / comply], so they can [business outcome]. *(Source: client discovery. Governs prioritization and the engagement's success measure - not user-facing design.)*
 
 ---
 

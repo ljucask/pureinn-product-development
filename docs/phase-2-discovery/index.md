@@ -62,6 +62,20 @@ Every skill in this phase offers a graceful degradation path - if you have no da
 
 ---
 
+## Client discovery layer (commissioned builds)
+
+When a client, sponsor, or exec commissioned the work, discovery gains a plane above the end users - the commissioner's business, trigger, benefit, budget, constraints, and references. Same four tracks, added tooling:
+
+| Step | Skill / Material | Output |
+|---|---|---|
+| Before each session | [pm-discovery-interview](pm-discovery-interview.md) | Session agenda targeting the biggest remaining gaps - carries the full discovery question bank inline (two planes, three user populations, reference decompression + Exception sweep techniques) |
+| After each session | `/pm-meeting` (Client Discovery type) | Structured findings - references classified directive/hypothesis, constraints, `[CANDIDATE-BR]` exceptions |
+| Continuously | [pm-discovery-report](pm-discovery-report.md) | Client-facing "what we heard, what we recommend" - incremental, re-runnable |
+
+Client claims about their own users enter Track D tagged `[CLIENT-ASSERTED]` - input, not evidence. When the mandate is already given (the client decided to build), Phase 3a can be skipped: the Discovery Report feeds `/pm-scope-brief` directly (Phase 3b alternative to the PRD).
+
+---
+
 ## What you exit with
 
 - **Tech Feasibility Report** - stack viability, key constraints, risks
