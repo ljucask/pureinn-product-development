@@ -4,8 +4,8 @@
 
 **Phase:** 2 - Discovery (Track B)  
 **Agent mode:** `synthesis` - runs fully autonomously  
-**Version:** 1.0.0  
-**Triggers:** domain analysis, legal requirements, regulatory, compliance, industry analysis, Phase 2
+**Version:** 1.1.0  
+**Triggers:** domain analysis, legal requirements, regulatory, compliance, industry analysis, certifications, Phase 2
 
 ---
 
@@ -22,7 +22,7 @@ Phase 2, Track B. Runs in parallel with Tracks A, C, D. Bring Perplexity deep re
 Two artifacts (`artifacts/phase-2-discovery/`):
 
 1. **Domain Analysis Report** (`domain-analysis.md`) - Industry structure, key players, domain-specific constraints and norms, business model patterns in the space, incumbents' defensible advantages
-2. **Legal & Regulatory Requirements** (`legal-requirements.md`) - Licensing, data protection obligations, sector-specific regulations (financial, healthcare, food, transport, etc.), EU AI Act assessment if applicable, showstoppers explicitly called out
+2. **Legal & Regulatory Requirements** (`legal-requirements.md`) - Licensing, data protection obligations, sector-specific regulations (financial, healthcare, food, transport, etc.), **enterprise/B2B certifications** (SOC 2, ISO 27001 - timeline and cost, if selling to regulated buyers), EU AI Act assessment if applicable, showstoppers explicitly called out
 
 ---
 

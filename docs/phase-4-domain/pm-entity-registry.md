@@ -51,7 +51,7 @@ Append mode is used in Feature Implementation when a new initiative introduces e
 
 ## How entities are derived
 
-Source: **PRD Business Capabilities section**. Claude extracts nouns from the capabilities list, clusters them into business objects, and proposes the entity catalogue. The user confirms the entity catalogue before state machines are generated - preventing detailed work on top of a wrong domain structure.
+Source: **PRD Business Capabilities section** - or `product/scope_brief.md` Business Capabilities section on commissioned builds (same table contract; the Scope Brief's `[CANDIDATE-BR]` edge cases additionally seed the business rules register). Claude extracts nouns from the capabilities list, clusters them into business objects, and proposes the entity catalogue. The user confirms the entity catalogue before state machines are generated - preventing detailed work on top of a wrong domain structure.
 
 Entity naming follows the Ubiquitous Language of the domain (business terms, not technical terms).
 
@@ -77,7 +77,7 @@ When `reconcile/reconciliation_report.md` exists, it is the authoritative input.
 ## Dependencies
 
 **Required before running:**
-- `pm-prd` - PRD must include a Business Capabilities section (entities are derived from it)
+- `pm-prd` - PRD must include a Business Capabilities section (entities are derived from it) - or `pm-scope-brief` on commissioned builds
 
 **Produces for:**
 - `pm-business-rules-library` - entities define the scope of business rules

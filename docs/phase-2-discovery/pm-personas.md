@@ -1,10 +1,10 @@
 # pm-personas
 
-> Customer Segments, Personas, and Early Adopter Profile from VOC data
+> Customer Segments, Personas (with Empathy Map + provenance tracking), and Early Adopter Profile from VOC data
 
 **Phase:** 2 - Discovery (Track D, Step 1)  
 **Agent mode:** `decision` - drafts, then requires your review  
-**Version:** 1.0.0  
+**Version:** 1.1.0  
 **Triggers:** personas, customer segments, early adopters, VOC, customer profile, user research, interviews
 
 ---
@@ -13,6 +13,10 @@
 
 Phase 2, Track D, Step 1. Run before `jtbd-building` - JTBD analysis uses personas as input. This is a "bring your data" skill - no invented personas without data. If you have no data, Path B offers AI-powered elicitation from founder knowledge (assumption-based output, clearly marked).
 
+**Provenance tracking:** every persona claim carries its source - real VOC, `[CLIENT-ASSERTED]` (a client/sponsor's own claim about their users, on commissioned builds), or `[ASSUMED]`. A client's description of their users is never treated as validated research.
+
+**Three populations (commissioned builds):** beyond the client's customers, their **staff** (admins, operators, support who use the product daily) are legitimate personas too - skipping them is the classic launch failure.
+
 ---
 
 ## What it produces
@@ -20,7 +24,7 @@ Phase 2, Track D, Step 1. Run before `jtbd-building` - JTBD analysis uses person
 Three artifacts (`artifacts/phase-2-discovery/`):
 
 1. **Customer Segments** (`customer-segments.md`) - distinct groups with shared needs, segmentation criteria, size estimates, pain intensity, revenue potential, primary segment for MVP
-2. **Personas** (`personas.md`) - 1-2 personas per key segment: goals, pains + intensity + workarounds, behaviors, tools they use, direct quotes, what success looks like, why they'd adopt / why they might not
+2. **Personas** (`personas.md`) - 1-2 personas per key segment: goals, pains + intensity + workarounds, behaviors, tools they use, direct quotes, an **Empathy Map** (Says/Thinks/Does/Feels/Sees/Hears), the **as-is journey**, what success looks like, why they'd adopt / why they might not
 3. **Early Adopters Profile** (`early-adopters-profile.md`) - who the first 10-50 customers are, what triggers them, what they need day 1, what they'll tolerate, where to find them
 
 ---

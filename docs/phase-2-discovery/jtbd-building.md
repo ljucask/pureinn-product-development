@@ -4,14 +4,16 @@
 
 **Phase:** 2 - Discovery (Track D, Step 2)  
 **Agent mode:** `decision` - drafts, then requires your review  
-**Version:** 1.0.0  
-**Triggers:** JTBD, jobs to be done, forces diagram, switching logic, job stories, customer motivation
+**Version:** 1.1.0  
+**Triggers:** JTBD, jobs to be done, forces diagram, switching logic, job stories, customer motivation, commissioner job
 
 ---
 
 ## When to use
 
-Phase 2, Track D, Step 2. Run after `pm-personas`. Personas give you who - JTBD gives you why. JTBD analysis goes deeper than pain points: it explains the causal mechanism behind why someone would switch from their current solution to yours.
+Phase 2, Track D, Step 2. Run after `pm-personas`. Personas give you who - JTBD gives you why. JTBD analysis goes deeper than pain points: it explains the causal mechanism behind why someone would switch from their current solution to yours. Also captures job **frequency and context** (how often, under what pressure).
+
+**Commissioned builds - two levels of job:** the commissioner has their own job at business level (earn more / spend less / reduce risk / comply), recorded as a separate **Commissioner Job** story, distinct from and never averaged with end-user jobs.
 
 ---
 

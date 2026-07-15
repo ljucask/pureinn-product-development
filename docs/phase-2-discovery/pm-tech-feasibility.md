@@ -4,8 +4,8 @@
 
 **Phase:** 2 - Discovery (Track A)  
 **Agent mode:** `synthesis` - runs fully autonomously  
-**Version:** 1.0.0  
-**Triggers:** tech feasibility, technology assessment, stack feasibility, technical risks, Phase 2 Track A
+**Version:** 1.1.0  
+**Triggers:** tech feasibility, technology assessment, stack feasibility, technical risks, no-code, disruption, Phase 2 Track A
 
 ---
 
@@ -24,6 +24,7 @@ Phase 2, Track A. Runs in parallel with Tracks B, C, D. This is a "bring your da
 - AI component cost modeling (if product includes AI/ML)
 - Talent availability for the required stack
 - Architecture approach recommendation (high-level)
+- **Technology Disruption Check** - could no-code/low-code or a general AI assistant make the custom build unnecessary? Platform-dependency risk?
 - Open technical questions requiring resolution before Phase 4
 
 ---

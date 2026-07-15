@@ -51,5 +51,6 @@ Can be run with partial track outputs if some tracks are still in progress. Miss
 **Produces for:**
 - `pm-prd` - Problem Validation Summary is a primary PRD input
 - `design-thinking` - feeds the Define stage (problem statement, POV)
+- `pm-discovery-report` - on commissioned builds, its client-facing narrative companion (same facts, different audience)
 
 **Related skills:** `pm-personas`, `jtbd-building`, `pm-market-analysis`, `pm-tech-feasibility`, `pm-domain-analysis`

@@ -4,8 +4,8 @@
 
 **Phase:** Cross-phase  
 **Agent mode:** `synthesis` - runs fully autonomously  
-**Version:** 1.1.0  
-**Triggers:** meeting, notes, transcript, summary, action items, action points, standup, retro, retrospective, planning, grooming, customer interview, discovery call, strategic review
+**Version:** 1.2.0  
+**Triggers:** meeting, notes, transcript, summary, action items, action points, standup, retro, retrospective, planning, grooming, customer interview, discovery call, strategic review, client discovery, requirements session, client brief
 
 ---
 
@@ -38,18 +38,21 @@ Input can be:
 
 ---
 
-## Six meeting types
+## Seven meeting types
 
 The skill detects type from the content. Each type has its own summary template and routing:
 
 | Type | Detection keywords | Primary routing |
 |---|---|---|
 | **Customer Discovery** | customer, user, prospect, "they said", pain, interview | Insights → personas / jtbd / pm-problem-validation |
+| **Client / Requirements Discovery** | client, brief, requirements, "they want", budget, "like [company]", scope, quote, proposal | Discovery Report / Scope Brief / personas `[CLIENT-ASSERTED]` |
 | **Product Review** | FEAT-, AC-, spec, design review, Section, Figma | Feature Card update / pm-feature-design re-run |
 | **Planning / Grooming** | sprint, stripe, priority, backlog, phase, who takes what | feature_list update / pm-stripe / pm-mvp-scope |
 | **Strategic Review** | roadmap, investor, revenue, phase gate, business model, PRD | pm-prd / pm-product-roadmap delta |
 | **Standup / Retro** | yesterday, today, blocker, retrospective, what went well | pm-stripe (blockers) / Notion tasks (retro actions) |
 | **Partner / Vendor** | partner, vendor, contract, integration, API, SLA | Notion tasks + follow-up calendar |
+
+**Client Discovery** captures findings from whoever commissioned the build - requirements, references classified directive/hypothesis (with explicit non-goals), budget/decision process, and process/exception findings tagged `[CANDIDATE-BR]`. Distinct from Customer Discovery (end users). See `pm-discovery-interview` for the full question set used to run these sessions.
 
 ---
 
@@ -78,4 +81,4 @@ Every action item gets a destination tag regardless of meeting type:
 - Feature Cards (for Product Review and Planning types)
 - Downstream skills depending on meeting type (see routing table above)
 
-**Related skills:** `pm-personas`, `jtbd-building`, `pm-problem-validation`, `pm-stripe`, `pm-feature-card`, `pm-product-roadmap`, `pm-team-roster`
+**Related skills:** `pm-personas`, `jtbd-building`, `pm-problem-validation`, `pm-stripe`, `pm-feature-card`, `pm-product-roadmap`, `pm-team-roster`, `pm-discovery-interview`, `pm-discovery-report`, `pm-scope-brief`

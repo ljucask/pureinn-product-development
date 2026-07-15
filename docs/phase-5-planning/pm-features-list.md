@@ -11,7 +11,7 @@
 
 ## When to use
 
-Phase 5, Step 1. Takes the product scope from PRD Business Capabilities and produces the complete prioritized feature inventory. The output of this skill is the direct input for `pm-mvp-scope` (MVP cut + stripe assignment).
+Phase 5, Step 1. Takes the product scope from PRD Business Capabilities (or `product/scope_brief.md` Business Capabilities on commissioned builds - same contract) and produces the complete prioritized feature inventory. The output of this skill is the direct input for `pm-mvp-scope` (MVP cut + stripe assignment).
 
 Re-runnable: if new features are added (Feature Implementation), runs in append mode without destroying existing entries.
 
@@ -94,7 +94,7 @@ Feature Sets are grouping labels only - they do not affect MVP cut or sprint pla
 ## Dependencies
 
 **Required before running:**
-- `pm-prd` - PRD Business Capabilities section is the primary input for feature extraction
+- `pm-prd` - PRD Business Capabilities section is the primary input for feature extraction (or `pm-scope-brief` on commissioned builds)
 - `pm-entity-registry` - entities inform what operations are needed per domain
 
 **Recommended:**

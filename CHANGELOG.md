@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.26.1] - 2026-07-15
+
+### Sync docs pages with client discovery layer skill changes (versions, Empathy Map, per-competitor profiles, scope_brief cross-refs)
+
+---
+
+
 ## [5.26.0] - 2026-07-15
 
 ### Client discovery layer: pm-discovery-interview (self-contained question bank), pm-discovery-report, pm-scope-brief + Client Discovery meeting type, commissioned-build path through Phase 3, and discovery gap-fills across 5 skills
