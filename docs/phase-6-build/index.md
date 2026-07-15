@@ -37,6 +37,7 @@ pm-feature-    pm-feature-      pm-stripe                                  pm-st
 
 | Skill | What it does | Output |
 |---|---|---|
+| [pm-stripe](pm-stripe.md) | Session orchestrator - run every time you sit down to work on Phase 6-7. Detects where each feature is in the lifecycle, surfaces the right next action, routes to the correct skill | Stripe dashboard, Design/Code Inspection, next-action routing |
 | [pm-feature-design](pm-feature-design.md) | JIT design for one feature: register finalization, ACs, sequence diagram, Feature Card Sections 1-3 | Feature Card Sections 1-3, register updates |
 | [pm-feature-card](pm-feature-card.md) | Feature Card management and lifecycle | Feature Card CRUD operations |
 | [pm-feature-viability](pm-feature-viability.md) | Pre-spec viability check: KANO, MDP scope, success metrics | Viability assessment (skip if feature already scoped) |

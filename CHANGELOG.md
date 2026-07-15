@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.26.2] - 2026-07-15
+
+### Fix pm-stripe missing link in phase-6-build index (was backtick-only, not linked to its doc page)
+
+---
+
+
 ## [5.26.1] - 2026-07-15
 
 ### Sync docs pages with client discovery layer skill changes (versions, Empathy Map, per-competitor profiles, scope_brief cross-refs)
