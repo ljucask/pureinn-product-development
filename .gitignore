@@ -9,3 +9,5 @@ lovable-prompt-bible
 .claude/worktrees/
 # Standalone methodology/knowledge layer - private, undecided publishing status, not the plugin
 framework-methodology-no-git/
+# Internal framework development ideas - not published
+BACKLOG.md

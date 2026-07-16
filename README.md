@@ -265,7 +265,7 @@ The `examples/` folder contains realistic output samples showing what the framew
 
 | Example | Playbook | Domain | What it shows |
 |---|---|---|---|
-| [saas-subscription/](examples/saas-subscription/) | Feature Implementation | Subscription Billing (Stripe) | Initiative PRD, full domain registers (entities, business rules, feature list), two Feature Cards at different lifecycle stages (6_Shipped + 3_Ready_to_Build) |
+| [food-delivery-app/](examples/food-delivery-app/) | Greenfield | Food delivery marketplace (PureHunger) | Full lifecycle, Foundation through Build - project charter, personas, JTBD, market analysis, Go/No-Go, PRD, domain registers (entities, business rules with the Core/Critical/Governance split, decision tables), feature list + MVP scope, two Feature Cards at different lifecycle stages, plus cross-phase meeting notes and an onboarding brief |
 
 ---
 

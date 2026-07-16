@@ -324,11 +324,22 @@ From the same notion-fetch result, find the `<templates>` section.
 Look for the template named `"Feature Card Template"` and extract its `id` attribute.
 Example: `<template id="b8df8652-..." name="Feature Card Template"/>` → use this id.
 
-**Step 4c - Create pages:**
+**Step 4c - Check for existing entries (duplicate guard, mandatory before any create):**
 
-Call `mcp__claude_ai_Notion__notion-create-pages` with:
-- `parent.type` = `"data_source_id"`
-- `parent.data_source_id` = ID from Step 4a
+This skill is re-runnable to re-sync Notion after state changes - re-running must never create duplicate pages for a feature that is already there.
+
+1. Call `mcp__claude_ai_Notion__notion-query-data-sources` (or `notion-search` scoped to the data source) against the data source ID from Step 4a to fetch existing entries.
+2. Extract the `FEAT-ID` property from every existing entry into a set.
+3. Split the features to push into two groups: **new** (FEAT-ID not in the set) and **existing** (FEAT-ID already present).
+
+**Step 4d - Create or update:**
+
+- **New features:** call `mcp__claude_ai_Notion__notion-create-pages` with:
+  - `parent.type` = `"data_source_id"`
+  - `parent.data_source_id` = ID from Step 4a
+- **Existing features:** call `mcp__claude_ai_Notion__notion-update-page` on the matched page instead - refresh its properties (Status, Phase, Dev Stripe, etc.) to current values. Never create a second page for a FEAT-ID that already has one.
+
+Report both counts separately: "Created [N] new, updated [M] existing."
 
 **Status mapping (extraction → Notion):**
 
@@ -386,7 +397,6 @@ content:
 
 Fill from evidence/derivation: `Layer` (from code - FE routes/components → Frontend, controllers/services → Backend, jobs/cron → System), `Has Subtasks` (true if the card has any subtasks), `Dev Stripe`. Propose with reasoning (confirm via AskUserQuestion): `Phase`, `KANO Category` (a shipped feature is usually Must-be), `V×C Quadrant`, `Priority`. Leave blank only: `Feature Card URL` - filled later by pm-feature-design. Never leave Layer / Description / Has Subtasks blank.
 
-After push, confirm count: "Pushed [N] features to Notion."
 
 ---
 

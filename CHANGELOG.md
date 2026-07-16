@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.27.0] - 2026-07-16
+
+### Replace saas-subscription example with full-lifecycle food-delivery-app walkthrough (all 7 phases); add pm-reconcile write-verification gate and pm-reverse-extract Notion duplicate guard
+
+---
+
+
 ## [5.26.2] - 2026-07-15
 
 ### Fix pm-stripe missing link in phase-6-build index (was backtick-only, not linked to its doc page)

@@ -211,7 +211,7 @@ Use the **grouped question pattern** (CLAUDE.md): batch related conflicts (2-4 p
 **High-volume batching (checkpointed) - required when an area is large:** When a single area pass has many items to reconcile (roughly **>15** rules / decision tables / features - common in legacy systems with dozens of each), do NOT process them all in one sitting. Batch and checkpoint:
 
 1. Split the area's items into batches by a natural grouping - rules and decision tables by **feature set or rule category**, features by **feature set**, entities by **cluster**. Aim for ~10-15 items per batch. Business rules and decision tables can be batched as separate runs if both are large.
-2. Process one batch fully: auto-reconcile the matches, raise AskUserQuestion only on **that batch's** divergences. Then **checkpoint** - append the batch's findings to the report, record progress in `state.json` (`reconcile.areas[].batches_done` / `batches_total`), and report: `batch N/M done - X divergences resolved, Y open`.
+2. Process one batch fully: auto-reconcile the matches, raise AskUserQuestion only on **that batch's** divergences. Then **checkpoint** - append the batch's findings to the report, confirm the writes actually landed (Step A5b - re-read the target file or `git diff --stat`, do not report from intent), record progress in `state.json` (`reconcile.areas[].batches_done` / `batches_total`), and report: `batch N/M done - X divergences resolved, Y open`.
 3. The user can stop after any batch. `/pm-reconcile-status` shows batch progress; re-running `/pm-reconcile [area]` **resumes at the next un-done batch** and does not re-reconcile completed batches.
 
 This bounds the AskUserQuestion load per batch (not by the whole area's volume) and keeps each sitting reviewable. The area's `status` becomes `done` only when its last batch is checkpointed.
@@ -233,9 +233,13 @@ Drive the existing skill - do not duplicate its template:
   - **Too big** (a legacy feature carries two independent results) → split into separate Features.
   - Record every merge/split in the Reconciliation Report (Section: feature regrouping) so the team can trace where each legacy item went.
 
+## Step A5b: Confirm the write landed (mandatory gate before any "done" claim)
+
+Never report a batch, area, or file as updated based on stated intent. After driving a downstream skill's write in Step A5, re-read back the actual target file(s) (`entities.md` / `business_rules.md` / `decision_models.md` / `feature_list.md` / cards / `domain-model.md`) or run `git diff --stat` against the workspace and confirm the expected files actually show as changed with the expected content. If a claimed write did not land, redo it before proceeding - do not move on and do not checkpoint. This applies at every granularity: per-batch checkpoints (Step A3) and per-area completion (Step A6) both require this confirmation, not a memory of what was planned.
+
 ## Step A6: Update status + Notion
 
-Set this area `status: done` in `state.json reconcile.areas[]` (record `divergences_open` count) and tick it in `reconciliation_plan.md`. Push this slice to Notion via the downstream skill's existing logic if a target is configured (`notion_ids.<key>` convention; never invent columns).
+Set this area `status: done` in `state.json reconcile.areas[]` (record `divergences_open` count) and tick it in `reconciliation_plan.md` - only after Step A5b confirms the writes actually landed. Push this slice to Notion via the downstream skill's existing logic if a target is configured (`notion_ids.<key>` convention; never invent columns).
 
 Close with: what this area produced, open divergences, and the next area command (or "all areas done - run /pm-reconcile-status").
 
