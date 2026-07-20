@@ -11,3 +11,5 @@ lovable-prompt-bible
 framework-methodology-no-git/
 # Internal framework development ideas - not published
 BACKLOG.md
+# macOS junk
+.DS_Store
