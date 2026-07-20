@@ -1,13 +1,13 @@
 ---
 name: pm-reverse-extract
-description: Migration path skill for products built outside the framework. Reads existing codebase, docs, and Feature Cards (if any) to extract the full feature inventory. Outputs feature_list.md (Live Register 4, FEAT-[DOMAIN]-NNN IDs) + stub Feature Cards in features/cards/ + Notion push. Run after pm-entity-registry and pm-business-rules-library have initialized the domain registers. Run instead of pm-features-list + pm-mvp-scope for existing products.
+description: Migration path skill for products built outside the framework. Reads existing codebase, docs, and Feature Cards (if any) to extract the full feature inventory, including cross-feature Dependencies (user-stated + code-evidence-derived) and Priority - same fields, same Notion property set as pm-features-list, for structural parity across playbooks. Outputs feature_list.md (Live Register 4, FEAT-[DOMAIN]-NNN IDs) + stub Feature Cards in features/cards/ + Notion push. Run after pm-entity-registry and pm-business-rules-library have initialized the domain registers. Run instead of pm-features-list + pm-mvp-scope for existing products.
 license: MIT
 metadata:
   agent-mode: synthesis
   author: https://github.com/ljucask
-  version: "2.0.0"
+  version: "2.1.0"
   domain: product-management
-  triggers: reverse extract, existing product, feature inventory, migration path, feature implementation onboarding, sync Notion
+  triggers: reverse extract, existing product, feature inventory, migration path, feature implementation onboarding, sync Notion, dependencies
   role: specialist
   scope: extraction
   output-format: document
@@ -120,7 +120,12 @@ Migration path setup - I need a few inputs before extracting the feature invento
    This determines which features/domains get JIT design first.
    [answer]
 
-5. NOTION
+5. KNOWN DEPENDENCIES
+   Are there features you know depend on each other? (e.g., "payment can't be
+   tested without a confirmed order", "notifications need the booking flow first")
+   [describe or "none known yet - infer from code"]
+
+6. NOTION
    Do you have a Notion Product Features database?
    URL (or "skip - markdown only"):
    [answer]
@@ -164,7 +169,16 @@ Done features: assign to their natural stripe with status = Promoted
 In Progress features: assign as Active in their stripe
 Planned features: assign to Queue in their stripe
 
-### 2d. Identify what needs JIT design before next build
+### 2d. Derive dependencies
+
+Two sources, both feeding the same `Dependencies` field per feature:
+
+1. **User-stated** (from Step 1, Q5) - direct input, highest confidence.
+2. **Code-evidence-derived** - if Feature A's evidence file imports, calls, or is called by Feature B's evidence file (e.g., the payment controller calls a function defined in the order controller), that is a **candidate** hard dependency. Propose it, do not assert it silently - list candidates and confirm with the user before writing them as settled (same discipline as `pm-domain-analysis`'s `[CANDIDATE-BR]` tagging: a code-derived signal is a hypothesis until confirmed, not a fact).
+
+Record as a plain FEAT-ID list per feature (e.g., `FEAT-ORD-001, FEAT-PAY-001`), same format as `pm-features-list`'s `Deps` column - this is the same field, populated a different way for an existing product. If none found or confirmed: `none`.
+
+### 2e. Identify what needs JIT design before next build
 
 Flag features that are:
 - Status: In Progress or Planned AND
@@ -208,8 +222,9 @@ Save to: `pureinn-workspace/[project-slug]/features/feature_list.md`
 ### FEAT-[DOMAIN]-001: [Feature Name]
 **Description:** [1-2 clear, orientational sentences - what this feature does, who uses it, and its role/value. NOT a few words restating the title. **MANDATORY for every feature, every status** (Built/Shipped and Backlog). This whole-list view is the team's first orientation; never blank or trivial.]
 **Layer:** [one or more of frontend / backend / system - list all layers a cross-layer feature spans, e.g. "frontend, backend"; never "fullstack"]   ·   **Phase:** MVP / MVP+ / Phase 1 / ...   ·   **Actor:** [User / Host / Admin / System]
-**KANO:** Must-be / Performance / Delighter / Indifferent   ·   **V×C:** Quick Win / Big Bet / Fill-in / Time Waster
+**KANO:** Must-be / Performance / Delighter / Indifferent   ·   **V×C:** Quick Win / Big Bet / Fill-in / Time Waster   ·   **Priority:** P1 - Critical / P2 - High / P3 - Medium / P4 - Low
 **Status:** [canonical only: `6_Shipped` / `4_In_Build` / `1_Backlog` - the SAME vocabulary as the card frontmatter, mapped from the code reality below]   ·   **Dev Stripe:** [Dev Stripe 1 / ...]   ·   **Subtasks:** yes / no
+**Dependencies:** [comma-separated FEAT-IDs this depends on, or "none" - see Step 2d]
 **Build reality:** Done / In Progress / Planned / Unclear   *(human label only - the code reality that maps to the canonical Status above; not a second status axis)*
 **Spec coverage:** [Feature Card exists: Yes/No | Sections 1-3: Complete/Partial/None]
 **Notes:** [any relevant context]
@@ -264,6 +279,7 @@ kano: [Must-be / Performance / Delighter / Indifferent]
 vxc: [Quick Win / Big Bet / Fill-in / Time Waster]
 estimate: "[S / M / L - informational sizing, NOT the atomicity test]"
 has_subtasks: false
+dependencies: [FEAT-ID, FEAT-ID]   # from Step 2d - [] if none found/confirmed
 prd_ref: /product/PRD_master.md#[section]
 feature_flag: [domain.feature-name]
 flag_default: off
@@ -361,10 +377,12 @@ properties:
   Status: [mapped canonical status - 6_Shipped / 4_In_Build / 1_Backlog, per the mapping table above]
   Layer: [one or more of Frontend / Backend / System - multi-select; list all layers the feature spans, never "fullstack"]
   Phase: [MVP / MVP+ / Phase 1 / ...]
+  Priority: [P1 - Critical / P2 - High / P3 - Medium / P4 - Low]
   KANO Category: [Must-be / Performance / Delighter / Indifferent]
   V×C Quadrant: [Quick Win / Big Bet / Fill-in / Time Waster]
   Dev Stripe: Dev Stripe [N]
   Has Subtasks: [true / false]
+  Dependencies: [rich_text - comma-separated FEAT-IDs from Step 2d, or "none"]
 
 content:
   ## Description
@@ -395,7 +413,7 @@ content:
   *TBD - populated after build and Code Inspection*
 ```
 
-Fill from evidence/derivation: `Layer` (from code - FE routes/components → Frontend, controllers/services → Backend, jobs/cron → System), `Has Subtasks` (true if the card has any subtasks), `Dev Stripe`. Propose with reasoning (confirm via AskUserQuestion): `Phase`, `KANO Category` (a shipped feature is usually Must-be), `V×C Quadrant`, `Priority`. Leave blank only: `Feature Card URL` - filled later by pm-feature-design. Never leave Layer / Description / Has Subtasks blank.
+Fill from evidence/derivation: `Layer` (from code - FE routes/components → Frontend, controllers/services → Backend, jobs/cron → System), `Has Subtasks` (true if the card has any subtasks), `Dev Stripe`, `Dependencies` (from Step 2d - user-stated + confirmed code-evidence candidates only, never an unconfirmed candidate). Propose with reasoning (confirm via AskUserQuestion): `Phase`, `KANO Category` (a shipped feature is usually Must-be), `V×C Quadrant`, `Priority`. Leave blank only: `Feature Card URL` - filled later by pm-feature-design. Never leave Layer / Description / Has Subtasks blank.
 
 
 ---

@@ -5,9 +5,9 @@ license: MIT
 metadata:
   agent-mode: decision
   author: https://github.com/ljucask
-  version: "2.0.0"
+  version: "2.1.0"
   domain: product-management
-  triggers: features list, FDD format, feature list, KANO analysis, value complexity matrix, feature prioritization, Phase 5, feature hierarchy
+  triggers: features list, FDD format, feature list, KANO analysis, value complexity matrix, feature prioritization, Phase 5, feature hierarchy, dependencies
   role: specialist
   scope: planning
   output-format: document
@@ -505,6 +505,7 @@ kano: [Must-be / Performance / Delighter / Indifferent]
 vxc: [Quick Win / Big Bet / Fill-in / Time Waster]
 estimate: "[S / M / L - informational sizing, NOT the atomicity test]"
 has_subtasks: false
+dependencies: [FEAT-ID, FEAT-ID]   # from the Deps column above - [] if none
 prd_ref: /product/PRD_master.md#[relevant-section]
 feature_flag: [domain.feature-name]
 flag_default: off
@@ -571,7 +572,9 @@ properties:
   Priority: [P1 - Critical / P2 - High / P3 - Medium / P4 - Low]
   KANO Category: [Must-be / Performance / Delighter / Indifferent]
   V×C Quadrant: [Quick Win / Big Bet / Fill-in / Time Waster]
+  Dev Stripe: [Dev Stripe N if pm-mvp-scope already ran / "TBD" otherwise - same value as the Stripe column]
   Has Subtasks: [true / false]
+  Dependencies: [rich_text - comma-separated FEAT-IDs from the Deps column, or "none"]
 
 content:
   ## [Feature Name]
@@ -631,6 +634,7 @@ After push: report how many entries were created, how many stub Feature Cards we
 - [ ] Critical path identified
 - [ ] Parallelizable tracks identified
 - [ ] No circular dependencies
+- [ ] Every feature's `Deps` column value mirrored into its Feature Card frontmatter `dependencies:` field and into the Notion `Dependencies` property - same data, three places, never only in the Dependency Map doc
 
 **KANO:**
 - [ ] Every feature classified

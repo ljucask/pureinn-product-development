@@ -5,7 +5,7 @@ license: MIT
 metadata:
   agent-mode: decision
   author: https://github.com/ljucask
-  version: "2.0.0"
+  version: "2.1.0"
   domain: product-management
   triggers: feature design, JIT design, design by feature, sequence diagram, feature spec, Phase 6
   role: specialist
@@ -106,17 +106,26 @@ If Feature Card status is already `3_Ready_to_Build` or later: stop. Design is a
 
 ---
 
-## Step 1: Gather inputs
+## Step 1: Detect mode from state.json, then gather feature-specific inputs
 
-Use AskUserQuestion tool with two questions together:
+**Playbook mode and team mode come from `state.json` - do NOT ask them cold.** By the time a feature reaches design, the workspace already knows its `playbook` and `team_structure` (both set at Phase 1 setup). Asking again is redundant and makes the skill look like it forgot its own state - which violates the situation-aware standard (CLAUDE.md → Adaptive execution). Read them and **state** the detected mode; only fall back to a question if the value is genuinely absent.
 
-- Question 1: "Playbook mode for [FEAT-ID]?"
-  - Option A: "Greenfield - designing from scratch, diagram defines new classes/methods (Recommended for new projects)"
-  - Option B: "Feature Implementation - adding to existing codebase, diagram must match real code (Recommended for FI context)"
+Read `state.json`:
+- `playbook` → **Greenfield** (design from scratch, diagram defines new classes/methods) or **Feature Implementation** (diagram must match existing code - triggers the Step 2 code scan).
+- `team_structure` → **Solo Builder** (AI drafts the full design, you confirm before build) or **Delivery Team** (design goes to a Design Inspection step after this).
 
-- Question 2: "Team mode?"
-  - Option A: "Solo Builder - AI generates full design, you confirm before build starts (Recommended)"
-  - Option B: "Delivery Team - design goes to Design Inspection after this step"
+State it, don't ask:
+
+```
+Detected from state.json: [Greenfield | Feature Implementation] · [Solo Builder | Delivery Team].
+→ Designing [from scratch | against the existing codebase]; [you confirm before build | this routes to Design Inspection].
+Say "switch mode" if that's wrong.
+```
+
+**Only if `playbook` or `team_structure` is missing from state.json** (e.g. a hand-created workspace, or a fast-track that skipped setup), fall back to AskUserQuestion for the missing field(s) - one question, only the one that's unknown:
+
+- Playbook (if unknown): "Greenfield - design from scratch (Recommended for new projects)" / "Feature Implementation - match existing code (Recommended for an existing codebase)"
+- Team (if unknown): "Solo Builder - you confirm before build (Recommended)" / "Delivery Team - goes to Design Inspection"
 
 Then ask as plain text:
 

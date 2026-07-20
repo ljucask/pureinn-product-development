@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.28.0] - 2026-07-21
+
+### Structural parity: pm-features-list and pm-reverse-extract now produce identical Feature Card + Notion property sets (Dependencies, Priority, Dev Stripe on both); pm-feature-design reads playbook/team mode from state.json instead of re-asking
+
+---
+
+
 ## [5.27.0] - 2026-07-16
 
 ### Replace saas-subscription example with full-lifecycle food-delivery-app walkthrough (all 7 phases); add pm-reconcile write-verification gate and pm-reverse-extract Notion duplicate guard
