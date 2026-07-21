@@ -4,7 +4,7 @@
 
 **Phase:** 6 - JIT Delivery  
 **Agent mode:** `decision` - drafts, then requires your review before finalizing  
-**Version:** 2.0.0  
+**Version:** 2.1.0  
 **Triggers:** feature design, JIT design, design by feature, sequence diagram, feature spec, Phase 6
 
 ---
@@ -63,15 +63,16 @@ Sets status to `2_Spec_Done` (or `2b_In_Design` for frontend features awaiting F
 
 ## How it works
 
-1. **Reads the Feature Card** (stub at entry - frontmatter + empty sections)
-2. **Discovery Interrogation** - actively surfaces unknowns and ambiguities; calibrated to feature criticality; sorts findings into: new rules / new guard conditions / new ACs / subtasks
-3. **Enriches `entities.md`** - adds exact guard conditions to state transitions relevant to this feature
-4. **Enriches `business_rules.md` and `decision_models.md`** - finalizes rules this feature enforces (Draft → Final); adds brand-new rules via the single-rule helpers (`pm-business-rule-core/critical/governance`)
-5. **Populates Section 1** (Business Constraints) - links entity IDs, BR-IDs, TBL-IDs; defines explicit scope exclusions
-6. **Writes Section 2** (Acceptance Criteria) - minimum: AC-01 happy path, AC-02 guard failure, AC-03 feature flag OFF
-7. **Writes Subtasks** - nuance/spec details for the developer (these are helpers, not sub-features)
-8. **Generates Section 3** - Mermaid.js sequence diagram with real classes/methods from existing codebase; lists files to modify
-9. **Pushes to Notion**, sets status to `2_Spec_Done`
+1. **Detects mode from `state.json`** - reads `playbook` (Greenfield vs Feature Implementation) and `team_structure`, set once at Phase 1 setup, and states the detected mode rather than re-asking. Only falls back to a question if a value is genuinely missing (e.g. a hand-created workspace).
+2. **Reads the Feature Card** (stub at entry - frontmatter + empty sections)
+3. **Discovery Interrogation** - actively surfaces unknowns and ambiguities; calibrated to feature criticality; sorts findings into: new rules / new guard conditions / new ACs / subtasks
+4. **Enriches `entities.md`** - adds exact guard conditions to state transitions relevant to this feature
+5. **Enriches `business_rules.md` and `decision_models.md`** - finalizes rules this feature enforces (Draft → Final); adds brand-new rules via the single-rule helpers (`pm-business-rule-core/critical/governance`)
+6. **Populates Section 1** (Business Constraints) - links entity IDs, BR-IDs, TBL-IDs; defines explicit scope exclusions
+7. **Writes Section 2** (Acceptance Criteria) - minimum: AC-01 happy path, AC-02 guard failure, AC-03 feature flag OFF
+8. **Writes Subtasks** - nuance/spec details for the developer (these are helpers, not sub-features)
+9. **Generates Section 3** - Mermaid.js sequence diagram with real classes/methods from existing codebase; lists files to modify
+10. **Pushes to Notion**, sets status to `2_Spec_Done`
 
 **Atomic commit protocol** (registers committed before Feature Card - prevents merge conflicts in parallel Stripes):
 ```

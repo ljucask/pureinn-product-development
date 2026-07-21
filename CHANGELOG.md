@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.30.0] - 2026-07-21
+
+### docs/ version-sync gate in validate.py - blocks release when a skill's docs page is missing or version-mismatched; fixed 4 drifted pages found by the new check (pm-diagrams, pm-feature-design, pm-prd, pm-product-roadmap)
+
+---
+
+
 ## [5.29.0] - 2026-07-21
 
 ### pm-diagrams v3 redesign - 17 diagram types across 6 categories with per-type composition references (references/[slug].md), slug argument routing (/pm-diagrams bpmn), and context-aware recommendation from workspace state

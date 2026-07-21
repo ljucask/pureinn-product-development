@@ -4,7 +4,7 @@
 
 **Phase:** 3b - Definition (closes Phase 3b); or Feature Implementation (Initiative PRD)  
 **Agent mode:** `synthesis` - runs fully autonomously  
-**Version:** 1.0.0  
+**Version:** 1.1.0  
 **Triggers:** PRD, product requirements, product spec, business capabilities, initiative PRD
 
 ---
@@ -28,7 +28,9 @@ Two distinct modes, detected automatically:
 
 ### Product PRD
 
-Synthesizes all upstream artifacts into `product/PRD_master.md`. **This file does not change after creation.** New scope, new functionality, or changed assumptions → new Initiative PRD for that scope. PRD_master is the stable historical record.
+Synthesizes all upstream artifacts into `product/PRD_master.md`. **This file does not change for new scope.** New domain/feature scope after Phase 4 → a new Initiative PRD, never an edit to PRD_master. PRD_master is the stable historical record.
+
+**Re-run with new evidence (delta mode):** if PRD_master already exists and new upstream evidence arrives *for the same scope* (updated personas, market analysis, re-prioritization) before it's fully consumed downstream, the skill does not rewrite from scratch - it reads the current PRD, re-validates the evidence-sensitive sections (Problem Statement, Target Customer, Value Proposition, Market Context, Business Model) against the new sources, changes only what the new evidence supports (marking each `[UPDATED - previous/new/reason]`, leaving the rest `[UNCHANGED]`), and shows the delta before writing. It then names downstream artifacts that may now be inconsistent (`pm-product-roadmap`, `pm-features-list`, `pm-business-model`) and recommends `/pm-audit strategy`.
 
 **PRD sections:**
 - Product vision and problem statement

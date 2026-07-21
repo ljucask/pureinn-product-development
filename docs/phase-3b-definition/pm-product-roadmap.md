@@ -4,7 +4,7 @@
 
 **Phase:** 3b (v1), 4 (v2), 5 (v3) - updates across all three phases  
 **Agent mode:** `synthesis` - runs fully autonomously  
-**Version:** 1.0.0  
+**Version:** 1.2.0  
 **Triggers:** product roadmap, roadmap, delivery phases, strategic plan, phase planning
 
 ---
@@ -71,6 +71,8 @@ A partial roadmap is a valid expected state - capture phases you know, derive fe
 - v2 roadmap
 - `pm-features-list` - feature inventory for the feature view
 - `pm-mvp-scope` - MVP scope, Feature Sets, and Delivery Stripes
+
+**Dependency guard (MVP Delivery View):** the v3 delivery view (stripes + MVP/POST-MVP cut) is the output of `pm-mvp-scope`, downstream of this skill. If stripe assignments and the IN/POST-MVP cut are absent from `feature_list.md` (e.g. a Rebuild where the roadmap runs before features are carded), the skill does **not** invent them - it finalizes every other section, marks `MVP Delivery View` as `[TBD - pending /pm-mvp-scope]`, and asks you to re-run once `pm-mvp-scope` has produced the cut.
 
 **Produces for:**
 - `pm-prd` - roadmap is a required PRD section (all versions)

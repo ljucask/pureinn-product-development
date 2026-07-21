@@ -57,6 +57,14 @@ CROSS_REPO_LEAKS = [
 # Matches /product/PRD.md and product/PRD.md but NOT PRD_master.md / PRD_[Domain].md.
 STALE_PRD_RE = re.compile(r"(?<![\w_])/?product/PRD\.md")
 
+# docs/ is the pureinn-web content source (release.sh ships it, deploy-web.yml
+# triggers a rebuild that pulls it in). It has no auto-generation - keeping a
+# skill's docs page in sync with SKILL.md is a manual editorial step, easy to
+# forget. This check makes forgetting a release-blocking error instead of a
+# silent drift. index.md phase-overview pages are exempt (no single skill
+# version applies to them).
+DOCS_VERSION_RE = re.compile(r"\*\*Version:\*\*\s*([0-9][0-9.]*)")
+
 # Skills whose *function* is to describe/detect the old PRD path (migration skills)
 # legitimately contain the stale string as a pattern-to-migrate, not as a live
 # reference. They are exempt from the stale-PRD check. Keep this list minimal.
@@ -203,6 +211,9 @@ def check_skill(name, path, existing_skill_names, rep):
     # Shared content checks (pm-audit is exempt from stale-PRD: it describes the pattern)
     check_common_body(where, text, rep, allow_stale_prd=(name in STALE_PRD_EXEMPT))
 
+    # docs/ website page must exist and carry the same version as this skill
+    check_docs_sync(name, strip_quotes(meta.get("version", "")), rep)
+
 
 def check_command(name, path, rep):
     text = read(path)
@@ -227,6 +238,37 @@ def check_common_body(where, text, rep, allow_stale_prd=False):
     # Stale PRD reference (migration skills that describe the pattern are exempt)
     if not allow_stale_prd and STALE_PRD_RE.search(text):
         rep.err(where, "stale PRD reference '/product/PRD.md' - canonical is /product/PRD_master.md")
+
+
+def find_docs_page(name):
+    """Find docs/**/[name].md by basename (docs/ has no fixed skill->phase-folder
+    map worth hardcoding - a recursive basename search is the actual invariant:
+    every skill has exactly one page named after it, somewhere under docs/)."""
+    docs_dir = os.path.join(repo_root(), "docs")
+    target = f"{name}.md"
+    for dirpath, _, filenames in os.walk(docs_dir):
+        if target in filenames:
+            return os.path.join(dirpath, target)
+    return None
+
+
+def check_docs_sync(name, skill_version, rep):
+    """docs/ is the pureinn-web content source - shipped by release.sh and
+    pulled in on every website rebuild. Nothing regenerates it automatically,
+    so a skill and its docs page silently drift unless this is enforced."""
+    doc_path = find_docs_page(name)
+    if doc_path is None:
+        rep.err(f"skills/{name}", f"no matching docs/**/{name}.md page - every skill needs one (docs/ is the website source)")
+        return
+    doc_rel = os.path.relpath(doc_path, repo_root())
+    m = DOCS_VERSION_RE.search(read(doc_path))
+    if not m:
+        rep.err(doc_rel, "missing '**Version:**' line")
+        return
+    doc_version = m.group(1)
+    if skill_version and doc_version != skill_version:
+        rep.err(doc_rel, f"version '{doc_version}' != skills/{name}/SKILL.md version "
+                         f"'{skill_version}' - update the docs page to match")
 
 
 def extract_section(body, heading):
