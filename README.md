@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/pureinn-cover.png" width="100%" alt="Pureinn - AI PM Workflow Engine"/>
+  <img src="assets/pujreinn_ogimage.png" width="100%" alt="Pureinn - AI PM Workflow Engine"/>
 </p>
 
 # Pureinn - AI Product Development Framework
