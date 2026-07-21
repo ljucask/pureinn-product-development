@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.29.0] - 2026-07-21
+
+### pm-diagrams v3 redesign - 17 diagram types across 6 categories with per-type composition references (references/[slug].md), slug argument routing (/pm-diagrams bpmn), and context-aware recommendation from workspace state
+
+---
+
+
 ## [5.28.0] - 2026-07-21
 
 ### Structural parity: pm-features-list and pm-reverse-extract now produce identical Feature Card + Notion property sets (Dependencies, Priority, Dev Stripe on both); pm-feature-design reads playbook/team mode from state.json instead of re-asking
