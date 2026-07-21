@@ -43,7 +43,7 @@ Engine prečíta `state.json`, obnoví kontext z `assessment.md`, zobrazí dashb
 ### Skok do konkrétnej časti (stage shortcut)
 ```
 /pureinn define                       # aktuálny projekt: skoč do Commercial Definition
-/pureinn vezmee model                 # projekt vezmee: skoč do Domain Modeling
+/pureinn acme model                   # projekt acme: skoč do Domain Modeling
 /pureinn discover "food delivery app" # nový projekt: rovno do Discovery (Pureinn založí workspace)
 ```
 Keywordy: `setup` · `discover` · `validate` · `define` · `model` · `plan` · `build` (+ aliasy). Engine rozlíši keyword, over si podklad pre danú časť (ak chýba, ponúkne možnosti - nikdy nezablokuje), a ak workspace ešte neexistuje, najprv ho celý založí. Pre jeden konkrétny artefakt spusti priamo daný skill (`/jtbd-building`, `/pm-features-list`) - stage netreba.
@@ -64,7 +64,7 @@ Evaluate `$ARGUMENTS` in this order (first match wins):
 1. **`map` / `help`** → Skip all steps. Go directly to **FRAMEWORK MAP** at the bottom of this skill.
 
 2. **First token is a stage/playbook keyword** (see Stage Keyword Resolver below) → Go to **STEP 1C (Stage Entry)**.
-   The keyword may stand alone (`/pureinn define`), be preceded by a project slug (`/pureinn vezmee define`), or be followed by a fresh product idea (`/pureinn discover "food delivery app"`).
+   The keyword may stand alone (`/pureinn define`), be preceded by a project slug (`/pureinn acme define`), or be followed by a fresh product idea (`/pureinn discover "food delivery app"`).
 
 3. **Matches a known project slug with an existing `state.json`** → Go to **STEP 1B (Resume path)**.
 

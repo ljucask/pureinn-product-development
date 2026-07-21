@@ -481,7 +481,7 @@ content:
   [Description of what it provides]
 
   ## Integration Type
-  [How MediOps connects to it]
+  [How the product connects to it]
 
   ## Data Exchanged
   [What data flows in/out]

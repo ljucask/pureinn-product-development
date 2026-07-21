@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.31.0] - 2026-07-21
+
+### Content-hygiene fix - removed leaked real client/project names from CHANGELOG history, usage examples, and a skill template; added a validate.py gate blocking any future project-name leak across the repo
+
+---
+
+
 ## [5.30.0] - 2026-07-21
 
 ### docs/ version-sync gate in validate.py - blocks release when a skill's docs page is missing or version-mismatched; fixed 4 drifted pages found by the new check (pm-diagrams, pm-feature-design, pm-prd, pm-product-roadmap)
@@ -183,7 +190,7 @@
 
 ### Fixed
 
-- **One status vocabulary everywhere - the canonical lifecycle (`1_Backlog`..`6_Shipped`).** A real Vezmee inconsistency: the feature_list carried the reconcile reality words (`Built` / `In Progress` / `Backlog`) as the per-feature `Status`, while the cards used the canonical lifecycle - two vocabularies on one axis, which drift and can't map cleanly to a single Notion `Status` property. Fixed: `pm-reverse-extract` now writes the **canonical status** in the feature_list block (mapped: `Built`→`6_Shipped`, `In Progress`→`4_In_Build`, `Planned/Backlog`→`1_Backlog`) and keeps the code reality only as a separate **Build reality** human label, never a second status axis. `pm-audit` lifecycle check now flags reality words used as a status as P1 drift and maps them. Same lesson as the `mvp`/`roadmap_phase` fix (5.13.4): one field per axis.
+- **One status vocabulary everywhere - the canonical lifecycle (`1_Backlog`..`6_Shipped`).** A real inconsistency found on a client onboarding: the feature_list carried the reconcile reality words (`Built` / `In Progress` / `Backlog`) as the per-feature `Status`, while the cards used the canonical lifecycle - two vocabularies on one axis, which drift and can't map cleanly to a single Notion `Status` property. Fixed: `pm-reverse-extract` now writes the **canonical status** in the feature_list block (mapped: `Built`→`6_Shipped`, `In Progress`→`4_In_Build`, `Planned/Backlog`→`1_Backlog`) and keeps the code reality only as a separate **Build reality** human label, never a second status axis. `pm-audit` lifecycle check now flags reality words used as a status as P1 drift and maps them. Same lesson as the `mvp`/`roadmap_phase` fix (5.13.4): one field per axis.
 - **`layer` is a multi-value field from `{frontend, backend, system}` - `fullstack` is not a layer.** A genuinely cross-layer feature (e.g. an ops dashboard = UI + new aggregation endpoints) lists the actual layers it spans (`frontend, backend`), rather than being forced into one value or a meaningless `fullstack`. Updated the canonical Feature Card, `pm-features-list`, `pm-reverse-extract` (feature_list block + card stub + Notion push), and the `pm-audit` metadata check (a value outside the set - especially `fullstack` - is a P2 finding, replace with the real layers). Matches a multi-select Notion `Layer` property.
 
 ---
@@ -193,8 +200,8 @@
 
 ### Fixed
 
-- **`phase` is the single axis for MVP membership - no more separate `mvp` / `roadmap_phase` field.** v5.12.0 already made `phase` replace the old MVP boolean on the card, but `pm-mvp-scope` still wrote an "MVP true/false" column and an `mvp` flag, so a real Vezmee audit ended up with **both** `roadmap_phase` and `mvp` on cards - two fields for one axis, drifting apart (exactly the duplication the user flagged). Fixed: `pm-mvp-scope` now records the IN/POST-MVP/CUT decision **as the `phase` value** (IN-MVP = `MVP`/`P0`), writes `phase` + `stripe` to frontmatter and feature_list, and **if features already carry a `phase`** (a Rebuild where `/pm-product-roadmap` already split phases) it **reads the cut instead of re-deciding it** and only assigns stripes. `pm-audit` gained a canonical-field check: a stray `mvp`/`roadmap_phase`/"MVP" column is a P2 finding, mechanically collapsed into `phase`.
-- **`pm-audit` naming check hardened so it actually fires.** On the Vezmee run the naming check silently produced **zero** findings despite obvious violations (`ORD-004 "Drive order state machine"` - technical object; an `ID-/ORD-/NOT- "Manage X"` cluster - banned vague verb). The check is now **mandatory and must report its result explicitly** (even "0 anti-patterns found", so a silent skip is visible), with the anti-pattern set spelled out: vague/banned verbs (`Process`/`Manage`/`Handle`), technical objects (`...state machine`/`FSM`/`queue`/`flag`/`handler`), and the other FDD anti-patterns. Each violation is reported as `[FEAT-ID] "name" → anti-pattern → suggested rename`, and the judgment-fix step must always propose a concrete client-valued rename rather than leaving a flagged name unaddressed.
+- **`phase` is the single axis for MVP membership - no more separate `mvp` / `roadmap_phase` field.** v5.12.0 already made `phase` replace the old MVP boolean on the card, but `pm-mvp-scope` still wrote an "MVP true/false" column and an `mvp` flag, so a real client audit ended up with **both** `roadmap_phase` and `mvp` on cards - two fields for one axis, drifting apart (exactly the duplication the user flagged). Fixed: `pm-mvp-scope` now records the IN/POST-MVP/CUT decision **as the `phase` value** (IN-MVP = `MVP`/`P0`), writes `phase` + `stripe` to frontmatter and feature_list, and **if features already carry a `phase`** (a Rebuild where `/pm-product-roadmap` already split phases) it **reads the cut instead of re-deciding it** and only assigns stripes. `pm-audit` gained a canonical-field check: a stray `mvp`/`roadmap_phase`/"MVP" column is a P2 finding, mechanically collapsed into `phase`.
+- **`pm-audit` naming check hardened so it actually fires.** On a real audit run the naming check silently produced **zero** findings despite obvious violations (`ORD-004 "Drive order state machine"` - technical object; an `ID-/ORD-/NOT- "Manage X"` cluster - banned vague verb). The check is now **mandatory and must report its result explicitly** (even "0 anti-patterns found", so a silent skip is visible), with the anti-pattern set spelled out: vague/banned verbs (`Process`/`Manage`/`Handle`), technical objects (`...state machine`/`FSM`/`queue`/`flag`/`handler`), and the other FDD anti-patterns. Each violation is reported as `[FEAT-ID] "name" → anti-pattern → suggested rename`, and the judgment-fix step must always propose a concrete client-valued rename rather than leaving a flagged name unaddressed.
 
 ---
 
@@ -212,7 +219,7 @@
 
 ### Fixed
 
-- **Specified-but-not-implemented capabilities are now carded as `1_Backlog`, not just noted in the report.** A real Vezmee gap: roadmap found 4 Phase-1 capabilities (KYC, DAC7, dispute v1, admin ops) that existed as intent but were invisible as features. Root cause: reconcile recorded doc-only / specified-not-implemented capabilities **only in the reconciliation report** (an audit log), not in `feature_list.md` (the backlog) - so they vanish when the source is discarded. Fixed by making the layer distinction explicit: **R1-3 (entities/rules/decision models) describe only what runs** (never fabricate unbuilt logic), **R4 (feature_list/cards) is the backlog** and legitimately holds `1_Backlog` stubs for unbuilt-but-specified capabilities (marked `specified in source, not yet implemented`). Applied in the source-of-truth model, the features execution step, and `verify` (a capability that lives only in the report counts as a **gap**, not as covered; `⛔ intentionally dropped` is now distinct from `specified, not implemented`).
+- **Specified-but-not-implemented capabilities are now carded as `1_Backlog`, not just noted in the report.** A real gap found on a client project: roadmap found 4 Phase-1 capabilities (KYC, DAC7, dispute v1, admin ops) that existed as intent but were invisible as features. Root cause: reconcile recorded doc-only / specified-not-implemented capabilities **only in the reconciliation report** (an audit log), not in `feature_list.md` (the backlog) - so they vanish when the source is discarded. Fixed by making the layer distinction explicit: **R1-3 (entities/rules/decision models) describe only what runs** (never fabricate unbuilt logic), **R4 (feature_list/cards) is the backlog** and legitimately holds `1_Backlog` stubs for unbuilt-but-specified capabilities (marked `specified in source, not yet implemented`). Applied in the source-of-truth model, the features execution step, and `verify` (a capability that lives only in the report counts as a **gap**, not as covered; `⛔ intentionally dropped` is now distinct from `specified, not implemented`).
 
 ### Added
 
@@ -247,9 +254,9 @@
 
 ### Fixed
 
-- **`pm-audit` backfill now populates the whole `feature_list.md` overview, not just individual cards.** On Vezmee the backfill filled card files but left the list overview sparse, and descriptions came out terse. The list is the team's first orientation, so backfill now writes there **first**, for every feature, then mirrors to the card and Notion - iterating across the whole list rather than card-by-card.
+- **`pm-audit` backfill now populates the whole `feature_list.md` overview, not just individual cards.** On a real client workspace the backfill filled card files but left the list overview sparse, and descriptions came out terse. The list is the team's first orientation, so backfill now writes there **first**, for every feature, then mirrors to the card and Notion - iterating across the whole list rather than card-by-card.
 - **Raised the description quality bar.** Descriptions must be clear, genuinely orientational sentences (what / who / value/role), explicitly *not* a one-liner restating the title - in the templates (canonical card, reverse-extract block) and in pm-audit's backfill.
-- **`has_subtasks` derivation hardened** - counts only a real Subtasks item, ignoring italic / placeholder lines (`*TBD ...*`, the `- [ ] [nuance...]` template), so it can't be fooled into `true` by an empty section. (The Vezmee audit caught this itself; now it's an explicit rule.)
+- **`has_subtasks` derivation hardened** - counts only a real Subtasks item, ignoring italic / placeholder lines (`*TBD ...*`, the `- [ ] [nuance...]` template), so it can't be fooled into `true` by an empty section. (A real audit caught this itself; now it's an explicit rule.)
 - Phase backfill notes that a coherent phase split across the whole list should align to `pm-product-roadmap`.
 
 ---
@@ -267,7 +274,7 @@
   - `has_subtasks` - true / false, kept in sync with the card's actual Subtasks section (so the backlog shows at a glance which features have subtask detail - previously invisible in the list)
   - (`stripe` / Dev Stripe already existed.)
   The `feature_list.md` table gained a compact 12-column layout (FE/BE/SYS, M/P/D/I, QW/BB/FI/TW codes) with a legend; the reverse-extract block format gained the property lines.
-- **`pm-audit` checks and backfills the property set.** New "Feature metadata complete" check (P2). On fix: `has_subtasks` is mechanical (derived from the Subtasks section); `layer` is derived from code evidence; `phase` / `kano` / `vxc` are proposed with reasoning and confirmed via AskUserQuestion (never silently guessed). All three locations - frontmatter, feature_list, Notion - are kept in sync. So Vezmee's existing features can be backfilled with `/pm-audit features`.
+- **`pm-audit` checks and backfills the property set.** New "Feature metadata complete" check (P2). On fix: `has_subtasks` is mechanical (derived from the Subtasks section); `layer` is derived from code evidence; `phase` / `kano` / `vxc` are proposed with reasoning and confirmed via AskUserQuestion (never silently guessed). All three locations - frontmatter, feature_list, Notion - are kept in sync. So an existing workspace's features can be backfilled with `/pm-audit features`.
 
 ---
 
@@ -276,11 +283,11 @@
 
 ### Changed
 
-- **Every feature must carry a Description, for every status.** A feature was orientable only if it had a full card - shipped "lean" stubs and un-carded backlog features had no description, which hurt the team's ability to understand the backlog at a glance (surfaced on Vezmee: 21 shipped + 7 backlog features with no description). Now mandatory everywhere:
+- **Every feature must carry a Description, for every status.** A feature was orientable only if it had a full card - shipped "lean" stubs and un-carded backlog features had no description, which hurt the team's ability to understand the backlog at a glance (surfaced on a real workspace: 21 shipped + 7 backlog features with no description). Now mandatory everywhere:
   - `## Description` section added to the **canonical Feature Card** (pm-feature-card) and the **pm-features-list** stub (pm-reverse-extract already had it) - a 2-3 sentence "what / who / value", required regardless of status (`1_Backlog` to `6_Shipped`).
   - A **`Description:` line per feature in `feature_list.md`** (pm-reverse-extract blocks) so even un-carded backlog features are orientable in the register itself.
   - The reconcile "lean" shipped stub must now fill its Description from the extraction evidence (no longer blank).
-- **`pm-audit` flags and backfills missing descriptions.** A new "Description present" check (P2); on fix, it drafts a description from the card's evidence / code references / linked rules and confirms via AskUserQuestion - so an existing workspace (like Vezmee) can be backfilled with `/pm-audit features` without re-running the whole reconcile.
+- **`pm-audit` flags and backfills missing descriptions.** A new "Description present" check (P2); on fix, it drafts a description from the card's evidence / code references / linked rules and confirms via AskUserQuestion - so an existing workspace can be backfilled with `/pm-audit features` without re-running the whole reconcile.
 
 ---
 
@@ -298,7 +305,7 @@
 
 ### Added
 
-- **Deep source ingestion universal standard (CLAUDE.md).** Every skill that reads provided documents, a source folder, or a codebase must now ingest the **full depth**, never the surface: (1) traverse subfolders **recursively** - a folder is not "read" until its subfolders are; (2) **follow the detail, not just the overview** - an index/summary/master table (e.g. a business-rules CSV listing IDs) is a pointer, not the content; if the detail lives in referenced files or a subfolder, read those too; (3) follow references ("see appendix", "detailed in [folder]", links, attachments) to their actual source; (4) confirm coverage before producing output ("Read N files across M folders: [list]"), surface anything skipped, and ask rather than silently skip. A skill that asks "point me at the docs" owns reading them completely. Reinforced in `pm-reconcile` (P1 catalogues recursively, A2 parses to full depth). Fixes the real Vezmee case where a skill read only the top-level overview table and missed the detail subfolder.
+- **Deep source ingestion universal standard (CLAUDE.md).** Every skill that reads provided documents, a source folder, or a codebase must now ingest the **full depth**, never the surface: (1) traverse subfolders **recursively** - a folder is not "read" until its subfolders are; (2) **follow the detail, not just the overview** - an index/summary/master table (e.g. a business-rules CSV listing IDs) is a pointer, not the content; if the detail lives in referenced files or a subfolder, read those too; (3) follow references ("see appendix", "detailed in [folder]", links, attachments) to their actual source; (4) confirm coverage before producing output ("Read N files across M folders: [list]"), surface anything skipped, and ask rather than silently skip. A skill that asks "point me at the docs" owns reading them completely. Reinforced in `pm-reconcile` (P1 catalogues recursively, A2 parses to full depth). Fixes a real case where a skill read only the top-level overview table and missed the detail subfolder.
 
 ---
 
@@ -340,7 +347,7 @@
 
 ### New Skill
 
-- **pm-decision-model** (40th skill) - JIT single decision-table helper, closing an asymmetry: Register 2 (business_rules.md) had three single-rule helpers (`pm-business-rule-core/critical/governance`) for adding one rule during development, but Register 3 (decision_models.md) had none - a new decision table meant re-running the whole `pm-business-rules-library`. This adds one well-formed `TBL-[DOMAIN]-NN` to `decision_models.md` directly: input columns, exhaustive condition rows, output, edge cases. It actively surfaces uncovered condition combinations (a partial decision table is the most common defect). One helper (not three by priority) - a decision table has no priority class. Wired in: `pm-business-rules-library` JIT-helpers section and `pm-feature-design` finding-routing now point to it; `pm-business-rule-core` routes here when a rule turns out to have multiple condition combinations (instead of routing to the heavy library skill). Surfaced by a Vezmee question: how to add a single decision model during development.
+- **pm-decision-model** (40th skill) - JIT single decision-table helper, closing an asymmetry: Register 2 (business_rules.md) had three single-rule helpers (`pm-business-rule-core/critical/governance`) for adding one rule during development, but Register 3 (decision_models.md) had none - a new decision table meant re-running the whole `pm-business-rules-library`. This adds one well-formed `TBL-[DOMAIN]-NN` to `decision_models.md` directly: input columns, exhaustive condition rows, output, edge cases. It actively surfaces uncovered condition combinations (a partial decision table is the most common defect). One helper (not three by priority) - a decision table has no priority class. Wired in: `pm-business-rules-library` JIT-helpers section and `pm-feature-design` finding-routing now point to it; `pm-business-rule-core` routes here when a rule turns out to have multiple condition combinations (instead of routing to the heavy library skill). Surfaced by a real question during a client engagement: how to add a single decision model during development.
 
 ---
 
@@ -349,7 +356,7 @@
 
 ### Added
 
-- **`pm-reconcile` high-volume batching (checkpointed).** When a single area pass has many items to reconcile (roughly >15 rules / decision tables / features - common in legacy systems with dozens of each), it now processes them in batches by a natural grouping (rules and tables by feature set or rule category; features by feature set; entities by cluster), ~10-15 per batch. After each batch it checkpoints: appends findings to the report, records `batches_done` / `batches_total` in `state.json`, and reports `batch N/M done`. The user can stop after any batch; `/pm-reconcile-status` shows batch progress, and re-running `/pm-reconcile [area]` resumes at the next un-done batch without redoing completed ones. This bounds the AskUserQuestion load per batch instead of by the whole area's volume. Surfaced by the Vezmee onboarding (legacy has dozens of business rules and dozens of decision models). `pm-reconcile-status` dashboard gained a BATCHES column.
+- **`pm-reconcile` high-volume batching (checkpointed).** When a single area pass has many items to reconcile (roughly >15 rules / decision tables / features - common in legacy systems with dozens of each), it now processes them in batches by a natural grouping (rules and tables by feature set or rule category; features by feature set; entities by cluster), ~10-15 per batch. After each batch it checkpoints: appends findings to the report, records `batches_done` / `batches_total` in `state.json`, and reports `batch N/M done`. The user can stop after any batch; `/pm-reconcile-status` shows batch progress, and re-running `/pm-reconcile [area]` resumes at the next un-done batch without redoing completed ones. This bounds the AskUserQuestion load per batch instead of by the whole area's volume. Surfaced by a real legacy-system onboarding (dozens of business rules and dozens of decision models). `pm-reconcile-status` dashboard gained a BATCHES column.
 
 ---
 
@@ -358,7 +365,7 @@
 
 ### Fixed
 
-- **`pm-domain-model` - explicit reconciled-mode hard check in Step 0.** Before anything else, the skill now checks whether `reconcile/reconciliation_report.md` and `domain/entities.md` both exist. If so, it announces reconciled mode, builds the cross-domain ERD **on top of** the already-reconciled entities, skips entity re-elicitation, and does not re-derive or re-question what the report settled. This makes the v5.5.0 reconciled-mode detection robust for the real case: a user who already ran `/pm-reconcile domain` and now wants only the higher-level domain-model layer (e.g. after upgrading the plugin mid-migration). Found while onboarding the Vezmee project.
+- **`pm-domain-model` - explicit reconciled-mode hard check in Step 0.** Before anything else, the skill now checks whether `reconcile/reconciliation_report.md` and `domain/entities.md` both exist. If so, it announces reconciled mode, builds the cross-domain ERD **on top of** the already-reconciled entities, skips entity re-elicitation, and does not re-derive or re-question what the report settled. This makes the v5.5.0 reconciled-mode detection robust for the real case: a user who already ran `/pm-reconcile domain` and now wants only the higher-level domain-model layer (e.g. after upgrading the plugin mid-migration). Found while onboarding a real client project.
 
 ---
 

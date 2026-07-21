@@ -13,3 +13,7 @@ framework-methodology-no-git/
 BACKLOG.md
 # macOS junk
 .DS_Store
+# Local-only blocklist of real client/project names for the validate.py
+# content-hygiene check - never shipped, so the public repo never contains
+# a real name even as blocklist data. See scripts/validate.py.
+scripts/.project-blocklist

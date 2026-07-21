@@ -72,7 +72,7 @@ Jump straight into one part of the framework:
 
 ```bash
 /pureinn define                        # current project → Commercial Definition
-/pureinn vezmee model                  # named project → Domain Modeling
+/pureinn acme model                    # named project → Domain Modeling
 /pureinn discover "food delivery app"  # fresh project → Discovery
 ```
 

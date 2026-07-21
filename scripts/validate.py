@@ -70,6 +70,29 @@ DOCS_VERSION_RE = re.compile(r"\*\*Version:\*\*\s*([0-9][0-9.]*)")
 # reference. They are exempt from the stale-PRD check. Keep this list minimal.
 STALE_PRD_EXEMPT = {"pm-audit"}
 
+# Real client/personal project names must never appear in this public
+# framework repo - not in examples, not in a changelog entry describing a bug
+# found while dogfooding. Found leaking in CHANGELOG.md + usage examples +
+# a skill template (fixed in the release that added this check). Use a
+# generic placeholder ("acme") for examples and anonymize incident writeups
+# ("a real client onboarding") instead of naming the real project.
+#
+# The actual names are deliberately NOT hardcoded here - a blocklist baked
+# into a shipped file has the exact same leak problem this check exists to
+# prevent. They live in scripts/.project-blocklist (gitignored, local-only,
+# one name per line). No such file -> no names to check -> this check is a
+# silent no-op for anyone who clones the public repo fresh, which is correct:
+# the list is the author's private hygiene tool, not part of the framework.
+PROJECT_BLOCKLIST_FILE = ".project-blocklist"
+
+# Where to scan for blocklisted names: everything that ships to end users or is
+# publicly visible in the repo, beyond just skills/commands (a changelog entry
+# or a README example is just as much a leak as a skill body).
+PROJECT_LEAK_SCAN_PATHS = [
+    "skills", "commands", "docs",
+    "README.md", "FRAMEWORK_GUIDE.md", "CHANGELOG.md", "NOTION_TEMPLATE.md",
+]
+
 # NOTE: We do NOT lint for A)/B)/C)/D) option lists. Per CLAUDE.md, A/B/C/D lists
 # are the intended *authoring shorthand* in skill bodies; the runtime agent
 # converts them to AskUserQuestion at execution time (a universal rule). So their
@@ -240,6 +263,40 @@ def check_common_body(where, text, rep, allow_stale_prd=False):
         rep.err(where, "stale PRD reference '/product/PRD.md' - canonical is /product/PRD_master.md")
 
 
+def check_no_real_project_names(rep):
+    """Scan every content surface (skills, commands, docs, top-level published
+    .md files) for a real client/personal project name. Deliberately global -
+    a leak in CHANGELOG.md or README.md is exactly as real as one in a skill
+    body, and the incident that motivated this check was in both.
+
+    Reads names from scripts/.project-blocklist (gitignored, local-only). If
+    that file doesn't exist - e.g. a fresh clone of the public repo - this
+    check has nothing to compare against and silently does nothing."""
+    root = repo_root()
+    blocklist_path = os.path.join(root, "scripts", PROJECT_BLOCKLIST_FILE)
+    if not os.path.isfile(blocklist_path):
+        return
+    names = [ln.strip() for ln in read(blocklist_path).split("\n") if ln.strip()]
+    if not names:
+        return
+    pattern = re.compile("(" + "|".join(re.escape(n) for n in names) + ")", re.IGNORECASE)
+    targets = []
+    for rel in PROJECT_LEAK_SCAN_PATHS:
+        p = os.path.join(root, rel)
+        if os.path.isdir(p):
+            for dirpath, _, filenames in os.walk(p):
+                targets.extend(os.path.join(dirpath, fn) for fn in filenames if fn.endswith(".md"))
+        elif os.path.isfile(p):
+            targets.append(p)
+    for t in targets:
+        for i, line in enumerate(read(t).split("\n"), start=1):
+            m = pattern.search(line)
+            if m:
+                rep.err(os.path.relpath(t, root),
+                        f"line {i}: real project/client name '{m.group(0)}' - use a generic "
+                        f"placeholder (e.g. 'acme') or anonymize ('a real client onboarding')")
+
+
 def find_docs_page(name):
     """Find docs/**/[name].md by basename (docs/ has no fixed skill->phase-folder
     map worth hardcoding - a recursive basename search is the actual invariant:
@@ -336,6 +393,8 @@ def main():
             rep.err(f"commands/{name}", "directory has no COMMAND.md")
             continue
         check_command(name, path, rep)
+
+    check_no_real_project_names(rep)
 
     # Output
     print(f"Pureinn validator - {len(skill_names)} skills, {len(command_names)} commands checked\n")

@@ -53,7 +53,7 @@ Full framework overview - all playbooks, phases, skills, and artifact chains.
 
 ```bash
 /pureinn define                        # jump into a stage of the current project
-/pureinn vezmee model                  # jump into a stage of a named project
+/pureinn acme model                    # jump into a stage of a named project
 /pureinn discover "food delivery app"  # fresh project, straight into a stage
 ```
 

@@ -55,7 +55,7 @@ You don't have to start at the top. A **stage keyword** jumps straight into one 
 
 ```
 /pureinn define                        # current project → Commercial Definition
-/pureinn vezmee model                  # named project → Domain Modeling
+/pureinn acme model                    # named project → Domain Modeling
 /pureinn discover "food delivery app"  # fresh project → straight into Discovery
 ```
 
