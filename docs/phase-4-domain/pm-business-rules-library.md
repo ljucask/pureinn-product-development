@@ -1,10 +1,10 @@
 # pm-business-rules-library
 
-> Live Registers 2 and 3 of 4 - Business Rules Library (business_rules.md) and Decision Models Matrix (decision_models.md)
+> Live Registers 2 and 3 of 5 - Business Rules Library (business_rules.md) and Decision Models Matrix (decision_models.md)
 
 **Phase:** 4-5 (initial draft); enriched JIT in Phase 6  
 **Agent mode:** `decision` - drafts, then requires your review  
-**Version:** 2.0.0  
+**Version:** 2.1.0  
 **Triggers:** business rules, decision models, business rules library, BR-ID, rule catalog, Phase 4, Phase 5
 
 ---
@@ -71,7 +71,7 @@ These helpers are typically triggered from `pm-feature-design` when a feature su
 
 ## Reconciled mode (Rebuild playbook)
 
-When `reconcile/reconciliation_report.md` exists, it is the authoritative input. Business rule values come from the reconciled docs, expressed against real code entities. Rules tied to an unresolved divergence (`DIV-NN` in the report) stay `Draft` with a link to the report row; only divergence-free rules go `Final`.
+When `reconcile/reconciliation_report.md` exists, it is the authoritative input. Business rule values come from the reconciled docs, expressed against real code entities. Rules tied to an unresolved divergence (`DIV-{DOMAIN}-NN` in the report and in `domain/open_questions.md`) stay `Draft` with a link to the report row; only divergence-free rules go `Final`.
 
 ---
 
@@ -90,4 +90,10 @@ When `reconcile/reconciliation_report.md` exists, it is the authoritative input.
 - `pm-features-list` - rule catalog informs which features have cross-cutting compliance dependencies
 - `pm-stripe` - Design Inspection checklist references critical rules
 
-**Related skills:** `pm-entity-registry`, `pm-business-rule-core`, `pm-business-rule-critical`, `pm-business-rule-governance`, `pm-decision-model`
+**Related skills:** `pm-entity-registry`, `pm-business-rule-core`, `pm-business-rule-critical`, `pm-business-rule-governance`, `pm-decision-model`, `pm-open-questions`
+
+---
+
+## Open questions
+
+A rule's exact formula, enforcement point, or a decision table's condition combinations that are genuinely unresolved (not just a draft-mode TBD awaiting normal JIT finalization) are logged directly in `domain/open_questions.md` (Live Register 5, `pm-open-questions`) - Type: Question, `OQ-{DOMAIN}-NN`.

@@ -4,7 +4,7 @@
 
 **Phase:** 2 - Discovery (Track C)  
 **Agent mode:** `synthesis` - runs fully autonomously  
-**Version:** 1.2.0  
+**Version:** 1.3.0  
 **Triggers:** market analysis, TAM SAM SOM, competitor analysis, SWOT, market sizing, competitive landscape, client market
 
 ---
@@ -59,4 +59,10 @@ Four artifacts (`artifacts/phase-2-discovery/`):
 - `pm-business-case` - TAM/SAM/SOM feeds financial projections
 - `pm-product-roadmap` - market sizing and timing frame roadmap prioritization
 
-**Related skills:** `pm-domain-analysis`, `pm-personas`, `pm-problem-validation`, `pm-business-case`
+**Related skills:** `pm-domain-analysis`, `pm-personas`, `pm-problem-validation`, `pm-business-case`, `pm-open-questions`
+
+---
+
+## Open questions
+
+A strategic/business question without a technical domain context (e.g. pricing model choice, market-entry timing) that is genuinely unresolved is logged directly in `domain/open_questions.md` (Live Register 5, `pm-open-questions`) - Type: Question, `OQ-BIZ-NN` - not as a loose note in these artifacts.

@@ -4,7 +4,7 @@
 
 **Phase:** 5 - Planning (Step 1-3)  
 **Agent mode:** `decision` - drafts, then requires your review  
-**Version:** 2.1.0  
+**Version:** 2.2.0  
 **Triggers:** features list, FDD format, feature list, KANO analysis, value complexity matrix, feature prioritization, Phase 5, feature hierarchy, dependencies
 
 **Structural parity with `pm-reverse-extract`:** Dependencies (from the `Deps` column) are mirrored onto every Feature Card's `dependencies:` frontmatter field and pushed to Notion as their own property, alongside `Dev Stripe` - the same field set and Notion properties as the Rebuild migration path, so a Notion filter/view works identically regardless of which playbook a project came from.
@@ -110,4 +110,10 @@ Feature Sets are grouping labels only - they do not affect MVP cut or sprint pla
 - `pm-product-roadmap` (v3) - features populate the delivery view
 - Phase 6 skills - `pm-feature-design` reads Feature Cards JIT before each feature enters build
 
-**Related skills:** `pm-mvp-scope`, `pm-prioritize`, `pm-entity-registry`, `pm-business-rules-library`, `pm-prd`, `pm-product-roadmap`
+**Related skills:** `pm-mvp-scope`, `pm-prioritize`, `pm-entity-registry`, `pm-business-rules-library`, `pm-prd`, `pm-product-roadmap`, `pm-open-questions`
+
+---
+
+## Open questions
+
+A genuine scope/prioritization judgment call (not yet ready for `pm-mvp-scope` to rule on) is logged directly in `domain/open_questions.md` (Live Register 5, `pm-open-questions`) - Type: Question, `OQ-{DOMAIN}-NN` or `OQ-MVP-NN` for MVP-cut questions - not embedded as a note in `feature_list.md`.

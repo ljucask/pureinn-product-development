@@ -214,10 +214,12 @@ The client's claims about their own users enter Track D tagged `[CLIENT-ASSERTED
 | `/pm-process-flows` | System user types + E2E process map per domain (business view) + per-user user flows connected to screens (designer brief, with UI/loading/empty states). Lean - references entity states by name, no duplication. Feeds pm-feature-design UX. |
 | `/pm-product-roadmap` | Product Roadmap v2 (+ domain constraints) |
 
-**The 4 Live Registers are initialized here and enriched continuously during Phase 6-7:**
+**Three of the framework's five Live Registers are initialized here and enriched continuously during Phase 6-7:**
 - `entities.md` (Register 1): entity states + Mermaid `stateDiagram-v2`; guards TBD until JIT
 - `business_rules.md` (Register 2): `BR-[DOMAIN]-[NUMBER]`; Draft until pm-feature-design finalizes JIT
 - `decision_models.md` (Register 3): `TBL-[DOMAIN]-[NUMBER]`; decision tables in Draft
+
+`open_questions.md` (Register 5, `pm-open-questions`) can also start here (or earlier) - it initializes at first open item, not on a fixed schedule.
 
 ### Phase 5 - Feature Planning (2-3 days)
 
@@ -395,7 +397,7 @@ Then enter the **[JIT delivery engine](#the-jit-delivery-engine)**.
 
 # The JIT delivery engine
 
-Phase 6 + 7. The shared build cycle that **all three playbooks funnel into**. Spec happens per Feature (not per Feature Set). The 4 Live Registers are the living source of truth. Orchestrated by `/pm-stripe`.
+Phase 6 + 7. The shared build cycle that **all three playbooks funnel into**. Spec happens per Feature (not per Feature Set). The 5 Live Registers are the living source of truth. Orchestrated by `/pm-stripe`.
 
 ```
    ┌──────────────────── /pm-stripe orchestrates the lifecycle ────────────────────┐
@@ -461,6 +463,7 @@ Mandatory when building onto a product that already has users. (Greenfield has n
 | Skill | When |
 |---|---|
 | `/pm-glossary` | Start early, update when new terminology surfaces |
+| `/pm-open-questions` | Any time an unresolved question, legacy-vs-code divergence, or concrete blocker comes up. The single home for all of it - `domain/open_questions.md` (Live Register 5). Three record types: `OQ-` (Question, needs a judgment call), `DIV-` (Divergence, legacy vs. code ruling), `BLK-` (Blocker, concrete gap, just needs doing). Every producing skill (pm-prd, pm-product-roadmap, pm-reconcile, pm-domain-model, pm-features-list, pm-feature-design, pm-business-rules-library, pm-market-analysis) appends here directly instead of embedding open items in its own artifact. Migration scan available for existing projects (`/pm-reconcile open-questions`). |
 | `/pm-diagrams` | When a visual is needed - 17 types (state, erd, domain, sequence, flow, bpmn, journey, wireflow, architecture, c4, dependency, storymap, gantt, jtbd, matrix, kano, swot). `/pm-diagrams [slug]` for a specific type, or no arg for a context-aware recommendation. Composition standard per type in `references/[slug].md`. |
 | `/pm-prototype` | When you want to validate before real build - a feature, a PRD initiative, the whole product, or a slice ("for this user type, test this part"). Runs an intent gate (is a prototype worth it, or go straight to build?), ingests ACs / flows / process / screens / Feature Card / persona / brain dump, then compiles a **tool-ready build prompt** with the Lovable Prompting Bible baked in (front-load + book-end, mandatory in/out-of-scope fence, explicit stack, flow narrative, plan-first, fidelity calibration). Targets Lovable / v0 / Figma Make via MCP (user picks per run; multiple endpoints configurable in pureinn-variables) or hands a paste-ready block. Writes a prototype reference back into the Feature Card; on re-run (result mode) captures the verdict and cascades to the hypothesis register. |
 | `/pm-stress-test` | Before any room where you'll be challenged - exec/product-council review, investor pitch, board meeting, budget defense, security/legal review, contentious feature push. **Adversarial pushback simulator:** you paste the proposal/decision/view; the skill plays a specific skeptical stakeholder and attacks it in **multiple rounds** (not one shot), in that persona's real voice. Baked-in knowledge: 15 stakeholder profiles (investor, CFO, board, CTO, CPO, CRO, legal, compliance, security, DPO, COO, user advocate, procurement...), a challenge-question bank across 13 dimensions, 12 adversarial methods (pre-mortem, red team, murder board, 5 Whys, falsification, outside-view...), real-room bars (VC DD, board, stage-gate, CFO, GDPR/EU AI Act, GTM, pricing), and a 12-item weakness catalogue. Runs a silent weakness diagnosis first, then ends with a prep summary: held / thin / unresolved blind spots / robustness score / pre-meeting checklist. Two modes: live iterative rehearsal or one-pass written gauntlet. Does not fabricate your facts - challenges the gaps. |

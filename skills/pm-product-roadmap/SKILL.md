@@ -5,13 +5,13 @@ license: MIT
 metadata:
   agent-mode: synthesis
   author: https://github.com/ljucask
-  version: "1.2.0"
+  version: "1.3.0"
   domain: product-management
   triggers: product roadmap, roadmap, strategic roadmap, roadmap v1 v2 v3, delivery plan
   role: specialist
   scope: planning
   output-format: document
-  related-skills: pm-prd, pm-mvp-scope, pm-features-list, pm-prioritize, pm-kpis
+  related-skills: pm-prd, pm-mvp-scope, pm-features-list, pm-prioritize, pm-kpis, pm-open-questions
 ---
 
 # PM - Product Roadmap
@@ -68,6 +68,12 @@ The roadmap is NOT a sprint backlog. It communicates strategic intent and phase 
 - `pm-prd` - roadmap is a required PRD section
 - `pm-business-case` - roadmap phases inform investment staging
 - All Phase 6 skills - roadmap v3 defines what gets built in which stripe
+
+---
+
+## Open questions
+
+Open questions and decisions have exactly one home in the whole project: `domain/open_questions.md` (Live Register 5, owned by `pm-open-questions`). This roadmap has no "Open Questions & Decisions" section - if a phase decision is genuinely unresolved (not just an assumption to monitor), append an entry to `domain/open_questions.md` (Type: Question / Divergence / Blocker, `OQ-`/`DIV-`/`BLK-{DOMAIN}-NN` ID - run `pm-open-questions` to initialize the register if it doesn't exist yet) rather than adding it here. **Roadmap Assumptions** stays a distinct concept - things the timeline bets on, not decisions someone owes.
 
 ---
 

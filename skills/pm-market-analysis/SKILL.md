@@ -5,13 +5,13 @@ license: MIT
 metadata:
   agent-mode: synthesis
   author: https://github.com/ljucask
-  version: "1.2.0"
+  version: "1.3.0"
   domain: product-management
   triggers: market analysis, TAM SAM SOM, competitor analysis, SWOT, market sizing, competitive landscape, client market
   role: specialist
   scope: research
   output-format: document
-  related-skills: pm-domain-analysis, pm-personas, pm-problem-validation, pm-business-case
+  related-skills: pm-domain-analysis, pm-personas, pm-problem-validation, pm-business-case, pm-open-questions
 ---
 
 # PM - Market Analysis
@@ -52,6 +52,12 @@ Path A and C produce research-backed artifacts. Path B produces assumption-based
 - `pm-personas` - segment data informs persona development
 - `pm-prd` - market context is a key PRD section
 - `pm-product-roadmap` - market sizing and timing feed into roadmap framing
+
+---
+
+## Open questions
+
+Open questions and decisions have exactly one home in the whole project: `domain/open_questions.md` (Live Register 5, owned by `pm-open-questions`). A strategic/business question without a technical domain context (e.g. pricing model choice, market-entry timing) that is genuinely unresolved does not belong as a loose note in this artifact - append an entry to the register (Type: Question, `OQ-BIZ-NN` ID; run `pm-open-questions` to initialize it first if it doesn't exist).
 
 ---
 

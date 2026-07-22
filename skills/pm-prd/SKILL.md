@@ -5,13 +5,13 @@ license: MIT
 metadata:
   agent-mode: synthesis
   author: https://github.com/ljucask
-  version: "1.1.0"
+  version: "1.2.0"
   domain: product-management
   triggers: PRD, product requirements document, Phase 3b exit, product consolidation, product specification
   role: specialist
   scope: documentation
   output-format: document
-  related-skills: pm-lean-canvas, pm-kpis, pm-domain-model, pm-product-roadmap
+  related-skills: pm-lean-canvas, pm-kpis, pm-domain-model, pm-product-roadmap, pm-open-questions
 ---
 
 # PM - Product Requirements Document (PRD)
@@ -95,6 +95,12 @@ No new research. Pure synthesis.
 - Phase 5 rules init (`pm-business-rules-library` reads known constraints from Domain Analysis)
 - Feature Cards (`prd_ref` field points to specific PRD sections for JIT context)
 - External stakeholders, investors, team onboarding
+
+---
+
+## Open questions
+
+Open questions and decisions have exactly one home in the whole project: `domain/open_questions.md` (Live Register 5, owned by `pm-open-questions`). If synthesis surfaces an unresolved question, a legacy-vs-code divergence, or a concrete blocker while assembling the PRD, do **not** write it into a PRD section (there is no "Open Questions" section in this artifact). Instead: append an entry to `domain/open_questions.md` per its schema (Type: Question / Divergence / Blocker, `OQ-`/`DIV-`/`BLK-{DOMAIN}-NN` ID - if the register doesn't exist yet, run `pm-open-questions` to initialize it first), and leave only the bare placeholder in the PRD itself (e.g. "Exit gate: TBD") without duplicating the question text.
 
 ---
 
@@ -456,14 +462,9 @@ These items are explicitly excluded from the MVP. This is a strategic decision.
 
 ---
 
-## 9. Open Questions and Assumptions
+## 9. Critical Assumptions
 
-### Open Questions (not yet resolved)
-
-| Question | Priority | Owner | Target date |
-|---|---|---|---|
-| [What we don't know yet] | High / Med / Low | [Who resolves] | [When] |
-| ... | | | |
+> Open questions and decisions live in `domain/open_questions.md` (Live Register 5), not here - see "Open questions" below. This section holds only **assumptions to validate** (a different concept: things the PRD is betting on, not things someone needs to decide).
 
 ### Critical Assumptions (that could invalidate the product)
 
@@ -731,15 +732,7 @@ Defined in Viability Assessment - reproduced here for traceability.
 
 ---
 
-## 6. Open Questions
-
-| Question | Priority | Owner | Target date |
-|---|---|---|---|
-| [unresolved] | High / Med | [who] | [when] |
-
----
-
-## 7. Revision History
+## 6. Revision History
 
 | Version | Date | Change |
 |---|---|---|

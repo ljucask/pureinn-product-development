@@ -5,13 +5,13 @@ license: MIT
 metadata:
   agent-mode: decision
   author: https://github.com/ljucask
-  version: "2.1.0"
+  version: "2.2.0"
   domain: product-management
   triggers: feature design, JIT design, design by feature, sequence diagram, feature spec, Phase 6
   role: specialist
   scope: specification
   output-format: document
-  related-skills: pm-feature-viability, pm-entity-registry, pm-business-rules-library, pm-decision-model, pm-process-flows, pm-feature-card, pm-stripe
+  related-skills: pm-feature-viability, pm-entity-registry, pm-business-rules-library, pm-decision-model, pm-process-flows, pm-feature-card, pm-stripe, pm-open-questions
 ---
 
 # PM - Feature Design (JIT)
@@ -83,6 +83,12 @@ If the project has an existing codebase, Claude Code MUST scan the relevant serv
 - Feature Card (Sections 1-3 populated)
 - Build phase - Claude Code reads the completed Feature Card as implementation spec
 - `test-master` / `playwright-expert` - ACs in Section 2 are the direct test basis
+
+---
+
+## Open questions
+
+Open questions and decisions have exactly one home in the whole project: `domain/open_questions.md` (Live Register 5, owned by `pm-open-questions`). If the Discovery Interrogation surfaces a genuine judgment call (not just a new rule/guard condition to add, which goes into `business_rules.md`/`entities.md` directly), a legacy-vs-code divergence, or a concrete blocker to build - do not park it as a Subtask or a comment in the Feature Card. Append an entry to the register (Type: Question / Divergence / Blocker, `OQ-`/`DIV-`/`BLK-{DOMAIN}-NN` ID; run `pm-open-questions` to initialize it first if it doesn't exist). A Subtask is a nuance for the developer to handle during build; an open question is something nobody has decided yet - keep the two separate.
 
 ---
 

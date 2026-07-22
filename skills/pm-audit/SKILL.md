@@ -1,17 +1,17 @@
 ---
 name: pm-audit
-description: Health check for an existing Pureinn workspace. Scans the framework's own artifacts - the 4 Live Registers, feature_list, Feature Cards, roadmap, glossary, state.json - against the current Pureinn conventions, finds inconsistencies, drift, and errors, then fixes the mechanical ones and asks about the judgment calls. Detects framework-version drift (artifacts produced by an older Pureinn version) and offers to migrate them. Use when a workspace was built with an older version, after pm-reconcile or pm-reverse-extract, or any time you want to confirm the workspace is internally consistent before continuing. Takes an optional area argument to scope the audit (/pm-audit domain | rules | features), or audits the whole workspace by default. Distinct from pm-reconcile (code vs legacy docs) and pm-reverse-extract (code to inventory) - this checks Pureinn artifacts against Pureinn conventions (Tier 1: form) and cross-checks the strategic layer (PRD, roadmap, personas, market, business model) for semantic consistency, surfacing contradictions read-only and routing each fix to its authoring skill (Tier 2: substance).
+description: Health check for an existing Pureinn workspace. Scans the framework's own artifacts - the 5 Live Registers (including the Open Questions Register), Feature Cards, roadmap, glossary, state.json - against the current Pureinn conventions, finds inconsistencies, drift, and errors, then fixes the mechanical ones and asks about the judgment calls. Detects framework-version drift (artifacts produced by an older Pureinn version) and offers to migrate them. Use when a workspace was built with an older version, after pm-reconcile or pm-reverse-extract, or any time you want to confirm the workspace is internally consistent before continuing. Takes an optional area argument to scope the audit (/pm-audit domain | rules | features), or audits the whole workspace by default. Distinct from pm-reconcile (code vs legacy docs) and pm-reverse-extract (code to inventory) - this checks Pureinn artifacts against Pureinn conventions (Tier 1: form) and cross-checks the strategic layer (PRD, roadmap, personas, market, business model) for semantic consistency, surfacing contradictions read-only and routing each fix to its authoring skill (Tier 2: substance).
 license: MIT
 metadata:
   agent-mode: synthesis
   author: https://github.com/ljucask
-  version: "1.3.0"
+  version: "1.4.0"
   domain: product-management
   triggers: audit, health check, consistency check, workspace check, framework drift, version migration, fix inconsistencies, sanity check, naming check, anti-pattern, strategic consistency, cross-artifact check, re-check
   role: specialist
   scope: validation
   output-format: document
-  related-skills: pm-reconcile, pm-reverse-extract, pm-feature-card, pm-features-list, pm-stripe
+  related-skills: pm-reconcile, pm-reverse-extract, pm-feature-card, pm-features-list, pm-stripe, pm-open-questions
 ---
 
 # PM - Audit (Workspace Health Check)
@@ -87,10 +87,11 @@ If no workspace is found, do not guess. Tell the user to run `/pureinn` first (g
 | `/pm-audit domain` | `domain/entities.md` + `domain/domain-model.md` (structure, entity/state naming, ERD ↔ entities consistency) |
 | `/pm-audit rules` | `domain/business_rules.md` + `domain/decision_models.md` (BR/TBL IDs, rule↔entity refs, decision-table completeness) |
 | `/pm-audit features` | `features/feature_list.md` + `features/cards/` (card structure, FS-NN, Section-1 BR-ID refs resolve, lifecycle status) |
+| `/pm-audit open-questions` | `domain/open_questions.md` (ID hygiene, Type↔prefix match, no duplication of open-item text elsewhere in the workspace) |
 | `/pm-audit strategy` | **Tier 2 only** - cross-artifact strategic consistency (PRD ↔ personas ↔ roadmap ↔ market ↔ business model ↔ feature phases). Read-only, routes fixes to authoring skills. |
 | `/pm-audit [other]` | any single artifact the user names |
 
-**Tier scoping:** area scopes (`domain`, `rules`, `features`) run Tier 1 only. `strategy` runs Tier 2 only. The default whole-workspace run does **both** tiers.
+**Tier scoping:** area scopes (`domain`, `rules`, `features`, `open-questions`) run Tier 1 only. `strategy` runs Tier 2 only. The default whole-workspace run does **both** tiers.
 
 When an area is given, scan and report only that area's artifacts (plus their direct cross-references - e.g. `features` checks that BR-IDs in cards resolve into `business_rules.md`, without auditing the rules themselves). When no area is given, audit everything. If the user states a scope in plain language, honour it (per the Adaptive-execution standard).
 
@@ -137,6 +138,7 @@ Read every artifact **in scope** (Step 0) and run the checks below - for an area
 | **Description present** | Every feature has a non-blank Description - both its `feature_list.md` entry and its card's `## Description` section, for **every status** (including `6_Shipped` lean stubs and `1_Backlog`). A feature with no description is a P2 finding (orientation gap). |
 | **Feature metadata complete** | Every feature carries the full property set in frontmatter + feature_list + Notion: `layer` (frontend/backend/system), `phase` (MVP/MVP+/Phase 1... or the project's P0/P1…), `kano`, `vxc`, `stripe` (Dev Stripe), `has_subtasks`. Also check **value consistency**: `has_subtasks` matches whether the card's Subtasks section actually has items; values are from the allowed sets. **`layer` is one or more of `{frontend, backend, system}`** (a cross-layer feature lists several, e.g. `frontend, backend`) - flag any value outside the set, especially **`fullstack`** (not a layer → replace with the actual layers), P2. Missing or inconsistent = P2. **Canonical-field check:** `phase` is the **single axis for MVP membership** - flag and consolidate any duplicate/non-canonical field that encodes the same thing (`mvp: true/false`, `roadmap_phase`, an "MVP" column) into `phase` (IN-MVP = the first/`MVP`/`P0` phase). Two fields on one axis drift apart - a stray `mvp`/`roadmap_phase` is a P2 finding, migrate it to `phase`. |
 | **Notion sync** (if configured) | Local `status` vs Notion `Status` mismatch surfaced (drift log, like pm-stripe). |
+| **Open questions hygiene** | Open items have exactly one home: `domain/open_questions.md` (Live Register 5). Flag as P1/P2 anti-pattern: an "Open Questions" section or table reappearing in the PRD, Roadmap, a Feature Card, or a reconcile report instead of (or in addition to) a register entry; open-question text duplicated verbatim in two places; an `OQ-`/`DIV-`/`BLK-` ID referenced somewhere that does not resolve to an entry in the register. Also check ID hygiene within the register itself: no ID reused across different entries (Open or Resolved), Type field matches its prefix (`OQ-`→Question, `DIV-`→Divergence, `BLK-`→Blocker). If the register doesn't exist yet but scattered open-item patterns are found elsewhere, route to `/pm-open-questions migrate` rather than fixing in place. |
 
 The table above is **Tier 1 (form)**. For a whole-workspace run or `/pm-audit strategy`, also run Tier 2 below.
 

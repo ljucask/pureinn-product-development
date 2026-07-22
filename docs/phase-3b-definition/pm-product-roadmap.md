@@ -4,7 +4,7 @@
 
 **Phase:** 3b (v1), 4 (v2), 5 (v3) - updates across all three phases  
 **Agent mode:** `synthesis` - runs fully autonomously  
-**Version:** 1.2.0  
+**Version:** 1.3.0  
 **Triggers:** product roadmap, roadmap, delivery phases, strategic plan, phase planning
 
 ---
@@ -79,4 +79,10 @@ A partial roadmap is a valid expected state - capture phases you know, derive fe
 - `pm-business-case` - roadmap phases inform investment staging
 - All Phase 6 skills - v3 roadmap defines what gets built in which stripe
 
-**Related skills:** `pm-prd`, `pm-features-list`, `pm-mvp-scope`, `pm-business-case`, `pm-kpis`
+**Related skills:** `pm-prd`, `pm-features-list`, `pm-mvp-scope`, `pm-business-case`, `pm-kpis`, `pm-open-questions`
+
+---
+
+## Open questions
+
+This roadmap has no "Open Questions & Decisions" section - open questions, divergences, and blockers live in exactly one place project-wide: `domain/open_questions.md` (Live Register 5, `pm-open-questions`). A genuinely unresolved phase decision is logged there directly, not embedded here. **Roadmap Assumptions** stays a distinct, separate concept - things the timeline bets on, not decisions someone owes.

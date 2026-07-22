@@ -19,7 +19,7 @@ A structured methodology for building products - from zero to launch. Implemente
 
 ## What this is
 
-**50 active skills + 2 commands** covering the full product lifecycle: client discovery, discovery, validation, prototyping, stakeholder pushback rehearsal, anomaly root-cause diagnosis, domain modeling, process & user-flow mapping, feature planning, prioritization, FDD delivery, reconciliation-based rebuild, workspace health-check, team onboarding, and meeting capture.
+**51 active skills + 2 commands** covering the full product lifecycle: client discovery, discovery, validation, prototyping, stakeholder pushback rehearsal, anomaly root-cause diagnosis, domain modeling, process & user-flow mapping, feature planning, prioritization, FDD delivery, reconciliation-based rebuild, workspace health-check, team onboarding, and meeting capture.
 
 Three playbooks:
 
@@ -189,6 +189,7 @@ If FEAT-ID doesn't exist yet: add it to `feature_list.md`, create stub card, the
 | Skill | When |
 |---|---|
 | `/pm-glossary` | Start in Phase 1, update continuously |
+| `/pm-open-questions` | Any phase - the single home for open questions (`OQ-`), legacy-vs-code divergences (`DIV-`), and blockers (`BLK-`), Live Register 5. Initializes on first open item (at latest Phase 4); every skill that hits an unresolved item appends here directly instead of embedding it in its own artifact. |
 | `/pm-diagrams` | Any phase - 17 diagram types across 6 categories (domain/data, process/behavior, UX, architecture, planning/delivery, strategic). Call with a slug for a specific diagram (`/pm-diagrams bpmn`, `erd`, `journey`, `c4`, `storymap`...) or with no argument for a context-aware recommendation from workspace state. Each type has a composition reference in `references/[slug].md` read before drawing. |
 | `/pm-prototype` | Any phase - validate before real build. Turns a feature / PRD initiative / whole product / slice into a tool-ready prototype spec (Lovable, v0/Vercel, Figma Make, Base44). Gate-checks whether a prototype is worth it, compiles a tool-optimized build prompt (Lovable Prompting Bible baked in), pushes via MCP or hands a paste-ready block. On re-run, captures the result and feeds it back to the Feature Card / hypothesis register. |
 | `/pm-stress-test` | Before any high-stakes room - exec review, investor pitch, board meeting, budget defense, contentious feature push. Plays a specific skeptical stakeholder (investor, CFO, board, CTO, legal, DPO, sales, product lead, and more) and stress-tests your proposal in multiple rounds - not one shot. Runs a silent weakness diagnosis first, fires the sharpest questions that persona actually asks, and ends with a prep summary: what held, what's thin, unresolved blind spots, robustness score, and a pre-meeting checklist. Baked-in bank of real objections, adversarial methods (pre-mortem, red team, murder board), and failure patterns. |

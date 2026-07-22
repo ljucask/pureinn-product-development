@@ -5,13 +5,13 @@ license: MIT
 metadata:
   agent-mode: synthesis
   author: https://github.com/ljucask
-  version: "1.0.0"
+  version: "1.1.0"
   domain: product-management
   triggers: domain model, ERD, entity relationship, domain entities, ubiquitous language, data model, Phase 4
   role: specialist
   scope: modeling
   output-format: document
-  related-skills: pm-entity-registry, pm-business-rules-library, pm-privacy-requirements, pm-domain-analysis, pm-features-list
+  related-skills: pm-entity-registry, pm-business-rules-library, pm-privacy-requirements, pm-domain-analysis, pm-features-list, pm-open-questions
 ---
 
 # PM - Domain Model
@@ -57,6 +57,12 @@ If `reconcile/reconciliation_report.md` and the reconciled `entities.md` exist, 
 - `pm-feature-design` - entities and their attributes are referenced in functional specs
 - `pm-features-list` - domain structure informs feature derivation
 - Phase 6 skills - all spec work references this document
+
+---
+
+## Open questions
+
+Open questions and decisions have exactly one home in the whole project: `domain/open_questions.md` (Live Register 5, owned by `pm-open-questions`). If domain modeling surfaces a genuine boundary/ownership ambiguity (which context owns this entity?) or a legacy-vs-code divergence, do not resolve it silently and do not park it as a comment in this artifact - append an entry to the register (Type: Question or Divergence, `OQ-`/`DIV-{DOMAIN}-NN` ID; run `pm-open-questions` to initialize it first if it doesn't exist).
 
 ---
 

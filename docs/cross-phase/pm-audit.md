@@ -4,7 +4,7 @@
 
 **Phase:** Cross-phase  
 **Agent mode:** `synthesis` - runs fully autonomously  
-**Version:** 1.3.0  
+**Version:** 1.4.0  
 **Triggers:** audit, health check, consistency check, workspace check, framework drift, version migration, fix inconsistencies, sanity check, naming check, anti-pattern, strategic consistency, cross-artifact check, re-check
 
 ---
@@ -33,6 +33,7 @@
 /pm-audit domain           # domain/entities.md + domain-model.md only (Tier 1)
 /pm-audit rules            # business_rules.md + decision_models.md only (Tier 1)
 /pm-audit features         # feature_list.md + features/cards/ only (Tier 1)
+/pm-audit open-questions   # domain/open_questions.md only (Tier 1) - ID hygiene, no duplication elsewhere
 /pm-audit strategy         # strategic layer only (Tier 2 - read-only)
 /pm-audit [artifact-name]  # any specific artifact named by the user
 /pm-audit --agent          # autonomous full-workspace audit
@@ -51,6 +52,7 @@ Checks include:
 - Feature Set naming convention (FS-NN format)
 - Cross-reference resolution (does every BR-ID reference in a Feature Card resolve in `business_rules.md`?)
 - Framework version drift (artifacts missing fields introduced in newer Pureinn versions)
+- **Open questions hygiene** - open items have exactly one home, `domain/open_questions.md` (Live Register 5). Flags an "Open Questions" section reappearing in PRD/Roadmap/Feature Cards/reconcile reports, duplicated open-item text, or an `OQ-`/`DIV-`/`BLK-` ID that doesn't resolve to a register entry.
 
 **Tier 2 - Substance (strategic - read-only):**
 Does the strategic layer agree with itself and with the research it was built on? PRD target customer vs. personas, value proposition vs. validated pains, roadmap phases vs. feature phases, pricing vs. willingness to pay signal.
@@ -95,4 +97,4 @@ Tier 2 is read-only. It surfaces each contradiction as `[CONFLICT]` and routes t
 
 If no workspace is found: tell the user to run `/pureinn` (greenfield) or `/pm-reverse-extract` / `/pm-reconcile` (existing product) first.
 
-**Related skills:** `pm-reconcile`, `pm-reverse-extract`, `pm-feature-card`, `pm-features-list`, `pm-stripe`
+**Related skills:** `pm-reconcile`, `pm-reverse-extract`, `pm-feature-card`, `pm-features-list`, `pm-stripe`, `pm-open-questions`

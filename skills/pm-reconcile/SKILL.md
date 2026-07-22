@@ -1,17 +1,17 @@
 ---
 name: pm-reconcile
-description: Rebuild playbook for an existing product onboarded to Pureinn. Reconciles the actual codebase against a folder of legacy documents (BRD, FSD, domain/entity models, business rules) that may contain logical, semantic and structural inconsistencies. Runs in two phases - first PLAN (inspect docs + code, define which areas to reconcile, in what order, into which Pureinn artifacts), then per-area EXECUTION (/pm-reconcile domain | rules | features ...) one layer at a time. Produces a living Reconciliation Report and rebuilds the 4 Live Registers + feature inventory clean. A closing verify pass (/pm-reconcile verify) re-reads the source one last time, proves every unit was transposed, incorporates any gaps it finds (not just reports them), and rules whether the legacy source is safe to archive - the source-disposal gate. The source is whatever the user points to (any format), never a hardcoded BRD. Use when a product was built outside the framework, has stale or conflicting docs, and the (often new) team needs one consistent source of truth that matches the code. Multi-session - track progress with pm-reconcile-status.
+description: Rebuild playbook for an existing product onboarded to Pureinn. Reconciles the actual codebase against a folder of legacy documents (BRD, FSD, domain/entity models, business rules) that may contain logical, semantic and structural inconsistencies. Runs in two phases - first PLAN (inspect docs + code, define which areas to reconcile, in what order, into which Pureinn artifacts), then per-area EXECUTION (/pm-reconcile domain | rules | features | open-questions ...) one layer at a time. Produces a living Reconciliation Report and rebuilds the 5 Live Registers clean, including consolidating scattered open questions/divergences/blockers into the Open Questions Register. A closing verify pass (/pm-reconcile verify) re-reads the source one last time, proves every unit was transposed, incorporates any gaps it finds (not just reports them), and rules whether the legacy source is safe to archive - the source-disposal gate. The source is whatever the user points to (any format), never a hardcoded BRD. Use when a product was built outside the framework, has stale or conflicting docs, and the (often new) team needs one consistent source of truth that matches the code. Multi-session - track progress with pm-reconcile-status.
 license: MIT
 metadata:
   agent-mode: never
   author: https://github.com/ljucask
-  version: "1.2.0"
+  version: "1.3.0"
   domain: product-management
   triggers: reconcile, rebuild, migration, existing product, old docs, BRD reconciliation, team handover, codebase vs docs, onboard existing product, rebuild from code, source coverage, verify transposition, disposal readiness, archive source, specified not implemented, strategic layer, delivery-driven roadmap
   role: specialist
   scope: reconciliation
   output-format: document
-  related-skills: pm-reconcile-status, pm-entity-registry, pm-domain-model, pm-business-rules-library, pm-reverse-extract, pm-glossary, pm-stripe
+  related-skills: pm-reconcile-status, pm-entity-registry, pm-domain-model, pm-business-rules-library, pm-reverse-extract, pm-glossary, pm-stripe, pm-open-questions
 ---
 
 # PM - Reconcile (Rebuild from Existing Product)
@@ -46,6 +46,7 @@ This is the **Rebuild playbook** referenced in the `/pureinn` orchestrator. Run 
 | `/pm-reconcile rules` | **Execute** | Reconcile business rules + decision models + transition **guard conditions** → `business_rules.md` + `decision_models.md` (Registers 2-3). |
 | `/pm-reconcile features` | **Execute** | Reconcile feature inventory → `feature_list.md` + stub Feature Cards Section 1 (Register 4). |
 | `/pm-reconcile [other]` | **Execute** | Any extra area the plan defined (e.g. `events`, `integrations`). |
+| `/pm-reconcile open-questions` | **Execute** | Route to `/pm-open-questions migrate` - scan every artifact + Notion for scattered `OQ-*`/`DIV-*`/`BLK-*`/TBD items and consolidate them into `domain/open_questions.md` (Register 5). Run any time; typically after the other areas surface divergences and blockers. |
 | `/pm-reconcile verify [area]` | **Verify + incorporate** | Re-read the source one more time, prove every unit landed in the registers, **incorporate the gaps it finds** (not just report them), and rule on disposal readiness. The source-disposal gate. Default = all areas; scope with `verify domain \| rules \| features`. |
 
 **Default area order is dependency-driven:** `domain` → `rules` → `features`. Entities are the vocabulary everything references, so they become canonical first. Rules operate on entities and guard transitions, so they come next. Features reference rules and entities, so they come last. This mirrors the register numbering 1 → 2 → 3 → 4. The plan can adapt the order (e.g. domain-by-domain on a large product).
@@ -62,7 +63,7 @@ Reconciliation is **asymmetric**. Two layers, two kinds of mismatch. Apply on ev
 
 | Layer | Source of truth | On mismatch |
 |---|---|---|
-| **Business intent** - rule values, decisions, what a feature should do, *why* | **Legacy docs (BRD / business rules / decision models)** | If code implements a *different business rule* (e.g. refund window 14 vs 30 days) → **business-logic divergence**. Do NOT silently pick a side. Surface via AskUserQuestion; the team rules "code is the bug" or "doc is stale". Record it. |
+| **Business intent** - rule values, decisions, what a feature should do, *why* | **Legacy docs (BRD / business rules / decision models)** | If code implements a *different business rule* (e.g. refund window 14 vs 30 days) → **business-logic divergence**. Do NOT silently pick a side. Surface via AskUserQuestion; the team rules "code is the bug" or "doc is stale". Record it - in the Reconciliation Report **and** as a `DIV-{DOMAIN}-NN` entry in `domain/open_questions.md` (Live Register 5). The report is this session's audit trail; the register is the permanent, single home for the open item - it must not only live in the report. |
 | **Technical structure** - entity / attribute / enum / state names, state-machine shape, what is implemented | **Codebase** (observed reality) | **Rewrite the docs to match the code. Mechanical, no question.** Old doc name kept as an **alias** in the glossary. |
 
 Two rules that follow:
@@ -205,8 +206,9 @@ Diff code (A1) vs intent (A2), applying the source-of-truth model. Classify ever
 | Doc-only / aspirational (described, not built) | Mark `specified, not implemented` → backlog; not added as real |
 | Code-only / undocumented (built, not in docs) | Capture as real; flag "confirm intent" |
 | Internal doc contradiction (docs disagree) | **AskUserQuestion** - which is authoritative |
+| **Concrete technical/build gap** (structure is otherwise complete, but something specific is missing or broken - no ambiguity about what needs doing, just execution) | Not a divergence and not a feature-scope gap - log as `BLK-{DOMAIN}-NN` in `domain/open_questions.md` (Type: Blocker). Example: a referenced shared module doesn't exist, an enum's value-set is TBD while everything else is settled. |
 
-Use the **grouped question pattern** (CLAUDE.md): batch related conflicts (2-4 per group), present code behavior + doc statement(s) + a recommended resolution, confirm, continue. Never silently resolve a business-logic conflict. Assign `DIV-NN` IDs to divergences.
+Use the **grouped question pattern** (CLAUDE.md): batch related conflicts (2-4 per group), present code behavior + doc statement(s) + a recommended resolution, confirm, continue. Never silently resolve a business-logic conflict. Assign `DIV-{DOMAIN}-NN` IDs to divergences and log each to `domain/open_questions.md` (Live Register 5), not only the Reconciliation Report - if `pm-open-questions` hasn't initialized the register yet, do so before this area completes.
 
 **High-volume batching (checkpointed) - required when an area is large:** When a single area pass has many items to reconcile (roughly **>15** rules / decision tables / features - common in legacy systems with dozens of each), do NOT process them all in one sitting. Batch and checkpoint:
 
@@ -301,10 +303,10 @@ A report alone changes nothing. For every non-covered unit, close it - with conf
 |---|---|
 | ❌ **Not transposed** | Propose the artifact it should become - business logic that runs → new `BR-NN` / `TBL-NN` / entity state; a **specified-not-implemented capability → a `FEAT-ID` card at `1_Backlog`** (marked `specified in source, not yet implemented`); a nuance → a Subtask on an existing card. Confirm via AskUserQuestion, then **write it into the register / feature_list / card**. Carding the unbuilt capability in feature_list (not just the report) is what makes it safe to discard the source. |
 | 🔄 **Altered / incomplete** | Show source value vs transposed value, propose the correction, confirm, **fix the register/card** to match the source's intent. |
-| ⚠️ **Conflicts code** | Assign `DIV-NN`, surface via AskUserQuestion (code-bug vs source-stale), record the ruling in the Reconciliation Report. Code is never changed - only the doc/register, per policy. |
+| ⚠️ **Conflicts code** | Assign `DIV-{DOMAIN}-NN`, surface via AskUserQuestion (code-bug vs source-stale), record the ruling in the Reconciliation Report **and** in `domain/open_questions.md` (Register 5). Code is never changed - only the doc/register, per policy. |
 | ⛔ **Dropped** | Confirm once it was an intentional drop; record it so it is not re-flagged next run. |
 
-Use the grouped AskUserQuestion pattern (2-4 per round). Apply the same write-paths as reconcile: registers via their owning skills (`pm-business-rules-library`, `pm-entity-registry`, `pm-reverse-extract`), feature_list + cards kept in parity, Notion synced via `notion_ids.<key>`. **Never change the codebase.** Append every incorporation and every `DIV-NN` to `reconciliation_report.md`.
+Use the grouped AskUserQuestion pattern (2-4 per round). Apply the same write-paths as reconcile: registers via their owning skills (`pm-business-rules-library`, `pm-entity-registry`, `pm-reverse-extract`), feature_list + cards kept in parity, Notion synced via `notion_ids.<key>`. **Never change the codebase.** Append every incorporation and every `DIV-NN` to `reconciliation_report.md` **and** `domain/open_questions.md`.
 
 ## Step V5: Disposal-readiness verdict
 

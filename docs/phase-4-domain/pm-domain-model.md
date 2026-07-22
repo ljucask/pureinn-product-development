@@ -4,7 +4,7 @@
 
 **Phase:** 4 - Domain Modeling (optional companion to pm-entity-registry)  
 **Agent mode:** `synthesis` - runs fully autonomously  
-**Version:** 1.0.0  
+**Version:** 1.1.0  
 **Triggers:** domain model, ERD, entity relationship, domain entities, ubiquitous language, data model, Phase 4
 
 ---
@@ -84,4 +84,10 @@ Run `pm-entity-registry` first. Run `pm-domain-model` when the cross-domain view
 - `pm-business-rules-library` - domain boundaries scope business rule application
 - `pm-feature-design` (JIT Phase 6) - domain structure referenced in functional specs
 
-**Related skills:** `pm-entity-registry`, `pm-business-rules-library`, `pm-privacy-requirements`, `pm-domain-analysis`
+**Related skills:** `pm-entity-registry`, `pm-business-rules-library`, `pm-privacy-requirements`, `pm-domain-analysis`, `pm-open-questions`
+
+---
+
+## Open questions
+
+A genuine boundary/ownership ambiguity (which context owns this entity?) or a legacy-vs-code divergence does not get parked as a comment in the domain model - it's logged directly in `domain/open_questions.md` (Live Register 5, `pm-open-questions`).

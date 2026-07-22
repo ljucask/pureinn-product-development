@@ -4,7 +4,7 @@
 
 **Phase:** Rebuild playbook  
 **Agent mode:** `never` - value is the live dialogue (business-logic conflicts require human decisions)  
-**Version:** 1.2.0  
+**Version:** 1.3.0  
 **Triggers:** reconcile, rebuild, migration, existing product, old docs, BRD reconciliation, team handover, codebase vs docs, onboard existing product, rebuild from code, source coverage, verify transposition, disposal readiness, archive source
 
 ---
@@ -20,13 +20,14 @@ When a product was built outside Pureinn, legacy docs disagree with the code and
 ## What it produces
 
 1. **Reconciliation Plan** (`reconcile/reconciliation_plan.md`) - which areas to reconcile, in what order, into which Pureinn artifacts
-2. **Reconciliation Report** (`reconcile/reconciliation_report.md`) - living audit log per area: what matched, what diverged (`DIV-NN` entries), human decisions recorded
+2. **Reconciliation Report** (`reconcile/reconciliation_report.md`) - living audit log per area: what matched, what diverged (`DIV-{DOMAIN}-NN` entries), human decisions recorded
 3. **Rebuilt Live Registers** - `entities.md`, `business_rules.md`, `decision_models.md`, `feature_list.md` - structurally aligned to code, carrying business logic from docs, every divergence visible
 4. **Stub Feature Cards** - for specified-not-yet-implemented capabilities discovered in the source
+5. **Open Questions & Decisions Register** (`domain/open_questions.md`, Register 5) - every `DIV-`/`BLK-` finding is logged here too, not only in the report, so it survives after the legacy source is archived
 
 ---
 
-## How to invoke - seven modes
+## How to invoke - eight modes
 
 ```bash
 /pm-reconcile                       # Plan / route: no plan → build plan; plan exists → status + next area
@@ -34,6 +35,7 @@ When a product was built outside Pureinn, legacy docs disagree with the code and
 /pm-reconcile domain                # Execute: entities + state machines → entities.md (Register 1)
 /pm-reconcile rules                 # Execute: business rules + decision models → business_rules.md + decision_models.md (Registers 2-3)
 /pm-reconcile features              # Execute: feature inventory → feature_list.md + stub cards (Register 4)
+/pm-reconcile open-questions        # Execute: routes to /pm-open-questions migrate - consolidate scattered OQ-/DIV-/BLK-/TBD items → open_questions.md (Register 5)
 /pm-reconcile [other-area]          # Execute: any extra area the plan defined (events, integrations, etc.)
 /pm-reconcile verify [area]         # Verify + incorporate: re-read source, prove coverage, fill gaps, rule on disposal readiness
 ```
@@ -46,7 +48,7 @@ Default area execution order: `domain` → `rules` → `features` (dependency-dr
 
 | Layer | Source of truth | On mismatch |
 |---|---|---|
-| **Business intent** (rule values, what a feature should do, why) | **Legacy docs** | Surface as business-logic divergence (`DIV-NN`). Do NOT silently pick a side. Team rules "code is the bug" or "doc is stale". |
+| **Business intent** (rule values, what a feature should do, why) | **Legacy docs** | Surface as business-logic divergence (`DIV-{DOMAIN}-NN`), logged in the report **and** `domain/open_questions.md` (Register 5). Do NOT silently pick a side. Team rules "code is the bug" or "doc is stale". |
 | **Technical structure** (entity names, attribute names, enum values, state names) | **Codebase** | Rewrite docs to match code. Mechanical, no question needed. Old doc name kept as alias in glossary. |
 
 **Two hard rules:**
@@ -89,4 +91,4 @@ This is a fork the team should decide consciously. The skill surfaces it at hand
 - `pm-audit` - runs after reconcile as the verification pass
 - `pm-domain-model` - builds cross-domain ERD on top of reconciled entities
 
-**Related skills:** `pm-reconcile-status`, `pm-reverse-extract`, `pm-entity-registry`, `pm-business-rules-library`, `pm-domain-model`, `pm-audit`
+**Related skills:** `pm-reconcile-status`, `pm-reverse-extract`, `pm-entity-registry`, `pm-business-rules-library`, `pm-domain-model`, `pm-audit`, `pm-open-questions`

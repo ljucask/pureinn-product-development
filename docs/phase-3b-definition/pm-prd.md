@@ -4,7 +4,7 @@
 
 **Phase:** 3b - Definition (closes Phase 3b); or Feature Implementation (Initiative PRD)  
 **Agent mode:** `synthesis` - runs fully autonomously  
-**Version:** 1.1.0  
+**Version:** 1.2.0  
 **Triggers:** PRD, product requirements, product spec, business capabilities, initiative PRD
 
 ---
@@ -44,7 +44,7 @@ Synthesizes all upstream artifacts into `product/PRD_master.md`. **This file doe
 - **Business Capabilities** - what the product must enable, in business language (required for Phase 4)
 - Roadmap reference (v1)
 - Legal and compliance requirements
-- Assumptions and open risks
+- **Critical Assumptions** (things the PRD is betting on, to validate - not decisions)
 
 **Modular PRD for large products:** If the product covers multiple distinct business domains:
 - `product/PRD_master.md` - high-level router: goals, personas, KPIs, links to domain sub-PRDs (this IS the frozen master)
@@ -105,4 +105,10 @@ The PRD answers: who is this for, what problem does it solve, why does it matter
 - `pm-domain-model` - Phase 4 domain modeling references PRD business context
 - All Phase 6 Feature Cards - `prd_ref` field links to specific PRD sections
 
-**Related skills:** `pm-product-roadmap`, `pm-lean-canvas`, `pm-kpis`, `pm-business-case`, `pm-entity-registry`
+**Related skills:** `pm-product-roadmap`, `pm-lean-canvas`, `pm-kpis`, `pm-business-case`, `pm-entity-registry`, `pm-open-questions`
+
+---
+
+## Open questions
+
+This PRD no longer has an "Open Questions" section - open questions, divergences, and blockers live in exactly one place project-wide: `domain/open_questions.md` (Live Register 5, `pm-open-questions`). If synthesis surfaces an unresolved item, it's logged there directly and only a bare placeholder (e.g. "Exit gate: TBD") stays in the PRD.

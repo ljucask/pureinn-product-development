@@ -5,13 +5,13 @@ license: MIT
 metadata:
   agent-mode: decision
   author: https://github.com/ljucask
-  version: "2.1.0"
+  version: "2.2.0"
   domain: product-management
   triggers: features list, FDD format, feature list, KANO analysis, value complexity matrix, feature prioritization, Phase 5, feature hierarchy, dependencies
   role: specialist
   scope: planning
   output-format: document
-  related-skills: pm-mvp-scope, pm-prioritize, pm-entity-registry, pm-business-rules-library, pm-prd, pm-product-roadmap
+  related-skills: pm-mvp-scope, pm-prioritize, pm-entity-registry, pm-business-rules-library, pm-prd, pm-product-roadmap, pm-open-questions
 ---
 
 # PM - Features List
@@ -91,6 +91,12 @@ KANO tells you *what* to include. V×C tells you *in what order* to deliver it. 
 - `pm-mvp-scope` - feature list is the direct input for MVP cut + stripe assignment
 - `pm-product-roadmap` v3 - features populate the delivery view
 - Phase 6 skills - pm-feature-design reads Feature Cards JIT before each feature enters build
+
+---
+
+## Open questions
+
+Open questions and decisions have exactly one home in the whole project: `domain/open_questions.md` (Live Register 5, owned by `pm-open-questions`). If prioritization or scoping surfaces a genuine judgment call (e.g. unclear which phase/MVP-cut a capability belongs to, before `pm-mvp-scope` can rule on it) do not embed it as a note in `feature_list.md` - append an entry to the register (Type: Question, `OQ-{DOMAIN}-NN` or `OQ-MVP-NN` for MVP-cut questions; run `pm-open-questions` to initialize it first if it doesn't exist).
 
 ---
 

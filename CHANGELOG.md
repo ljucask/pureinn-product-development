@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.32.0] - 2026-07-22
+
+### Open Questions & Decisions Register (Live Register 5) - new pm-open-questions skill centralizes scattered open items (OQ-/DIV-/BLK- IDs) from PRD, Roadmap, reconcile, and JIT design into one home; pm-audit hygiene check added; 4->5 Live Registers terminology updated framework-wide
+
+---
+
+
 ## [5.31.0] - 2026-07-21
 
 ### Content-hygiene fix - removed leaked real client/project names from CHANGELOG history, usage examples, and a skill template; added a validate.py gate blocking any future project-name leak across the repo

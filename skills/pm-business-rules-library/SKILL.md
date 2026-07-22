@@ -5,13 +5,13 @@ license: MIT
 metadata:
   agent-mode: decision
   author: https://github.com/ljucask
-  version: "2.0.0"
+  version: "2.1.0"
   domain: product-management
   triggers: business rules, decision models, business rules library, BR-ID, rule catalog, Phase 4, Phase 5
   role: specialist
   scope: specification
   output-format: document
-  related-skills: pm-entity-registry, pm-features-list, pm-feature-design, pm-business-rule-core, pm-business-rule-critical, pm-business-rule-governance, pm-decision-model
+  related-skills: pm-entity-registry, pm-features-list, pm-feature-design, pm-business-rule-core, pm-business-rule-critical, pm-business-rule-governance, pm-decision-model, pm-open-questions
 ---
 
 # PM - Business Rules Library
@@ -81,6 +81,12 @@ If `reconcile/reconciliation_report.md` exists, it is the authoritative input - 
 - `pm-feature-design` (JIT) - Phase 6 finalizes rule details and adds guard conditions to entities.md
 - `pm-feature-card` - Section 1 (Biznis Mantinely) references BR-IDs and TBL-IDs
 - Build phase - Claude Code reads rules as source of truth for business logic implementation
+
+---
+
+## Open questions
+
+Open questions and decisions have exactly one home in the whole project: `domain/open_questions.md` (Live Register 5, owned by `pm-open-questions`). If a rule's exact formula, enforcement point, or a decision table's condition combinations are genuinely unresolved (not just TBD-in-draft-mode awaiting JIT), do not leave it as a loose note in `business_rules.md`/`decision_models.md` - append an entry to the register (Type: Question, `OQ-{DOMAIN}-NN` ID; run `pm-open-questions` to initialize it first if it doesn't exist). Draft-mode TBDs that are simply awaiting the normal JIT finalization in `pm-feature-design` are not open questions - only genuine unresolved judgment calls are.
 
 ---
 

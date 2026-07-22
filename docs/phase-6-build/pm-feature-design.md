@@ -4,7 +4,7 @@
 
 **Phase:** 6 - JIT Delivery  
 **Agent mode:** `decision` - drafts, then requires your review before finalizing  
-**Version:** 2.1.0  
+**Version:** 2.2.0  
 **Triggers:** feature design, JIT design, design by feature, sequence diagram, feature spec, Phase 6
 
 ---
@@ -57,7 +57,13 @@ Sets status to `2_Spec_Done` (or `2b_In_Design` for frontend features awaiting F
 - `pm-stripe` - Impact Analysis reads BR-IDs from Section 1
 - `pm-feature-card` - populates the card sections
 
-**Related skills:** `pm-feature-viability`, `pm-entity-registry`, `pm-business-rules-library`, `pm-decision-model`, `pm-process-flows`, `pm-feature-card`, `pm-stripe`
+**Related skills:** `pm-feature-viability`, `pm-entity-registry`, `pm-business-rules-library`, `pm-decision-model`, `pm-process-flows`, `pm-feature-card`, `pm-stripe`, `pm-open-questions`
+
+---
+
+## Open questions
+
+A genuine judgment call, legacy-vs-code divergence, or concrete build blocker surfaced during Discovery Interrogation is logged directly in `domain/open_questions.md` (Live Register 5, `pm-open-questions`) - Type: Question / Divergence / Blocker. A Subtask is different: it's a nuance for the developer to handle during build, not something nobody has decided yet - keep the two separate.
 
 ---
 
