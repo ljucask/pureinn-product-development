@@ -425,21 +425,29 @@ pm-feature-    pm-feature-      pm-stripe                                  pm-st
 **Spec gate (hard rule):** Sections 1-3 complete + status `3_Ready_to_Build` before any feature enters build.
 **Atomic commit protocol:** register updates (`domain/*.md`) committed before code. One feature per stripe in active design/build at a time.
 
-## Build skills (per feature, after the spec gate)
+## Build & review skills (per feature, after the spec gate)
+
+These are **external, recommended-not-required** skills - they ship from separate marketplaces (see Recommended companion plugins below) and must be installed separately. **Pureinn owns the orchestration, not the tool:** `pm-stripe` Step 1C/1D defines *when* each runs (always vs conditional-by-trigger), briefs it with the repo's domain registers + pattern files, and runs a non-blocking coverage check. The executor is swappable - use your own build/review workflow if you prefer; the triggers and coverage check still apply.
+
+**Always (every feature):**
 
 | Skill | From | Purpose |
 |---|---|---|
 | `/fullstack-guardian` | fullstack-dev-skills | Full-stack implementation (reads Feature Card Section 3) |
-| `/impeccable-craft` | impeccable | Frontend UI implementation |
-| `/test-master` | fullstack-dev-skills | Unit + integration tests |
-| `/playwright-expert` | fullstack-dev-skills | E2E tests |
-| `/code-reviewer` | fullstack-dev-skills | Code review |
-| `/impeccable-harden` | impeccable | UI edge cases, error states, accessibility |
-| `/security-reviewer` | fullstack-dev-skills | Security audit |
-| `/devops-engineer` | fullstack-dev-skills | CI/CD, deployment |
-| `/monitoring-expert` | fullstack-dev-skills | Observability, alerting |
+| `/code-reviewer` | fullstack-dev-skills | Code review (broad pass, includes an OWASP dimension) |
 
-Not every skill applies to every feature. Choose what fits.
+**Conditional (run when the trigger is met - see `pm-stripe`):**
+
+| Skill | From | Trigger |
+|---|---|---|
+| `/test-master` | fullstack-dev-skills | Unit + integration tests - required for P1/Must-be; skip only for trivial P3 CRUD (coverage check flags it) |
+| `/impeccable-craft` | impeccable | `layer: frontend` - UI implementation |
+| `/impeccable-harden` / `/impeccable-audit` | impeccable | `layer: frontend` - UI edge cases, error states, accessibility |
+| `/playwright-expert` | fullstack-dev-skills | Feature has a multi-step user-facing E2E path |
+| `/secure-code-guardian` | fullstack-dev-skills | `security_review: build`/`both` - threat-models + writes a **new** security mechanism (see Security Review Trigger Criteria in `pm-stripe`) |
+| `/security-reviewer` | fullstack-dev-skills | `security_review: review`/`both` - dedicated deeper SAST/audit with severity rating |
+
+**Optional infra (run when needed, not per feature):** `/devops-engineer` (CI/CD, deployment), `/monitoring-expert` (observability, alerting).
 
 **Optional spec support** (run when needed, not per feature): `/architecture-designer` (System Design, ADRs), `/api-designer` (API contracts, OpenAPI), `/impeccable document` (PRODUCT.md + DESIGN.md), `/impeccable-shape` (UX/UI shape brief).
 
@@ -625,7 +633,7 @@ Pureinn covers the product and spec layer. For the full stack, pair it with:
 
 The build-phase skills referenced in the JIT delivery engine are part of two open-source projects:
 
-- **[fullstack-dev-skills](https://github.com/jeffallan/claude-skills)** by [@jeffallan](https://github.com/jeffallan) - 66+ specialist skills across languages, frameworks, infrastructure, and workflows. `common-ground`, `fullstack-guardian`, `test-master`, `playwright-expert`, `code-reviewer`, `security-reviewer`, `devops-engineer`, and `monitoring-expert` are from this project.
+- **[fullstack-dev-skills](https://github.com/jeffallan/claude-skills)** by [@jeffallan](https://github.com/jeffallan) - 66+ specialist skills across languages, frameworks, infrastructure, and workflows. `common-ground`, `fullstack-guardian`, `secure-code-guardian`, `test-master`, `playwright-expert`, `code-reviewer`, `security-reviewer`, `devops-engineer`, and `monitoring-expert` are from this project.
 - **[impeccable](https://github.com/impeccable-dev/impeccable)** - a production-grade frontend design skill. `impeccable document`, `impeccable-shape`, `impeccable-craft`, and `impeccable-harden` are from this project.
 
 Pureinn focuses on what comes before the build: methodology, thinking, decisions, specifications. These two projects pick up where Pureinn ends. Credit where it is due.

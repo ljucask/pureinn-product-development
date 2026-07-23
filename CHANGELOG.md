@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.33.0] - 2026-07-23
+
+### Security review model + build/review coverage gates in pm-stripe - security_review frontmatter field routes secure-code-guardian/security-reviewer via 8 domain-neutral vulnerability areas (not feature types); explicit always-vs-conditional build/review skill split with a non-blocking coverage check before 5_In_Review; full runbook rewrite of playbook + phase docs (step-by-step when/gather/command/get/done format)
+
+---
+
+
 ## [5.32.0] - 2026-07-22
 
 ### Open Questions & Decisions Register (Live Register 5) - new pm-open-questions skill centralizes scattered open items (OQ-/DIV-/BLK- IDs) from PRD, Roadmap, reconcile, and JIT design into one home; pm-audit hygiene check added; 4->5 Live Registers terminology updated framework-wide

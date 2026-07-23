@@ -5,9 +5,9 @@ license: MIT
 metadata:
   agent-mode: decision
   author: https://github.com/ljucask
-  version: "2.2.0"
+  version: "2.3.0"
   domain: product-management
-  triggers: feature design, JIT design, design by feature, sequence diagram, feature spec, Phase 6
+  triggers: feature design, JIT design, design by feature, sequence diagram, feature spec, security review, Phase 6
   role: specialist
   scope: specification
   output-format: document
@@ -178,6 +178,23 @@ Criticality = f(KANO, priority, touches money?, touches PII?, number of state tr
   High  (money / PII / P1 / critical)  → full interrogation across all axes below
 ```
 
+**Security dimension - set the `security_review` flag here.** The same signals that drive criticality also decide whether this feature needs a security specialist in build/review. **Think in security areas, not feature types:** the trigger is whether the feature **creates, crosses, or modifies** a vulnerability area, not whether it is a specific feature (an invite code is an *instance* of the Abuse/enumeration + Identity areas, not its own trigger). Assess it now (you have the most context during interrogation) and write the verdict to the Feature Card frontmatter in Step 4d. Set `security_review` above `none` when the feature touches at least one area:
+
+| # | Security area | Example (illustrative) |
+|---|---|---|
+| 1 | Access control & tenant isolation | RLS, org/tenant scoping, service-role bypass, privilege escalation, impersonation, bulk/admin ops |
+| 2 | Authentication & identity | login, session, token lifecycle, SSO/OAuth, new role/permission flag |
+| 3 | Cryptography & secrets | key/API-key storage, token generation, hashing, encryption |
+| 4 | Sensitive / regulated data | PII/regulated data crossing a boundary (the regime GDPR/HIPAA/PCI is a per-vertical example, not the trigger) |
+| 5 | Input & injection surface | untrusted input parsing, injection, deserialization, file upload |
+| 6 | External / server-side integration | outbound → LLM/3rd-party API, inbound webhooks, SSRF |
+| 7 | Abuse & enumeration surface | guessable identifiers (invite/coupon codes, reset tokens), brute force, rate-limiting, resource exhaustion |
+| 8 | Financial integrity | money movement, accounting, transactional integrity |
+
+Pre-auth / cross-tenant reachability escalates whatever area it touches - treat borderline pre-auth surfaces as triggering.
+
+**Value:** `build` if the feature **creates a new** mechanism in an area (a new security BR going Draft→Final for the first time) → `secure-code-guardian` threat-models before writing it. `review` if it only **crosses** a sensitive area but **reuses an existing Final** security pattern (the primitive is already proven) → `security-reviewer` audit only. `both` if new AND sensitive. `none` if no area touched (plain CRUD behind proven auth). (Full authoritative table + reuse rule: `pm-stripe` → Security Review Trigger Criteria.) State the verdict inline: `security_review: [value] - because [area touched / no area touched]`.
+
 **Axes to probe** (use the grouped question pattern from CLAUDE.md - batch 2-4 related questions per AskUserQuestion round, confirm, continue):
 
 | Axis | What to actively probe | Feeds |
@@ -202,7 +219,7 @@ Criticality = f(KANO, priority, touches money?, touches PII?, number of state tr
 | Testable condition for this feature | **Acceptance Criterion** (§2) |
 | Lightweight nuance / dev helper | **Subtask** (§Subtasks) - not a rule, not an AC |
 
-Produce a short interrogation summary (new rules to add, ACs identified, subtasks captured, open assumptions) before moving to register updates.
+Produce a short interrogation summary (new rules to add, ACs identified, subtasks captured, open assumptions, **and the `security_review` verdict with its reason**) before moving to register updates.
 
 ---
 
@@ -381,7 +398,7 @@ sequenceDiagram
 
 **User-facing intent:** [What the user sees and what action they take - 1-2 sentences]
 
-**Design system reference:** [Component or pattern from Impeccable design system / "new pattern - see Figma"]
+**Design system reference:** [Component or pattern from your design system (e.g. the external Impeccable skill, or your own) / "new pattern - see Figma"]
 
 **Figma reference:** [URL to specific screen / frame / component - or "N/A"]
 
@@ -394,9 +411,15 @@ If no Figma URL was provided and Figma MCP is connected: check `figma_project_ur
 
 If feature is backend/API-only: omit Section 3b entirely.
 
-**4d. Update Feature Card frontmatter status**
+**4d. Update Feature Card frontmatter status + security_review**
 
-Spec (Sections 1-3) is complete → `2_Spec_Done`. Then branch on `layer`:
+Write the `security_review` verdict decided in Step 1.5 to the frontmatter (`none` / `build` / `review` / `both`). pm-stripe reads this to route `secure-code-guardian` (build) and `security-reviewer` (review), and to run its Build Skills Coverage check. If the stub was created with `security_review: none`, overwrite it with the assessed value.
+
+```yaml
+security_review: build   # none | build | review | both - from Step 1.5 security dimension
+```
+
+Then set status. Spec (Sections 1-3) is complete → `2_Spec_Done`. Then branch on `layer`:
 
 - **Feature has a UI (`layer` includes `frontend`) and the Figma design is not yet done** (no Figma URL in Section 3b, design still to be produced): set `2b_In_Design` - the feature is spec'd but waiting on / in visual design. It advances to `3_Ready_to_Build` once the design is approved.
 - **Backend / system feature, or the UI design is already provided/approved:** set `2_Spec_Done` (goes straight to `3_Ready_to_Build` at Design Inspection - nothing to design).
@@ -462,6 +485,11 @@ Then run /pm-stripe to proceed to build.
 ## Internal completeness checklist
 
 <!-- Claude reference only - not shown to user -->
+
+**Security dimension:**
+- [ ] `security_review` assessed in Step 1.5 against the 8 security areas, verdict stated with the area(s) touched
+- [ ] `build` only when a NEW security mechanism is introduced (new security BR Draft→Final); reuse of an existing Final security BR → not `build`
+- [ ] `security_review` written to Feature Card frontmatter in Step 4d (overwrites the `none` stub default)
 
 **Register updates:**
 - [ ] Guard conditions added to entities.md (not left as TBD)

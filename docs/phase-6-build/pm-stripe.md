@@ -4,8 +4,8 @@
 
 **Phase:** 6-7 - JIT Delivery (session start point)  
 **Agent mode:** `never` - value is the live interactive session  
-**Version:** 3.0.0  
-**Triggers:** stripe, delivery stripe, JIT cycle, build feature, impact analysis, Phase 6, next feature
+**Version:** 3.1.0  
+**Triggers:** stripe, delivery stripe, JIT cycle, build feature, impact analysis, security review, Phase 6, next feature
 
 ---
 
@@ -75,6 +75,48 @@ pm-stripe presents a checklist for human review of Sections 1-3:
 - Files to modify listed
 
 Approval transitions the feature to `3_Ready_to_Build`.
+
+---
+
+## Build & review skills - always vs conditional
+
+pm-stripe routes build skills (Step 1C, `3_Ready_to_Build → 4_In_Build`) and review skills (Step 1D, `4_In_Build → 5_In_Review`). Each set is split into **always** and **conditional-by-trigger** - "applicable" is now explicitly defined, not left to vibe.
+
+> **These build/review skills are external and recommended-not-required.** `fullstack-guardian`, `secure-code-guardian`, `security-reviewer`, `code-reviewer`, `test-master`, `playwright-expert` and `impeccable-craft`/`impeccable-audit` are **not part of the Pureinn plugin** - they ship from separate marketplaces (`fullstack-dev-skills`, `impeccable`) and must be installed separately. Pureinn owns the *orchestration* (when to build/review, the trigger, the context-briefing, the coverage check), not the tool. The executor is swappable - use your own build/review workflow if you prefer; the triggers and coverage check still apply.
+
+| Stage | Always | Conditional (trigger) |
+|---|---|---|
+| Build (1C) | `fullstack-guardian` | `test-master` (P1/Must-be → required), `impeccable-craft` (`layer: frontend`), `playwright-expert` (E2E path), `secure-code-guardian` (`security_review: build`/`both`) |
+| Review (1D) | `code-reviewer` | `impeccable-audit` (`layer: frontend`), `security-reviewer` (`security_review: review`/`both`) |
+
+**Build Skills Coverage check** (before `4_In_Build → 5_In_Review`): pm-stripe reconciles what the triggers required against what actually ran, and surfaces anything skipped-despite-trigger. It is a **visibility check, not a blocking gate** - a Solo Builder may knowingly skip, but the skip is on record rather than silent (which is how `test-master` used to get dropped unnoticed).
+
+**Context-briefing:** the build/review specialists are generic marketplace skills. pm-stripe passes them the relevant `domain/entities.md` + `domain/business_rules.md` slices and the repo's existing pattern files (e.g. `src/lib/auth.ts`), not just the FEAT-ID - so they respect proven repo conventions instead of inventing generic ones.
+
+---
+
+## Security Review Trigger Criteria
+
+The `security_review` frontmatter value (`none` / `build` / `review` / `both`) decides whether a security specialist runs. It is set by `pm-feature-design` during Discovery Interrogation and read here for routing.
+
+**Think in security areas, not feature types.** The trigger is not "is this feature X" - it is "does this feature **create, cross, or modify** one of these vulnerability areas". A feature is an *instance* of an area (an invite code lives in Abuse/enumeration + Identity, it is not its own trigger). This keeps the criterion **domain-neutral** (fintech, healthcare, marketplace - no vertical baked in) and **complete** (a new feature type falls into an existing area instead of opening a gap). Set above `none` when the feature touches at least one:
+
+| # | Security area | Examples (illustrative) |
+|---|---|---|
+| 1 | Access control & tenant isolation | RLS, org/tenant scoping, service-role bypass, privilege escalation, impersonation, bulk/admin ops |
+| 2 | Authentication & identity | login, session, token lifecycle, SSO/OAuth, MFA, new role/permission flag |
+| 3 | Cryptography & secrets | key/API-key storage, token generation, hashing, encryption |
+| 4 | Sensitive / regulated data | PII/regulated data crossing a boundary; the regime (GDPR/HIPAA/PCI/CCPA) is a per-vertical example, not the trigger |
+| 5 | Input & injection surface | untrusted input parsing, injection, deserialization, file upload |
+| 6 | External / server-side integration | outbound → LLM/3rd-party API, inbound webhooks, SSRF |
+| 7 | Abuse & enumeration surface | guessable identifiers (invite/referral/coupon codes, reset tokens), brute force, rate-limiting, resource exhaustion |
+| 8 | Financial integrity | money movement, accounting, transactional integrity |
+
+Pre-auth / cross-tenant reachability **escalates** whatever area it touches. Before a **production cutover**, run one broad `security-reviewer` sweep across the whole domain, independent of any single feature.
+
+`build` = **creates a new** mechanism in an area (new security BR Draft→Final) → `secure-code-guardian`. `review` = **crosses** a sensitive area but reuses a proven pattern → `security-reviewer`. `both` = new AND sensitive. `none` = touches no area (plain CRUD behind proven auth; fullstack-guardian's checkpoint + code-reviewer's OWASP pass suffice).
+
+**Reuse rule:** `secure-code-guardian` adds value only at the first introduction of a mechanism in an area. A second feature reusing an existing Final security BR drops `build` (keeps `review` if a sensitive area is still touched) - adding a specialist to every feature is complexity without marginal value.
 
 ---
 

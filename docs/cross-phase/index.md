@@ -4,6 +4,12 @@ Skills that run at any point in any playbook - not tied to a specific phase. Eac
 
 ---
 
+## How to read this page
+
+Unlike the phase pages, this is **not a sequence** - there's no "Step 1, Step 2" here. Each skill below has its own trigger; run it whenever that trigger fires, independent of where you are in a playbook.
+
+---
+
 ## Skills overview
 
 | Skill | When to run |
@@ -14,9 +20,9 @@ Skills that run at any point in any playbook - not tied to a specific phase. Eac
 | [pm-audit](pm-audit.md) | After research injection, re-prioritization, reconcile/extract, or before a build commitment or pitch |
 | [pm-meeting](pm-meeting.md) | After any meeting with notes or a transcript |
 | [pm-onboarding](pm-onboarding.md) | When a new team member joins |
-| [pm-diagrams](pm-diagrams.md) | When a visual diagram is needed |
-| [pm-glossary](pm-glossary.md) | Start early, update whenever new terminology surfaces |
-| [pm-stripe](pm-stripe.md) | Orchestrating and monitoring the JIT delivery cycle |
+| [pm-diagrams](../phase-6-build/pm-diagrams.md) | When a visual diagram is needed |
+| [pm-glossary](../phase-6-build/pm-glossary.md) | Start early, update whenever new terminology surfaces |
+| [pm-stripe](../phase-6-build/pm-stripe.md) | Orchestrating and monitoring the JIT delivery cycle |
 
 ---
 
@@ -99,6 +105,8 @@ Ends with testable hypotheses that feed `pm-hypotheses`.
 
 **When to use:** after research injection or re-prioritization, after reconcile/extract, or before a build commitment or pitch.
 
+**Skip when:** nothing has changed since the last audit and you're not about to commit to anything - running it against unchanged state produces no new signal.
+
 Two tiers:
 
 **Tier 1 - Form check:** scans Pureinn artifacts against current conventions, fixes naming drift and metadata errors, migrates older-version workspaces to the current schema.
@@ -172,8 +180,10 @@ During Rebuild (A1 Reconcile), the glossary captures entity name aliases - the o
 
 ## pm-stripe
 
-**When to use:** orchestrating and monitoring the JIT delivery cycle across all active Delivery Stripes.
+**When to use:** orchestrating and monitoring the JIT delivery cycle across all active Delivery Stripes. Run this every time you sit down to work on Phase 6-7 - it's your session start point, not a one-time setup.
 
 Provides a delivery dashboard: feature status per stripe, dependency graph, what's blocked, what's next. Drives the Feature Card lifecycle transitions (Design Inspection → 3_Ready_to_Build, Code Inspection → 6_Shipped).
+
+Full step-by-step runbook for the cycle it orchestrates: [Phase 6+7 - JIT Delivery](../phase-6-build/index.md).
 
 **Agent mode:** `synthesis`.

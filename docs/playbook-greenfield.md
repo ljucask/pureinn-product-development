@@ -6,6 +6,12 @@ Build a new product from scratch - from first idea to launch. Full discovery, va
 
 ---
 
+## How to read this page
+
+This is a **route map** - which phase comes next, when a whole phase can be skipped, and what unlocks the next one. Each phase links to its own runbook page with the per-skill detail (when to run/skip each skill, what you get, what it doesn't).
+
+---
+
 ## Phase overview
 
 ```
@@ -19,7 +25,9 @@ Foundation →  Discovery  →  Validation →  Commercial  →  Domain      →
 
 ## Express path (skip discovery/validation)
 
-**Trigger:** validated idea, you know what to build, no discovery needed.
+- **When to use:** you already have a validated idea, know exactly what to build, and don't need discovery or market/customer validation.
+- **Skips:** Phase 1, 2, 3a, 3b entirely.
+- **Never skips:** domain registers and a feature list with FEAT-IDs - `pm-feature-design` cannot run without them.
 
 ```bash
 /pureinn [idea]                  # workspace setup, 3 intake questions
@@ -30,82 +38,28 @@ Foundation →  Discovery  →  Validation →  Commercial  →  Domain      →
 /pm-feature-design [FEAT-ID]     # → JIT delivery engine
 ```
 
-Skips: Phase 1, 2, 3a, 3b. Never skips: domain registers, feature list with FEAT-IDs (required by `pm-feature-design`).
+**Done when:** the first feature enters `pm-feature-design`. From there you're in the same JIT cycle as the full path.
 
 ---
 
 ## Full flow
 
-### [Phase 1 - Foundation](phase-1-foundation/index.md) (~1 day)
-
-| Team type | Skills |
-|---|---|
-| Solo | `/pm-project-charter` only |
-| Small team (2-3) | `/pm-project-charter` → `/pm-team-roster` → `/pm-comms-charter` |
-| Corporate | `/pm-stakeholder-map` → `/pm-project-charter` → `/pm-team-roster` → `/pm-comms-charter` |
-
-### [Phase 2 - Discovery](phase-2-discovery/index.md) (1-3 weeks)
-
-Four tracks run in parallel, converge at Problem Validation Summary:
-
-| Track | Skill | Output |
-|---|---|---|
-| A - Tech | `/pm-tech-feasibility` | Tech Feasibility Report |
-| B - Domain | `/pm-domain-analysis` | Domain Analysis |
-| C - Market | `/pm-market-analysis` | Market Size, Competitor Analysis, SWOT |
-| D - Customer | `/pm-personas` → `/jtbd-building` | Segments, Personas, JTBD |
-| Convergence | `/pm-problem-validation` | Problem Validation Summary |
-
-### [Phase 3a - Validation](phase-3a-validation/index.md) (externally paced)
-
-| Step | Action |
-|---|---|
-| 1 | `/design-thinking` |
-| 2 | `/pm-hypotheses` (Plan mode) |
-| 3 | You: run experiments |
-| 4 | `/pm-hypotheses` (Results mode) → **GO / PIVOT / STOP** |
-
-### [Phase 3b - Commercial Definition](phase-3b-definition/index.md) (hours to a few sessions)
-
-```
-pm-kotler → pm-lean-canvas → pm-kpis → pm-business-case → pm-product-roadmap (v1) → pm-prd
-```
-
-PRD is frozen at Phase 3b exit.
-
-### Pre-Phase 6 - Technical Foundation
-
-```bash
-/common-ground    # from fullstack-dev-skills plugin
-```
-
-Tech stack decision, repo structure, COMMON-GROUND.md.
-
-### [Phase 4 - Domain Modeling](phase-4-domain/index.md) (3-5 days)
-
-```
-pm-domain-model → pm-entity-registry → pm-business-rules-library
-→ pm-privacy-requirements → pm-process-flows → pm-product-roadmap (v2)
-```
-
-### [Phase 5 - Feature Planning](phase-5-planning/index.md) (2-3 days)
-
-```
-pm-features-list → pm-prioritize → pm-mvp-scope → pm-product-roadmap (v3)
-```
-
-### [Phase 6+7 - JIT Delivery](phase-6-build/index.md) (ongoing)
-
-Per feature, just before build:
-```
-pm-feature-design [FEAT-ID] → Design Inspection → Build → Test → Deploy → Shipped
-```
+| Phase | Enter when | What happens | Detail |
+|---|---|---|---|
+| **1 - Foundation** | Start of every Greenfield project | Scope, team, stakeholders defined - scales down to nothing for solo builders | [Phase 1](phase-1-foundation/index.md) |
+| **2 - Discovery** | Phase 1 artifacts exist (or `/pureinn discover`) | 4 parallel tracks (Tech, Domain, Market, Customer) converge into a Problem Validation Summary | [Phase 2](phase-2-discovery/index.md) |
+| **3a - Validation** | Problem Validation Summary exists (can start in parallel with late Phase 2) | Real-world experiments → **hard GO/PIVOT/STOP gate** | [Phase 3a](phase-3a-validation/index.md) |
+| **3b - Commercial Definition** | Phase 3a GO verdict (no workaround) | Business model, KPIs, business case, PRD - **PRD frozen at exit** | [Phase 3b](phase-3b-definition/index.md) |
+| **Pre-Phase 6 - Technical Foundation** | PRD frozen | `/common-ground` (fullstack-dev-skills) - tech stack decision, repo structure, `COMMON-GROUND.md` | - |
+| **4 - Domain Modeling** | Technical Foundation done | Live Registers (entities, rules, decision tables) initialized in Draft | [Phase 4](phase-4-domain/index.md) |
+| **5 - Feature Planning** | Registers initialized | Feature inventory, prioritization, MVP scope, Delivery Stripes | [Phase 5](phase-5-planning/index.md) |
+| **6+7 - JIT Delivery** | Features assigned to Stripes | Per feature, just before build: spec → design inspection → build → review → ship | [Phase 6+7](phase-6-build/index.md) |
 
 ---
 
 ## Key rules
 
-- **Phase 3a is a hard gate.** Only GO advances. PIVOT loops. STOP ends.
-- **Phase 3b requires Phase 3a GO.** Cannot be entered without a GO verdict.
-- **PRD is frozen** after Phase 3b. No scope changes without a formal change request.
-- **Spec gate before build.** Feature Card Sections 1-3 complete before any feature enters code.
+- **Phase 3a is a hard gate.** Only GO advances. PIVOT loops back to targeted re-validation. STOP ends the project. No FORCE bypass.
+- **Phase 3b requires Phase 3a GO.** Cannot be entered without a GO verdict - there is no workaround.
+- **PRD is frozen** after Phase 3b. No scope changes without a formal change request tracked in the PRD changelog.
+- **Spec gate before build** (Phase 6, hard gate). Feature Card Sections 1-3 complete + Design Inspection passed before any feature enters code.

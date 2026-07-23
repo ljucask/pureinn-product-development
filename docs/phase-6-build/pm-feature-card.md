@@ -4,7 +4,7 @@
 
 **Phase:** 6 - JIT Delivery (and Phase 5 stub creation)  
 **Agent mode:** `synthesis` - runs fully autonomously  
-**Version:** 2.1.0  
+**Version:** 2.2.0  
 **Triggers:** feature card, FEAT-ID, feature spec, feature lifecycle, cards
 
 ---
@@ -70,11 +70,12 @@ A Feature Card has four sections with defined ownership:
 ## Stub completeness requirements
 
 **Stub (`1_Backlog`) must have:**
-- All frontmatter fields: `id`, `title`, `status`, `stripe`, `layer`, `phase`, `actor`, `priority`, `kano`, `vxc`, `feature_flag`, `flag_default`, `prd_ref`
+- All frontmatter fields: `id`, `title`, `status`, `stripe`, `layer`, `phase`, `actor`, `priority`, `kano`, `vxc`, `feature_flag`, `flag_default`, `prd_ref`, `security_review` (stub default `none`)
 - Sections 1-4 present as stubs (placeholder text, not filled)
 - Description block (2-3 sentences: what the feature does, who uses it, value delivered)
 
 **After `pm-feature-design` (`2_Spec_Done`) must have:**
+- `security_review` set from the Step 1.5 security assessment (routes `secure-code-guardian` / `security-reviewer` in pm-stripe)
 - Section 1: entity state transitions + BR-IDs linked
 - Section 2: at minimum AC-01 (happy path), AC-02 (one guard failure), AC-03 (flag OFF)
 - Section 3: Mermaid sequence diagram (not empty) + files to modify listed

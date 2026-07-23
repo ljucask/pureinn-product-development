@@ -5,7 +5,7 @@ license: MIT
 metadata:
   agent-mode: decision
   author: https://github.com/ljucask
-  version: "2.2.0"
+  version: "2.3.0"
   domain: product-management
   triggers: features list, FDD format, feature list, KANO analysis, value complexity matrix, feature prioritization, Phase 5, feature hierarchy, dependencies
   role: specialist
@@ -511,6 +511,7 @@ kano: [Must-be / Performance / Delighter / Indifferent]
 vxc: [Quick Win / Big Bet / Fill-in / Time Waster]
 estimate: "[S / M / L - informational sizing, NOT the atomicity test]"
 has_subtasks: false
+security_review: none    # none | build | review | both - stub default; set by pm-feature-design (Step 1.5), read by pm-stripe to route security specialists
 dependencies: [FEAT-ID, FEAT-ID]   # from the Deps column above - [] if none
 prd_ref: /product/PRD_master.md#[relevant-section]
 feature_flag: [domain.feature-name]

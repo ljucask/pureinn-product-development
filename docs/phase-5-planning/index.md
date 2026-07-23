@@ -2,60 +2,39 @@
 
 Build the complete feature inventory, prioritize it, define the MVP scope, and assign features to Delivery Stripes. This phase closes the planning work and opens the door to the JIT build cycle.
 
-**Duration:** 2-3 days  
-**Gate type:** Soft gate  
-**Playbooks:** Greenfield, Feature Implementation
+**Duration:** 2-3 days · **Gate type:** Soft gate · **Playbooks:** Greenfield, Feature Implementation
+
+---
+
+## How to read this page
+
+Four steps, run in this order the first time. `pm-prioritize` and `pm-mvp-scope` are also **re-runnable** later, whenever priorities shift - they don't have to wait for a full phase re-entry.
 
 ---
 
 ## When to enter this phase
 
-Enter Phase 5 after Phase 4 (domain registers initialized). For Feature Implementation adding new features to an existing product, you may enter directly with `pm-features-list` if the registers already exist.
+Enter after Phase 4 (domain registers initialized). For Feature Implementation adding new features to an existing product, you may enter directly with `pm-features-list` if the registers already exist.
+
+**What you need before entering:** `entities.md` (Register 1) must exist, `business_rules.md` (Register 2) at least in Draft, and a frozen PRD (Greenfield) or equivalent product context.
 
 ---
 
-## What you need before entering
+## Step 1 - Feature Inventory (R4)
 
-- `entities.md` (Register 1) - entity list must exist
-- `business_rules.md` (Register 2) - at least Draft
-- Frozen PRD (for Greenfield) or equivalent product context
-
----
-
-## Skills in this phase
-
-| Skill | What it does | Output |
-|---|---|---|
-| [pm-features-list](pm-features-list.md) | Builds the complete feature inventory with FEAT-IDs, KANO classification, V×C matrix, Feature Set grouping, and stub Feature Cards | `feature_list.md` (Register 4) + stub Feature Cards |
-| [pm-prioritize](pm-prioritize.md) | Re-runnable prioritization engine - ranks the backlog by roadmap, directive, lens, or AI proposal. Dependency-reconciled, non-destructive. | Updated priority order in `feature_list.md` |
-| [pm-mvp-scope](pm-mvp-scope.md) | Defines MVP scope (IN / POST-MVP / CUT), Delivery Stripes, and Feature-to-Stripe assignment | MVP Scope + `delivery-stripes.md` |
-| [pm-product-roadmap](pm-product-roadmap.md) | Phase 5 update: roadmap with full feature and delivery view | Product Roadmap v3 |
-
-**Order:**
-```
-pm-features-list → pm-prioritize → pm-mvp-scope → pm-product-roadmap (v3)
-```
+- **When to run / skip:** always run - this is the phase's foundational artifact.
+- **Gather first:** frozen PRD's Business Capabilities, Registers 1-2.
+- **Command:** `/pm-features-list`
+- **What you get:** `feature_list.md` (Register 4) - every feature gets a `FEAT-[DOMAIN]-[NUMBER]` ID, a Feature Set grouping (`FS-NN: name`), a KANO class (Must-be/Performance/Delighter/Indifferent - tells you *what* enters MVP), a V×C class (Quick Win/Big Bet/Fill-in/Time Waster - tells you *what order* features enter Delivery Stripes), plus a stub Feature Card at `features/cards/FEAT-[DOMAIN]-001.md` (status `1_Backlog`) and a Notion push.
+- **What it does NOT give you:** a priority order across features - KANO and V×C classify, they don't sequence. That's Step 2.
+- **Done when:** every feature from the PRD has a FEAT-ID, KANO class, and V×C class.
 
 ---
 
-## pm-features-list: what it produces
+## Step 2 - Prioritization
 
-The master feature inventory (Register 4). For each feature:
-
-- **FEAT-ID** (`FEAT-[DOMAIN]-[NUMBER]`) - stable identifier referenced by Feature Cards and Notion
-- **Feature Set assignment** (`FS-NN: name`) - logical domain grouping
-- **KANO classification** - Must-be / Performance / Delighter / Indifferent
-- **V×C classification** - Quick Win / Big Bet / Fill-in / Time Waster
-- **Stub Feature Card** created at `features/cards/FEAT-[DOMAIN]-001.md` (status: 1_Backlog)
-- **Notion push** - features pushed to Notion with Status = Backlog, Priority from KANO+V×C
-
-KANO tells you *what* enters the MVP. V×C tells you *in what order* features enter Delivery Stripes.
-
----
-
-## pm-prioritize: re-runnable engine
-
-Prioritization is not a one-time event. `pm-prioritize` can be re-run any time priorities shift:
+- **When to run / skip:** run after Step 1, and **re-run any time** priorities shift (new features added, roadmap changed, a deadline appeared). Non-destructive - previous assignments are preserved and the delta is shown.
+- **Gather first:** feature inventory (Step 1) and whichever basis applies:
 
 | Basis | When to use |
 |---|---|
@@ -64,23 +43,41 @@ Prioritization is not a one-time event. `pm-prioritize` can be re-run any time p
 | Lens | Apply a specific thinking lens (user value, technical risk, revenue impact) |
 | Propose | AI proposes order with rationale - you review and adjust |
 
-Non-destructive: previous priority assignments are preserved and delta is shown explicitly.
+- **Command:** `/pm-prioritize`
+- **What you get:** an updated priority order in `feature_list.md`, dependency-reconciled.
+- **What it does NOT give you:** MVP scope decisions (IN/POST-MVP/CUT) - that's Step 3. Priority order and MVP membership are different questions.
+- **Done when:** every feature has a priority order consistent with its dependencies.
 
 ---
 
-## pm-mvp-scope: MVP vs. POST-MVP vs. CUT
+## Step 3 - MVP Scope + Delivery Stripes
 
-`pm-mvp-scope` makes three calls per feature:
+- **When to run / skip:** always run after Step 2.
+- **Gather first:** prioritized feature inventory (Step 2).
+- **Command:** `/pm-mvp-scope`
+- **What you get:** a scope decision per feature:
 
 | Decision | Meaning |
 |---|---|
 | **IN** | In MVP scope - required for launch |
 | **POST-MVP** | Not in MVP, but in V1.1 or later |
-| **CUT** | Not planned - either deferred indefinitely or dropped |
+| **CUT** | Not planned - deferred indefinitely or dropped |
 
-After scope decisions, features are assigned to **Delivery Stripes** - parallel domain-focused development channels. Example: stripe-auth, stripe-checkout, stripe-reporting.
+Plus Delivery Stripe assignment - parallel domain-focused development channels (e.g. `stripe-auth`, `stripe-checkout`, `stripe-reporting`). One feature is active per stripe at a time, processed in dependency order.
 
-One feature is active per stripe at a time, processed in dependency order.
+- **What it does NOT give you:** the feature spec itself - stripes and scope only decide *what* and *when*, not the design. That's Phase 6.
+- **Done when:** every IN-scope feature has a Stripe assignment and a position in that Stripe's queue.
+
+---
+
+## Step 4 - Product Roadmap (v3)
+
+- **When to run / skip:** always run, closing this phase.
+- **Gather first:** MVP Scope + Delivery Stripes (Step 3).
+- **Command:** `/pm-product-roadmap`
+- **What you get:** Product Roadmap v3 - the final planning-phase roadmap, with full feature and delivery view.
+- **What it does NOT give you:** anything beyond planning - from here, roadmap changes come from Impact Analysis in Phase 6-7, not a phase re-run.
+- **Done when:** the roadmap reflects the actual Stripe queues, not a pre-planning estimate.
 
 ---
 

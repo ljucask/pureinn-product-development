@@ -5,9 +5,9 @@ license: MIT
 metadata:
   agent-mode: synthesis
   author: https://github.com/ljucask
-  version: "2.1.0"
+  version: "2.2.0"
   domain: product-management
-  triggers: feature card, FEAT-ID, feature spec, feature lifecycle, cards, in design, figma state
+  triggers: feature card, FEAT-ID, feature spec, feature lifecycle, cards, in design, figma state, security review
   role: specialist
   scope: specification
   output-format: document
@@ -145,6 +145,7 @@ kano: [Must-be / Performance / Delighter / Indifferent]
 vxc: [Quick Win / Big Bet / Fill-in / Time Waster]
 estimate: "[S / M / L - informational sizing for roadmap, NOT the atomicity test]"
 has_subtasks: false
+security_review: none    # none | build | review | both - set by pm-feature-design (Step 1.5 security dimension). Routes secure-code-guardian (build) + security-reviewer (review) in pm-stripe. Stub default: none.
 prd_ref: /product/PRD_master.md#[section]
 feature_flag: [domain.feature-name]
 flag_default: off
@@ -274,10 +275,11 @@ If Feature Backlog URL is blank in pureinn-variables.md: save locally, remind us
 <!-- Claude reference only - not shown to user -->
 
 **Stub (1_Backlog) must have:**
-- [ ] All frontmatter fields populated (id, title, status, stripe, owner, priority, prd_ref, feature_flag, flag_default)
+- [ ] All frontmatter fields populated (id, title, status, stripe, owner, priority, prd_ref, feature_flag, flag_default; `security_review: none` placeholder)
 - [ ] Sections 1-4 present as stubs (not filled)
 
 **After pm-feature-design (2_Spec_Done) must have:**
+- [ ] `security_review` set from the Step 1.5 assessment (no longer the `none` stub default unless genuinely no trigger met)
 - [ ] Section 1: entity, state before/after, BR-IDs linked
 - [ ] Section 2: at minimum AC-01 (happy path), AC-02 (one guard failure), AC-03 (flag OFF)
 - [ ] Section 3: mermaid sequenceDiagram (not empty), files to modify listed

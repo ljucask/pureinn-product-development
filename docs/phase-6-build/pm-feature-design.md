@@ -4,8 +4,8 @@
 
 **Phase:** 6 - JIT Delivery  
 **Agent mode:** `decision` - drafts, then requires your review before finalizing  
-**Version:** 2.2.0  
-**Triggers:** feature design, JIT design, design by feature, sequence diagram, feature spec, Phase 6
+**Version:** 2.3.0  
+**Triggers:** feature design, JIT design, design by feature, sequence diagram, feature spec, security review, Phase 6
 
 ---
 
@@ -71,7 +71,7 @@ A genuine judgment call, legacy-vs-code divergence, or concrete build blocker su
 
 1. **Detects mode from `state.json`** - reads `playbook` (Greenfield vs Feature Implementation) and `team_structure`, set once at Phase 1 setup, and states the detected mode rather than re-asking. Only falls back to a question if a value is genuinely missing (e.g. a hand-created workspace).
 2. **Reads the Feature Card** (stub at entry - frontmatter + empty sections)
-3. **Discovery Interrogation** - actively surfaces unknowns and ambiguities; calibrated to feature criticality; sorts findings into: new rules / new guard conditions / new ACs / subtasks
+3. **Discovery Interrogation** - actively surfaces unknowns and ambiguities; calibrated to feature criticality; sorts findings into: new rules / new guard conditions / new ACs / subtasks. Also assesses the **security dimension** and sets the `security_review` frontmatter flag (`none`/`build`/`review`/`both`) by asking which **security area** the feature touches - 8 domain-neutral vulnerability areas (access control & tenant isolation, authentication & identity, cryptography & secrets, sensitive/regulated data, input & injection, external/server-side integration, abuse & enumeration, financial integrity), not a list of feature types. This is where pm-stripe later reads whether to route `secure-code-guardian` / `security-reviewer`. `build` only when the feature **creates a new** mechanism in an area; merely reusing an existing Final security pattern does not warrant it.
 4. **Enriches `entities.md`** - adds exact guard conditions to state transitions relevant to this feature
 5. **Enriches `business_rules.md` and `decision_models.md`** - finalizes rules this feature enforces (Draft → Final); adds brand-new rules via the single-rule helpers (`pm-business-rule-core/critical/governance`)
 6. **Populates Section 1** (Business Constraints) - links entity IDs, BR-IDs, TBL-IDs; defines explicit scope exclusions

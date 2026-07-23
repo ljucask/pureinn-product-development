@@ -5,9 +5,9 @@ license: MIT
 metadata:
   agent-mode: never
   author: https://github.com/ljucask
-  version: "3.0.0"
+  version: "3.1.0"
   domain: product-management
-  triggers: stripe, delivery stripe, JIT cycle, feature design, build feature, impact analysis, Phase 6, Phase 7, next feature
+  triggers: stripe, delivery stripe, JIT cycle, feature design, build feature, impact analysis, security review, Phase 6, Phase 7, next feature
   role: orchestrator
   scope: delivery
   output-format: document
@@ -65,7 +65,7 @@ pm-stripe reads the current state of all active stripes, detects where each acti
 **Produces artifacts used by:**
 - Feature Cards (status updates throughout lifecycle)
 - `feature_list.md` (status column updated)
-- Build skills (fullstack-guardian, impeccable-craft, test-master, etc.)
+- Build skills - always: fullstack-guardian (build), code-reviewer (review). Conditional by trigger: test-master, impeccable-craft/impeccable-audit, playwright-expert, secure-code-guardian, security-reviewer (see Step 1C/1D and the Security Review Trigger Criteria)
 
 ---
 
@@ -223,6 +223,10 @@ Spec gate passed. Route to build skills.
 
 Update Feature Card frontmatter `status: 4_In_Build`.
 
+Build skills split into **always** and **conditional**. The conditional ones have an explicit trigger - do not treat them as optional-by-vibe. Read the Feature Card frontmatter (`layer`, `kano`, `priority`, `security_review`) to resolve each trigger before routing.
+
+> **The build/review skills below are external and recommended-not-required.** `fullstack-guardian`, `secure-code-guardian`, `security-reviewer`, `code-reviewer`, `test-master`, `playwright-expert` and `impeccable-craft`/`impeccable-audit` are **not part of the Pureinn plugin** - they ship from separate marketplaces (`fullstack-dev-skills`, `impeccable`) and must be installed separately. Pureinn recommends them as sensible defaults. What the framework actually owns is the **orchestration**: *when* to build/review, the *trigger* that makes a specialist applicable, the *context-briefing*, and the *coverage check* - not a mandated tool. The concrete executor is swappable: if you run your own build/review workflow (or plain Claude Code without a named specialist), the triggers and the coverage check still apply - map each always/conditional slot to whatever executes it. If a routed skill isn't installed, say so and offer the built-in path rather than failing.
+
 ```
 Build started for FEAT-[ID]: [title]
 Status: 4_In_Build
@@ -232,13 +236,26 @@ Build instructions - read in this order:
   2. /domain/entities.md - guard conditions for state transitions
   3. /domain/business_rules.md - BR-IDs referenced in Section 1
   4. /domain/decision_models.md - TBL-IDs for edge case test generation
+```
 
-Run build skills:
-  /fullstack-guardian FEAT-[ID]    → full-stack implementation
-  /impeccable-craft FEAT-[ID]      → frontend UI (if UI feature)
-  /test-master FEAT-[ID]           → unit + integration tests
-  /playwright-expert FEAT-[ID]     → E2E tests
+**Always run (every feature):**
 
+| Skill | Purpose |
+|---|---|
+| `/fullstack-guardian FEAT-[ID]` | Full-stack implementation |
+
+**Conditional - run when the trigger is met:**
+
+| Skill | Trigger (from frontmatter / criticality) |
+|---|---|
+| `/test-master FEAT-[ID]` | **Always for `priority: P1` or `kano: Must-be`.** P2 → happy path + guard tests. P3 pure CRUD may skip, but the coverage check (Step 1D) will flag it. Test-master is not "optional" - it is the default; skipping is the exception that must be visible. |
+| `/impeccable-craft FEAT-[ID]` | `layer` includes `frontend` (feature has a UI to craft) |
+| `/playwright-expert FEAT-[ID]` | Feature has a user-facing E2E path worth an automated flow (multi-step UI journey, not a single API call) |
+| `/secure-code-guardian FEAT-[ID]` | `security_review` is `build` or `both` - the feature introduces a **new** security mechanism (see Security Review Trigger Criteria below). Skip when it reuses an already-Final security pattern. |
+
+**Context-briefing (mandatory when routing any generic skill).** fullstack-guardian, secure-code-guardian, test-master, impeccable-craft and playwright-expert are generic marketplace skills - they do not know this repo's conventions. When you route one, the prompt MUST carry more than the FEAT-ID: include the relevant `/domain/entities.md` and `/domain/business_rules.md` slices for this feature, and point at the existing pattern files it must follow (e.g. `src/lib/auth.ts` for an auth guard, the existing service/repository the feature extends). Without this, the specialist invents a generic pattern instead of respecting what is already proven in the repo.
+
+```
 When build is complete, run /pm-stripe and mark build done.
 ```
 
@@ -246,21 +263,87 @@ When build is complete, run /pm-stripe and mark build done.
 
 ## Step 1D: Mark Build Complete (4_In_Build → 5_In_Review)
 
-Build skills finished. Moving to code review phase.
+Build skills finished. **Before transitioning, run the Build Skills Coverage check** - then move to code review.
+
+**Build Skills Coverage check (visibility, NOT a blocking gate).**
+
+A Solo Builder has the right to knowingly skip a skill - but the skip must be visible, not silent. Before setting `5_In_Review`, reconcile what *should* have run against what *did* run.
+
+1. Compute what the triggers required for this feature (from `layer`, `kano`, `priority`, `security_review`).
+2. Use the AskUserQuestion tool (multiSelect: true) - "Which build skills actually ran for FEAT-[ID]?" - list fullstack-guardian + every conditional skill whose trigger was met.
+3. Show the reconciliation:
+
+```
+Build Skills Coverage - FEAT-[ID]
+  Required by trigger      Ran?
+  fullstack-guardian       [✓ / ✗]
+  test-master              [✓ / ✗]   (P1 → required)
+  impeccable-craft         [✓ / ✗]   (layer: frontend)
+  secure-code-guardian     [✓ / — ]  (security_review: build)
+
+⚠ Skipped despite trigger: [list, or "none"]
+```
+
+4. If anything required was skipped: surface it plainly and ask whether to run it now or proceed knowingly. **Do not block** - record the conscious skip so it is on record, not lost.
 
 Update Feature Card frontmatter `status: 5_In_Review`.
 
+**Always run (every feature):**
+
+| Skill | Purpose |
+|---|---|
+| `/code-reviewer FEAT-[ID]` | Code correctness review (includes an OWASP Top 10 pass as one dimension) |
+
+**Conditional - run when the trigger is met:**
+
+| Skill | Trigger |
+|---|---|
+| `/impeccable-audit FEAT-[ID]` | `layer` includes `frontend` (UI quality/accessibility audit) |
+| `/security-reviewer FEAT-[ID]` | `security_review` is `review` or `both` - a dedicated, deeper SAST/audit pass with a severity-rated report. Narrower and deeper than code-reviewer's broad OWASP dimension; run it when the feature touches a security area (see Security Review Trigger Criteria below). |
+
+**Context-briefing** applies here too: code-reviewer and security-reviewer are generic - pass them the domain register slices and the repo's existing security patterns, not just the FEAT-ID, so they review against this repo's proven conventions rather than a generic checklist.
+
 ```
-Build complete for FEAT-[ID]: [title]
-Status: 5_In_Review
-
-Code review:
-  /code-reviewer FEAT-[ID]     → code correctness review
-  /impeccable-audit FEAT-[ID]  → code quality review
-  /security-reviewer FEAT-[ID] → security check (if applicable)
-
 When code review passes, run /pm-stripe and mark review complete.
 ```
+
+---
+
+## Reference: Security Review Trigger Criteria
+
+Determines the Feature Card `security_review` value, which in turn routes `secure-code-guardian` (build) and `security-reviewer` (review). The value is set by `pm-feature-design` during Discovery Interrogation (it has the most context there) and read here for routing. This is the authoritative definition of "applicable" - it replaces the old undefined "if applicable".
+
+**Think in security areas, not feature types.** The trigger is not "is this feature X" - it is "does this feature **create, cross, or modify** one of the vulnerability areas below". A feature is an *instance* of an area (an invite code lives in Abuse/enumeration + Identity; it is not its own trigger). The area routes the specialist; the feature is just an example. This keeps the criterion **domain-neutral** (works for fintech, healthcare, marketplace - no vertical baked in) and **complete** (a new feature type falls into an existing area instead of opening a gap). Do NOT extend this into a list of feature types.
+
+**Set `security_review` above `none` when the feature touches at least one area:**
+
+| # | Security area | Boundary / asset | Examples (illustrative, not definitional) |
+|---|---|---|---|
+| 1 | Access control & tenant isolation | authz boundary | RLS policy, org/tenant scoping, RLS bypass (service-role), privilege escalation, impersonation, bulk/admin ops |
+| 2 | Authentication & identity | authn boundary | login, session, token lifecycle, SSO/OAuth, MFA, new role/permission flag |
+| 3 | Cryptography & secrets | asset: keys | key/API-key storage, token generation, hashing, encryption |
+| 4 | Sensitive / regulated data | asset: data | PII/regulated data crossing a boundary (→ external service, export). The specific regime (GDPR/HIPAA/PCI/CCPA) is a per-vertical example, not the trigger |
+| 5 | Input & injection surface | input boundary | untrusted input parsing, injection, deserialization, file upload |
+| 6 | External / server-side integration | external boundary | outbound calls (→ LLM / 3rd-party API), inbound webhooks, SSRF |
+| 7 | Abuse & enumeration surface | availability / abuse | guessable identifiers (invite/referral/coupon codes, reset tokens), brute force, rate-limiting, resource exhaustion |
+| 8 | Financial integrity | asset: money | money movement, accounting, transactional integrity |
+
+**Reachability escalates.** A feature reachable **pre-auth or cross-tenant** (public endpoint, unauthenticated webhook, not-yet-scoped actor) raises the severity of whatever area it touches - treat borderline cases as triggering when the surface is pre-auth.
+
+**Milestone sweep (not per-feature):** before a production cutover / go-live, run one broad `security-reviewer` pass across the whole Stripe/domain at once, independent of any single feature's flag.
+
+**Value encoding:**
+
+| `security_review` | Meaning | Routes |
+|---|---|---|
+| `none` | Feature touches no area (plain CRUD behind an already-proven auth pattern) | fullstack-guardian's built-in security checkpoint + code-reviewer's OWASP pass are sufficient |
+| `build` | **Creates a new mechanism** in an area (new security BR Draft→Final) | `secure-code-guardian` in build (threat-model before writing the primitive) |
+| `review` | **Crosses/touches** an area but reuses a proven pattern | `security-reviewer` in review only |
+| `both` | New mechanism AND touches a sensitive area | Both skills |
+
+**secure-code-guardian reuse rule (avoid needless complexity).** `secure-code-guardian`'s value is high only at the **first introduction** of a mechanism in an area. It drops to near-zero when a feature reuses an already-proven pattern (e.g. the second feature using the same `requireRole`-style guard). Discriminate by the Feature Card's rules: if Section 1 introduces a **new** security BR (going Draft→Final for the first time), that is `build`. If it only references an **existing Final** security BR, the primitive is already proven - drop `build`, keep `review` if a sensitive area is still touched.
+
+When a feature touches none of the 8 areas (ordinary CRUD behind existing, proven auth), `security_review` stays `none`. Adding a security specialist to every feature is complexity without marginal value.
 
 ---
 
@@ -381,7 +464,10 @@ When multiple stripes run in parallel, register updates can cause merge conflict
 - [ ] READY check: status 1_Backlog + all dependencies 6_Shipped + no active feature in same stripe
 - [ ] One feature per stripe in active design/build at any time (no parallel features in same stripe)
 - [ ] Spec gate verified before 3_Ready_to_Build → 4_In_Build transition (Sections 1-3 present)
-- [ ] Build skills receive Feature Card FEAT-ID as context parameter
+- [ ] Build skills receive Feature Card FEAT-ID + domain register slices + repo pattern files (context-briefing), not just FEAT-ID
+- [ ] Conditional build/review skills resolved against triggers (layer, kano, priority, security_review) - not skipped by default
+- [ ] Build Skills Coverage check run before 4_In_Build → 5_In_Review (non-blocking; skipped-despite-trigger surfaced)
+- [ ] security_review value honored: build → secure-code-guardian, review → security-reviewer, both → both, none → neither
 - [ ] Section 4 complete before 6_Shipped is set
 
 **Status transitions:**
