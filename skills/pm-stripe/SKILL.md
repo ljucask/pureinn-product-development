@@ -5,7 +5,7 @@ license: MIT
 metadata:
   agent-mode: never
   author: https://github.com/ljucask
-  version: "3.2.0"
+  version: "3.2.1"
   domain: product-management
   triggers: stripe, delivery stripe, JIT cycle, feature design, build feature, impact analysis, security review, delivery plan, build order, sequence, parallel, Phase 6, Phase 7, next feature
   role: orchestrator
@@ -503,6 +503,16 @@ A feature with `override: {reason}` preempts capacity, priority ordering, and co
 - **NOW** (default): Buildable-now + Blocked-with-rationale (see Step 0). The daily driver.
 - **FULL** (plan birth, pre-dev walkthrough, on request): additionally each stripe's full ordered queue, the wave grouping, cross-stripe sync points, and a Mermaid swimlane (`subgraph` per stripe, arrows for dependencies). Mostly-shipped rebuild plans collapse the Shipped block and show the forward frontier.
 
+**Contention-confidence marker (FULL render only).** `mutex_tags` are populated per feature at JIT design (`pm-feature-design`), so in a greenfield plan every feature still at `1_Backlog` has none yet - the projected parallelism of far waves is **optimistic** (two features shown side by side may in fact collide on shared code once designed). This never affects the *Buildable now* decision (a feature passes the spec gate, and therefore has `mutex_tags`, before it can enter build) - only the forward projection. Do not guess tags to compensate; a wrong tag creates a false block, which is worse. Instead, mark the boundary honestly: for any wave whose features have no `mutex_tags` yet, append the marker.
+
+```
+Wave 1:  TNT-001 · BIL-001 · PAY-001
+Wave 4:  FEAT-A · FEAT-B · FEAT-C
+         ⚠ projected parallelism - contention unknown until JIT design
+```
+
+Rebuild plans usually skip this marker: `mutex_tags` came from real code at extraction, so their contention dimension is accurate from the first render.
+
 ### Plan birth (first render)
 
 The plan is born the first time `/pm-stripe` runs once `feature_list.md` carries statuses:
@@ -562,6 +572,7 @@ When multiple stripes run in parallel, register updates can cause merge conflict
 - [ ] KANO/VxC NOT used in ordering (they decided phase upstream); tie-break = priority then FEAT-ID
 - [ ] `delivery_plan.md` materialized to repo root; `plan_order`/`wave` written back to feature_list + Notion, never hand-edited
 - [ ] FULL render at plan birth (first run after mvp-scope / rebuild extract-reconcile); NOW render in steady state
+- [ ] FULL render marks waves whose features have no `mutex_tags` yet as `⚠ projected parallelism` (never invent tags to fill the gap)
 
 **Status transitions:**
 - [ ] Feature Card frontmatter `status:` updated at every transition

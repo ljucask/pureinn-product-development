@@ -4,7 +4,7 @@
 
 **Phase:** 6-7 - JIT Delivery (session start point)  
 **Agent mode:** `never` - value is the live interactive session  
-**Version:** 3.2.0  
+**Version:** 3.2.1  
 **Triggers:** stripe, delivery stripe, JIT cycle, build feature, impact analysis, security review, delivery plan, build order, sequence, parallel, Phase 6, next feature
 
 ---
@@ -42,6 +42,8 @@ Formally a **Resource-Constrained Project Scheduling Problem**: one global depen
 **Two renders, one computation:**
 - **NOW** (default, daily): buildable-now + blocked-with-reason.
 - **FULL** (plan birth, pre-dev walkthrough): every stripe's ordered queue, parallel waves, cross-stripe sync points, Mermaid swimlane.
+
+**Contention confidence (FULL only):** `mutex_tags` are set per feature at JIT design, so in a greenfield plan far waves have none yet and their projected parallelism is optimistic. Those waves are marked `⚠ projected parallelism - contention unknown until JIT design`. It never affects the *Buildable now* decision (a feature is JIT-designed before it can enter build). Tags are never guessed to fill the gap - a wrong tag creates a false block. Rebuild plans usually skip the marker (tags came from real code).
 
 **Plan birth:** the first `/pm-stripe` after `pm-mvp-scope` (greenfield - all backlog) or after `pm-reverse-extract`/`pm-reconcile` (rebuild - mixed statuses + `mutex_tags` from real code).
 

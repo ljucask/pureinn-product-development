@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.34.1] - 2026-07-23
+
+### Delivery Plan contention-confidence marker - FULL render now flags waves whose features have no mutex_tags yet as 'projected parallelism' instead of implying certain parallelism; tags are never guessed ahead of JIT design (a wrong tag creates a false block); Buildable-now decisions are unaffected and rebuild plans skip the marker
+
+---
+
+
 ## [5.34.0] - 2026-07-23
 
 ### Delivery Plan in pm-stripe - answers 'what's next / what's parallel' across all stripes as a derived RCPSP schedule (dependencies + per-stripe capacity + code-contention via new mutex_tags field), with FULL/NOW renders, self-explaining rationale, break-glass P0 override, and delivery_plan.md materialized for AI agents to read; plan_order/wave written back to feature_list + Notion for stable sort; mutex_tags populated at JIT (pm-feature-design) or from real code (pm-reverse-extract/reconcile); new delivery-plan docs page with 7 use cases

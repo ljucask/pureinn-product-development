@@ -60,6 +60,8 @@ DELIVERY PLAN — Acme           recomputed 2026-07-23 · 12 shipped / 38 remain
 
 **FULL** (plan birth, pre-development walkthrough) additionally shows each stripe's full ordered queue, the parallel **waves**, the cross-stripe sync points, and a Mermaid swimlane (stripe = lane, arrows = dependencies).
 
+> **Contention confidence.** `mutex_tags` are filled per feature at JIT design, so on a fresh greenfield plan the far waves have none yet - their parallelism is a projection, and two features shown side by side may collide once designed. Those waves are marked `⚠ projected parallelism - contention unknown until JIT design`. This never affects the **Buildable now** answer: a feature must pass the spec gate (and therefore carry `mutex_tags`) before it can enter build. Tags are never guessed ahead of design - a wrong tag creates a false block, which costs more than an optimistic projection. Rebuild plans usually carry no marker: their tags came from real code at extraction.
+
 Both are also written to **`delivery_plan.md`** in the repo root, so your AI coding agent can read it: *"Based on delivery_plan.md, what should I build next in stripe-tenant?"*
 
 ---
