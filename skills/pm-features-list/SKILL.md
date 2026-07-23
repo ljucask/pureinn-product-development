@@ -5,9 +5,9 @@ license: MIT
 metadata:
   agent-mode: decision
   author: https://github.com/ljucask
-  version: "2.3.0"
+  version: "2.4.0"
   domain: product-management
-  triggers: features list, FDD format, feature list, KANO analysis, value complexity matrix, feature prioritization, Phase 5, feature hierarchy, dependencies
+  triggers: features list, FDD format, feature list, KANO analysis, value complexity matrix, feature prioritization, Phase 5, feature hierarchy, dependencies, mutex tags
   role: specialist
   scope: planning
   output-format: document
@@ -512,7 +512,9 @@ vxc: [Quick Win / Big Bet / Fill-in / Time Waster]
 estimate: "[S / M / L - informational sizing, NOT the atomicity test]"
 has_subtasks: false
 security_review: none    # none | build | review | both - stub default; set by pm-feature-design (Step 1.5), read by pm-stripe to route security specialists
-dependencies: [FEAT-ID, FEAT-ID]   # from the Deps column above - [] if none
+mutex_tags: []           # code modules/files this feature touches - drives delivery-plan CONTENTION. Empty at stub; set at JIT (pm-feature-design) or from code (pm-reverse-extract/pm-reconcile). Entry: "ModuleName" or {tag: X, reason: "why"}
+override: false          # break-glass; {reason: "..."} forces a P0 ahead of capacity/priority/contention (never past a hard dependency)
+dependencies: [FEAT-ID, FEAT-ID]   # from the Deps column above - [] if none. Entry may be a bare FEAT-ID or annotated {id: FEAT-ID, reason: "why"} for delivery-plan explainability
 prd_ref: /product/PRD_master.md#[relevant-section]
 feature_flag: [domain.feature-name]
 flag_default: off

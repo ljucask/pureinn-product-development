@@ -4,7 +4,7 @@
 
 **Phase:** 6 - JIT Delivery (and Phase 5 stub creation)  
 **Agent mode:** `synthesis` - runs fully autonomously  
-**Version:** 2.2.0  
+**Version:** 2.3.0  
 **Triggers:** feature card, FEAT-ID, feature spec, feature lifecycle, cards
 
 ---
@@ -70,7 +70,9 @@ A Feature Card has four sections with defined ownership:
 ## Stub completeness requirements
 
 **Stub (`1_Backlog`) must have:**
-- All frontmatter fields: `id`, `title`, `status`, `stripe`, `layer`, `phase`, `actor`, `priority`, `kano`, `vxc`, `feature_flag`, `flag_default`, `prd_ref`, `security_review` (stub default `none`)
+- All frontmatter fields: `id`, `title`, `status`, `stripe`, `layer`, `phase`, `actor`, `priority`, `kano`, `vxc`, `feature_flag`, `flag_default`, `prd_ref`, `security_review` (stub default `none`), `mutex_tags` (empty at stub), `override` (false at stub)
+
+> **Delivery-plan fields:** `mutex_tags` (shared code the feature touches - drives contention in the pm-stripe delivery plan; set at JIT design or from code in rebuild) and `override` (break-glass P0). `plan_order`/`wave` are NOT stored on the card - they are derived write-back fields the delivery plan computes into `feature_list.md` + Notion.
 - Sections 1-4 present as stubs (placeholder text, not filled)
 - Description block (2-3 sentences: what the feature does, who uses it, value delivered)
 

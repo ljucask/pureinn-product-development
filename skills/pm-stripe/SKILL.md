@@ -5,9 +5,9 @@ license: MIT
 metadata:
   agent-mode: never
   author: https://github.com/ljucask
-  version: "3.1.0"
+  version: "3.2.0"
   domain: product-management
-  triggers: stripe, delivery stripe, JIT cycle, feature design, build feature, impact analysis, security review, Phase 6, Phase 7, next feature
+  triggers: stripe, delivery stripe, JIT cycle, feature design, build feature, impact analysis, security review, delivery plan, build order, sequence, parallel, Phase 6, Phase 7, next feature
   role: orchestrator
   scope: delivery
   output-format: document
@@ -99,30 +99,36 @@ Read `features/feature_list.md` and scan all `/features/cards/FEAT-*.md` files.
 
 If any mid-cycle feature is found, surface it prominently at the top of the dashboard with a clear action prompt.
 
-**Show stripe dashboard:**
+**Compute and show the Delivery Plan** (full spec: "Delivery Plan - computation, rules, materialization" section below). Compute the schedule from the current state, then render it. Two render modes, same computation:
+
+- **NOW render (default, steady state):** what is buildable right now + what is blocked and why. This is the daily driver.
+- **FULL render (first run / on request / pre-dev walkthrough):** the whole structure - every stripe's ordered queue, the parallel waves, cross-stripe sync points. Use it at plan birth (first `/pm-stripe` after Phase 5 / after rebuild extract-reconcile) and whenever someone asks "show me the whole plan".
+
+**NOW render:**
 
 ```
-STRIPE DASHBOARD - [Product Name]
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+DELIVERY PLAN - [Product Name]        recomputed [date] · [N] shipped / [M] remaining
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ⚡ ACTION NEEDED:
-  [stripe-name] FEAT-[ID]: [title]
-  Status: [current status] → [what to do next]
+  [stripe-name] FEAT-[ID]: [title] - Status: [current] → [next action]
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+▶ BUILDABLE NOW (parallel across stripes):
+  [stripe-name]   FEAT-[ID]  [title] (P[n])
+                  ✓ Ready: deps met · lane free · no contention
+  [stripe-name]   FEAT-[ID]  [title] (P[n])
+                  ✓ Ready: deps met · lane free · no contention
 
-STRIPE STATUS
-| Stripe | Active feature | Status | Next in queue |
-|---|---|---|---|
-| stripe-checkout | FEAT-ORD-012 | 3_Ready_to_Build | FEAT-ORD-013 |
-| stripe-auth | FEAT-USR-001 | 2_Spec_Done | FEAT-USR-002 |
-| stripe-[name] | none | - | FEAT-XXX-001 |
-
-BLOCKED (dependencies not met):
-  FEAT-ORD-002: waiting for FEAT-ORD-001 (currently 4_In_Build)
+⛔ BLOCKED (why):
+  [stripe]   FEAT-[ID]  [title]
+             [one rationale line - see grammar below]
+  [stripe]   FEAT-[ID]  [title]
+             Dependency: waiting for FEAT-[X] to ship (Context: [dep reason])
 ```
 
-Then use AskUserQuestion tool based on what's detected:
+**FULL render** additionally prints each stripe's full ordered queue, the wave grouping (`Wave 1: A · B · C`), and the cross-stripe sync points, plus a Mermaid swimlane (stripe = lane, `→` = dependency). See the computation section for the exact shape.
+
+After rendering, **materialize** `delivery_plan.md` to the repo root and **write `plan_order`/`wave` back** (see materialization below). Then use AskUserQuestion tool based on what's detected:
 
 **If one clear action is obvious** (e.g., one feature at 3_Ready_to_Build): use AskUserQuestion tool with:
 - Question: "What do you want to do?"
@@ -439,6 +445,84 @@ Update `state.json`: remove closed stripe from `current_stripes`.
 
 ---
 
+## Delivery Plan - computation, rules, materialization
+
+Answers the two questions no existing artifact did: **"what do we build next?"** and **"what can run in parallel right now?"** - across all stripes, at once. The plan is a **derived view** computed on demand from the current state; it is never a hand-maintained document. The source of truth stays `feature_list.md` + Feature Cards.
+
+**This is a Resource-Constrained Project Scheduling Problem (RCPSP).** One global dependency DAG; stripes are renewable resources of capacity 1; shared code is a mutex. Do NOT compute per-stripe order as a separate prior step - a cross-stripe dependency can dictate intra-stripe order. It is one list-scheduling pass; the per-stripe order falls out of it.
+
+### Inputs and outputs
+
+| Read (source) | Written back (derived - never hand-edit) |
+|---|---|
+| `dependencies` (bare `FEAT-ID` or `{id, reason}`), `stripe`, `phase`, `priority`, `status`, `mutex_tags`, `override` | `plan_order` (global sort index), `wave` (parallelism level) → to `feature_list.md` + Notion |
+
+`plan_order`/`wave` exist ONLY so dumb tools (Notion) can sort stably - they are a lossy flat projection of a parallel structure. The swimlane / `delivery_plan.md` is the real structure. Never hand-edit them; never reorder rows in Notion - both are overwritten on recompute.
+
+### The algorithm (deterministic, one pass)
+
+```
+1. PRUNE: drop status = 6_Shipped. For any remaining feature depending on a shipped one, that edge is satisfied.
+2. CYCLE CHECK: DFS for a cycle in the dependency DAG. If found → STOP, report the cycle (a broken chain needs a human; you cannot schedule it). Dangling dep (FEAT-ID not in list) → warn, treat as data error.
+3. OCCUPANCY: mark each stripe holding a feature in 4_In_Build OR 5_In_Review as Occupied (both consume the lane - rework re-locks). Collect their mutex_tags into Active_Mutex_Set.
+4. AVAILABLE POOL: all features with no unshipped dependency (in-degree 0 over the pruned graph).
+5. SORT the pool by: (1) override present, (2) priority P1>P2>P3, (3) FEAT-ID (deterministic). KANO and VxC are NOT used - they decided phase upstream, not build order.
+6. ASSIGN, iterating the sorted pool:
+     - override present → BREAK-GLASS: mark Ready, preempt capacity/contention (never a hard dep). Loud rationale.
+     - stripe Occupied → Blocked (Capacity)
+     - mutex_tags ∩ Active_Mutex_Set ≠ ∅ → Blocked (Contention)
+     - else → Ready. Mark stripe Occupied, add its mutex_tags to Active_Mutex_Set.
+7. CLASSIFY the rest: in-degree > 0 → Blocked (Dependency).
+8. WAVES: wave number = longest dependency path to the feature (topological level). Same wave = no dependency between them = candidate-parallel (still subject to capacity/contention).
+9. plan_order = deterministic flatten (wave, then stripe, then intra-stripe position). Write plan_order + wave back.
+```
+
+### Rationale grammar (emit one line per feature - explain STATE, not a static index)
+
+There is no fixed "position #14" in a dynamic DAG - explain the state and the constraint that bounded it. Emit deterministically from the algorithm's evaluation order:
+
+| State | Line |
+|---|---|
+| Ready | `✓ Ready: deps met · lane free · no contention` |
+| Blocked (Dependency) | `⛔ Dependency: waiting for FEAT-[X] to ship (Context: [dep reason])` |
+| Blocked (Capacity) | `⛔ Capacity: FEAT-[X] is In_Build/In_Review on this lane` |
+| Blocked (Contention) | `⛔ Contention: waiting for FEAT-[X] to release lock on '[tag]' (Context: [mutex reason])` |
+| Yielded (tie-break) | `Yielded: FEAT-[X] took this lane (P1 > P2)` |
+| Break-glass | `🔴 BREAK-GLASS P0: [override reason] - preempts capacity/priority/contention` |
+
+Mechanical reasons are auto-derived; the `(Context: ...)` parts come from the annotated `{id, reason}` / `{tag, reason}` in the source (human judgment captured where the constraint was set). **No separate justification document** - the rationale is emitted inline at every render.
+
+**Golden rule:** when priority and a dependency clash (a P3 sequenced ahead of a P1 because the P1 needs it), the line must say so loudly: `Forced: P3 built first - P1 FEAT-[X] you want will not work without it`.
+
+### Break-glass (P0 override)
+
+A feature with `override: {reason}` preempts capacity, priority ordering, and contention - with the loud rationale above. It CANNOT bypass a hard dependency (physics: you can't build on code that doesn't exist). A P0 bug fix is almost always on already-shipped code, so it's dependency-free and just jumps the lane. Board integrity holds because it's a visible, logged, source-level annotation; everything else computes normally around it. Contention override = the human is explicitly accepting merge risk.
+
+### FULL vs NOW render
+
+- **NOW** (default): Buildable-now + Blocked-with-rationale (see Step 0). The daily driver.
+- **FULL** (plan birth, pre-dev walkthrough, on request): additionally each stripe's full ordered queue, the wave grouping, cross-stripe sync points, and a Mermaid swimlane (`subgraph` per stripe, arrows for dependencies). Mostly-shipped rebuild plans collapse the Shipped block and show the forward frontier.
+
+### Plan birth (first render)
+
+The plan is born the first time `/pm-stripe` runs once `feature_list.md` carries statuses:
+- **Greenfield / Feature Implementation:** after `pm-mvp-scope` (all `1_Backlog`) → FULL render is the whole forward plan.
+- **Rebuild:** after `pm-reverse-extract` / `pm-reconcile features` (mixed statuses from code) → FULL render is mostly-Shipped history + in-flight lanes + forward frontier. `mutex_tags` are extracted from real code here, so a rebuild's first plan already has an accurate contention dimension.
+
+### Materialization + sync direction
+
+After every compute: write `delivery_plan.md` to the repo root (so AI coding agents can read it - "based on delivery_plan.md, what's next in [stripe]?"), and write `plan_order`/`wave` back to `feature_list.md` + Notion.
+
+| Field | Authority | Direction |
+|---|---|---|
+| `status` | Notion / team | Notion → md (Notion wins, as today) |
+| `priority`, `dependencies`, `mutex_tags`, `override` | source judgment | edit in ONE place per cycle; `/pm-stripe` reconciles (pulls a Notion-side change into md like status), md is the durable record |
+| `plan_order`, `wave` | the computation | compute → md + Notion (never hand-edit; Notion sorts by `plan_order`, groups by `stripe`) |
+
+**To change the build order:** never touch `delivery_plan.md` or `plan_order`. Edit the source - `priority`, a soft `dependency {id, reason}`, or `override` - then run `/pm-stripe`. The plan recomputes and every change carries its reason into the rationale.
+
+---
+
 ## Atomic commit protocol (parallel stripe safety)
 
 When multiple stripes run in parallel, register updates can cause merge conflicts.
@@ -469,6 +553,15 @@ When multiple stripes run in parallel, register updates can cause merge conflict
 - [ ] Build Skills Coverage check run before 4_In_Build → 5_In_Review (non-blocking; skipped-despite-trigger surfaced)
 - [ ] security_review value honored: build → secure-code-guardian, review → security-reviewer, both → both, none → neither
 - [ ] Section 4 complete before 6_Shipped is set
+
+**Delivery Plan:**
+- [ ] Computed as one RCPSP pass (not per-stripe-first); cycle check before scheduling
+- [ ] 4_In_Build AND 5_In_Review both occupy the lane (rework re-locks)
+- [ ] Blocked features carry a rationale line (dependency / capacity / contention / yielded / break-glass) with `(Context: ...)` from annotated source
+- [ ] `override` preempts capacity/priority/contention but never a hard dependency
+- [ ] KANO/VxC NOT used in ordering (they decided phase upstream); tie-break = priority then FEAT-ID
+- [ ] `delivery_plan.md` materialized to repo root; `plan_order`/`wave` written back to feature_list + Notion, never hand-edited
+- [ ] FULL render at plan birth (first run after mvp-scope / rebuild extract-reconcile); NOW render in steady state
 
 **Status transitions:**
 - [ ] Feature Card frontmatter `status:` updated at every transition

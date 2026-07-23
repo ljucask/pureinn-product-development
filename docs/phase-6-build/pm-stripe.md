@@ -4,8 +4,8 @@
 
 **Phase:** 6-7 - JIT Delivery (session start point)  
 **Agent mode:** `never` - value is the live interactive session  
-**Version:** 3.1.0  
-**Triggers:** stripe, delivery stripe, JIT cycle, build feature, impact analysis, security review, Phase 6, next feature
+**Version:** 3.2.0  
+**Triggers:** stripe, delivery stripe, JIT cycle, build feature, impact analysis, security review, delivery plan, build order, sequence, parallel, Phase 6, next feature
 
 ---
 
@@ -21,13 +21,42 @@ Reads `features/feature_list.md` and all `features/cards/FEAT-*.md` files, then:
 
 1. **Syncs status from Notion** (if Feature Backlog URL is configured) - Notion wins on status, markdown wins on content
 2. **Detects mid-cycle features** (anything not at `1_Backlog` or `6_Shipped`) and surfaces them with a clear action prompt
-3. **Shows the Stripe Dashboard** - active feature per stripe, status, next in queue, blocked features
+3. **Computes and shows the Delivery Plan** - what is buildable now, what is blocked and why, across all stripes (see below)
 4. **Routes you** to the right next action via AskUserQuestion
 
 **Division of responsibility:**
 - `feature_list.md` - source of truth for inventory, priority, stripe assignment, dependency order
 - `features/cards/FEAT-*.md` - source of truth for feature status and spec content
-- `pm-stripe` - session orchestrator: detects state, routes, tracks transitions, runs Impact Analysis
+- `pm-stripe` - session orchestrator: detects state, routes, tracks transitions, runs Impact Analysis, **computes the Delivery Plan**
+
+---
+
+## The Delivery Plan
+
+Answers the two questions no earlier artifact did: **"what do we build next?"** and **"what can run in parallel right now?"** - across all stripes, in one place. It is a **derived view** computed on demand from the current state, never a hand-maintained document. Source of truth stays `feature_list.md` + Feature Cards.
+
+Formally a **Resource-Constrained Project Scheduling Problem**: one global dependency DAG, stripes are resources of capacity 1, shared code is a mutex. One list-scheduling pass; per-stripe order falls out of it (you cannot compute it per-stripe first - a cross-stripe dependency can dictate intra-stripe order).
+
+**What it evaluates, in order:** drop `6_Shipped`; check for dependency cycles (stop if found); mark stripes with a `4_In_Build` **or** `5_In_Review` feature as occupied (rework re-locks the lane); then for each dependency-ready feature: `override` (break-glass) → capacity → contention (`mutex_tags` overlap) → priority tie-break (P1>P2>P3, then FEAT-ID). **KANO and VxC are not used** - they decided phase upstream, not build order.
+
+**Two renders, one computation:**
+- **NOW** (default, daily): buildable-now + blocked-with-reason.
+- **FULL** (plan birth, pre-dev walkthrough): every stripe's ordered queue, parallel waves, cross-stripe sync points, Mermaid swimlane.
+
+**Plan birth:** the first `/pm-stripe` after `pm-mvp-scope` (greenfield - all backlog) or after `pm-reverse-extract`/`pm-reconcile` (rebuild - mixed statuses + `mutex_tags` from real code).
+
+**Explainability:** every feature carries a rationale line - `Ready`, `Blocked by Dependency/Capacity/Contention`, `Yielded`, or `🔴 BREAK-GLASS`. Mechanical reasons are auto-derived; the `(Context: ...)` comes from annotated `{id, reason}` / `{tag, reason}` in the source. No separate justification document.
+
+**Materialization + control:**
+- `delivery_plan.md` is written to the repo root so AI coding agents can read it ("based on delivery_plan.md, what's next in [stripe]?").
+- `plan_order` + `wave` are written back to `feature_list.md` + Notion so dumb tools sort stably. **Never hand-edit them, never reorder rows in Notion** - overwritten on recompute.
+- **To change the order:** edit the source (`priority`, a soft `dependency`, or `override`), then run `/pm-stripe`. The plan recomputes; every change carries its reason into the rationale.
+
+| Field | Authority | Direction |
+|---|---|---|
+| `status` | Notion / team | Notion → md |
+| `priority`, `dependencies`, `mutex_tags`, `override` | source judgment | edit in one place, `/pm-stripe` reconciles |
+| `plan_order`, `wave` | the computation | compute → md + Notion (never hand-edit) |
 
 ---
 

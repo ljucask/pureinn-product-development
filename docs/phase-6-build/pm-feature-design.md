@@ -4,8 +4,8 @@
 
 **Phase:** 6 - JIT Delivery  
 **Agent mode:** `decision` - drafts, then requires your review before finalizing  
-**Version:** 2.3.0  
-**Triggers:** feature design, JIT design, design by feature, sequence diagram, feature spec, security review, Phase 6
+**Version:** 2.4.0  
+**Triggers:** feature design, JIT design, design by feature, sequence diagram, feature spec, security review, mutex tags, Phase 6
 
 ---
 
@@ -77,6 +77,7 @@ A genuine judgment call, legacy-vs-code divergence, or concrete build blocker su
 6. **Populates Section 1** (Business Constraints) - links entity IDs, BR-IDs, TBL-IDs; defines explicit scope exclusions
 7. **Writes Section 2** (Acceptance Criteria) - minimum: AC-01 happy path, AC-02 guard failure, AC-03 feature flag OFF
 8. **Writes Subtasks** - nuance/spec details for the developer (these are helpers, not sub-features)
+   - Also sets **`mutex_tags`** in frontmatter from Section 3's "Files to modify" - the shared modules/classes this feature touches. The delivery plan (pm-stripe) uses these to stop two features editing the same code in parallel (critical with AI agents on separate branches). This is the moment the contention footprint is known.
 9. **Generates Section 3** - Mermaid.js sequence diagram with real classes/methods from existing codebase; lists files to modify
 10. **Pushes to Notion**, sets status to `2_Spec_Done`
 

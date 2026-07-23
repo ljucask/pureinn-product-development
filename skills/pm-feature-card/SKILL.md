@@ -5,9 +5,9 @@ license: MIT
 metadata:
   agent-mode: synthesis
   author: https://github.com/ljucask
-  version: "2.2.0"
+  version: "2.3.0"
   domain: product-management
-  triggers: feature card, FEAT-ID, feature spec, feature lifecycle, cards, in design, figma state, security review
+  triggers: feature card, FEAT-ID, feature spec, feature lifecycle, cards, in design, figma state, security review, mutex tags, delivery plan
   role: specialist
   scope: specification
   output-format: document
@@ -146,6 +146,8 @@ vxc: [Quick Win / Big Bet / Fill-in / Time Waster]
 estimate: "[S / M / L - informational sizing for roadmap, NOT the atomicity test]"
 has_subtasks: false
 security_review: none    # none | build | review | both - set by pm-feature-design (Step 1.5 security dimension). Routes secure-code-guardian (build) + security-reviewer (review) in pm-stripe. Stub default: none.
+mutex_tags: []           # code modules/files this feature touches - drives delivery-plan CONTENTION (two features sharing a tag can't run parallel). Set at JIT by pm-feature-design (or from real code by pm-reverse-extract/pm-reconcile). Entry: "ModuleName" or {tag: X, reason: "why"}. Empty at stub.
+override: false          # break-glass. Set to {reason: "..."} to force a P0 ahead of capacity/priority/contention in the delivery plan (never past a HARD dependency - that's physics). Shown loudly in the plan rationale.
 prd_ref: /product/PRD_master.md#[section]
 feature_flag: [domain.feature-name]
 flag_default: off

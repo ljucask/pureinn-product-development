@@ -5,9 +5,9 @@ license: MIT
 metadata:
   agent-mode: synthesis
   author: https://github.com/ljucask
-  version: "2.1.0"
+  version: "2.2.0"
   domain: product-management
-  triggers: reverse extract, existing product, feature inventory, migration path, feature implementation onboarding, sync Notion, dependencies
+  triggers: reverse extract, existing product, feature inventory, migration path, feature implementation onboarding, sync Notion, dependencies, mutex tags
   role: specialist
   scope: extraction
   output-format: document
@@ -414,6 +414,8 @@ content:
 ```
 
 Fill from evidence/derivation: `Layer` (from code - FE routes/components → Frontend, controllers/services → Backend, jobs/cron → System), `Has Subtasks` (true if the card has any subtasks), `Dev Stripe`, `Dependencies` (from Step 2d - user-stated + confirmed code-evidence candidates only, never an unconfirmed candidate). Propose with reasoning (confirm via AskUserQuestion): `Phase`, `KANO Category` (a shipped feature is usually Must-be), `V×C Quadrant`, `Priority`. Leave blank only: `Feature Card URL` - filled later by pm-feature-design. Never leave Layer / Description / Has Subtasks blank.
+
+**`mutex_tags` from real code (rebuild advantage).** Because the code exists, extract the shared modules/classes/files each still-open feature (`1_Backlog` / `4_In_Build`) touches directly from the codebase - more accurate than a greenfield JIT guess. This gives the first delivery plan (pm-stripe) an accurate code-contention dimension immediately. Set them on the same shared surfaces the code shows the feature modifying (services, schemas, shared components, middleware). Shipped features need no `mutex_tags` (they don't get scheduled). Format: list of `"ModulePath"` or `{tag, reason}`.
 
 
 ---

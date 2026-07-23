@@ -4,7 +4,7 @@
 
 **Phase:** Rebuild playbook  
 **Agent mode:** `synthesis` - runs fully autonomously  
-**Version:** 2.1.0  
+**Version:** 2.2.0  
 **Triggers:** reverse extract, existing product, feature inventory, migration path, feature implementation onboarding, sync Notion, dependencies
 
 **Structural parity with `pm-features-list`:** this skill produces the same fields and the same Notion property set as the Greenfield flow (Priority, Dependencies, Dev Stripe, KANO, V×C on every feature) - a project migrated via this skill and one built via `pm-features-list` look identical downstream (Notion filters, `pm-stripe`, `pm-audit`). Dependencies come from two sources: what you tell it directly, and candidates it derives from code evidence (one feature's code calling another's) - code-derived candidates are proposed and confirmed, never asserted silently.
@@ -28,7 +28,8 @@ Use instead of `pm-features-list` + `pm-mvp-scope` for existing products. Can al
 1. **Feature List** (`features/feature_list.md`) - Live Register 4. Full feature inventory in FDD format (`[Action] [Result] [Object]`) with `FEAT-[DOMAIN]-NNN` IDs
 2. **Stub Feature Cards** (`features/cards/FEAT-*.md`) - one per feature, status `1_Backlog`
 3. **Stripe assignment** - which features go into which domain-coherent delivery stripe
-4. **Notion push** - Feature hierarchy pushed to Product Features database (if URL configured)
+4. **`mutex_tags` from real code** - the shared modules/files each still-open feature touches, extracted directly from the codebase. Because the code exists, this is more accurate than a greenfield JIT guess, so the rebuild's first delivery plan (pm-stripe) has an accurate code-contention dimension immediately.
+5. **Notion push** - Feature hierarchy pushed to Product Features database (if URL configured)
 
 ---
 

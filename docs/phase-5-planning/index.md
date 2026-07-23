@@ -98,3 +98,5 @@ Run `/pureinn` to check the Phase 5 exit gate and advance to Phase 6.
 **Gate type: Soft.** Requires: `feature_list.md` with FEAT-IDs, MVP scope defined, Delivery Stripes assigned. Missing items named - you can proceed acknowledging gaps.
 
 After Phase 5, run `/common-ground` (from fullstack-dev-skills plugin) for the tech stack decision before entering the JIT build cycle.
+
+> **Delivery Plan is born here.** Once features carry stripe + phase + dependencies, the first `/pm-stripe` run computes the full **[Delivery Plan](../phase-6-build/delivery-plan.md)** - the ordered, parallelizable build sequence across all stripes. This is the artifact for your pre-development walkthrough.

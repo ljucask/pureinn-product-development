@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.34.0] - 2026-07-23
+
+### Delivery Plan in pm-stripe - answers 'what's next / what's parallel' across all stripes as a derived RCPSP schedule (dependencies + per-stripe capacity + code-contention via new mutex_tags field), with FULL/NOW renders, self-explaining rationale, break-glass P0 override, and delivery_plan.md materialized for AI agents to read; plan_order/wave written back to feature_list + Notion for stable sort; mutex_tags populated at JIT (pm-feature-design) or from real code (pm-reverse-extract/reconcile); new delivery-plan docs page with 7 use cases
+
+---
+
+
 ## [5.33.0] - 2026-07-23
 
 ### Security review model + build/review coverage gates in pm-stripe - security_review frontmatter field routes secure-code-guardian/security-reviewer via 8 domain-neutral vulnerability areas (not feature types); explicit always-vs-conditional build/review skill split with a non-blocking coverage check before 5_In_Review; full runbook rewrite of playbook + phase docs (step-by-step when/gather/command/get/done format)

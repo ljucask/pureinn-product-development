@@ -5,9 +5,9 @@ license: MIT
 metadata:
   agent-mode: decision
   author: https://github.com/ljucask
-  version: "2.3.0"
+  version: "2.4.0"
   domain: product-management
-  triggers: feature design, JIT design, design by feature, sequence diagram, feature spec, security review, Phase 6
+  triggers: feature design, JIT design, design by feature, sequence diagram, feature spec, security review, mutex tags, Phase 6
   role: specialist
   scope: specification
   output-format: document
@@ -411,12 +411,20 @@ If no Figma URL was provided and Figma MCP is connected: check `figma_project_ur
 
 If feature is backend/API-only: omit Section 3b entirely.
 
-**4d. Update Feature Card frontmatter status + security_review**
+**4d. Update Feature Card frontmatter status + security_review + mutex_tags**
 
 Write the `security_review` verdict decided in Step 1.5 to the frontmatter (`none` / `build` / `review` / `both`). pm-stripe reads this to route `secure-code-guardian` (build) and `security-reviewer` (review), and to run its Build Skills Coverage check. If the stub was created with `security_review: none`, overwrite it with the assessed value.
 
 ```yaml
 security_review: build   # none | build | review | both - from Step 1.5 security dimension
+```
+
+**Populate `mutex_tags`** from Section 3's "Files to modify" - this is the exact moment the code-contention footprint is known. List the shared modules/classes/files this feature touches that other features might also touch (the delivery-plan uses this to prevent two features editing the same code in parallel - critical when AI agents build on separate branches). Prefer the shared/reusable surfaces (services, schemas, shared components, middleware), not leaf files unique to this feature. In Feature Implementation mode, take them from the Step 2 code scan (real modules); in Greenfield, from the classes the diagram introduces. Annotate with a reason where the risk is non-obvious.
+
+```yaml
+mutex_tags:
+  - {tag: "InviteService", reason: "new invite-code methods"}
+  - "auth/middleware.ts"
 ```
 
 Then set status. Spec (Sections 1-3) is complete → `2_Spec_Done`. Then branch on `layer`:
@@ -485,6 +493,9 @@ Then run /pm-stripe to proceed to build.
 ## Internal completeness checklist
 
 <!-- Claude reference only - not shown to user -->
+
+**Delivery-plan inputs:**
+- [ ] `mutex_tags` populated in Step 4d from Section 3 "Files to modify" (shared surfaces, not leaf files); reason where non-obvious
 
 **Security dimension:**
 - [ ] `security_review` assessed in Step 1.5 against the 8 security areas, verdict stated with the area(s) touched

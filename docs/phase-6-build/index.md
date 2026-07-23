@@ -51,6 +51,8 @@ pm-feature-    pm-feature-      pm-stripe      build skills   review skills   pm
 
 **You always start a session with `/pm-stripe`.** It reads where every feature is and routes you to the right step below. You never guess the step - the orchestrator tells you.
 
+> **What to build next / what runs in parallel?** `/pm-stripe` computes the **[Delivery Plan](delivery-plan.md)** - a derived, always-current view of buildable-now vs blocked-with-reason across all stripes, materialized to `delivery_plan.md` for your AI agent to read. See the [Delivery Plan page](delivery-plan.md) for use cases (reorder, break-glass P0, rebuild onboarding, Notion sort stability).
+
 ---
 
 ## Step 0 - Viability (optional)
