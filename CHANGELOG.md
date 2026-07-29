@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.35.0] - 2026-07-29
+
+### pm-diagrams 18th type + delivery-render fixes - new kanban lifecycle-board type (Mermaid native, one column per status, one board per stripe, owned by pm-stripe); gantt gains a relative-duration mode (S/M/L estimates, synthetic day-0, sanctioned anti-pattern carve-out) for delivery-plan timelines without faked dates; dependency makes critical-path highlighting a required step (dependency-edges only, never lane-serialized) and adds wave-column layout above ~10 nodes; catalogue 17 to 18 across SKILL/docs/README/guide; backlog/ gitignored as internal
+
+---
+
+
 ## [5.34.1] - 2026-07-23
 
 ### Delivery Plan contention-confidence marker - FULL render now flags waves whose features have no mutex_tags yet as 'projected parallelism' instead of implying certain parallelism; tags are never guessed ahead of JIT design (a wrong tag creates a false block); Buildable-now decisions are unaffected and rebuild plans skip the marker

@@ -1,11 +1,11 @@
 # pm-diagrams
 
-> Generate any of 17 diagram types across 6 categories - domain/data, process/behavior, UX, architecture, planning/delivery, strategic
+> Generate any of 18 diagram types across 6 categories - domain/data, process/behavior, UX, architecture, planning/delivery, strategic
 
 **Phase:** Any (cross-phase)
 **Agent mode:** `synthesis` - runs fully autonomously
-**Version:** 3.0.0
-**Triggers:** diagrams, visual diagram, state machine, sequence diagram, ERD, entity relationship, domain model, user flow, flowchart, BPMN, business process, customer journey, wireflow, screen flow, system architecture, C4, dependency graph, story map, gantt, roadmap timeline, JTBD forces, 2x2 matrix, Kano, SWOT, Excalidraw, Mermaid
+**Version:** 3.1.0
+**Triggers:** diagrams, visual diagram, state machine, sequence diagram, ERD, entity relationship, domain model, user flow, flowchart, BPMN, business process, customer journey, wireflow, screen flow, system architecture, C4, dependency graph, story map, gantt, roadmap timeline, kanban, kanban board, delivery board, JTBD forces, 2x2 matrix, Kano, SWOT, Excalidraw, Mermaid
 
 ---
 
@@ -27,7 +27,7 @@ Hand-drawn visual style for team and stakeholder communication. Rendered inline 
 
 ---
 
-## The 17-type catalogue
+## The 18-type catalogue
 
 Each type has a dedicated composition reference (`references/[slug].md`) that the skill reads before drawing - the element vocabulary, composition rules, canonical structure, anti-patterns, and rendering notes for that specific notation.
 
@@ -49,15 +49,16 @@ Each type has a dedicated composition reference (`references/[slug].md`) that th
 | `c4` | C4 (Context + Container) | Mermaid | Phase 4 |
 | **Planning / delivery** |
 | `dependency` | Dependency Graph | Mermaid | Phase 5 |
+| `kanban` | Kanban Board (lifecycle) | Mermaid | Phase 6, Phase 7 |
 | `storymap` | User Story Map | Excalidraw | Phase 5 |
-| `gantt` | Gantt / Timeline Roadmap | Mermaid | Phase 3b, Phase 5 |
+| `gantt` | Gantt / Timeline Roadmap | Mermaid | Phase 3b, Phase 5, Phase 6 |
 | **Strategic** |
 | `jtbd` | JTBD Four Forces | Excalidraw | Phase 2 |
 | `matrix` | 2×2 Matrix (generic) | Excalidraw | Various |
 | `kano` | Kano Model | Excalidraw | Phase 5 |
 | `swot` | SWOT | Excalidraw | Phase 2 |
 
-Four types (`dependency`, `gantt`, `kano`, `swot`) render an analysis owned by another skill (`pm-features-list`, `pm-product-roadmap`, `pm-market-analysis`). If that analysis doesn't exist yet, `pm-diagrams` routes there instead of inventing one.
+Five types (`dependency`, `kanban`, `gantt`, `kano`, `swot`) render an analysis owned by another skill (`pm-features-list`, `pm-stripe`, `pm-product-roadmap`, `pm-market-analysis`). If that analysis doesn't exist yet, `pm-diagrams` routes there instead of inventing one. `kanban` and the relative-duration `gantt` mode are owned by `pm-stripe` (delivery lifecycle); `kanban` reads each feature's real `status` and never advances it to fill a column.
 
 ---
 
@@ -67,6 +68,7 @@ Four types (`dependency`, `gantt`, `kano`, `swot`) render an analysis owned by a
 /pm-diagrams                          # no argument - context-aware recommendation
 /pm-diagrams bpmn                     # specific type by slug - skips the menu
 /pm-diagrams erd
+/pm-diagrams kanban                   # lifecycle board per stripe (Phase 6/7)
 /pm-diagrams --agent                  # autonomous draft from existing artifacts
 ```
 
@@ -86,14 +88,15 @@ Four types (`dependency`, `gantt`, `kano`, `swot`) render an analysis owned by a
 
 ## Dependencies
 
-**No hard dependencies.** Works from whatever artifacts are available; for the four "render for" types it routes to the owning skill if no analysis exists yet.
+**No hard dependencies.** Works from whatever artifacts are available; for the five "render for" types it routes to the owning skill if no analysis exists yet.
 
 **Best inputs per diagram type:**
 - State Machine / ERD / Domain Overview: `entities.md` (`pm-entity-registry`)
 - Sequence Diagram: Feature Card Section 3 context (`pm-feature-design`)
 - Dependency Graph / Kano: `feature_list.md` (`pm-features-list`)
-- Gantt: `pm-product-roadmap` output
+- Kanban (lifecycle board): Feature Card `status` + `stripe` (`pm-stripe`)
+- Gantt: `pm-product-roadmap` output (dated) or delivery-plan estimates (relative mode, `pm-stripe`)
 - JTBD Forces: JTBD Analysis output (`jtbd-building`)
 - SWOT: `pm-market-analysis` output
 
-**Related skills:** `pm-entity-registry`, `pm-feature-design`, `jtbd-building`, `pm-features-list`, `pm-product-roadmap`, `pm-market-analysis`
+**Related skills:** `pm-entity-registry`, `pm-feature-design`, `jtbd-building`, `pm-features-list`, `pm-stripe`, `pm-product-roadmap`, `pm-market-analysis`

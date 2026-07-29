@@ -1,13 +1,13 @@
 ---
 name: pm-diagrams
-description: Generate any of 17 diagram types across 6 categories (domain/data, process/behavior, UX, architecture, planning/delivery, strategic). Two rendering modes - Mermaid.js (primary, embedded in markdown registers) and Excalidraw (visual overviews). Call with a slug for a specific diagram (`/pm-diagrams bpmn`, `/pm-diagrams erd`, `/pm-diagrams journey`...) or with no argument for a context-aware recommendation based on workspace state. Each type has a composition reference in references/[slug].md that the skill reads before drawing. Cross-phase - callable at any point.
+description: Generate any of 18 diagram types across 6 categories (domain/data, process/behavior, UX, architecture, planning/delivery, strategic). Two rendering modes - Mermaid.js (primary, embedded in markdown registers) and Excalidraw (visual overviews). Call with a slug for a specific diagram (`/pm-diagrams bpmn`, `/pm-diagrams erd`, `/pm-diagrams kanban`...) or with no argument for a context-aware recommendation based on workspace state. Each type has a composition reference in references/[slug].md that the skill reads before drawing. Cross-phase - callable at any point.
 license: MIT
 metadata:
   agent-mode: synthesis
   author: https://github.com/ljucask
-  version: "3.0.0"
+  version: "3.1.0"
   domain: product-management
-  triggers: diagrams, visual diagram, state machine, sequence diagram, ERD, entity relationship, domain model, user flow, flowchart, BPMN, business process, customer journey, wireflow, screen flow, system architecture, C4, dependency graph, story map, gantt, roadmap timeline, JTBD forces, 2x2 matrix, Kano, SWOT, Excalidraw, Mermaid
+  triggers: diagrams, visual diagram, state machine, sequence diagram, ERD, entity relationship, domain model, user flow, flowchart, BPMN, business process, customer journey, wireflow, screen flow, system architecture, C4, dependency graph, story map, gantt, roadmap timeline, kanban, kanban board, delivery board, JTBD forces, 2x2 matrix, Kano, SWOT, Excalidraw, Mermaid
   role: specialist
   scope: visualization
   output-format: diagram
@@ -33,7 +33,7 @@ Generates visual diagrams. It is a **rendering engine + composition knowledge** 
 - **Mermaid.js** (primary, Claude Code workflow) - rendered inline in markdown, embedded in live registers and Feature Cards. Claude reads Mermaid natively. Use for anything that must be read as a specification.
 - **Excalidraw** (secondary, human communication) - hand-drawn visual overviews for stakeholders. Use for high-level maps where the value is visual, not machine-readable.
 
-### The 17-type catalogue (slug → type)
+### The 18-type catalogue (slug → type)
 
 | Slug | Type | Primary tool | Phase | Ownership |
 |---|---|---|---|---|
@@ -53,15 +53,16 @@ Generates visual diagrams. It is a **rendering engine + composition knowledge** 
 | `c4` | C4 (Context + Container) | Mermaid | 4 | pm-diagrams |
 | **Planning / delivery** |
 | `dependency` | Dependency Graph | Mermaid | 5 | render for pm-features-list |
+| `kanban` | Kanban Board (lifecycle) | Mermaid | 6, 7 | render for pm-stripe |
 | `storymap` | User Story Map | Excalidraw | 5 | pm-diagrams |
-| `gantt` | Gantt / Timeline Roadmap | Mermaid | 3b, 5 | render for pm-product-roadmap |
+| `gantt` | Gantt / Timeline Roadmap | Mermaid | 3b, 5, 6 | render for pm-product-roadmap (dated) / pm-stripe (relative) |
 | **Strategic** |
 | `jtbd` | JTBD Four Forces | Excalidraw | 2 | pm-diagrams |
 | `matrix` | 2×2 Matrix (generic) | Excalidraw | various | pm-diagrams |
 | `kano` | Kano Model | Excalidraw | 5 | render for pm-features-list |
 | `swot` | SWOT | Excalidraw | 2 | render for pm-market-analysis |
 
-**"Render for" ownership (`dependency`, `gantt`, `kano`, `swot`):** the analysis is owned by another skill. This skill only *renders* it. Read the data from the owning artifact; if the analysis does not exist yet, **route to the owning skill** rather than inventing the analysis. Never fabricate a Kano classification, SWOT factors, dependency edges, or a dated plan.
+**"Render for" ownership (`dependency`, `kanban`, `gantt`, `kano`, `swot`):** the analysis is owned by another skill. This skill only *renders* it. Read the data from the owning artifact; if the analysis does not exist yet, **route to the owning skill** rather than inventing the analysis. Never fabricate a Kano classification, SWOT factors, dependency edges, a lifecycle status, or a dated plan. For `kanban`, read `status` from `feature_list.md` / Feature Cards - never advance or invent a status to fill a column (status = code reality, owned by `pm-stripe`).
 
 ---
 
@@ -82,6 +83,7 @@ Generates visual diagrams. It is a **rendering engine + composition knowledge** 
 | domain model exists, no ERD | `erd` |
 | Phase 2 + personas exist, no journey map | `journey` |
 | `feature_list.md` has dependencies, no dependency graph | `dependency` |
+| Phase 6/7, features carry lifecycle `status` across a stripe | `kanban` |
 | Phase 5, no story map | `storymap` |
 | Phase 6, a feature is in design | `sequence` |
 | JTBD analysis exists, no Four Forces | `jtbd` |

@@ -153,14 +153,15 @@ Roles: Developer, PM, Designer, Stakeholder.
 
 ## pm-diagrams
 
-**When to use:** when a visual diagram is needed to communicate architecture, user flow, domain model, or JTBD forces.
+**When to use:** when a visual diagram is needed to communicate architecture, user flow, domain model, delivery lifecycle, or a strategic framework.
 
-Generates Mermaid.js diagrams. Types supported:
-- User Flow diagrams
-- Architecture diagrams
-- JTBD Forces Diagram
-- ERD (Entity-Relationship Diagram)
+Renders in two modes - Mermaid.js (primary, embedded in markdown) and Excalidraw (visual overviews). An **18-type catalogue** across 6 categories, each with its own composition reference in `references/[slug].md`. Illustrative types:
+- User Flow, Architecture, ERD, Domain Model
 - Sequence diagrams (also generated within `pm-feature-design`)
+- Dependency graph, Kanban lifecycle board, Gantt (dated + relative)
+- JTBD Forces, Kano, SWOT, 2×2 matrix
+
+Full catalogue and slugs: [pm-diagrams](../phase-6-build/pm-diagrams.md).
 
 **Agent mode:** `synthesis`.
 

@@ -11,6 +11,7 @@ lovable-prompt-bible
 framework-methodology-no-git/
 # Internal framework development ideas - not published
 BACKLOG.md
+backlog/
 # macOS junk
 .DS_Store
 # Local-only blocklist of real client/project names for the validate.py
