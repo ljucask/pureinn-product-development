@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.37.1] - 2026-07-29
+
+### pm-stripe bug fix - Delivery Plan companion page (delivery_plan.html) offer was never wired into the main Step 0 render flow, so the visualization question never fired - not even on projects created after v5.36.0. Fixed: state.json's delivery_html is now checked on every render (including steady-state NOW, not just plan birth), so any project hitting this gap gets asked on its next /pm-stripe run regardless of when delivery_plan.md was first created
+
+---
+
+
 ## [5.37.0] - 2026-07-29
 
 ### Artifact language localization (universal standard, phased rollout) - new per-project artifact_language setting asked once at /pureinn STEP 6, stored in state.json, default English (zero risk to existing projects); translates prose (descriptions, rationale, rule text) while IDs/frontmatter keys/enum values/section headers/file names always stay English - the machine-readable contract other skills grep/parse literally. First wave: pm-prd, pm-feature-card, pm-business-rules-library carry the inline Artifact language block; remaining ~47 skills tracked as a follow-up backlog item, rolled out incrementally rather than swept blindly

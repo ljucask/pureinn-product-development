@@ -5,7 +5,7 @@ license: MIT
 metadata:
   agent-mode: never
   author: https://github.com/ljucask
-  version: "3.4.0"
+  version: "3.4.1"
   domain: product-management
   triggers: stripe, delivery stripe, JIT cycle, feature design, build feature, impact analysis, security review, delivery plan, build order, sequence, parallel, Phase 6, Phase 7, next feature, kanban, timeline, delivery visualization, rebuild plan, WIP limit, delivery_plan.html, interactive delivery plan, click-for-detail
   role: orchestrator
@@ -134,7 +134,14 @@ DELIVERY PLAN - [Product Name]        recomputed [date] · [N] shipped / [M] rem
 
 **FULL render** additionally prints each stripe's full ordered queue, the wave grouping (`Wave 1: A · B · C`), and the cross-stripe sync points, plus a Mermaid swimlane (stripe = lane, `→` = dependency). See the computation section for the exact shape.
 
-After rendering, **materialize** `delivery_plan.md` to the repo root and **write `plan_order`/`wave` back** (see materialization below). Then use AskUserQuestion tool based on what's detected:
+After rendering, **materialize** `delivery_plan.md` to the repo root and **write `plan_order`/`wave` back** (see materialization below).
+
+**Check `state.json` for `delivery_html` before moving on - this key is easy to miss on a project whose `state.json` predates this capability.** Three cases:
+- **Key absent (never asked - true for every project created before this capability shipped, and for anyone who hit this gap before it was fixed):** ask the visualization question now (see "Delivery Plan companion page" below), even on a steady-state NOW render, even if `delivery_plan.md` already existed before this session. Do not wait for a FULL/plan-birth render to ask - a project can go many NOW renders without ever hitting one.
+- **`delivery_html: true`:** regenerate `delivery_plan.html` this run too (same discipline as `delivery_plan.md` - always overwritten, never conditionally skipped).
+- **`delivery_html: false`:** skip silently, don't re-ask.
+
+Then use AskUserQuestion tool based on what's detected:
 
 **If one clear action is obvious** (e.g., one feature at 3_Ready_to_Build): use AskUserQuestion tool with:
 - Question: "What do you want to do?"
@@ -635,7 +642,7 @@ When multiple stripes run in parallel, register updates can cause merge conflict
 - [ ] FULL render marks waves whose features have no `mutex_tags` yet as `⚠ projected parallelism` - data-driven per wave (empty tags), never "greenfield marks / rebuild skips"
 - [ ] Plan-birth WIP question asked on Rebuild first render before occupancy; answer written to `active_feature` (real WIP vs code-state artifact resolved once)
 - [ ] Rebuild FULL render offers the Evidence/"exists in code" walkthrough column when used for team onboarding
-- [ ] Visualization choice asked via AskUserQuestion (HTML companion Recommended / static Mermaid / none), persisted to `delivery_html`, never re-asked once set
+- [ ] `state.json` checked for `delivery_html` **every render, including steady-state NOW** (not just plan birth) - key absent → ask via AskUserQuestion now, regardless of whether `delivery_plan.md` predates this capability; persisted, never re-asked once set
 - [ ] If HTML companion enabled: `references/delivery-plan-companion.html`'s `<style>`/`<script>` copied verbatim, only `<main>` + `FEATS` regenerated; critical path/waves reuse the same computation as the text render; never hand-edited
 - [ ] If static Mermaid chosen instead: granular multi-select per view (Kanban/Timeline/Dependency/Kano) with the state-based "most suitable now" recommendation (Rebuild→Kanban, greenfield→Timeline)
 
