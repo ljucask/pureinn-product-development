@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.36.0] - 2026-07-29
+
+### pm-stripe Rebuild-hardening + coverage gaps + interactive delivery-plan companion - occupancy now reads active_feature (schedule axis) before status so Rebuild code-state statuses no longer falsely lock lanes; two-axes rule (status = code reality, plan order = schedule) removes the need for a new lifecycle state; phase added to the sort (gates order); one-time Rebuild plan-birth WIP question; per-stripe WIP-limit warning; contention marker made data-driven per wave, with pm-reverse-extract populating mutex_tags in reconciled mode too; Step 1D gains a component-test-infra check, auto-logs conscious skips to the Open Questions Register, and a fix-inline-vs-report policy for review skills; new delivery_plan.html interactive companion (collapsible Kanban lanes, relative Timeline, wave-column Dependency graph, Kano distribution, click-for-detail) generated every run from a fixed CSS/JS reference template - copied byte-for-byte, never re-authored - with static Mermaid as a lighter fallback
+
+---
+
+
 ## [5.35.0] - 2026-07-29
 
 ### pm-diagrams 18th type + delivery-render fixes - new kanban lifecycle-board type (Mermaid native, one column per status, one board per stripe, owned by pm-stripe); gantt gains a relative-duration mode (S/M/L estimates, synthetic day-0, sanctioned anti-pattern carve-out) for delivery-plan timelines without faked dates; dependency makes critical-path highlighting a required step (dependency-edges only, never lane-serialized) and adds wave-column layout above ~10 nodes; catalogue 17 to 18 across SKILL/docs/README/guide; backlog/ gitignored as internal

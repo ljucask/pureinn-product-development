@@ -5,7 +5,7 @@ license: MIT
 metadata:
   agent-mode: synthesis
   author: https://github.com/ljucask
-  version: "2.2.0"
+  version: "2.3.0"
   domain: product-management
   triggers: reverse extract, existing product, feature inventory, migration path, feature implementation onboarding, sync Notion, dependencies, mutex tags
   role: specialist
@@ -415,7 +415,7 @@ content:
 
 Fill from evidence/derivation: `Layer` (from code - FE routes/components → Frontend, controllers/services → Backend, jobs/cron → System), `Has Subtasks` (true if the card has any subtasks), `Dev Stripe`, `Dependencies` (from Step 2d - user-stated + confirmed code-evidence candidates only, never an unconfirmed candidate). Propose with reasoning (confirm via AskUserQuestion): `Phase`, `KANO Category` (a shipped feature is usually Must-be), `V×C Quadrant`, `Priority`. Leave blank only: `Feature Card URL` - filled later by pm-feature-design. Never leave Layer / Description / Has Subtasks blank.
 
-**`mutex_tags` from real code (rebuild advantage).** Because the code exists, extract the shared modules/classes/files each still-open feature (`1_Backlog` / `4_In_Build`) touches directly from the codebase - more accurate than a greenfield JIT guess. This gives the first delivery plan (pm-stripe) an accurate code-contention dimension immediately. Set them on the same shared surfaces the code shows the feature modifying (services, schemas, shared components, middleware). Shipped features need no `mutex_tags` (they don't get scheduled). Format: list of `"ModulePath"` or `{tag, reason}`.
+**`mutex_tags` from real code (rebuild advantage) - required in BOTH standalone and reconciled mode.** Because the code exists, extract the shared modules/classes/files each still-open feature (`1_Backlog` / `4_In_Build`) touches directly from the codebase - more accurate than a greenfield JIT guess. This gives the first delivery plan (pm-stripe) an accurate code-contention dimension immediately. Set them on the same shared surfaces the code shows the feature modifying (services, schemas, shared components, middleware). Shipped features need no `mutex_tags` (they don't get scheduled). Format: list of `"ModulePath"` or `{tag, reason}`. **When `pm-reconcile features` delegates feature carding to this skill (reconciled mode), this step runs too** - do not skip tagging just because reconcile drove the extraction. A reconcile-based rebuild that lands with empty `mutex_tags` on every card gives pm-stripe a contention dimension as blind as greenfield (it will honestly mark those waves `⚠ projected parallelism`), losing the whole rebuild advantage. If the code genuinely doesn't reveal a shared surface for a feature, leave its tags empty deliberately - don't guess a wrong tag (a wrong tag creates a false block).
 
 
 ---

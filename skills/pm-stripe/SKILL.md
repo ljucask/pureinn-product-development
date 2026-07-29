@@ -5,9 +5,9 @@ license: MIT
 metadata:
   agent-mode: never
   author: https://github.com/ljucask
-  version: "3.2.1"
+  version: "3.4.0"
   domain: product-management
-  triggers: stripe, delivery stripe, JIT cycle, feature design, build feature, impact analysis, security review, delivery plan, build order, sequence, parallel, Phase 6, Phase 7, next feature
+  triggers: stripe, delivery stripe, JIT cycle, feature design, build feature, impact analysis, security review, delivery plan, build order, sequence, parallel, Phase 6, Phase 7, next feature, kanban, timeline, delivery visualization, rebuild plan, WIP limit, delivery_plan.html, interactive delivery plan, click-for-detail
   role: orchestrator
   scope: delivery
   output-format: document
@@ -45,6 +45,12 @@ pm-stripe reads the current state of all active stripes, detects where each acti
 | `4_In_Build` | Build skills actively working on this feature | pm-stripe |
 | `5_In_Review` | Build complete, code review in progress | pm-stripe |
 | `6_Shipped` | Complete - code reviewed, Section 4 filled, Feature Card immutable | pm-stripe |
+
+**Two independent axes - never conflate them (critical for Rebuild).** `status` and build order are two separate things:
+- **`status` = code reality.** What the code actually is right now (nothing built / partially built / shipped). Owned by whoever observed the code: `pm-stripe` in greenfield (it moves the status forward), `pm-reverse-extract`/`pm-reconcile` in a Rebuild (they set it from the codebase).
+- **Plan order (`plan_order`/`wave` + `active_feature`) = the schedule.** What we work on next and who is on which lane. Owned by the Delivery Plan computation + the human picking up work.
+
+**Never reset `status` to serve planning, and never infer active work purely from `status`.** A Rebuild legitimately lands features at `4_In_Build` meaning "code is half-built, nobody is touching it" - that is a true statement about code reality, not a claim that work is in progress. Occupancy comes from `active_feature` (the schedule axis), not from `status` (the reality axis). This is the cheapest correct model - no new lifecycle state is needed; the inherited-partial-build case is just `status: 4_In_Build` (or `1_Backlog` for doc-only) with an empty `active_feature`.
 
 **JIT cycle (per feature, per stripe):**
 1. `1_Backlog` → run `/pm-feature-design FEAT-[ID]` → `2_Spec_Done`
@@ -276,8 +282,9 @@ Build skills finished. **Before transitioning, run the Build Skills Coverage che
 A Solo Builder has the right to knowingly skip a skill - but the skip must be visible, not silent. Before setting `5_In_Review`, reconcile what *should* have run against what *did* run.
 
 1. Compute what the triggers required for this feature (from `layer`, `kano`, `priority`, `security_review`).
-2. Use the AskUserQuestion tool (multiSelect: true) - "Which build skills actually ran for FEAT-[ID]?" - list fullstack-guardian + every conditional skill whose trigger was met.
-3. Show the reconciliation:
+2. **Test-infra capability check (not just "did test-master run").** Routing test-master is not the same as the project being *able* to run the test type the feature needs. When `layer` includes `frontend`, the feature needs component tests (jsdom/happy-dom + a testing-library). Detect whether that infra exists: scan `package.json` for `@testing-library/*` and the test config for `jsdom`/`happy-dom`. If a frontend feature has no component-test infra, that is its own coverage row - `component test infra: missing` - NOT silently folded into "test-master ran" (test-master in a Node-only vitest setup writes logic tests and leaves the UI layer untested, or has to add a dependency on its own - a decision that must be explicit).
+3. Use the AskUserQuestion tool (multiSelect: true) - "Which build skills actually ran for FEAT-[ID]?" - list fullstack-guardian + every conditional skill whose trigger was met.
+4. Show the reconciliation:
 
 ```
 Build Skills Coverage - FEAT-[ID]
@@ -286,11 +293,13 @@ Build Skills Coverage - FEAT-[ID]
   test-master              [✓ / ✗]   (P1 → required)
   impeccable-craft         [✓ / ✗]   (layer: frontend)
   secure-code-guardian     [✓ / — ]  (security_review: build)
+  component test infra     [present / MISSING]   (layer: frontend)
 
 ⚠ Skipped despite trigger: [list, or "none"]
 ```
 
-4. If anything required was skipped: surface it plainly and ask whether to run it now or proceed knowingly. **Do not block** - record the conscious skip so it is on record, not lost.
+5. If anything required was skipped OR component-test infra is missing on a frontend feature: surface it plainly and use the AskUserQuestion tool - **run/add it now** / **consciously skip** / **defer to Open Questions**. **Do not block.**
+6. **A conscious skip or deferral is auto-logged, never left in the conversation.** When the user chooses "consciously skip" or "defer", append an entry to `/domain/open_questions.md` (Open Questions Register) with an `OQ-[DOMAIN]-NN` id, the feature, what was skipped, and why - so the decision survives past this session instead of being lost when the chat ends. "Record the conscious skip so it is on record" means write it to the register, not just print it. (Missing component-test infra is a classic deferral: card it as an OQ so the gap is tracked, not forgotten.)
 
 Update Feature Card frontmatter `status: 5_In_Review`.
 
@@ -308,6 +317,8 @@ Update Feature Card frontmatter `status: 5_In_Review`.
 | `/security-reviewer FEAT-[ID]` | `security_review` is `review` or `both` - a dedicated, deeper SAST/audit pass with a severity-rated report. Narrower and deeper than code-reviewer's broad OWASP dimension; run it when the feature touches a security area (see Security Review Trigger Criteria below). |
 
 **Context-briefing** applies here too: code-reviewer and security-reviewer are generic - pass them the domain register slices and the repo's existing security patterns, not just the FEAT-ID, so they review against this repo's proven conventions rather than a generic checklist.
+
+**Fix policy - inline vs report-only (so it isn't re-decided by vibe every time).** A review skill (code-reviewer, security-reviewer, impeccable-audit) **may fix trivial, unambiguous findings inline** - a clear bug, a wrong constant, a missing touch-target, a lint-level issue - and note in its summary what it fixed. It **must report and wait** on anything larger: a behavioral change, a change touching a business rule / guard condition / security primitive, anything affecting an interface other features depend on, or anything where the "right" fix is a judgment call. When in doubt, report - don't fix. This keeps small findings from bouncing through a full review cycle while ensuring consequential changes stay a human decision, not a reviewer's silent edit.
 
 ```
 When code review passes, run /pm-stripe and mark review complete.
@@ -464,9 +475,9 @@ Answers the two questions no existing artifact did: **"what do we build next?"**
 ```
 1. PRUNE: drop status = 6_Shipped. For any remaining feature depending on a shipped one, that edge is satisfied.
 2. CYCLE CHECK: DFS for a cycle in the dependency DAG. If found → STOP, report the cycle (a broken chain needs a human; you cannot schedule it). Dangling dep (FEAT-ID not in list) → warn, treat as data error.
-3. OCCUPANCY: mark each stripe holding a feature in 4_In_Build OR 5_In_Review as Occupied (both consume the lane - rework re-locks). Collect their mutex_tags into Active_Mutex_Set.
+3. OCCUPANCY: a stripe is Occupied when someone is **actively** working it. Read `state.json` per-stripe `active_feature` FIRST - that is the authoritative occupancy signal. Only when `active_feature` is absent (never set) fall back to status = `4_In_Build`/`5_In_Review`. **Why the order matters:** `pm-stripe` moves statuses in greenfield, so status is a fair proxy there - but in a Rebuild, `pm-reverse-extract`/`pm-reconcile` assign `4_In_Build` from *code state* ("partially built"), not from active work. Reading status-first there falsely locks nearly every lane and the scheduler surfaces only some stray low-priority feature. So: `active_feature` set → that stripe Occupied by that feature; `active_feature` empty on a Rebuild first render → treat the lane as free unless the plan-birth question (below) says otherwise. Collect the Occupied features' mutex_tags into Active_Mutex_Set. (Both `4_In_Build` and `5_In_Review` consume the lane when they ARE the active feature - rework re-locks.)
 4. AVAILABLE POOL: all features with no unshipped dependency (in-degree 0 over the pruned graph).
-5. SORT the pool by: (1) override present, (2) priority P1>P2>P3, (3) FEAT-ID (deterministic). KANO and VxC are NOT used - they decided phase upstream, not build order.
+5. SORT the pool by: (1) override present, (2) phase (earlier phase first - Phase 0/MVP before Phase 1 before Phase 2), (3) priority P1>P2>P3, (4) FEAT-ID (deterministic). Phase GATES order: a later-phase feature must never take a lane ahead of a current-phase feature in the same wave (visibly wrong on an MVP push). KANO and VxC are NOT used - they decided *phase* upstream (which is now the top content gate), not the intra-phase build order.
 6. ASSIGN, iterating the sorted pool:
      - override present → BREAK-GLASS: mark Ready, preempt capacity/contention (never a hard dep). Loud rationale.
      - stripe Occupied → Blocked (Capacity)
@@ -475,6 +486,7 @@ Answers the two questions no existing artifact did: **"what do we build next?"**
 7. CLASSIFY the rest: in-degree > 0 → Blocked (Dependency).
 8. WAVES: wave number = longest dependency path to the feature (topological level). Same wave = no dependency between them = candidate-parallel (still subject to capacity/contention).
 9. plan_order = deterministic flatten (wave, then stripe, then intra-stripe position). Write plan_order + wave back.
+10. WIP-LIMIT CHECK: for each stripe, count features that are Occupied/active (by `active_feature` first, else `4_In_Build`/`5_In_Review`). The rule is one per stripe. If a stripe shows >1 active - common on a Rebuild first render where many features carry `4_In_Build` from code state - emit a warning row (don't silently work around it): `⚠ [stripe]: N features active - WIP limit is 1 (resolve via the plan-birth question or set active_feature).`
 ```
 
 ### Rationale grammar (emit one line per feature - explain STATE, not a static index)
@@ -503,6 +515,8 @@ A feature with `override: {reason}` preempts capacity, priority ordering, and co
 - **NOW** (default): Buildable-now + Blocked-with-rationale (see Step 0). The daily driver.
 - **FULL** (plan birth, pre-dev walkthrough, on request): additionally each stripe's full ordered queue, the wave grouping, cross-stripe sync points, and a Mermaid swimlane (`subgraph` per stripe, arrows for dependencies). Mostly-shipped rebuild plans collapse the Shipped block and show the forward frontier.
 
+**Rebuild FULL render - onboarding walkthrough mode.** On a Rebuild the most common real use of the FULL plan is walking a new team through a half-built product ("this is what we have, this is the scope, this is the plan"), not "what's next". For that, add a **"what already exists in code"** column per feature, pulled from the Feature Card's Evidence + Known gaps (set by `pm-reverse-extract`/`pm-reconcile`). That turns the schedule into a walkthrough agenda - the team reads row by row and decides per feature: **code review + tests** (exists, looks done) / **finish coding** (partial) / **from scratch** (stub only). Optionally record that decision in a Feature Card `entry_mode` field (`review` / `continue` / `from_scratch`) filled during the walkthrough, so the next render shows how each inherited-partial feature will be approached.
+
 **Contention-confidence marker (FULL render only).** `mutex_tags` are populated per feature at JIT design (`pm-feature-design`), so in a greenfield plan every feature still at `1_Backlog` has none yet - the projected parallelism of far waves is **optimistic** (two features shown side by side may in fact collide on shared code once designed). This never affects the *Buildable now* decision (a feature passes the spec gate, and therefore has `mutex_tags`, before it can enter build) - only the forward projection. Do not guess tags to compensate; a wrong tag creates a false block, which is worse. Instead, mark the boundary honestly: for any wave whose features have no `mutex_tags` yet, append the marker.
 
 ```
@@ -511,13 +525,22 @@ Wave 4:  FEAT-A · FEAT-B · FEAT-C
          ⚠ projected parallelism - contention unknown until JIT design
 ```
 
-Rebuild plans usually skip this marker: `mutex_tags` came from real code at extraction, so their contention dimension is accurate from the first render.
+**The marker is data-driven, never playbook-driven.** Apply the exact same rule to every plan regardless of greenfield vs Rebuild: a wave gets the marker **iff its features actually have empty `mutex_tags`** - never "greenfield always marks / Rebuild always skips". The Rebuild advantage is real only when extraction populated the tags: `pm-reverse-extract` extracts them from real code, but `pm-reconcile` historically did **not**, so a reconcile-based Rebuild can land with empty `mutex_tags` on every card and its far-wave parallelism is exactly as unproven as greenfield's. Do not assume a Rebuild's contention dimension is trustworthy - check the tags. If they're empty, mark the wave honestly; if they're populated (real-code extraction), no marker. (Source-side fix: `pm-reverse-extract` populates `mutex_tags` in both standalone and reconciled mode - see its Step; when reconcile delegates feature carding there, tags should come with it.)
 
 ### Plan birth (first render)
 
 The plan is born the first time `/pm-stripe` runs once `feature_list.md` carries statuses:
 - **Greenfield / Feature Implementation:** after `pm-mvp-scope` (all `1_Backlog`) → FULL render is the whole forward plan.
-- **Rebuild:** after `pm-reverse-extract` / `pm-reconcile features` (mixed statuses from code) → FULL render is mostly-Shipped history + in-flight lanes + forward frontier. `mutex_tags` are extracted from real code here, so a rebuild's first plan already has an accurate contention dimension.
+- **Rebuild:** after `pm-reverse-extract` / `pm-reconcile features` (mixed statuses from code) → FULL render is Shipped history + inherited-partial lanes + forward frontier. A Rebuild does **not** necessarily land mostly-Shipped: if reconcile tightened the definition of done (added the client layer, back-filled tests) it can land with little Shipped and many features at `4_In_Build` meaning "code half-built, nobody working" (code reality, not active WIP - see the two-axes rule and the plan-birth question). `mutex_tags` are accurate only if extraction populated them (`pm-reverse-extract` does; a reconcile that skipped tagging does not) - the contention marker checks per wave, it doesn't assume.
+
+**Plan-birth WIP question (Rebuild first render ONLY, before computing occupancy).** On the very first render after a Rebuild extract/reconcile, the `4_In_Build`/`5_In_Review` statuses came from code state, not from anyone actively working. Before computing occupancy, resolve real WIP vs artifact once - use the AskUserQuestion tool:
+
+> "Of the features at `4_In_Build`/`5_In_Review`, how many is someone actually working on right now?"
+> - A: **None - these came from code state, not active work** (Recommended for a fresh Rebuild) → set every `active_feature` empty; all lanes free.
+> - B: **I'll name the specific FEAT-IDs** → set `active_feature` on exactly those stripes; those lanes Occupied, the rest free.
+> - C: **All of them - it's real in-progress work** → keep status-as-occupancy for this render.
+
+Write the answer to each stripe's `active_feature` in `state.json` so subsequent renders never re-ask (occupancy then reads `active_feature` directly, per algorithm step 3). This is the one-time bridge from "code reality" statuses to the "schedule" axis.
 
 ### Materialization + sync direction
 
@@ -530,6 +553,40 @@ After every compute: write `delivery_plan.md` to the repo root (so AI coding age
 | `plan_order`, `wave` | the computation | compute → md + Notion (never hand-edit; Notion sorts by `plan_order`, groups by `stripe`) |
 
 **To change the build order:** never touch `delivery_plan.md` or `plan_order`. Edit the source - `priority`, a soft `dependency {id, reason}`, or `override` - then run `/pm-stripe`. The plan recomputes and every change carries its reason into the rationale.
+
+### Delivery Plan companion page (`delivery_plan.html`)
+
+Beyond the text render and `delivery_plan.md`, pm-stripe can materialize a **self-contained interactive HTML companion** - one file, zero build step, zero external dependency (no CDN, no framework) - that visualizes the same computed schedule as a real, usable page: collapsible per-stripe Kanban lanes, a relative Timeline, a wave-column Dependency graph, and a Kano distribution, with click-for-detail on every card/bar/node. This originated as a hand-built prototype during a live session on a real project and earned a permanent place in the framework because it's genuinely useful - not a demo - regenerates cleanly from data pm-stripe already computes, and stays one flat file.
+
+**Read `references/delivery-plan-companion.html` before generating - it is the fixed template.** Its `<style>` block (Pureinn design tokens) and `<script>` block (collapse/expand + click-for-detail) are copied **byte-for-byte**, never re-authored per run - they are the engine, not something to reinvent. Only the `<main>` body content and the `FEATS` data object are regenerated from current state. The reference's own leading comment block is the full generation contract (per-region source, the timeline day-math, the row-packing algorithm for overlapping bars) - follow it exactly, do not improvise a different layout.
+
+**Offer it once per project, using the AskUserQuestion tool (optional, never forced):**
+
+> "How do you want to see the delivery plan visually?"
+> - Option A: "Interactive HTML companion - Kanban + Timeline + Dependency graph + Kano together, one file, refreshed every run (Recommended)"
+> - Option B: "Static Mermaid instead - pick individual views"
+> - Option C: "No visual output - text + .md only"
+
+Persist the choice to `state.json` (`delivery_html: true/false`); don't re-ask once set.
+
+**If Option B (static Mermaid) is chosen**, the granular per-type choice from the Mermaid views still applies - use the AskUserQuestion tool (`multiSelect: true`) - "Which view(s) do you want?":
+- ☑ **Kanban by lane** (pre-checked) - `/pm-diagrams kanban`.
+- ☑ **Timeline (relative Gantt)** (pre-checked) - `/pm-diagrams gantt` relative mode.
+- ☐ **Dependency graph** - `/pm-diagrams dependency`.
+- ☐ **Kano distribution** - `/pm-diagrams kano`.
+
+Plus a plain-language "most suitable right now" pick computed from state: a Rebuild / mixed-state plan → **Kanban** ("you need 'what do we have' before 'what's next'"); a greenfield plan-birth → **Timeline**. This per-view granularity does not apply to Option A - the HTML companion bundles all four sections together (each collapsed by default, so nothing forces you to look at all of them at once).
+
+**Generation summary (full detail lives in the reference file's comment block):**
+- **Stats + Kanban buckets:** `4_In_Build`→part_built, `5_In_Review`→needs_review, `6_Shipped`→shipped, everything else→not_started. Lanes = stripes, collapsed by default.
+- **Timeline:** excludes shipped features (nothing left to schedule for them); start day = earliest-start over unshipped dependencies (same day-0/estimate model as the relative Gantt); bars in the same lane that would overlap horizontally are packed into stacked rows, never drawn on top of each other.
+- **Wave columns:** reuse the Delivery Plan algorithm's own WAVES step - never recompute independently.
+- **Critical path = the one computation already used everywhere else** - dependency edges only, never lane-serialized (a capacity/mutex constraint is not a dependency). Timeline and Dependency graph highlight the identical chain.
+- **Kano:** render the `kano` field stamped by `pm-features-list`. Never reclassify.
+- **One semantic color mapping, fixed by the reference's CSS tokens** - coral = critical path, amber = part-built, blue = needs review, grey = not started, green = shipped. Never invent a per-section palette.
+- **`FEATS` object:** title, short description, `layer`, `priority`, `stripe` per feature - powers the click-for-detail popover.
+- **Never hand-edit `delivery_plan.html`.** Fully derived, like `plan_order`/`wave` - regenerated and overwritten every run where the companion is enabled. Materialize to the repo root, next to `delivery_plan.md`.
+- **Not pushed to Notion** - interactive JS doesn't survive there. It lives in the repo; `delivery_plan.md` can link to it.
 
 ---
 
@@ -560,19 +617,27 @@ When multiple stripes run in parallel, register updates can cause merge conflict
 - [ ] Spec gate verified before 3_Ready_to_Build → 4_In_Build transition (Sections 1-3 present)
 - [ ] Build skills receive Feature Card FEAT-ID + domain register slices + repo pattern files (context-briefing), not just FEAT-ID
 - [ ] Conditional build/review skills resolved against triggers (layer, kano, priority, security_review) - not skipped by default
-- [ ] Build Skills Coverage check run before 4_In_Build → 5_In_Review (non-blocking; skipped-despite-trigger surfaced)
+- [ ] Build Skills Coverage check run before 4_In_Build → 5_In_Review (non-blocking; skipped-despite-trigger surfaced); frontend features checked for component-test infra (`@testing-library/*` + jsdom/happy-dom), `component test infra: MISSING` surfaced as its own row
+- [ ] Any conscious skip / deferral auto-logged to `/domain/open_questions.md` as an `OQ-` entry (not left in the conversation)
+- [ ] Review skills' fix policy honored: trivial/unambiguous findings may be fixed inline (noted in summary); behavioral / rule-touching / interface-affecting changes reported and left to a human
 - [ ] security_review value honored: build → secure-code-guardian, review → security-reviewer, both → both, none → neither
 - [ ] Section 4 complete before 6_Shipped is set
 
 **Delivery Plan:**
 - [ ] Computed as one RCPSP pass (not per-stripe-first); cycle check before scheduling
-- [ ] 4_In_Build AND 5_In_Review both occupy the lane (rework re-locks)
+- [ ] Occupancy read from `active_feature` first, status (`4_In_Build`/`5_In_Review`) only as fallback (Rebuild code-state statuses must not falsely lock lanes)
+- [ ] WIP-limit check emits `⚠ N features active - WIP limit is 1` per stripe with >1 active (never silently worked around)
 - [ ] Blocked features carry a rationale line (dependency / capacity / contention / yielded / break-glass) with `(Context: ...)` from annotated source
 - [ ] `override` preempts capacity/priority/contention but never a hard dependency
-- [ ] KANO/VxC NOT used in ordering (they decided phase upstream); tie-break = priority then FEAT-ID
+- [ ] Sort order = override → phase → priority → FEAT-ID (phase gates order; a later-phase feature never precedes a current-phase one in the same wave); KANO/VxC NOT used in ordering
 - [ ] `delivery_plan.md` materialized to repo root; `plan_order`/`wave` written back to feature_list + Notion, never hand-edited
 - [ ] FULL render at plan birth (first run after mvp-scope / rebuild extract-reconcile); NOW render in steady state
-- [ ] FULL render marks waves whose features have no `mutex_tags` yet as `⚠ projected parallelism` (never invent tags to fill the gap)
+- [ ] FULL render marks waves whose features have no `mutex_tags` yet as `⚠ projected parallelism` - data-driven per wave (empty tags), never "greenfield marks / rebuild skips"
+- [ ] Plan-birth WIP question asked on Rebuild first render before occupancy; answer written to `active_feature` (real WIP vs code-state artifact resolved once)
+- [ ] Rebuild FULL render offers the Evidence/"exists in code" walkthrough column when used for team onboarding
+- [ ] Visualization choice asked via AskUserQuestion (HTML companion Recommended / static Mermaid / none), persisted to `delivery_html`, never re-asked once set
+- [ ] If HTML companion enabled: `references/delivery-plan-companion.html`'s `<style>`/`<script>` copied verbatim, only `<main>` + `FEATS` regenerated; critical path/waves reuse the same computation as the text render; never hand-edited
+- [ ] If static Mermaid chosen instead: granular multi-select per view (Kanban/Timeline/Dependency/Kano) with the state-based "most suitable now" recommendation (Rebuild→Kanban, greenfield→Timeline)
 
 **Status transitions:**
 - [ ] Feature Card frontmatter `status:` updated at every transition
@@ -600,7 +665,10 @@ Feature status in Feature Card frontmatter:
 
 State update → `pureinn-workspace/[project-slug]/state.json`:
 - `current_stripes`: list of active stripe names (remove on closure)
-- Per stripe: `active_feature`, `queue` (ordered FEAT-ID list)
+- Per stripe: `active_feature` (the **occupancy authority** - who is actively on the lane; empty = lane free even if a feature sits at `4_In_Build` from code state), `queue` (ordered FEAT-ID list)
+- `delivery_html`: `true`/`false` - whether the interactive HTML companion (`delivery_plan.html`) is enabled (persisted so it isn't re-asked)
+
+Feature Card frontmatter (Rebuild walkthrough, optional): `entry_mode` (`review` / `continue` / `from_scratch`) - how an inherited-partial feature will be approached, set during the onboarding walkthrough.
 
 ---
 

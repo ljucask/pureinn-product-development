@@ -4,8 +4,8 @@
 
 **Phase:** 6-7 - JIT Delivery (session start point)  
 **Agent mode:** `never` - value is the live interactive session  
-**Version:** 3.2.1  
-**Triggers:** stripe, delivery stripe, JIT cycle, build feature, impact analysis, security review, delivery plan, build order, sequence, parallel, Phase 6, next feature
+**Version:** 3.4.0  
+**Triggers:** stripe, delivery stripe, JIT cycle, build feature, impact analysis, security review, delivery plan, build order, sequence, parallel, Phase 6, next feature, kanban, timeline, delivery visualization, rebuild plan, WIP limit, delivery_plan.html, interactive delivery plan, click-for-detail
 
 ---
 
@@ -37,15 +37,17 @@ Answers the two questions no earlier artifact did: **"what do we build next?"** 
 
 Formally a **Resource-Constrained Project Scheduling Problem**: one global dependency DAG, stripes are resources of capacity 1, shared code is a mutex. One list-scheduling pass; per-stripe order falls out of it (you cannot compute it per-stripe first - a cross-stripe dependency can dictate intra-stripe order).
 
-**What it evaluates, in order:** drop `6_Shipped`; check for dependency cycles (stop if found); mark stripes with a `4_In_Build` **or** `5_In_Review` feature as occupied (rework re-locks the lane); then for each dependency-ready feature: `override` (break-glass) → capacity → contention (`mutex_tags` overlap) → priority tie-break (P1>P2>P3, then FEAT-ID). **KANO and VxC are not used** - they decided phase upstream, not build order.
+**What it evaluates, in order:** drop `6_Shipped`; check for dependency cycles (stop if found); mark a stripe occupied when someone is **actively** working it - read `active_feature` first, fall back to `4_In_Build`/`5_In_Review` status only when `active_feature` is unset (rework re-locks the lane); then for each dependency-ready feature, sort `override` (break-glass) → **phase** (earlier phase gates order) → priority (P1>P2>P3) → FEAT-ID, and assign against capacity → contention (`mutex_tags` overlap). A per-stripe **WIP-limit warning** fires if more than one feature shows active. **KANO and VxC are not used** - they decided phase upstream, not build order.
+
+**Two independent axes (critical for Rebuild):** `status` = **code reality** (what the code is), plan order + `active_feature` = **the schedule** (what we work on next). Never reset `status` for planning, never infer active work purely from `status`. A Rebuild legitimately lands features at `4_In_Build` meaning "code half-built, nobody touching it" - occupancy comes from `active_feature`, not from that status. This is why no new lifecycle state is needed for inherited-partial builds.
 
 **Two renders, one computation:**
 - **NOW** (default, daily): buildable-now + blocked-with-reason.
 - **FULL** (plan birth, pre-dev walkthrough): every stripe's ordered queue, parallel waves, cross-stripe sync points, Mermaid swimlane.
 
-**Contention confidence (FULL only):** `mutex_tags` are set per feature at JIT design, so in a greenfield plan far waves have none yet and their projected parallelism is optimistic. Those waves are marked `⚠ projected parallelism - contention unknown until JIT design`. It never affects the *Buildable now* decision (a feature is JIT-designed before it can enter build). Tags are never guessed to fill the gap - a wrong tag creates a false block. Rebuild plans usually skip the marker (tags came from real code).
+**Contention confidence (FULL only):** the `⚠ projected parallelism` marker is **data-driven, not playbook-driven** - a wave gets it iff its features actually have empty `mutex_tags`, applied identically to greenfield and Rebuild. In greenfield, far waves at `1_Backlog` have no tags yet (set at JIT design), so they're marked. A Rebuild is accurate **only if extraction populated the tags** (`pm-reverse-extract` does; a `pm-reconcile` that skipped tagging does not) - so a reconcile-based rebuild can be as contention-blind as greenfield and its waves get the marker too. It never affects the *Buildable now* decision (a feature is JIT-designed before it can enter build). Tags are never guessed to fill the gap - a wrong tag creates a false block.
 
-**Plan birth:** the first `/pm-stripe` after `pm-mvp-scope` (greenfield - all backlog) or after `pm-reverse-extract`/`pm-reconcile` (rebuild - mixed statuses + `mutex_tags` from real code).
+**Plan birth:** the first `/pm-stripe` after `pm-mvp-scope` (greenfield - all backlog) or after `pm-reverse-extract`/`pm-reconcile` (rebuild - mixed statuses from code). On a **Rebuild first render**, before computing occupancy, pm-stripe asks a one-time **WIP question** - "of the features at `4_In_Build`/`5_In_Review`, how many is someone actually working on right now?" (none = code-state artifact, all lanes free / name specific FEAT-IDs / all real WIP). The answer is written to each stripe's `active_feature` so it's never re-asked - the bridge from code-reality statuses to the schedule axis.
 
 **Explainability:** every feature carries a rationale line - `Ready`, `Blocked by Dependency/Capacity/Contention`, `Yielded`, or `🔴 BREAK-GLASS`. Mechanical reasons are auto-derived; the `(Context: ...)` comes from annotated `{id, reason}` / `{tag, reason}` in the source. No separate justification document.
 
@@ -59,6 +61,8 @@ Formally a **Resource-Constrained Project Scheduling Problem**: one global depen
 | `status` | Notion / team | Notion → md |
 | `priority`, `dependencies`, `mutex_tags`, `override` | source judgment | edit in one place, `/pm-stripe` reconciles |
 | `plan_order`, `wave` | the computation | compute → md + Notion (never hand-edit) |
+
+**Interactive HTML companion (`delivery_plan.html`):** beyond the text render, pm-stripe can materialize a self-contained interactive page - zero build step, zero external dependency - visualizing the same schedule as collapsible per-stripe Kanban lanes, a relative Timeline, a wave-column Dependency graph, and a Kano distribution, with click-for-detail on every card/bar/node. It originated as a hand-built prototype on a real project and earned a permanent place in the framework: it regenerates cleanly from data pm-stripe already computes and stays one flat file. Offered once via AskUserQuestion (Recommended); a lighter static-Mermaid alternative remains available - if chosen, a further multi-select picks which view(s) (`/pm-diagrams kanban`/`gantt`/`dependency`/`kano`, embedded in markdown), with a state-based "most useful right now" pick (Rebuild → Kanban, greenfield → Timeline). The CSS design tokens and JS interaction (collapse/expand, click-for-detail) are copied byte-for-byte from `references/delivery-plan-companion.html` every run - never re-authored; only the body content and feature data regenerate. The critical path is computed once - longest chain by dependency edges only, never lane-serialized - and shared across every view and with the text render, using one fixed color mapping (coral = critical path, amber = part-built, blue = needs review, grey = not started, green = shipped). On a Rebuild the FULL render also offers an "exists in code" walkthrough column (from each card's Evidence) so a new team can go feature by feature: code-review / finish / from-scratch. The choice persists in `state.json` (`delivery_html`); the HTML companion is not pushed to Notion (interactive JS doesn't survive there) - it lives in the repo, linked from `delivery_plan.md`.
 
 ---
 
@@ -120,7 +124,9 @@ pm-stripe routes build skills (Step 1C, `3_Ready_to_Build → 4_In_Build`) and r
 | Build (1C) | `fullstack-guardian` | `test-master` (P1/Must-be → required), `impeccable-craft` (`layer: frontend`), `playwright-expert` (E2E path), `secure-code-guardian` (`security_review: build`/`both`) |
 | Review (1D) | `code-reviewer` | `impeccable-audit` (`layer: frontend`), `security-reviewer` (`security_review: review`/`both`) |
 
-**Build Skills Coverage check** (before `4_In_Build → 5_In_Review`): pm-stripe reconciles what the triggers required against what actually ran, and surfaces anything skipped-despite-trigger. It is a **visibility check, not a blocking gate** - a Solo Builder may knowingly skip, but the skip is on record rather than silent (which is how `test-master` used to get dropped unnoticed).
+**Build Skills Coverage check** (before `4_In_Build → 5_In_Review`): pm-stripe reconciles what the triggers required against what actually ran, and surfaces anything skipped-despite-trigger. It is a **visibility check, not a blocking gate** - a Solo Builder may knowingly skip, but the skip is on record rather than silent (which is how `test-master` used to get dropped unnoticed). Two additions: (1) a **test-infra capability check** - a frontend feature needs component-test infra (`@testing-library/*` + jsdom/happy-dom); if it's missing, that surfaces as its own row (`component test infra: MISSING`), not silently folded into "test-master ran". (2) Any **conscious skip or deferral is auto-logged** to the Open Questions Register (`/domain/open_questions.md`) as an `OQ-` entry - the decision survives past the session instead of being lost in the chat.
+
+**Review fix policy:** a review skill (code-reviewer, security-reviewer, impeccable-audit) **may fix trivial, unambiguous findings inline** (a clear bug, a wrong constant, a missing touch-target) and note it in its summary; it **must report and wait** on anything larger - behavioral changes, anything touching a business rule / guard / security primitive, or anything affecting an interface other features depend on. When in doubt, report. This keeps the boundary a rule, not a per-run judgment.
 
 **Context-briefing:** the build/review specialists are generic marketplace skills. pm-stripe passes them the relevant `domain/entities.md` + `domain/business_rules.md` slices and the repo's existing pattern files (e.g. `src/lib/auth.ts`), not just the FEAT-ID - so they respect proven repo conventions instead of inventing generic ones.
 
