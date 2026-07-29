@@ -4,8 +4,8 @@
 
 **Phase:** 6 - JIT Delivery (and Phase 5 stub creation)  
 **Agent mode:** `synthesis` - runs fully autonomously  
-**Version:** 2.3.0  
-**Triggers:** feature card, FEAT-ID, feature spec, feature lifecycle, cards
+**Version:** 2.4.0  
+**Triggers:** feature card, FEAT-ID, feature spec, feature lifecycle, cards, artifact language, localization
 
 ---
 
@@ -86,6 +86,12 @@ A Feature Card has four sections with defined ownership:
 - Section 4: at least one commit link, at least one test file path
 - Section 4: feature flag OFF verification
 - Section 4: Code Inspection result with date
+
+---
+
+## Artifact language
+
+Checks `state.json` → `artifact_language` (set once at workspace setup, default English). If set to another language, the card's prose - feature description, acceptance criteria narrative, rationale in Sections 1-4 - is written in that language. `FEAT-ID`/`BR-ID`/`TBL-ID` references, frontmatter keys and enum values (`status:`, `layer:`, `priority:`...), section headers, and file names always stay English - other skills parse them literally.
 
 ---
 

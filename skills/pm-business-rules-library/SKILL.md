@@ -5,9 +5,9 @@ license: MIT
 metadata:
   agent-mode: decision
   author: https://github.com/ljucask
-  version: "2.1.0"
+  version: "2.2.0"
   domain: product-management
-  triggers: business rules, decision models, business rules library, BR-ID, rule catalog, Phase 4, Phase 5
+  triggers: business rules, decision models, business rules library, BR-ID, rule catalog, Phase 4, Phase 5, artifact language, localization
   role: specialist
   scope: specification
   output-format: document
@@ -24,6 +24,11 @@ Supports `--agent`: runs autonomously in a subagent, drafts the artifact from ex
 - **No flag** → interactive (default); if inputs are heavy, offer agent mode.
 - **`--agent`** → obey. First check inputs are complete. Anything missing: do NOT invent it - mark `[ASSUMED - what/why]` in the output and summary. Never hallucinate to fill a gap.
 - **Review required:** the artifact contains commitments - after drafting, require the user's review before finalizing; do not close decisions autonomously.
+
+## Artifact language
+Checks `state.json` → `artifact_language`. Default (unset or "English"): no change in behavior.
+- If set to a non-English language: write rule prose (rule text, rationale, decision table row descriptions) in that language.
+- Never translate: `BR-ID`/`TBL-ID`, frontmatter keys and enum values (`status: Draft`/`Final`), section headers, file names - these stay English always, regardless of the setting. This matters more here than elsewhere: `pm-reconcile`, `pm-stripe`'s security-review routing, and Impact Analysis all grep BR-IDs literally - a translated ID would silently break them.
 
 ---
 

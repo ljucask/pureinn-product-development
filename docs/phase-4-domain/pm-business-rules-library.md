@@ -4,8 +4,8 @@
 
 **Phase:** 4-5 (initial draft); enriched JIT in Phase 6  
 **Agent mode:** `decision` - drafts, then requires your review  
-**Version:** 2.1.0  
-**Triggers:** business rules, decision models, business rules library, BR-ID, rule catalog, Phase 4, Phase 5
+**Version:** 2.2.0  
+**Triggers:** business rules, decision models, business rules library, BR-ID, rule catalog, Phase 4, Phase 5, artifact language, localization
 
 ---
 
@@ -72,6 +72,12 @@ These helpers are typically triggered from `pm-feature-design` when a feature su
 ## Reconciled mode (Rebuild playbook)
 
 When `reconcile/reconciliation_report.md` exists, it is the authoritative input. Business rule values come from the reconciled docs, expressed against real code entities. Rules tied to an unresolved divergence (`DIV-{DOMAIN}-NN` in the report and in `domain/open_questions.md`) stay `Draft` with a link to the report row; only divergence-free rules go `Final`.
+
+---
+
+## Artifact language
+
+Checks `state.json` → `artifact_language` (set once at workspace setup, default English). If set to another language, rule prose - rule text, rationale, decision table row descriptions - is written in that language. `BR-ID`/`TBL-ID`, frontmatter keys and enum values (`status: Draft`/`Final`), section headers, and file names always stay English. This matters more here than in most skills: `pm-reconcile`, `pm-stripe`'s security-review routing, and Impact Analysis all grep BR-IDs literally - a translated ID would silently break them.
 
 ---
 

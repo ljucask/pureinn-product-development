@@ -352,6 +352,40 @@ Every new skill MUST declare `agent-mode` and carry the matching block. The mech
 
 ---
 
+## Artifact language (universal standard)
+
+Not every team member is equally fluent in English. A project may set `artifact_language` once, at workspace setup, so generated artifacts read naturally for the team that will actually review them - without breaking the machine-readable contract other skills depend on.
+
+**Runtime delivery (critical, same reason as agent-mode).** `CLAUDE.md` is author-facing only - not loaded at end-user runtime. The behavior must reach the user through the **skill itself**, via a compact `## Artifact language` block inline near the top of `SKILL.md` (after the H1, alongside the Agent mode block where one exists). This section is the single authoring source of truth; the inline block is the runtime instance. Keep them in sync when the rule changes.
+
+**The setting:** `state.json` field `artifact_language` (a human-readable language name, e.g. `"English"`, `"Slovak"`, `"German"`) - set once at workspace setup (`/pureinn` STEP 6), default `"English"`. Zero risk to existing projects: the default is a no-op.
+
+**What translates and what never does - this line is absolute, not a judgment call:**
+
+| Always English (never translate) | Translate when `artifact_language` ≠ English |
+|---|---|
+| IDs - `BR-XXX-NNN`, `FEAT-XXX-NNN`, `DIV-NN`, `OQ-NN`, `TBL-NN` | Prose - descriptions, rationale, rule text, feature descriptions |
+| Frontmatter keys (`status:`, `phase:`, `priority:`...) - values that are enums (`4_In_Build`) too | Free-text frontmatter values (a title, a short description) |
+| Section headers other skills parse programmatically (`## Section 1 - Business Constraints`) | Body content under those headers |
+| File names | - |
+
+**Why the line sits exactly there:** IDs, frontmatter keys, enum values, and parsed section headers are the machine-readable contract between skills - `pm-reconcile`, `pm-audit`, `pm-mvp-scope`, `pm-stripe` and others grep/parse them literally. Localizing them would silently break cross-skill consumption. Prose has no such consumer - it exists for a human to read, so it is free to translate.
+
+**Per-artifact-type overrides are out of scope for now** (e.g. "client-facing pitch deck always English, internal business rules localized"). One global setting, no per-type exceptions - added only if real demand shows up. Do not build the override mechanism speculatively.
+
+**Compact inline block template** (paste near the top of each `SKILL.md`, after the H1 - after the Agent mode block if one exists):
+
+```
+## Artifact language
+Checks `state.json` → `artifact_language`. Default (unset or "English"): no change in behavior.
+- If set to a non-English language: write prose content (descriptions, rationale, rule text) in that language.
+- Never translate: IDs, frontmatter keys and enum values, section headers other skills parse, file names - these stay English always, regardless of the setting.
+```
+
+**Rollout is phased, not a single sweep across all skills** - this is a cross-cutting change touching every content-producing skill; each SKILL.md must state the rule accurately for a skill whose author has actually checked it, not by search-and-replace. Rollout order: `/pureinn` orchestrator (asks + stores the setting) first, then the highest-traffic content skills (PRD, Feature Card, Business Rules Library), then the rest incrementally as they're next touched for other reasons. A skill without the inline block yet simply behaves as English-default - never a broken state, just an unfinished rollout.
+
+---
+
 ### Renaming or removing a skill
 
 This is a major version change - existing users may have workflows referencing the old name.

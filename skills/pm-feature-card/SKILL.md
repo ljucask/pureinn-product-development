@@ -5,9 +5,9 @@ license: MIT
 metadata:
   agent-mode: synthesis
   author: https://github.com/ljucask
-  version: "2.3.0"
+  version: "2.4.0"
   domain: product-management
-  triggers: feature card, FEAT-ID, feature spec, feature lifecycle, cards, in design, figma state, security review, mutex tags, delivery plan
+  triggers: feature card, FEAT-ID, feature spec, feature lifecycle, cards, in design, figma state, security review, mutex tags, delivery plan, artifact language, localization
   role: specialist
   scope: specification
   output-format: document
@@ -23,6 +23,11 @@ Supports `--agent`: runs autonomously in a subagent, drafts the artifact from ex
 
 - **No flag** → interactive (default); if inputs are heavy, offer agent mode.
 - **`--agent`** → obey. First check inputs are complete. Anything missing: do NOT invent it - mark `[ASSUMED - what/why]` in the output and summary. Never hallucinate to fill a gap.
+
+## Artifact language
+Checks `state.json` → `artifact_language`. Default (unset or "English"): no change in behavior.
+- If set to a non-English language: write the card's prose (feature description, acceptance criteria narrative, rationale in Sections 1-4) in that language.
+- Never translate: `FEAT-ID`, `BR-ID`/`TBL-ID` references, frontmatter keys and enum values (`status: 4_In_Build`, `layer:`, `priority:`...), section headers (`## Section 1 - Business Constraints`, etc.), file names - these stay English always, regardless of the setting.
 
 ---
 

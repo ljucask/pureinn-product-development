@@ -5,9 +5,9 @@ license: MIT
 metadata:
   agent-mode: synthesis
   author: https://github.com/ljucask
-  version: "1.2.0"
+  version: "1.3.0"
   domain: product-management
-  triggers: PRD, product requirements document, Phase 3b exit, product consolidation, product specification
+  triggers: PRD, product requirements document, Phase 3b exit, product consolidation, product specification, artifact language, localization
   role: specialist
   scope: documentation
   output-format: document
@@ -23,6 +23,11 @@ Supports `--agent`: runs autonomously in a subagent, drafts the artifact from ex
 
 - **No flag** → interactive (default); if inputs are heavy, offer agent mode.
 - **`--agent`** → obey. First check inputs are complete. Anything missing: do NOT invent it - mark `[ASSUMED - what/why]` in the output and summary. Never hallucinate to fill a gap.
+
+## Artifact language
+Checks `state.json` → `artifact_language`. Default (unset or "English"): no change in behavior.
+- If set to a non-English language: write the PRD's prose (problem statement, rationale, Business Capability descriptions, narrative sections) in that language.
+- Never translate: `FEAT-ID`/`BR-ID` references, frontmatter keys and enum values, section headers (`## Business Capabilities`, etc.), file names - these stay English always, regardless of the setting.
 
 ---
 

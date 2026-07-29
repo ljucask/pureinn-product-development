@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.37.0] - 2026-07-29
+
+### Artifact language localization (universal standard, phased rollout) - new per-project artifact_language setting asked once at /pureinn STEP 6, stored in state.json, default English (zero risk to existing projects); translates prose (descriptions, rationale, rule text) while IDs/frontmatter keys/enum values/section headers/file names always stay English - the machine-readable contract other skills grep/parse literally. First wave: pm-prd, pm-feature-card, pm-business-rules-library carry the inline Artifact language block; remaining ~47 skills tracked as a follow-up backlog item, rolled out incrementally rather than swept blindly
+
+---
+
+
 ## [5.36.0] - 2026-07-29
 
 ### pm-stripe Rebuild-hardening + coverage gaps + interactive delivery-plan companion - occupancy now reads active_feature (schedule axis) before status so Rebuild code-state statuses no longer falsely lock lanes; two-axes rule (status = code reality, plan order = schedule) removes the need for a new lifecycle state; phase added to the sort (gates order); one-time Rebuild plan-birth WIP question; per-stripe WIP-limit warning; contention marker made data-driven per wave, with pm-reverse-extract populating mutex_tags in reconciled mode too; Step 1D gains a component-test-infra check, auto-logs conscious skips to the Open Questions Register, and a fix-inline-vs-report policy for review skills; new delivery_plan.html interactive companion (collapsible Kanban lanes, relative Timeline, wave-column Dependency graph, Kano distribution, click-for-detail) generated every run from a fixed CSS/JS reference template - copied byte-for-byte, never re-authored - with static Mermaid as a lighter fallback

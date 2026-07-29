@@ -815,6 +815,15 @@ Then use the AskUserQuestion tool to help the user connect Notion now (or defer)
   - Option B: "Use your own Notion setup" — description: "Open pureinn-variables.md and paste the URLs of your existing pages and databases."
   - Option C: "Skip for now" — description: "Leave rows blank - skills will ask when they first need each item."
 
+**2d. Artifact language (asked once, stored in state.json)**
+
+Use the AskUserQuestion tool:
+- Question: "What language should generated artifact content be in?"
+  - Option A: "English (Recommended)" — description: "Default. IDs, frontmatter keys, and section headers are always English regardless of this setting - only prose (descriptions, rationale, rule text) is affected."
+  - Option B: "Other language - I'll name it" — description: "Prose content (descriptions, rationale, rule text) is written in that language. Structural elements - IDs, frontmatter keys/enum values, section headers, file names - stay English always, so skills can still parse them."
+
+If B: capture the language name as free text, store it in `state.json` as `artifact_language`. If A or skipped: store `"English"`. This is asked once - not re-asked on resume.
+
 **How skills read pureinn-variables.md:**
 
 When a skill needs a Notion URL, it:
@@ -908,6 +917,7 @@ When a skill needs a Notion URL, it:
     "business_model": "[Paid | Freemium | Free | Unknown]"
   },
   "team_structure": "[Solo | Small founding team | Team with roles | Corporate]",
+  "artifact_language": "[English | other language name - default English]",
   "documents_found": ["[list of filenames read]"],
   "assessment_file": "assessment.md",
   "current_stripes": [],
@@ -948,6 +958,7 @@ Note: individual feature status is tracked in Feature Card frontmatter (`status`
 Note: `registers` flags are set to `true` by pm-entity-registry and pm-business-rules-library after first initialization.
 Note: `phases_completed` uses string identifiers - "1", "2", "3a", "3b", "4", "5", "6-7". Phase 3 split is tracked as two separate entries.
 Note: `phase_3a_verdict` stores the Go/No-Go outcome: "GO", "PIVOT", or "STOP". Set by /pm-hypotheses [Results mode] or by "done elsewhere" import. Phase 3b entry is blocked until this field is "GO" - except commissioned builds (mandate given), where Phase 3a sits in `phases_skipped` and the field stays unset.
+Note: `artifact_language` gates prose translation only (see CLAUDE.md "Artifact language" standard) - IDs, frontmatter keys/enum values, section headers, and file names stay English regardless of this setting. Set once at STEP 6, read by any skill carrying the "Artifact language" inline block; skills without that block yet just behave as English-default.
 
 ---
 

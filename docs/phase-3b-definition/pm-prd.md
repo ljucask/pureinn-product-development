@@ -4,8 +4,8 @@
 
 **Phase:** 3b - Definition (closes Phase 3b); or Feature Implementation (Initiative PRD)  
 **Agent mode:** `synthesis` - runs fully autonomously  
-**Version:** 1.2.0  
-**Triggers:** PRD, product requirements, product spec, business capabilities, initiative PRD
+**Version:** 1.3.0  
+**Triggers:** PRD, product requirements, product spec, business capabilities, initiative PRD, artifact language, localization
 
 ---
 
@@ -84,6 +84,12 @@ The PRD must include a Business Capabilities section - a list of what the produc
 - No feature-level acceptance criteria
 
 The PRD answers: who is this for, what problem does it solve, why does it matter, what does success look like, what are the commercial assumptions.
+
+---
+
+## Artifact language
+
+Checks `state.json` → `artifact_language` (set once at workspace setup, default English). If set to another language, the PRD's prose - problem statement, rationale, Business Capability descriptions, narrative sections - is written in that language. `FEAT-ID`/`BR-ID` references, frontmatter keys and enum values, section headers (`## Business Capabilities`, etc.), and file names always stay English - other skills parse them literally.
 
 ---
 
