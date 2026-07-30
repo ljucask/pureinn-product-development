@@ -440,12 +440,16 @@ These are **external, recommended-not-required** skills - they ship from separat
 
 | Skill | From | Trigger |
 |---|---|---|
-| `/test-master` | fullstack-dev-skills | Unit + integration tests - required for P1/Must-be; skip only for trivial P3 CRUD (coverage check flags it) |
+| `/test-master` | fullstack-dev-skills | Required for P1/Must-be; specialized by `test_types` (unit/integration/contract/visual_regression/performance - see Test Type Matrix in `pm-stripe`); skip only for trivial P3 CRUD (coverage check flags it) |
+| Pact (or equivalent) | external, not fullstack-dev-skills | `test_types` includes `contract` - feature consumed by an external client (mobile app, partner integration, public API) |
+| Percy / Chromatic | external, not fullstack-dev-skills | `test_types` includes `visual_regression` - UI reuses a design-system component whose visual stability matters |
 | `/impeccable-craft` | impeccable | `layer: frontend` - UI implementation |
 | `/impeccable-harden` / `/impeccable-audit` | impeccable | `layer: frontend` - UI edge cases, error states, accessibility |
 | `/playwright-expert` | fullstack-dev-skills | Feature has a multi-step user-facing E2E path |
 | `/secure-code-guardian` | fullstack-dev-skills | `security_review: build`/`both` - threat-models + writes a **new** security mechanism (see Security Review Trigger Criteria in `pm-stripe`) |
 | `/security-reviewer` | fullstack-dev-skills | `security_review: review`/`both` - dedicated deeper SAST/audit with severity rating |
+
+**Stripe-close quality gate (not per-feature, before `pm-stripe` marks a stripe CLOSED):** full regression suite green in CI (e.g. GitHub Actions) + dependency/SCA scan (e.g. Snyk, Dependabot, Aikido) clean of open High/Critical - non-blocking. When findings exist, they're triaged, not dumped raw into the register: auto-fixable dependency findings stay in the tool's own fix-PR flow (never logged); non-fixable dependency findings or code-level (SAST) findings become an entry in `domain/open_questions.md` - `BLK-` for Critical/High or any concrete non-fixable gap, `OQ-` for Low/informational timing questions (e.g. a framework EOL notice). Both halves can run themselves instead of asking. The regression check can use `gh` CLI (`state.json` `ci_automation`) - no new credentials, reuses `gh`'s existing auth. The SCA scan can use Aikido's API today (`state.json` `sca_automation`) - credentials live only in named environment variables, never in a tracked file. See `pm-stripe` → Reference: Automatic Regression Check (GitHub Actions) / Reference: Automatic SCA Fetch (Aikido).
 
 **Optional infra (run when needed, not per feature):** `/devops-engineer` (CI/CD, deployment), `/monitoring-expert` (observability, alerting).
 

@@ -5,7 +5,7 @@ license: MIT
 metadata:
   agent-mode: decision
   author: https://github.com/ljucask
-  version: "2.4.0"
+  version: "2.5.0"
   domain: product-management
   triggers: feature design, JIT design, design by feature, sequence diagram, feature spec, security review, mutex tags, Phase 6
   role: specialist
@@ -194,6 +194,18 @@ Criticality = f(KANO, priority, touches money?, touches PII?, number of state tr
 Pre-auth / cross-tenant reachability escalates whatever area it touches - treat borderline pre-auth surfaces as triggering.
 
 **Value:** `build` if the feature **creates a new** mechanism in an area (a new security BR going Draft→Final for the first time) → `secure-code-guardian` threat-models before writing it. `review` if it only **crosses** a sensitive area but **reuses an existing Final** security pattern (the primitive is already proven) → `security-reviewer` audit only. `both` if new AND sensitive. `none` if no area touched (plain CRUD behind proven auth). (Full authoritative table + reuse rule: `pm-stripe` → Security Review Trigger Criteria.) State the verdict inline: `security_review: [value] - because [area touched / no area touched]`.
+
+**Test type dimension - set the `test_types` field here.** `test-master`'s scope is a black box unless this is decided explicitly. Assess against feature characteristics, not feature names - the same discipline as the security dimension above:
+
+| Characteristic | Test type | Why |
+|---|---|---|
+| Business logic / guard conditions (baseline - every feature) | `unit` | Cheapest, fastest signal; covers the BR-IDs from Section 1 |
+| Calls another internal service, DB, or API endpoint | `integration` | Verifies real interaction, not a mock |
+| Consumed by an external client (mobile app, partner integration, public API) | `contract` | Prevents a breaking change the caller can't see coming |
+| UI feature reusing a design-system component whose visual stability matters | `visual_regression` | Catches unintended visual drift that logic tests can't see |
+| Feature on the money path or a high-traffic endpoint | `performance` | Correctness in a unit test says nothing about behavior under load |
+
+E2E is decided separately (the `playwright-expert` trigger in `pm-stripe` - multi-step UI journey) and is not part of this field. Write the assessed list to the Feature Card frontmatter in Step 4d, e.g. `test_types: [unit, integration]` - `unit` is the baseline on virtually every feature; add the others only when their trigger condition is genuinely met, don't pad the list for thoroughness. State the verdict inline: `test_types: [...] - because [characteristic(s) matched]`.
 
 **Axes to probe** (use the grouped question pattern from CLAUDE.md - batch 2-4 related questions per AskUserQuestion round, confirm, continue):
 
@@ -419,6 +431,12 @@ Write the `security_review` verdict decided in Step 1.5 to the frontmatter (`non
 security_review: build   # none | build | review | both - from Step 1.5 security dimension
 ```
 
+**Write `test_types`** assessed in Step 1.5 to the frontmatter - `pm-stripe` reads it to specialize the `test-master` routing (Reference: Test Type Matrix) and the Build Skills Coverage check. If the stub carries no value yet, set it here; `unit` is always present.
+
+```yaml
+test_types: [unit, integration]   # from Step 1.5 test type dimension - unit is baseline; integration/contract/visual_regression/performance added only when their trigger is met
+```
+
 **Populate `mutex_tags`** from Section 3's "Files to modify" - this is the exact moment the code-contention footprint is known. List the shared modules/classes/files this feature touches that other features might also touch (the delivery-plan uses this to prevent two features editing the same code in parallel - critical when AI agents build on separate branches). Prefer the shared/reusable surfaces (services, schemas, shared components, middleware), not leaf files unique to this feature. In Feature Implementation mode, take them from the Step 2 code scan (real modules); in Greenfield, from the classes the diagram introduces. Annotate with a reason where the risk is non-obvious.
 
 ```yaml
@@ -501,6 +519,10 @@ Then run /pm-stripe to proceed to build.
 - [ ] `security_review` assessed in Step 1.5 against the 8 security areas, verdict stated with the area(s) touched
 - [ ] `build` only when a NEW security mechanism is introduced (new security BR Draft→Final); reuse of an existing Final security BR → not `build`
 - [ ] `security_review` written to Feature Card frontmatter in Step 4d (overwrites the `none` stub default)
+
+**Test type dimension:**
+- [ ] `test_types` assessed in Step 1.5 against the characteristics table (unit baseline + integration/contract/visual_regression/performance only where triggered)
+- [ ] `test_types` written to Feature Card frontmatter in Step 4d
 
 **Register updates:**
 - [ ] Guard conditions added to entities.md (not left as TBD)

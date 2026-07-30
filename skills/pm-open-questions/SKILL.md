@@ -5,13 +5,13 @@ license: MIT
 metadata:
   agent-mode: decision
   author: https://github.com/ljucask
-  version: "1.0.0"
+  version: "1.0.1"
   domain: product-management
   triggers: open questions, open question register, decisions log, unresolved question, blocker, divergence, OQ-ID, DIV-ID, BLK-ID, decision tracking, Live Register 5
   role: specialist
   scope: specification
   output-format: document
-  related-skills: pm-reconcile, pm-domain-model, pm-prd, pm-product-roadmap, pm-features-list, pm-feature-design, pm-business-rules-library, pm-market-analysis, pm-audit
+  related-skills: pm-reconcile, pm-domain-model, pm-prd, pm-product-roadmap, pm-features-list, pm-feature-design, pm-business-rules-library, pm-market-analysis, pm-audit, pm-stripe
 ---
 
 # PM - Open Questions & Decisions Register
@@ -78,6 +78,7 @@ Any skill can append an entry when it hits an unresolved item. The framework wir
 - `pm-feature-design` - JIT design surfaces a rule/guard-condition ambiguity
 - `pm-business-rules-library` - a rule's exact formula or enforcement point is unresolved
 - `pm-market-analysis` - a strategic/business question without technical domain context (`OQ-BIZ-`)
+- `pm-stripe` - a conscious build-skill skip (Step 1D), a Stripe-close quality-gate deferral, or a triaged finding from a connected SCA/security-scan tool (Step 1G) - non-fixable dependency findings and code-level (SAST) findings route here (`BLK-` for Critical/High or a concrete non-fixable gap, `OQ-` for Low/informational timing questions); auto-fixable dependency findings stay in the tool's own PR flow and are never logged here
 
 Each of these writes the entry **directly** to `domain/open_questions.md` following the schema below (creating the register first via this skill if it doesn't exist yet) - they do not write the question into their own artifact, and they do not route through this skill as a middle step for every single entry. This skill's job is to **own the register**: initialize it, assign IDs without collision, manage the Open→Resolved lifecycle, handle Notion sync, and run the migration scan. It is also directly callable to add, resolve, or query an entry standalone.
 

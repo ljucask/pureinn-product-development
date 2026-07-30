@@ -4,7 +4,7 @@
 
 **Phase:** Any (cross-phase); initializes on first use, at latest Phase 4
 **Agent mode:** `decision` - drafts, then requires your review before closing a question
-**Version:** 1.0.0
+**Version:** 1.0.1
 **Triggers:** open questions, open question register, decisions log, unresolved question, blocker, divergence, OQ-ID, DIV-ID, BLK-ID, decision tracking, Live Register 5
 
 ---
@@ -51,7 +51,7 @@ Most of the time this skill isn't invoked directly - a producing skill (see belo
 
 ## Producing skills (who writes here)
 
-`pm-prd`, `pm-product-roadmap`, `pm-reconcile`, `pm-domain-model`, `pm-features-list`, `pm-feature-design`, `pm-business-rules-library`, `pm-market-analysis` - each appends directly to the register when it hits an unresolved item, instead of embedding it in its own artifact.
+`pm-prd`, `pm-product-roadmap`, `pm-reconcile`, `pm-domain-model`, `pm-features-list`, `pm-feature-design`, `pm-business-rules-library`, `pm-market-analysis` - each appends directly to the register when it hits an unresolved item, instead of embedding it in its own artifact. `pm-stripe` also writes here: a conscious build-skill skip (Build Skills Coverage), a Stripe-close quality-gate deferral, or a triaged SCA/security-scan finding (`BLK-` for Critical/High or a non-fixable gap, `OQ-` for Low/informational timing questions) - auto-fixable dependency findings stay in the scanning tool's own PR flow and are never logged here.
 
 ---
 
@@ -79,4 +79,4 @@ Entries move **Open → Resolved**, they are never deleted. A resolved entry kee
 - Every producing skill listed above (a place to route unresolved items)
 - `pm-audit` - flags any open-item content duplicated outside the register
 
-**Related skills:** `pm-reconcile`, `pm-domain-model`, `pm-prd`, `pm-product-roadmap`, `pm-features-list`, `pm-feature-design`, `pm-business-rules-library`, `pm-market-analysis`, `pm-audit`
+**Related skills:** `pm-reconcile`, `pm-domain-model`, `pm-prd`, `pm-product-roadmap`, `pm-features-list`, `pm-feature-design`, `pm-business-rules-library`, `pm-market-analysis`, `pm-audit`, `pm-stripe`

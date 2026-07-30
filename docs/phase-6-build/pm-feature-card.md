@@ -4,8 +4,8 @@
 
 **Phase:** 6 - JIT Delivery (and Phase 5 stub creation)  
 **Agent mode:** `synthesis` - runs fully autonomously  
-**Version:** 2.4.0  
-**Triggers:** feature card, FEAT-ID, feature spec, feature lifecycle, cards, artifact language, localization
+**Version:** 2.5.0  
+**Triggers:** feature card, FEAT-ID, feature spec, feature lifecycle, cards, test types, artifact language, localization
 
 ---
 
@@ -70,7 +70,7 @@ A Feature Card has four sections with defined ownership:
 ## Stub completeness requirements
 
 **Stub (`1_Backlog`) must have:**
-- All frontmatter fields: `id`, `title`, `status`, `stripe`, `layer`, `phase`, `actor`, `priority`, `kano`, `vxc`, `feature_flag`, `flag_default`, `prd_ref`, `security_review` (stub default `none`), `mutex_tags` (empty at stub), `override` (false at stub)
+- All frontmatter fields: `id`, `title`, `status`, `stripe`, `layer`, `phase`, `actor`, `priority`, `kano`, `vxc`, `feature_flag`, `flag_default`, `prd_ref`, `security_review` (stub default `none`), `test_types` (stub default `[unit]`), `mutex_tags` (empty at stub), `override` (false at stub)
 
 > **Delivery-plan fields:** `mutex_tags` (shared code the feature touches - drives contention in the pm-stripe delivery plan; set at JIT design or from code in rebuild) and `override` (break-glass P0). `plan_order`/`wave` are NOT stored on the card - they are derived write-back fields the delivery plan computes into `feature_list.md` + Notion.
 - Sections 1-4 present as stubs (placeholder text, not filled)
@@ -78,6 +78,7 @@ A Feature Card has four sections with defined ownership:
 
 **After `pm-feature-design` (`2_Spec_Done`) must have:**
 - `security_review` set from the Step 1.5 security assessment (routes `secure-code-guardian` / `security-reviewer` in pm-stripe)
+- `test_types` set from the Step 1.5 test type assessment (specializes `test-master` routing in pm-stripe; `unit` is baseline, others added only when their trigger is met)
 - Section 1: entity state transitions + BR-IDs linked
 - Section 2: at minimum AC-01 (happy path), AC-02 (one guard failure), AC-03 (flag OFF)
 - Section 3: Mermaid sequence diagram (not empty) + files to modify listed

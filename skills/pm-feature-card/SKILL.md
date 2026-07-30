@@ -5,9 +5,9 @@ license: MIT
 metadata:
   agent-mode: synthesis
   author: https://github.com/ljucask
-  version: "2.4.0"
+  version: "2.5.0"
   domain: product-management
-  triggers: feature card, FEAT-ID, feature spec, feature lifecycle, cards, in design, figma state, security review, mutex tags, delivery plan, artifact language, localization
+  triggers: feature card, FEAT-ID, feature spec, feature lifecycle, cards, in design, figma state, security review, test types, mutex tags, delivery plan, artifact language, localization
   role: specialist
   scope: specification
   output-format: document
@@ -151,6 +151,7 @@ vxc: [Quick Win / Big Bet / Fill-in / Time Waster]
 estimate: "[S / M / L - informational sizing for roadmap, NOT the atomicity test]"
 has_subtasks: false
 security_review: none    # none | build | review | both - set by pm-feature-design (Step 1.5 security dimension). Routes secure-code-guardian (build) + security-reviewer (review) in pm-stripe. Stub default: none.
+test_types: [unit]       # unit | integration | contract | visual_regression | performance - set by pm-feature-design (Step 1.5 test type dimension). Specializes test-master routing + Build Skills Coverage check in pm-stripe. unit is the baseline stub default.
 mutex_tags: []           # code modules/files this feature touches - drives delivery-plan CONTENTION (two features sharing a tag can't run parallel). Set at JIT by pm-feature-design (or from real code by pm-reverse-extract/pm-reconcile). Entry: "ModuleName" or {tag: X, reason: "why"}. Empty at stub.
 override: false          # break-glass. Set to {reason: "..."} to force a P0 ahead of capacity/priority/contention in the delivery plan (never past a HARD dependency - that's physics). Shown loudly in the plan rationale.
 prd_ref: /product/PRD_master.md#[section]
@@ -282,11 +283,12 @@ If Feature Backlog URL is blank in pureinn-variables.md: save locally, remind us
 <!-- Claude reference only - not shown to user -->
 
 **Stub (1_Backlog) must have:**
-- [ ] All frontmatter fields populated (id, title, status, stripe, owner, priority, prd_ref, feature_flag, flag_default; `security_review: none` placeholder)
+- [ ] All frontmatter fields populated (id, title, status, stripe, owner, priority, prd_ref, feature_flag, flag_default; `security_review: none` placeholder; `test_types: [unit]` placeholder)
 - [ ] Sections 1-4 present as stubs (not filled)
 
 **After pm-feature-design (2_Spec_Done) must have:**
 - [ ] `security_review` set from the Step 1.5 assessment (no longer the `none` stub default unless genuinely no trigger met)
+- [ ] `test_types` set from the Step 1.5 assessment (beyond the `[unit]` stub default where a trigger was met)
 - [ ] Section 1: entity, state before/after, BR-IDs linked
 - [ ] Section 2: at minimum AC-01 (happy path), AC-02 (one guard failure), AC-03 (flag OFF)
 - [ ] Section 3: mermaid sequenceDiagram (not empty), files to modify listed

@@ -4,8 +4,8 @@
 
 **Phase:** 6-7 - JIT Delivery (session start point)  
 **Agent mode:** `never` - value is the live interactive session  
-**Version:** 3.4.1  
-**Triggers:** stripe, delivery stripe, JIT cycle, build feature, impact analysis, security review, delivery plan, build order, sequence, parallel, Phase 6, next feature, kanban, timeline, delivery visualization, rebuild plan, WIP limit, delivery_plan.html, interactive delivery plan, click-for-detail
+**Version:** 3.7.0  
+**Triggers:** stripe, delivery stripe, JIT cycle, build feature, impact analysis, security review, test types, test type matrix, dependency scan, SCA, regression gate, delivery plan, build order, sequence, parallel, Phase 6, next feature, kanban, timeline, delivery visualization, rebuild plan, WIP limit, delivery_plan.html, interactive delivery plan, click-for-detail
 
 ---
 
@@ -121,10 +121,10 @@ pm-stripe routes build skills (Step 1C, `3_Ready_to_Build → 4_In_Build`) and r
 
 | Stage | Always | Conditional (trigger) |
 |---|---|---|
-| Build (1C) | `fullstack-guardian` | `test-master` (P1/Must-be → required), `impeccable-craft` (`layer: frontend`), `playwright-expert` (E2E path), `secure-code-guardian` (`security_review: build`/`both`) |
+| Build (1C) | `fullstack-guardian` | `test-master` (P1/Must-be → required, specialized by `test_types`), a contract-testing tool e.g. Pact (`test_types` includes `contract`), `impeccable-craft` (`layer: frontend`), `playwright-expert` (E2E path), `secure-code-guardian` (`security_review: build`/`both`) |
 | Review (1D) | `code-reviewer` | `impeccable-audit` (`layer: frontend`), `security-reviewer` (`security_review: review`/`both`) |
 
-**Build Skills Coverage check** (before `4_In_Build → 5_In_Review`): pm-stripe reconciles what the triggers required against what actually ran, and surfaces anything skipped-despite-trigger. It is a **visibility check, not a blocking gate** - a Solo Builder may knowingly skip, but the skip is on record rather than silent (which is how `test-master` used to get dropped unnoticed). Two additions: (1) a **test-infra capability check** - a frontend feature needs component-test infra (`@testing-library/*` + jsdom/happy-dom); if it's missing, that surfaces as its own row (`component test infra: MISSING`), not silently folded into "test-master ran". (2) Any **conscious skip or deferral is auto-logged** to the Open Questions Register (`/domain/open_questions.md`) as an `OQ-` entry - the decision survives past the session instead of being lost in the chat.
+**Build Skills Coverage check** (before `4_In_Build → 5_In_Review`): pm-stripe reconciles what the triggers required against what actually ran, and surfaces anything skipped-despite-trigger. It is a **visibility check, not a blocking gate** - a Solo Builder may knowingly skip, but the skip is on record rather than silent (which is how `test-master` used to get dropped unnoticed). Additions: (1) a **test-infra capability check** - a frontend feature needs component-test infra (`@testing-library/*` + jsdom/happy-dom); if it's missing, that surfaces as its own row (`component test infra: MISSING`), not silently folded into "test-master ran". (2) a **test-type coverage check** - each `test_types` entry beyond `unit` (integration/contract/visual_regression/performance) needs its own artifact (integration test, Pact contract, visual baseline, load-test script) or an explicit deferral; missing ones surface as their own row, same principle as the test-infra check. (3) Any **conscious skip or deferral is auto-logged** to the Open Questions Register (`/domain/open_questions.md`) as an `OQ-` entry - the decision survives past the session instead of being lost in the chat.
 
 **Review fix policy:** a review skill (code-reviewer, security-reviewer, impeccable-audit) **may fix trivial, unambiguous findings inline** (a clear bug, a wrong constant, a missing touch-target) and note it in its summary; it **must report and wait** on anything larger - behavioral changes, anything touching a business rule / guard / security primitive, or anything affecting an interface other features depend on. When in doubt, report. This keeps the boundary a rule, not a per-run judgment.
 
@@ -154,6 +154,37 @@ Pre-auth / cross-tenant reachability **escalates** whatever area it touches. Bef
 `build` = **creates a new** mechanism in an area (new security BR Draft→Final) → `secure-code-guardian`. `review` = **crosses** a sensitive area but reuses a proven pattern → `security-reviewer`. `both` = new AND sensitive. `none` = touches no area (plain CRUD behind proven auth; fullstack-guardian's checkpoint + code-reviewer's OWASP pass suffice).
 
 **Reuse rule:** `secure-code-guardian` adds value only at the first introduction of a mechanism in an area. A second feature reusing an existing Final security BR drops `build` (keeps `review` if a sensitive area is still touched) - adding a specialist to every feature is complexity without marginal value.
+
+---
+
+## Test Type Matrix
+
+The `test_types` frontmatter value specializes `test-master` routing and the Build Skills Coverage check. Set by `pm-feature-design` during Discovery Interrogation, same mechanism as `security_review`.
+
+| Characteristic | Test type | Tool |
+|---|---|---|
+| Business logic / guard conditions (baseline) | `unit` | test-master (native) |
+| Calls another internal service, DB, or API endpoint | `integration` | test-master (native) |
+| Consumed by an external client (mobile app, partner integration, public API) | `contract` | Pact, or equivalent - not test-master's default remit |
+| UI feature reusing a design-system component whose visual stability matters | `visual_regression` | Percy / Chromatic / Playwright screenshot diff |
+| Feature on the money path or a high-traffic endpoint | `performance` | test-master (native - k6/Artillery) |
+
+E2E is a separate, already-existing axis (`playwright-expert`'s own trigger) - not part of `test_types`. `unit` is the default on nearly everything; the rest are added only when their characteristic genuinely matches, not for thoroughness.
+
+---
+
+## Close Stripe
+
+All features in the stripe at `6_Shipped`. Before marking CLOSED, pm-stripe confirms two things per-feature checks can't see - **non-blocking, visible, same principle as Build Skills Coverage**:
+
+1. **Regression check** - full test suite (not just this stripe's features in isolation) green in CI since the last feature shipped.
+2. **Dependency/SCA scan** - the project's scanner (Snyk, Dependabot, Aikido, or equivalent) clean of open High/Critical findings.
+
+If either is unconfirmed, pm-stripe asks and records the answer rather than silently closing. When findings exist, they're **triaged before logging**, not dumped raw into the register: an auto-fixable dependency finding (the tool opens its own fix PR) stays in that PR flow, never logged; a non-fixable dependency finding or a code-level (SAST) finding becomes a register entry - `BLK-` for Critical/High or any concrete non-fixable gap (tagged with the security area), `OQ-` for Low/informational timing questions (e.g. a framework EOL notice). Same discipline as a build-skill skip.
+
+**Automatic regression check (optional, GitHub Actions via `gh` CLI).** Simpler than the SCA side - no new credentials, `gh`'s existing auth is reused. Opt in once via `state.json` `ci_automation`; when enabled, pm-stripe runs `gh run list` for the relevant branch and reads the latest run's conclusion instead of asking. An in-progress/queued run is reported as unresolved, never guessed at. No workflow file is scaffolded by this framework - if the repo has none yet, it's treated as "not run yet" in the manual path.
+
+**Automatic fetch (optional, Aikido only today).** The SCA check can run itself instead of asking, once per-project opt-in: `state.json` `sca_automation` stores `enabled`, `tool`, `region`, and the **names** of the environment variables holding Aikido OAuth2 client credentials - never the credential values themselves, which live only in the environment, never in a tracked file. When enabled, pm-stripe exchanges the credentials for a short-lived token, fetches open issues for the connected repo via Aikido's public API, and applies the same triage table automatically - no per-item confirmation. Asked once (retrofit on existing projects, same discipline as `delivery_html`); other tools can be added the same way once their API is verified with equal rigor. Full procedure (endpoints, exact request shape): `pm-stripe` → Reference: Automatic SCA Fetch (Aikido).
 
 ---
 

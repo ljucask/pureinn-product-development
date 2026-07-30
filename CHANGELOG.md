@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.38.0] - 2026-07-31
+
+### Release v5.38.0 - JIT build-cycle quality gates: Test Type Matrix + Stripe-close SCA/regression automation - pm-feature-design gains a test type dimension (Step 1.5) alongside the security dimension, setting test_types (unit/integration/contract/visual_regression/performance) per feature to specialize test-master routing instead of leaving it a black box; pm-stripe's Stripe-close quality gate (Step 1G) gains a triage table for SCA/security-scan findings (auto-fixable dependency findings stay in the tool's own PR flow, non-fixable/code-level findings route to the Open Questions Register as BLK-/OQ- by severity) plus two opt-in automation paths following the delivery_html init-once/retrofit discipline - sca_automation (verified Aikido OAuth2 API integration, credentials never touch a tracked file) and ci_automation (GitHub Actions via gh CLI, no new credentials); pm-open-questions Producing skills list updated to reflect pm-stripe's existing writes
+
+---
+
+
 ## [5.37.1] - 2026-07-29
 
 ### pm-stripe bug fix - Delivery Plan companion page (delivery_plan.html) offer was never wired into the main Step 0 render flow, so the visualization question never fired - not even on projects created after v5.36.0. Fixed: state.json's delivery_html is now checked on every render (including steady-state NOW, not just plan birth), so any project hitting this gap gets asked on its next /pm-stripe run regardless of when delivery_plan.md was first created

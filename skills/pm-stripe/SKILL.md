@@ -5,9 +5,9 @@ license: MIT
 metadata:
   agent-mode: never
   author: https://github.com/ljucask
-  version: "3.4.1"
+  version: "3.7.0"
   domain: product-management
-  triggers: stripe, delivery stripe, JIT cycle, feature design, build feature, impact analysis, security review, delivery plan, build order, sequence, parallel, Phase 6, Phase 7, next feature, kanban, timeline, delivery visualization, rebuild plan, WIP limit, delivery_plan.html, interactive delivery plan, click-for-detail
+  triggers: stripe, delivery stripe, JIT cycle, feature design, build feature, impact analysis, security review, test types, test type matrix, dependency scan, SCA, regression gate, delivery plan, build order, sequence, parallel, Phase 6, Phase 7, next feature, kanban, timeline, delivery visualization, rebuild plan, WIP limit, delivery_plan.html, interactive delivery plan, click-for-detail
   role: orchestrator
   scope: delivery
   output-format: document
@@ -71,7 +71,7 @@ pm-stripe reads the current state of all active stripes, detects where each acti
 **Produces artifacts used by:**
 - Feature Cards (status updates throughout lifecycle)
 - `feature_list.md` (status column updated)
-- Build skills - always: fullstack-guardian (build), code-reviewer (review). Conditional by trigger: test-master, impeccable-craft/impeccable-audit, playwright-expert, secure-code-guardian, security-reviewer (see Step 1C/1D and the Security Review Trigger Criteria)
+- Build skills - always: fullstack-guardian (build), code-reviewer (review). Conditional by trigger: test-master, impeccable-craft/impeccable-audit, playwright-expert, secure-code-guardian, security-reviewer (see Step 1C/1D, the Security Review Trigger Criteria, and the Test Type Matrix). Test-master's specialization (unit/integration/contract/visual_regression/performance) and stripe-close SCA/regression gates may call on external tools (Pact, Percy/Chromatic, Snyk/Dependabot) - same recommended-not-required framing as the build/review skills.
 
 ---
 
@@ -245,6 +245,8 @@ Update Feature Card frontmatter `status: 4_In_Build`.
 Build skills split into **always** and **conditional**. The conditional ones have an explicit trigger - do not treat them as optional-by-vibe. Read the Feature Card frontmatter (`layer`, `kano`, `priority`, `security_review`) to resolve each trigger before routing.
 
 > **The build/review skills below are external and recommended-not-required.** `fullstack-guardian`, `secure-code-guardian`, `security-reviewer`, `code-reviewer`, `test-master`, `playwright-expert` and `impeccable-craft`/`impeccable-audit` are **not part of the Pureinn plugin** - they ship from separate marketplaces (`fullstack-dev-skills`, `impeccable`) and must be installed separately. Pureinn recommends them as sensible defaults. What the framework actually owns is the **orchestration**: *when* to build/review, the *trigger* that makes a specialist applicable, the *context-briefing*, and the *coverage check* - not a mandated tool. The concrete executor is swappable: if you run your own build/review workflow (or plain Claude Code without a named specialist), the triggers and the coverage check still apply - map each always/conditional slot to whatever executes it. If a routed skill isn't installed, say so and offer the built-in path rather than failing.
+>
+> **The same framing extends to the specialized test/quality tools below** (Reference: Test Type Matrix, and the Stripe-close quality gate in Step 1G): Pact (or equivalent) for contract testing, Percy/Chromatic (or Playwright's own screenshot diff) for visual regression, Snyk/Dependabot (or equivalent SCA) for dependency scanning. None of these ship with Pureinn - Pureinn owns the trigger (when a test type or scan applies) and the visibility check (was it run, is it clean), not the tool itself.
 
 ```
 Build started for FEAT-[ID]: [title]
@@ -267,7 +269,8 @@ Build instructions - read in this order:
 
 | Skill | Trigger (from frontmatter / criticality) |
 |---|---|
-| `/test-master FEAT-[ID]` | **Always for `priority: P1` or `kano: Must-be`.** P2 → happy path + guard tests. P3 pure CRUD may skip, but the coverage check (Step 1D) will flag it. Test-master is not "optional" - it is the default; skipping is the exception that must be visible. |
+| `/test-master FEAT-[ID]` | **Always for `priority: P1` or `kano: Must-be`.** P2 → happy path + guard tests. P3 pure CRUD may skip, but the coverage check (Step 1D) will flag it. Test-master is not "optional" - it is the default; skipping is the exception that must be visible. Read the Feature Card's `test_types` (set at JIT design - see Reference: Test Type Matrix below) to brief test-master on *which kinds* of tests to write, not just that it should run - a Feature Card carrying `test_types: [unit, contract]` needs more than a happy-path unit test. |
+| Contract-testing tool (e.g. Pact) | `test_types` includes `contract` - feature is consumed by an external client (mobile app, partner integration, public API). Not test-master's default remit; brief it explicitly if routed, or route a dedicated contract-testing tool. |
 | `/impeccable-craft FEAT-[ID]` | `layer` includes `frontend` (feature has a UI to craft) |
 | `/playwright-expert FEAT-[ID]` | Feature has a user-facing E2E path worth an automated flow (multi-step UI journey, not a single API call) |
 | `/secure-code-guardian FEAT-[ID]` | `security_review` is `build` or `both` - the feature introduces a **new** security mechanism (see Security Review Trigger Criteria below). Skip when it reuses an already-Final security pattern. |
@@ -290,6 +293,7 @@ A Solo Builder has the right to knowingly skip a skill - but the skip must be vi
 
 1. Compute what the triggers required for this feature (from `layer`, `kano`, `priority`, `security_review`).
 2. **Test-infra capability check (not just "did test-master run").** Routing test-master is not the same as the project being *able* to run the test type the feature needs. When `layer` includes `frontend`, the feature needs component tests (jsdom/happy-dom + a testing-library). Detect whether that infra exists: scan `package.json` for `@testing-library/*` and the test config for `jsdom`/`happy-dom`. If a frontend feature has no component-test infra, that is its own coverage row - `component test infra: missing` - NOT silently folded into "test-master ran" (test-master in a Node-only vitest setup writes logic tests and leaves the UI layer untested, or has to add a dependency on its own - a decision that must be explicit).
+2b. **Test-type coverage check (what test-master actually covered, not just that it ran).** Read the Feature Card's `test_types` (Reference: Test Type Matrix). For each type beyond `unit`, confirm the corresponding artifact exists or was explicitly deferred: `integration` → an integration test file, `contract` → a Pact contract (or equivalent), `visual_regression` → a baseline snapshot, `performance` → a load-test script (k6/Artillery). A missing one is its own coverage row - do not fold it into "test-master ran".
 3. Use the AskUserQuestion tool (multiSelect: true) - "Which build skills actually ran for FEAT-[ID]?" - list fullstack-guardian + every conditional skill whose trigger was met.
 4. Show the reconciliation:
 
@@ -298,6 +302,7 @@ Build Skills Coverage - FEAT-[ID]
   Required by trigger      Ran?
   fullstack-guardian       [✓ / ✗]
   test-master              [✓ / ✗]   (P1 → required)
+  test_types covered       [unit ✓ / integration ✓ / contract ✗]   (from Feature Card test_types)
   impeccable-craft         [✓ / ✗]   (layer: frontend)
   secure-code-guardian     [✓ / — ]  (security_review: build)
   component test infra     [present / MISSING]   (layer: frontend)
@@ -368,6 +373,26 @@ Determines the Feature Card `security_review` value, which in turn routes `secur
 **secure-code-guardian reuse rule (avoid needless complexity).** `secure-code-guardian`'s value is high only at the **first introduction** of a mechanism in an area. It drops to near-zero when a feature reuses an already-proven pattern (e.g. the second feature using the same `requireRole`-style guard). Discriminate by the Feature Card's rules: if Section 1 introduces a **new** security BR (going Draft→Final for the first time), that is `build`. If it only references an **existing Final** security BR, the primitive is already proven - drop `build`, keep `review` if a sensitive area is still touched.
 
 When a feature touches none of the 8 areas (ordinary CRUD behind existing, proven auth), `security_review` stays `none`. Adding a security specialist to every feature is complexity without marginal value.
+
+---
+
+## Reference: Test Type Matrix
+
+Determines the Feature Card `test_types` value, which specializes `test-master` routing (Step 1C) and the Build Skills Coverage check (Step 1D). The value is set by `pm-feature-design` during Discovery Interrogation (Step 1.5 test type dimension) and read here for routing - same mechanism as `security_review` above.
+
+**Think in feature characteristics, not feature types** - the same discipline as the security criteria.
+
+| Characteristic | Test type | Tool | Notes |
+|---|---|---|---|
+| Business logic / guard conditions (baseline) | `unit` | test-master (native) | Present on virtually every feature - the floor, not a decision |
+| Calls another internal service, DB, or API endpoint | `integration` | test-master (native) | Verifies real interaction, not a mock |
+| Consumed by an external client (mobile app, partner integration, public API) | `contract` | Pact, or equivalent - **not** test-master's default remit | Needs a dedicated contract-testing tool; brief whichever specialist is routed explicitly |
+| UI feature reusing a design-system component whose visual stability matters | `visual_regression` | Percy / Chromatic / Playwright's own screenshot diff | `impeccable-craft`/`impeccable-audit` review design quality, not pixel-diff stability - a different job |
+| Feature on the money path or a high-traffic endpoint | `performance` | test-master (native - k6/Artillery, per its own remit) | |
+
+**E2E is a separate axis, already handled** - multi-step UI journeys route to `playwright-expert` via its own trigger in Step 1C. It is not part of `test_types`.
+
+**Do not pad the list for thoroughness.** `unit` is the default on nearly everything; add `integration`/`contract`/`visual_regression`/`performance` only when the feature genuinely matches the characteristic. A feature with every type checked "for safety" defeats the purpose - it should read as a deliberate assessment, the same way `security_review` does.
 
 ---
 
@@ -443,6 +468,31 @@ Not affected: [N] features (no BR-[ID] reference in Section 1)
 
 All features in the stripe are at `6_Shipped`.
 
+**Stripe-close quality gate (non-blocking, visible - same principle as Build Skills Coverage).** Two things per-feature checks structurally cannot see: integration between features within the stripe, and supply-chain risk from 3rd-party dependencies. Confirm both before CLOSED - Pureinn does not execute either, it only confirms they ran:
+
+1. **Regression check:** has the full test suite (not just this stripe's features in isolation) run green in CI since the last feature shipped?
+2. **Dependency/SCA scan:** is the project's dependency scanner (Snyk, Dependabot, Aikido, or equivalent) clean of open High/Critical findings?
+
+**Regression-check automation init (first Step 1G run, or `ci_automation` key absent from `state.json` - same retrofit discipline as `delivery_html`):** ask once via AskUserQuestion - "Automate the regression check?" - **Yes, GitHub Actions via `gh` CLI (Recommended if the repo uses GitHub Actions and `gh` is authenticated)** / **Not now - I'll check manually each time** / **A different CI provider - not automatable yet, ask me each time**. Persist to `state.json` `ci_automation` (see State updates below); retrofit on existing projects the same way as `delivery_html`.
+
+- **If `ci_automation.enabled: true`:** check automatically instead of asking - see Reference: Automatic Regression Check (GitHub Actions) below. Report the latest run's conclusion for the relevant branch; only silently pass the gate item on an unambiguous success.
+- **If `ci_automation.enabled: false` (or a CI provider without a verified integration):** fall back to the manual path - ask directly whether the suite is green.
+
+**Dependency/SCA scan automation init (first Step 1G run, or `sca_automation` key absent from `state.json` - same retrofit discipline as `delivery_html`):** ask once via AskUserQuestion - "Automate the dependency/SCA scan check?" - **Yes, Aikido (Recommended if you have an Aikido account - the only tool with a verified fetch integration today)** / **Not now - I'll check manually each time** / **A different tool - not automatable yet, ask me each time**. Persist the answer to `state.json` `sca_automation` (see State updates below) so it's never re-asked; retrofit on projects created before this capability existed, the same way as `delivery_html`.
+
+- **If `sca_automation.enabled: true`:** fetch automatically instead of asking - see Reference: Automatic SCA Fetch (Aikido) below. Apply the triage table to the fetched results, write entries directly to the register, then show a summary (counts by type/severity, how many were skipped because a fix PR already exists). No per-item AskUserQuestion needed - that's the point of automating it.
+- **If `sca_automation.enabled: false` (or a tool without a verified integration):** fall back to the manual path - use the AskUserQuestion tool - "Stripe-close quality gate for [stripe-name]?" - **Confirmed clean (Recommended if verified)** / **Findings exist - I'll describe** / **Not run yet - defer and log**.
+
+**"Findings exist" - triage before logging, don't dump the raw scan output into the register:**
+
+| Finding type | Route to | Log to Open Questions? |
+|---|---|---|
+| Dependency-level (SCA), auto-fixable - the tool offers/opens its own fix PR (Snyk/Dependabot/Aikido AutoFix-style) | The tool's own PR - human reviews and merges, same as any PR | No - routine, tracked via the PR itself, not a judgment call |
+| Dependency-level (SCA), no fix available or the fix is breaking | - | Yes - `BLK-[DOMAIN]-NN` (a concrete gap someone has to work through, e.g. a manual major-version bump) |
+| Code-level (SAST) finding - some scanners (e.g. Aikido) bundle this alongside SCA; it is a finding in your own code, not a dependency, and no PR-bot can safely rewrite business logic for it | `secure-code-guardian` (new mechanism) / `security-reviewer` (audit) for the actual fix - never auto-merge a business-logic change | **Critical/High severity** → `BLK-[DOMAIN]-NN` (no ambiguity about whether to fix it, just needs doing) - tag the security area from the 8-area taxonomy (Reference: Security Review Trigger Criteria). **Low/informational** (e.g. an EOL/support-lifecycle notice, nothing actively exploitable) → `OQ-[DOMAIN]-NN` (a judgment call on timing/priority, not an immediate blocker) |
+
+A deferral (the "Not run yet" path, or any entry from the triage table above) is auto-logged to `/domain/open_questions.md` (same discipline as a conscious build-skill skip in Step 1D) - it does not silently block closure, but it must survive past this session.
+
 ```
 Closing [stripe-name]:
 
@@ -453,6 +503,8 @@ Verification:
   [ ] All Feature Cards in stripe at 6_Shipped
   [ ] feature_list.md Status column up to date
   [ ] No features blocked waiting for this stripe
+  [ ] Full regression suite green in CI (e.g. GitHub Actions) - not just this stripe's features in isolation
+  [ ] Dependency/SCA scan (e.g. Snyk, Dependabot) clean - no open High/Critical findings
 
 Stripe [stripe-name] → CLOSED ✅
 
@@ -460,6 +512,54 @@ Remaining active stripes: [list]
 ```
 
 Update `state.json`: remove closed stripe from `current_stripes`.
+
+---
+
+## Reference: Automatic Regression Check (GitHub Actions)
+
+Simpler than the SCA fetch - no separate credential setup. `gh` (GitHub CLI) carries the user's existing GitHub auth; if it's already authenticated (`gh auth status`), no new secret handling is needed at all.
+
+**One-time setup:** none beyond `gh auth login` if not already authenticated - that's a general GitHub CLI setup, not something specific to this framework.
+
+**Check procedure (executed by Claude at Step 1G when `ci_automation.enabled: true`):**
+
+1. Confirm `gh` is authenticated: `gh auth status`. Not authenticated despite `enabled: true` → surface it, fall back to the manual path - don't block.
+2. Get the latest workflow run conclusion for the relevant branch (default: the branch the stripe's features shipped against, typically `main`):
+   ```
+   gh run list --branch {branch} --limit 1 --json status,conclusion,workflowName,headSha,url
+   ```
+3. Interpret: `status: completed` + `conclusion: success` → regression check passes. `status: in_progress`/`queued` → not yet known, don't guess - report as unresolved, fall back to asking. `conclusion: failure`/`cancelled` → regression check fails, this is real signal for the gate, not something to paper over.
+4. Report the run's `url` alongside the verdict so the human can inspect it directly rather than trusting a one-line summary.
+
+**Repo/workflow are read from the project's own git remote and `.github/workflows/` - never hardcoded, never assumed.** If the repo has no workflow file yet, `gh run list` returns nothing meaningful - treat that the same as "not run yet" in the manual path (defer and log), it is not this framework's job to scaffold CI for a project.
+
+---
+
+## Reference: Automatic SCA Fetch (Aikido)
+
+Only Aikido has a verified fetch integration today - its OAuth2 REST API is documented and confirmed against `apidocs.aikido.dev`. Another tool can be added the same way once its API is verified with the same rigor - never improvise an undocumented endpoint or guess a response shape for a tool that hasn't been checked.
+
+**One-time setup (a project/user decision - never something Pureinn stores or performs on the user's behalf):**
+1. In Aikido: Integrations → create OAuth2 client credentials (Client ID + Client Secret) with the `issues:read` scope.
+2. Store both as environment variables - **never in any tracked file** (not `pureinn-variables.md`, not `state.json`, not anywhere in the repo - unlike a Notion DB URL, these are credentials, not a pointer). Default names `AIKIDO_CLIENT_ID` / `AIKIDO_CLIENT_SECRET`, or whatever `state.json` `sca_automation.client_id_env_var`/`client_secret_env_var` say if the user picked different names.
+3. Note the Aikido account region (EU/US/ME, visible in account settings/URL) - stored in `state.json` `sca_automation.region`; it selects the API base URL.
+
+**Fetch procedure (executed by Claude at Step 1G when `sca_automation.enabled: true`):**
+
+1. Confirm both env vars are set. Missing despite `enabled: true` → surface a runtime error ("expected Aikido credentials not found in environment"), fall back to the manual path - don't block stripe close on it.
+2. Exchange credentials for a short-lived access token - reference env vars by name, never type the literal secret into a command, file, or output:
+   ```
+   curl -u "$AIKIDO_CLIENT_ID:$AIKIDO_CLIENT_SECRET" -d grant_type=client_credentials {base_url}/oauth/token
+   ```
+   `base_url` by region: EU `https://app.aikido.dev/api`, US `https://app.us.aikido.dev/api`, ME `https://app.me.aikido.dev/api`. Never persist the returned `access_token` - it's short-lived by design, re-exchange every run.
+3. Fetch open issues for this repo:
+   ```
+   curl -H "Authorization: Bearer $ACCESS_TOKEN" "{base_url}/public/v1/open-issue-groups?filter_status=open&filter_code_repo_name={repo_name}"
+   ```
+4. For each item in the response, apply the Stripe-close triage table (Step 1G) using: `type` (`open_source` = dependency-level; `sast`/`iac`/`cloud` = code-level), `severity` (`critical`/`high`/`medium`/`low`), `group_status` (`pull_request_open` = a fix PR already exists - route there, don't log), `locations[].name` (the entry's Context/location), `how_to_fix` (feed into the entry's Context field so the developer has the tool's own remediation guidance, not just the finding title).
+5. Write entries directly to `/domain/open_questions.md` per the triage table - no per-item confirmation, that's what "automatic" means here. Report a summary, not the raw API payload.
+
+**Possible simpler alternative, not yet built into this framework:** AikidoSec also publishes an official Claude Code plugin (`AikidoSec/aikido-claude-plugin`) that may offer an MCP-based path instead of raw OAuth2 handling. Its exact capabilities weren't verified in enough depth to build this reference around it - worth evaluating separately if the direct-API approach above feels heavier than needed; the fetch procedure above is the one with confirmed technical detail.
 
 ---
 
@@ -625,6 +725,8 @@ When multiple stripes run in parallel, register updates can cause merge conflict
 - [ ] Build skills receive Feature Card FEAT-ID + domain register slices + repo pattern files (context-briefing), not just FEAT-ID
 - [ ] Conditional build/review skills resolved against triggers (layer, kano, priority, security_review) - not skipped by default
 - [ ] Build Skills Coverage check run before 4_In_Build → 5_In_Review (non-blocking; skipped-despite-trigger surfaced); frontend features checked for component-test infra (`@testing-library/*` + jsdom/happy-dom), `component test infra: MISSING` surfaced as its own row
+- [ ] `test_types` value honored: test-master briefed on the specific types (unit/integration/contract/visual_regression/performance), not just routed generically; `contract`/`visual_regression` routed to their dedicated external tool (Pact / Percy-Chromatic) when test-master's remit doesn't cover them
+- [ ] Test-type coverage check run alongside test-infra check - each `test_types` entry beyond `unit` has a corresponding artifact or an explicit deferral, surfaced as its own row (not folded into "test-master ran")
 - [ ] Any conscious skip / deferral auto-logged to `/domain/open_questions.md` as an `OQ-` entry (not left in the conversation)
 - [ ] Review skills' fix policy honored: trivial/unambiguous findings may be fixed inline (noted in summary); behavioral / rule-touching / interface-affecting changes reported and left to a human
 - [ ] security_review value honored: build → secure-code-guardian, review → security-reviewer, both → both, none → neither
@@ -659,6 +761,10 @@ When multiple stripes run in parallel, register updates can cause merge conflict
 
 **Stripe closure:**
 - [ ] All features at 6_Shipped before closing
+- [ ] Stripe-close quality gate confirmed: full regression suite green in CI + dependency/SCA scan clean - or explicitly deferred/triaged and logged (never silently skipped)
+- [ ] SCA/security-scan findings triaged per the routing table before logging: auto-fixable dependency findings → the tool's own PR (not logged); non-fixable dependency findings → `BLK-`; code-level (SAST) findings Critical/High → `BLK-` with security-area tag; code-level Low/informational → `OQ-`
+- [ ] `sca_automation` init question asked once (key absent, retrofit on existing projects); when `enabled: true`, fetch runs automatically per the Aikido reference procedure instead of asking per item; credentials read only from named env vars, never written to any tracked file
+- [ ] `ci_automation` init question asked once (key absent, retrofit on existing projects); when `enabled: true`, regression check runs automatically via `gh run list` instead of asking; an in-progress/queued run is reported as unresolved, never guessed
 - [ ] state.json current_stripes updated
 
 ---
@@ -674,6 +780,8 @@ State update → `pureinn-workspace/[project-slug]/state.json`:
 - `current_stripes`: list of active stripe names (remove on closure)
 - Per stripe: `active_feature` (the **occupancy authority** - who is actively on the lane; empty = lane free even if a feature sits at `4_In_Build` from code state), `queue` (ordered FEAT-ID list)
 - `delivery_html`: `true`/`false` - whether the interactive HTML companion (`delivery_plan.html`) is enabled (persisted so it isn't re-asked)
+- `sca_automation`: `{enabled, tool, region, client_id_env_var, client_secret_env_var}` (or `{enabled: false}`) - whether the Stripe-close SCA scan check is automated (see Reference: Automatic SCA Fetch). Only credential **env var names** are stored, never a credential value - the actual Client ID/Secret live only in the environment, never in this file or any tracked file. Persisted so the init question is never re-asked.
+- `ci_automation`: `{enabled, provider: "github_actions", branch}` (or `{enabled: false}`) - whether the Stripe-close regression check is automated (see Reference: Automatic Regression Check). No credentials stored - `gh` CLI's own auth is used. Persisted so the init question is never re-asked.
 
 Feature Card frontmatter (Rebuild walkthrough, optional): `entry_mode` (`review` / `continue` / `from_scratch`) - how an inherited-partial feature will be approached, set during the onboarding walkthrough.
 
