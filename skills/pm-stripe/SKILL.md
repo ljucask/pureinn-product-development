@@ -5,7 +5,7 @@ license: MIT
 metadata:
   agent-mode: never
   author: https://github.com/ljucask
-  version: "3.7.0"
+  version: "3.8.0"
   domain: product-management
   triggers: stripe, delivery stripe, JIT cycle, feature design, build feature, impact analysis, security review, test types, test type matrix, dependency scan, SCA, regression gate, delivery plan, build order, sequence, parallel, Phase 6, Phase 7, next feature, kanban, timeline, delivery visualization, rebuild plan, WIP limit, delivery_plan.html, interactive delivery plan, click-for-detail
   role: orchestrator
@@ -663,7 +663,7 @@ After every compute: write `delivery_plan.md` to the repo root (so AI coding age
 
 ### Delivery Plan companion page (`delivery_plan.html`)
 
-Beyond the text render and `delivery_plan.md`, pm-stripe can materialize a **self-contained interactive HTML companion** - one file, zero build step, zero external dependency (no CDN, no framework) - that visualizes the same computed schedule as a real, usable page: collapsible per-stripe Kanban lanes, a relative Timeline, a wave-column Dependency graph, and a Kano distribution, with click-for-detail on every card/bar/node. This originated as a hand-built prototype during a live session on a real project and earned a permanent place in the framework because it's genuinely useful - not a demo - regenerates cleanly from data pm-stripe already computes, and stays one flat file.
+Beyond the text render and `delivery_plan.md`, pm-stripe can materialize a **self-contained interactive HTML companion** - one file, zero build step, zero external dependency (no CDN, no framework) - that visualizes the same computed schedule as a real, usable page: collapsible per-stripe Kanban lanes, a relative Timeline, a wave-column Dependency graph, and a Kano distribution, with click-for-detail on every card/bar/node. All three sequencing views (Kanban, Timeline, Dependency graph) also carry the same **build-order badge** (a feature's 1-indexed rank within its own stripe's unshipped pool) and, where it applies, a **cross-stripe wait note** (which other-stripe feature it also blocks on) - one visual language, not a separate section, backed by an always-visible legend. This originated as a hand-built prototype during a live session on a real project and earned a permanent place in the framework because it's genuinely useful - not a demo - regenerates cleanly from data pm-stripe already computes, and stays one flat file.
 
 **Read `references/delivery-plan-companion.html` before generating - it is the fixed template.** Its `<style>` block (Pureinn design tokens) and `<script>` block (collapse/expand + click-for-detail) are copied **byte-for-byte**, never re-authored per run - they are the engine, not something to reinvent. Only the `<main>` body content and the `FEATS` data object are regenerated from current state. The reference's own leading comment block is the full generation contract (per-region source, the timeline day-math, the row-packing algorithm for overlapping bars) - follow it exactly, do not improvise a different layout.
 
@@ -691,7 +691,9 @@ Plus a plain-language "most suitable right now" pick computed from state: a Rebu
 - **Critical path = the one computation already used everywhere else** - dependency edges only, never lane-serialized (a capacity/mutex constraint is not a dependency). Timeline and Dependency graph highlight the identical chain.
 - **Kano:** render the `kano` field stamped by `pm-features-list`. Never reclassify.
 - **One semantic color mapping, fixed by the reference's CSS tokens** - coral = critical path, amber = part-built, blue = needs review, grey = not started, green = shipped. Never invent a per-section palette.
-- **`FEATS` object:** title, short description, `layer`, `priority`, `stripe` per feature - powers the click-for-detail popover.
+- **Build order (`qn`) + cross-stripe wait (`w`) - region 8:** `qn` is the feature's 1-indexed rank within its own stripe's unshipped pool only (shipped features carry no `qn`), sorted the same way the Delivery Plan's own SORT step already orders build order (wave asc, priority, FEAT-ID); same feature = same `qn` in Kanban, Timeline, and Dependency graph. `w` is a one-line "also waits on: FEAT-X (stripe)" note listing only unshipped dependencies in a *different* stripe (same-stripe deps are already implied by `qn` ordering, so they're omitted). Compute both once per render, reuse everywhere - never recompute per view.
+- **Legend panel - region 9:** a small, always-visible (not collapsible) block right under the header explaining `qn`, the cross-stripe asterisk, the state-color swatches, critical path, Wave, and click-for-detail - copied verbatim from the reference, the same discipline as the CSS/JS engine. This is what makes `qn`/`w` legible without opening any section first.
+- **`FEATS` object:** title, short description, `layer`, `priority`, `stripe`, and an optional `w` (cross-stripe wait note, mirrors region 8) per feature - powers the click-for-detail popover, including resolving the Timeline's compact `*` to full text (region 10).
 - **Never hand-edit `delivery_plan.html`.** Fully derived, like `plan_order`/`wave` - regenerated and overwritten every run where the companion is enabled. Materialize to the repo root, next to `delivery_plan.md`.
 - **Not pushed to Notion** - interactive JS doesn't survive there. It lives in the repo; `delivery_plan.md` can link to it.
 
@@ -746,6 +748,7 @@ When multiple stripes run in parallel, register updates can cause merge conflict
 - [ ] Rebuild FULL render offers the Evidence/"exists in code" walkthrough column when used for team onboarding
 - [ ] `state.json` checked for `delivery_html` **every render, including steady-state NOW** (not just plan birth) - key absent → ask via AskUserQuestion now, regardless of whether `delivery_plan.md` predates this capability; persisted, never re-asked once set
 - [ ] If HTML companion enabled: `references/delivery-plan-companion.html`'s `<style>`/`<script>` copied verbatim, only `<main>` + `FEATS` regenerated; critical path/waves reuse the same computation as the text render; never hand-edited
+- [ ] If HTML companion enabled: `qn`/`w` computed once (region 8) and reused across Kanban/Timeline/Dependency graph/`FEATS`; Kanban columns and each wave's per-stripe subgroup verified ascending by `qn`; Legend panel (region 9) copied verbatim, not collapsible; infobox `.ib-waits` (region 10) wired so Timeline's `*` resolves on click
 - [ ] If static Mermaid chosen instead: granular multi-select per view (Kanban/Timeline/Dependency/Kano) with the state-based "most suitable now" recommendation (Rebuild→Kanban, greenfield→Timeline)
 
 **Status transitions:**

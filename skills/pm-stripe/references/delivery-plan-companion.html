@@ -25,7 +25,11 @@
      Expanding a lane reveals a 4-column .lane-board (one .col per bucket, always all 4
      columns even if empty - render <div class="empty">—</div> for an empty column, never
      omit the column). Card = <div class="card [bucket]" data-fid="FEAT-ID"><span
-     class="cid">ID</span>Title</div>.
+     class="qn">{qn}</span><span class="body"><span class="cid">ID</span>Title<span
+     class="waits">{w}</span></span></div> - the trailing .waits span is emitted only when
+     the feature has a cross-stripe wait (region 8). CRITICAL: cards within each
+     state-bucket column MUST be sorted ascending by qn - never left in insertion or
+     alphabetical order.
 
   3. TIMELINE - one .tlane per stripe that has at least one non-shipped feature (skip a
      lane with nothing to show; shipped features do not appear on the timeline - they are
@@ -51,12 +55,31 @@
      Bar class: "crit" if the feature is on the critical path (overrides bucket coloring),
      else bucket: "part" (4_In_Build) / "review" (5_In_Review) / "new" (not started - never
      shown for shipped, they're excluded).
+     .bid content is compact - just the qn number, no feature-ID text (qn + click already
+     identify the feature, and dropping the ID text is what leaves room for the number):
+     <span class="bid">{qn}</span>, or <span class="bid">{qn}<span class="x">*</span></span>
+     when the feature has a cross-stripe wait (region 8) - the asterisk resolves to the
+     full "waits on" text via the infobox on click (region 10). No extra sort step is
+     needed for row-packing: because qn's own sort (wave asc, then priority, then ID) is
+     what determines start_day, the existing packing (which already sorts by start_day)
+     naturally stacks ascending-qn bars top-to-bottom for bars sharing a start_day - just
+     verify the invariant holds, don't add a second sort.
 
   4. DEPENDENCY WAVES - reuse the WAVES step already computed by the Delivery Plan
      algorithm (topological level = longest unshipped-dependency chain to the feature) -
      do not recompute. One .wcol per wave index present, header shows the wave number and
-     node count. Node = .wnode (add "crit" class if on the critical path), containing the
-     FEAT-ID, title, and stripe name.
+     node count. Node = .wnode (add "crit" class if on the critical path):
+       <div class="wnode [crit]" data-fid="FEAT-ID">
+         <span class="wtop"><span class="qn">{qn}</span><span class="wid">ID</span></span>
+         <span class="wtitle">Title</span>
+         <span class="waits">{w}</span>  <!-- only if w present -->
+         <span class="wstripe">stripe name</span>
+       </div>
+     No extra sort step is needed inside a wave column either: every same-stripe subgroup
+     landing in a given wave was already emitted in qn order by construction (the
+     wave-grouping step iterates the same per-stripe pool) - add a generation-time
+     assertion per wave-column per-stripe-subgroup rather than relying on this by
+     convention, it's cheap and catches future drift.
 
   5. KANO BAR - one .krow per Kano category present (Must-be, Performance, Attractive,
      Delighter - use the same 4 category set and description text as below), bar width% =
@@ -66,12 +89,44 @@
   6. FEATS OBJECT - one entry per feature appearing anywhere above, keyed by FEAT-ID:
      {t: title, d: short description (first ~200 chars of Section 1 / card description -
      truncate cleanly at a word boundary, never mid-word), l: layer (comma-joined), p:
-     priority, s: stripe}. Powers the click-for-detail popover - every data-fid in the
-     document must resolve here.
+     priority, s: stripe, w: optional - see region 8}. Powers the click-for-detail popover
+     - every data-fid in the document must resolve here.
 
   7. FOOTER - one line: generation date, source file count ("N Feature Cards"), and a note
      that this file is fully regenerated and overwritten on every /pm-stripe run where the
      companion is enabled - never hand-edited.
+
+  8. BUILD ORDER (qn) + CROSS-STRIPE WAIT (w) - computed once per render, reused across
+     regions 2/3/4/6 (same feature carries the same qn everywhere - one visual language):
+       qn = 1-indexed position of the feature within its OWN stripe's unshipped pool only
+            (shipped features carry no qn and never emit a .qn badge), sorted by (wave
+            ascending, priority P1>P2>P3, FEAT-ID ascending) - the exact SORT step the
+            Delivery Plan algorithm already runs. This is per-stripe rank, NOT position
+            within a wave (a wave mixes stripes).
+       w  = "also waits on: FEAT-X (stripe), FEAT-Y (stripe)" - only the feature's
+            unshipped dependencies whose stripe differs from its own. Same-stripe
+            dependencies are omitted (qn ordering already implies them - no need to say
+            "waits on the thing right above it"). Omit the field entirely (not an empty
+            string) when there is no cross-stripe wait.
+
+  9. LEGEND PANEL - a small, NOT collapsible .legend-panel inserted after .selector-note,
+     before nav.toc (this is the key that makes qn/w legible in the other three views
+     without opening any of them first - hiding it behind a click defeats the purpose).
+     Six .legend-item rows in a .legend-grid, each pairing a live visual sample with one
+     sentence: (1) a .qn badge -> the build-order-within-stripe rule, same number across
+     all 3 views; (2) a coral asterisk -> cross-stripe block, where each view surfaces it;
+     (3) the four state-color swatches -> code state is independent of build order (a
+     feature can be qn 1 and still not started); (4) a coral dot -> critical path; (5) a
+     circular "W" badge -> Wave = dependency depth across ALL stripes, not a stripe itself;
+     (6) a click-anywhere note -> full detail via the infobox. Static copy, not computed -
+     carry it byte-for-byte from this reference, same discipline as the CSS/JS engine.
+
+  10. INFOBOX WAITS - #infobox gets one more child, <div class="ib-waits"
+      style="display:none"></div>, placed between .ib-desc and .ib-meta. In showInfo(),
+      after setting .ib-desc: show f.w in .ib-waits (display:block) when present, else
+      keep it display:none. This is what resolves the Timeline's compact asterisk (region
+      3) to the full "waits on" text on click - required for region 3's compromise to be
+      complete, not optional.
 
   Materialize as delivery_plan.html at the repo root, next to delivery_plan.md. Scope
   (whole plan vs. current phase only) follows whatever the render (NOW/FULL) already
@@ -151,12 +206,19 @@
   .col { background:var(--surface); padding:10px; min-height:40px; }
   .col-count { font-family:"JetBrains Mono",ui-monospace,monospace; font-size:10px; color:var(--fg-subtle); margin-bottom:6px; text-transform:uppercase; letter-spacing:.03em; }
   .col-cards { display:flex; flex-direction:column; gap:5px; }
-  .card { background:var(--surface-raised); border-radius:6px; padding:6px 9px; font-size:12px; line-height:1.35; border-left:3px solid var(--fg-subtle); cursor:pointer; }
+  .card { background:var(--surface-raised); border-radius:6px; padding:6px 9px; font-size:12px; line-height:1.35; border-left:3px solid var(--fg-subtle); cursor:pointer;
+    display:flex; align-items:flex-start; gap:7px; }
   .card:hover { background:var(--border-2); }
   .card .cid { display:block; font-family:"JetBrains Mono",ui-monospace,monospace; font-size:10px; color:var(--fg-subtle); margin-bottom:2px; }
   .card.part_built { border-left-color:var(--amber); } .card.needs_review { border-left-color:var(--blue); }
   .card.shipped { border-left-color:var(--green); } .card.not_started { border-left-color:var(--fg-subtle); color:var(--fg-muted); }
   .empty { font-size:11px; color:var(--fg-subtle); font-family:"JetBrains Mono",monospace; padding:4px 2px; }
+  /* build-order badge + cross-stripe wait note, shared across Kanban cards and Dependency-graph nodes */
+  .qn { flex-shrink:0; width:16px; height:16px; border-radius:50%; background:var(--base); border:1px solid var(--border-2);
+    color:var(--fg-muted); font-family:"JetBrains Mono",monospace; font-size:9.5px; font-weight:700; display:flex; align-items:center; justify-content:center; }
+  .card .qn { margin-top:1px; }
+  .card .body { display:flex; flex-direction:column; min-width:0; }
+  .waits { display:block; font-size:10px; color:var(--coral); margin-top:3px; line-height:1.3; }
 
   .tl-wrap { overflow-x:auto; padding:18px 18px 10px; }
   .tl-axis { display:flex; justify-content:space-between; font-family:"JetBrains Mono",monospace; font-size:10px; color:var(--fg-subtle); padding-left:100px; margin-bottom:12px; min-width:760px; }
@@ -166,7 +228,8 @@
   .tbar { position:absolute; height:20px; border-radius:5px; background:var(--fg-subtle); display:flex; align-items:center; gap:6px; padding:0 7px;
     overflow:hidden; border:1.5px solid var(--base); cursor:pointer; box-shadow:0 0 0 1px var(--border); white-space:nowrap; }
   .tbar:hover { filter:brightness(1.15); }
-  .tbar .bid { font-family:"JetBrains Mono",monospace; font-size:9px; font-weight:700; color:var(--on-accent); flex-shrink:0; }
+  .tbar .bid { font-family:"JetBrains Mono",monospace; font-size:9.5px; font-weight:700; color:var(--on-accent); flex-shrink:0; }
+  .tbar .bid .x { color:var(--coral-deep); }
   .tbar .btitle { font-size:10px; color:var(--on-accent); opacity:.82; overflow:hidden; text-overflow:ellipsis; }
   .tbar.part { background:var(--amber); } .tbar.review { background:var(--blue); }
   .tbar.new { background:var(--fg-subtle); } .tbar.crit { background:var(--coral); }
@@ -182,6 +245,7 @@
   .wnode { background:var(--surface-raised); border:1px solid var(--border); border-radius:7px; padding:8px 10px; margin-bottom:8px; cursor:pointer; display:flex; flex-direction:column; gap:2px; }
   .wnode:hover { border-color:var(--border-2); }
   .wnode.crit { border-color:var(--coral); background:rgba(237,109,87,.12); }
+  .wtop { display:flex; align-items:center; gap:6px; }
   .wid { font-family:"JetBrains Mono",monospace; font-size:11px; font-weight:600; }
   .wnode.crit .wid { color:var(--coral); }
   .wtitle { font-size:11.5px; color:var(--fg-muted); line-height:1.3; }
@@ -200,12 +264,23 @@
   #infobox .ib-id { font-family:"JetBrains Mono",monospace; font-size:10.5px; color:var(--coral); margin-bottom:4px; }
   #infobox .ib-title { font-size:14px; font-weight:600; margin-bottom:8px; }
   #infobox .ib-desc { font-size:12px; color:var(--fg-muted); line-height:1.5; margin-bottom:10px; }
+  #infobox .ib-waits { font-size:11px; color:var(--coral); line-height:1.4; margin:-4px 0 10px; }
   #infobox .ib-meta { display:flex; gap:8px; flex-wrap:wrap; }
   #infobox .ib-meta span { font-family:"JetBrains Mono",monospace; font-size:10px; color:var(--fg-subtle);
     border:1px solid var(--border); padding:2px 8px; border-radius:999px; }
   #infobox .ib-close { position:absolute; top:8px; right:10px; cursor:pointer; color:var(--fg-subtle); font-size:14px; background:none; border:none; }
 
   footer { margin-top:44px; padding-top:20px; border-top:1px solid var(--border); font-size:12.5px; color:var(--fg-subtle); }
+
+  /* always-visible legend, the key that unlocks qn/waits across the other three views */
+  .legend-panel { margin-top:14px; padding:14px 16px; background:var(--surface); border:1px solid var(--border); border-radius:10px; }
+  .legend-title { font-family:"JetBrains Mono",monospace; font-size:10.5px; font-weight:600; letter-spacing:.06em; color:var(--fg-subtle); text-transform:uppercase; margin-bottom:10px; }
+  .legend-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:10px 18px; }
+  .legend-item { display:flex; align-items:flex-start; gap:8px; font-size:12px; color:var(--fg-muted); line-height:1.4; }
+  .legend-item b { color:var(--fg); }
+  .legend-item .qn { flex-shrink:0; margin-top:1px; }
+  .legend-item .dot { flex-shrink:0; margin-top:4px; }
+  .legend-item .swatches { display:flex; gap:5px; flex-shrink:0; margin-top:3px; }
 </style>
 
 <main>
@@ -219,13 +294,26 @@
       <div class="stat shipped"><span class="n">3</span><span class="l">shipped</span></div>
     </div>
     <div class="selector-note">💡 <span><b>Click any card, bar, or node</b> for a quick summary. <b>Click a section title</b> to collapse/expand that whole view.</span></div>
+
+    <div class="legend-panel">
+      <div class="legend-title">How to read this — same rules across all three views below</div>
+      <div class="legend-grid">
+        <div class="legend-item"><span class="qn">2</span><span><b>Build order within that lane.</b> One stripe runs one active feature at a time — #2 starts only once #1 in the <i>same</i> lane ships. Other lanes don't matter. Same feature = same number in every view.</span></div>
+        <div class="legend-item"><span style="color:var(--coral-deep);font-weight:700;flex-shrink:0">*</span><span><b>Also blocked by another lane.</b> Shown as a coral note (By lane, Dependency graph) or a coral <code>*</code> you click for detail (Timeline). Same-lane order already covers same-lane dependencies — this is only for cross-lane ones.</span></div>
+        <div class="legend-item"><span class="swatches"><span class="dot" style="background:var(--fg-subtle)"></span><span class="dot" style="background:var(--amber)"></span><span class="dot" style="background:var(--blue)"></span><span class="dot" style="background:var(--green)"></span></span><span><b>Code state</b> (grey → amber → blue → green = not started → part-built → needs review → shipped). Independent of build order — a feature can be #1 in its lane and still <code>not started</code>.</span></div>
+        <div class="legend-item"><span class="dot" style="background:var(--coral)"></span><span><b>Critical path</b> (Timeline bars, Dependency graph outline). The single longest dependency chain — delay any coral feature and everything after it slips.</span></div>
+        <div class="legend-item"><span class="qn" style="border-radius:3px">W</span><span><b>Wave</b> (Dependency graph column) = how many unfinished dependencies stand before a feature, counted across <i>all</i> lanes. Not a lane, not a priority — several stripes' features can share a wave.</span></div>
+        <div class="legend-item">🖱️<span>Click any card, bar, or node for the full description, layer, priority and (if any) the "waits on" detail.</span></div>
+      </div>
+    </div>
+
     <nav class="toc"><a href="#kanban">By lane</a><a href="#timeline">Timeline</a><a href="#graph">Dependency graph</a><a href="#kano">Kano</a></nav>
   </header>
 
   <section id="kanban" class="collapsible open">
     <button type="button" class="sec-head js-sec-toggle">
       <span class="sec-chevron">▾</span>
-      <span class="sec-head-text"><h2>By lane — where everything sits</h2><div class="sec-explain">One row per stripe. Each lane is collapsed to a count by default — click a lane to open it and see the actual features.</div></span>
+      <span class="sec-head-text"><h2>By lane — where everything sits</h2><div class="sec-explain">One row per stripe. Each lane is collapsed to a count by default — click a lane to open it and see the actual features. The circled number on a card is its <b>build order within that lane</b> (cards are sorted by it, low to high) — one stripe runs one active feature at a time, so #2 starts only once #1 in the <i>same</i> lane ships. A coral note under a card means it also waits on a feature in a <i>different</i> lane.</div></span>
     </button>
     <div class="sec-body"><div class="kanban-toolbar"><button type="button" id="expand-all">Expand all lanes</button><button type="button" id="collapse-all">Collapse all lanes</button></div><div>
     <div class="lane" data-lane-name="stripe-checkout">
@@ -233,21 +321,21 @@
         <span class="lane-name">▸ stripe-checkout</span>
         <span class="lane-chips"><span class="chip not_started">2 not started</span><span class="chip part_built">1 part-built</span><span class="chip shipped">3 shipped</span><span class="lane-n">6</span></span>
       </button>
-      <div class="lane-board"><div class="col"><div class="col-count">Not started · 2</div><div class="col-cards"><div class="card not_started" data-fid="FEAT-ORD-005"><span class="cid">ORD-005</span>Saved carts</div><div class="card not_started" data-fid="FEAT-ORD-006"><span class="cid">ORD-006</span>Reorder flow</div></div></div><div class="col"><div class="col-count">Part-built · 1</div><div class="col-cards"><div class="card part_built" data-fid="FEAT-ORD-004"><span class="cid">ORD-004</span>Discount codes</div></div></div><div class="col"><div class="col-count">Needs review · 0</div><div class="col-cards"><div class="empty">—</div></div></div><div class="col"><div class="col-count">Shipped · 3</div><div class="col-cards"><div class="card shipped" data-fid="FEAT-ORD-001"><span class="cid">ORD-001</span>Checkout</div><div class="card shipped" data-fid="FEAT-ORD-002"><span class="cid">ORD-002</span>Address book</div><div class="card shipped" data-fid="FEAT-ORD-003"><span class="cid">ORD-003</span>Cart merge</div></div></div></div>
+      <div class="lane-board"><div class="col"><div class="col-count">Not started · 2</div><div class="col-cards"><div class="card not_started" data-fid="FEAT-ORD-005"><span class="qn">2</span><span class="body"><span class="cid">ORD-005</span>Saved carts</span></div><div class="card not_started" data-fid="FEAT-ORD-006"><span class="qn">3</span><span class="body"><span class="cid">ORD-006</span>Reorder flow<span class="waits">also waits on: PAY-002 (stripe-payment)</span></span></div></div></div><div class="col"><div class="col-count">Part-built · 1</div><div class="col-cards"><div class="card part_built" data-fid="FEAT-ORD-004"><span class="qn">1</span><span class="body"><span class="cid">ORD-004</span>Discount codes</span></div></div></div><div class="col"><div class="col-count">Needs review · 0</div><div class="col-cards"><div class="empty">—</div></div></div><div class="col"><div class="col-count">Shipped · 3</div><div class="col-cards"><div class="card shipped" data-fid="FEAT-ORD-001"><span class="body"><span class="cid">ORD-001</span>Checkout</span></div><div class="card shipped" data-fid="FEAT-ORD-002"><span class="body"><span class="cid">ORD-002</span>Address book</span></div><div class="card shipped" data-fid="FEAT-ORD-003"><span class="body"><span class="cid">ORD-003</span>Cart merge</span></div></div></div></div>
     </div>
     <div class="lane" data-lane-name="stripe-payment">
       <button type="button" class="lane-head js-lane-toggle">
         <span class="lane-name">▸ stripe-payment</span>
         <span class="lane-chips"><span class="chip not_started">2 not started</span><span class="chip needs_review">1 needs review</span><span class="lane-n">3</span></span>
       </button>
-      <div class="lane-board"><div class="col"><div class="col-count">Not started · 2</div><div class="col-cards"><div class="card not_started" data-fid="FEAT-PAY-001"><span class="cid">PAY-001</span>Capture</div><div class="card not_started" data-fid="FEAT-PAY-002"><span class="cid">PAY-002</span>Refund</div></div></div><div class="col"><div class="col-count">Part-built · 0</div><div class="col-cards"><div class="empty">—</div></div></div><div class="col"><div class="col-count">Needs review · 1</div><div class="col-cards"><div class="card needs_review" data-fid="FEAT-PAY-003"><span class="cid">PAY-003</span>Method vault</div></div></div><div class="col"><div class="col-count">Shipped · 0</div><div class="col-cards"><div class="empty">—</div></div></div></div>
+      <div class="lane-board"><div class="col"><div class="col-count">Not started · 2</div><div class="col-cards"><div class="card not_started" data-fid="FEAT-PAY-001"><span class="qn">2</span><span class="body"><span class="cid">PAY-001</span>Capture<span class="waits">also waits on: ORD-004 (stripe-checkout)</span></span></div><div class="card not_started" data-fid="FEAT-PAY-002"><span class="qn">3</span><span class="body"><span class="cid">PAY-002</span>Refund</span></div></div></div><div class="col"><div class="col-count">Part-built · 0</div><div class="col-cards"><div class="empty">—</div></div></div><div class="col"><div class="col-count">Needs review · 1</div><div class="col-cards"><div class="card needs_review" data-fid="FEAT-PAY-003"><span class="qn">1</span><span class="body"><span class="cid">PAY-003</span>Method vault</span></div></div></div><div class="col"><div class="col-count">Shipped · 0</div><div class="col-cards"><div class="empty">—</div></div></div></div>
     </div>
     <div class="lane" data-lane-name="stripe-trust">
       <button type="button" class="lane-head js-lane-toggle">
         <span class="lane-name">▸ stripe-trust</span>
         <span class="lane-chips"><span class="chip not_started">2 not started</span><span class="lane-n">2</span></span>
       </button>
-      <div class="lane-board"><div class="col"><div class="col-count">Not started · 2</div><div class="col-cards"><div class="card not_started" data-fid="FEAT-TRU-001"><span class="cid">TRU-001</span>Trust score</div><div class="card not_started" data-fid="FEAT-TRU-002"><span class="cid">TRU-002</span>Verified badge</div></div></div><div class="col"><div class="col-count">Part-built · 0</div><div class="col-cards"><div class="empty">—</div></div></div><div class="col"><div class="col-count">Needs review · 0</div><div class="col-cards"><div class="empty">—</div></div></div><div class="col"><div class="col-count">Shipped · 0</div><div class="col-cards"><div class="empty">—</div></div></div></div>
+      <div class="lane-board"><div class="col"><div class="col-count">Not started · 2</div><div class="col-cards"><div class="card not_started" data-fid="FEAT-TRU-001"><span class="qn">1</span><span class="body"><span class="cid">TRU-001</span>Trust score<span class="waits">also waits on: ORD-006 (stripe-checkout)</span></span></div><div class="card not_started" data-fid="FEAT-TRU-002"><span class="qn">2</span><span class="body"><span class="cid">TRU-002</span>Verified badge</span></div></div></div><div class="col"><div class="col-count">Part-built · 0</div><div class="col-cards"><div class="empty">—</div></div></div><div class="col"><div class="col-count">Needs review · 0</div><div class="col-cards"><div class="empty">—</div></div></div><div class="col"><div class="col-count">Shipped · 0</div><div class="col-cards"><div class="empty">—</div></div></div></div>
     </div>
     </div></div>
   </section>
@@ -255,27 +343,27 @@
   <section id="timeline" class="collapsible open">
     <button type="button" class="sec-head js-sec-toggle">
       <span class="sec-chevron">▾</span>
-      <span class="sec-head-text"><h2>Timeline — relative days from day 0</h2><div class="sec-explain">No calendar dates yet — "day 0" means "whenever work starts." Bar length from each feature's size estimate (S/M/L). Coral bars are the single longest dependency chain — the one thing that, if delayed, delays everything after it.</div></span>
+      <span class="sec-head-text"><h2>Timeline — relative days from day 0</h2><div class="sec-explain">No calendar dates yet — "day 0" means "whenever work starts." Bar length from each feature's size estimate (S/M/L). Coral bars are the single longest dependency chain. The bold number on each bar is its <b>build order within that lane</b> (top-to-bottom stacking already follows this order) — a coral <b>*</b> after the number means it also waits on a feature in a different lane (click the bar for which one).</div></span>
     </button>
     <div class="sec-body"><div class="panel"><div class="tl-wrap"><div class="tl-axis"><span>d0</span><span>d4</span><span>d7</span><span>d10</span><span>d14</span><span>d17</span><span>d20</span><span>d24</span><span>d27</span><span>d34</span></div>
-      <div class="tlane"><div class="tlane-lbl">stripe-checkout</div><div class="ttrack" style="height:60px"><div class="tbar crit" data-fid="FEAT-ORD-004" style="left:0.0%;width:14.7%;top:0px"><span class="bid">ORD-004</span><span class="btitle">Discount codes</span></div><div class="tbar new" data-fid="FEAT-ORD-005" style="left:14.7%;width:5.9%;top:0px"><span class="bid">ORD-005</span><span class="btitle">Saved carts</span></div><div class="tbar crit" data-fid="FEAT-ORD-006" style="left:50.0%;width:14.7%;top:0px"><span class="bid">ORD-006</span><span class="btitle">Reorder flow</span></div></div></div>
-      <div class="tlane"><div class="tlane-lbl">stripe-payment</div><div class="ttrack" style="height:60px"><div class="tbar crit" data-fid="FEAT-PAY-001" style="left:14.7%;width:29.4%;top:0px"><span class="bid">PAY-001</span><span class="btitle">Capture</span></div><div class="tbar crit" data-fid="FEAT-PAY-002" style="left:44.1%;width:5.9%;top:0px"><span class="bid">PAY-002</span><span class="btitle">Refund</span></div><div class="tbar review" data-fid="FEAT-PAY-003" style="left:0.0%;width:14.7%;top:26px"><span class="bid">PAY-003</span><span class="btitle">Method vault</span></div></div></div>
-      <div class="tlane"><div class="tlane-lbl">stripe-trust</div><div class="ttrack" style="height:34px"><div class="tbar crit" data-fid="FEAT-TRU-001" style="left:64.7%;width:29.4%;top:0px"><span class="bid">TRU-001</span><span class="btitle">Trust score</span></div><div class="tbar crit" data-fid="FEAT-TRU-002" style="left:94.1%;width:5.9%;top:0px"><span class="bid">TRU-002</span><span class="btitle">Verified badge</span></div></div></div>
-      </div><div class="tl-legend"><span><span class="dot" style="background:var(--coral)"></span>critical path</span><span><span class="dot" style="background:var(--amber)"></span>part-built</span><span><span class="dot" style="background:var(--blue)"></span>needs review</span><span><span class="dot" style="background:var(--fg-subtle)"></span>not started</span></div></div></div>
+      <div class="tlane"><div class="tlane-lbl">stripe-checkout</div><div class="ttrack" style="height:60px"><div class="tbar crit" data-fid="FEAT-ORD-004" style="left:0.0%;width:14.7%;top:0px"><span class="bid">1</span><span class="btitle">Discount codes</span></div><div class="tbar new" data-fid="FEAT-ORD-005" style="left:14.7%;width:5.9%;top:0px"><span class="bid">2</span><span class="btitle">Saved carts</span></div><div class="tbar crit" data-fid="FEAT-ORD-006" style="left:50.0%;width:14.7%;top:0px"><span class="bid">3<span class="x">*</span></span><span class="btitle">Reorder flow</span></div></div></div>
+      <div class="tlane"><div class="tlane-lbl">stripe-payment</div><div class="ttrack" style="height:60px"><div class="tbar crit" data-fid="FEAT-PAY-001" style="left:14.7%;width:29.4%;top:0px"><span class="bid">2<span class="x">*</span></span><span class="btitle">Capture</span></div><div class="tbar crit" data-fid="FEAT-PAY-002" style="left:44.1%;width:5.9%;top:0px"><span class="bid">3</span><span class="btitle">Refund</span></div><div class="tbar review" data-fid="FEAT-PAY-003" style="left:0.0%;width:14.7%;top:26px"><span class="bid">1</span><span class="btitle">Method vault</span></div></div></div>
+      <div class="tlane"><div class="tlane-lbl">stripe-trust</div><div class="ttrack" style="height:34px"><div class="tbar crit" data-fid="FEAT-TRU-001" style="left:64.7%;width:29.4%;top:0px"><span class="bid">1<span class="x">*</span></span><span class="btitle">Trust score</span></div><div class="tbar crit" data-fid="FEAT-TRU-002" style="left:94.1%;width:5.9%;top:0px"><span class="bid">2</span><span class="btitle">Verified badge</span></div></div></div>
+      </div><div class="tl-legend"><span><span class="dot" style="background:var(--coral)"></span>critical path</span><span><span class="dot" style="background:var(--amber)"></span>part-built</span><span><span class="dot" style="background:var(--blue)"></span>needs review</span><span><span class="dot" style="background:var(--fg-subtle)"></span>not started</span><span><b style="color:var(--coral-deep)">*</b> also waits on another lane — click for which</span></div></div></div>
   </section>
 
   <section id="graph" class="collapsible open">
     <button type="button" class="sec-head js-sec-toggle">
       <span class="sec-chevron">▾</span>
-      <span class="sec-head-text"><h2>Dependency graph — what has to finish before what</h2><div class="sec-explain">Read left to right: each column is a "wave" — Wave 0 has no unfinished prerequisite. Coral-outlined features sit on the critical path — the same chain highlighted in the Timeline above.</div></span>
+      <span class="sec-head-text"><h2>Dependency graph — what has to finish before what</h2><div class="sec-explain">Read left to right: each column is a "wave" — Wave 0 has no unfinished prerequisite. Coral-outlined features sit on the critical path — the same chain highlighted in the Timeline above. The circled number is build order within that feature's own lane (same number as in By lane / Timeline). Coral notes name the other-lane feature that also has to ship.</div></span>
     </button>
     <div class="sec-body"><div class="panel"><div class="wave-wrap">
-      <div class="wcol"><div class="wcol-head">Wave 0<span>2</span></div><div class="wcol-body"><div class="wnode crit" data-fid="FEAT-ORD-004"><span class="wid">ORD-004</span><span class="wtitle">Discount codes</span><span class="wstripe">stripe-checkout</span></div><div class="wnode " data-fid="FEAT-PAY-003"><span class="wid">PAY-003</span><span class="wtitle">Method vault</span><span class="wstripe">stripe-payment</span></div></div></div>
-      <div class="wcol"><div class="wcol-head">Wave 1<span>2</span></div><div class="wcol-body"><div class="wnode " data-fid="FEAT-ORD-005"><span class="wid">ORD-005</span><span class="wtitle">Saved carts</span><span class="wstripe">stripe-checkout</span></div><div class="wnode crit" data-fid="FEAT-PAY-001"><span class="wid">PAY-001</span><span class="wtitle">Capture</span><span class="wstripe">stripe-payment</span></div></div></div>
-      <div class="wcol"><div class="wcol-head">Wave 2<span>1</span></div><div class="wcol-body"><div class="wnode crit" data-fid="FEAT-PAY-002"><span class="wid">PAY-002</span><span class="wtitle">Refund</span><span class="wstripe">stripe-payment</span></div></div></div>
-      <div class="wcol"><div class="wcol-head">Wave 3<span>1</span></div><div class="wcol-body"><div class="wnode crit" data-fid="FEAT-ORD-006"><span class="wid">ORD-006</span><span class="wtitle">Reorder flow</span><span class="wstripe">stripe-checkout</span></div></div></div>
-      <div class="wcol"><div class="wcol-head">Wave 4<span>1</span></div><div class="wcol-body"><div class="wnode crit" data-fid="FEAT-TRU-001"><span class="wid">TRU-001</span><span class="wtitle">Trust score</span><span class="wstripe">stripe-trust</span></div></div></div>
-      <div class="wcol"><div class="wcol-head">Wave 5<span>1</span></div><div class="wcol-body"><div class="wnode crit" data-fid="FEAT-TRU-002"><span class="wid">TRU-002</span><span class="wtitle">Verified badge</span><span class="wstripe">stripe-trust</span></div></div></div>
+      <div class="wcol"><div class="wcol-head">Wave 0<span>2</span></div><div class="wcol-body"><div class="wnode crit" data-fid="FEAT-ORD-004"><span class="wtop"><span class="qn">1</span><span class="wid">ORD-004</span></span><span class="wtitle">Discount codes</span><span class="wstripe">stripe-checkout</span></div><div class="wnode " data-fid="FEAT-PAY-003"><span class="wtop"><span class="qn">1</span><span class="wid">PAY-003</span></span><span class="wtitle">Method vault</span><span class="wstripe">stripe-payment</span></div></div></div>
+      <div class="wcol"><div class="wcol-head">Wave 1<span>2</span></div><div class="wcol-body"><div class="wnode " data-fid="FEAT-ORD-005"><span class="wtop"><span class="qn">2</span><span class="wid">ORD-005</span></span><span class="wtitle">Saved carts</span><span class="wstripe">stripe-checkout</span></div><div class="wnode crit" data-fid="FEAT-PAY-001"><span class="wtop"><span class="qn">2</span><span class="wid">PAY-001</span></span><span class="wtitle">Capture</span><span class="waits">also waits on: ORD-004 (stripe-checkout)</span><span class="wstripe">stripe-payment</span></div></div></div>
+      <div class="wcol"><div class="wcol-head">Wave 2<span>1</span></div><div class="wcol-body"><div class="wnode crit" data-fid="FEAT-PAY-002"><span class="wtop"><span class="qn">3</span><span class="wid">PAY-002</span></span><span class="wtitle">Refund</span><span class="wstripe">stripe-payment</span></div></div></div>
+      <div class="wcol"><div class="wcol-head">Wave 3<span>1</span></div><div class="wcol-body"><div class="wnode crit" data-fid="FEAT-ORD-006"><span class="wtop"><span class="qn">3</span><span class="wid">ORD-006</span></span><span class="wtitle">Reorder flow</span><span class="waits">also waits on: PAY-002 (stripe-payment)</span><span class="wstripe">stripe-checkout</span></div></div></div>
+      <div class="wcol"><div class="wcol-head">Wave 4<span>1</span></div><div class="wcol-body"><div class="wnode crit" data-fid="FEAT-TRU-001"><span class="wtop"><span class="qn">1</span><span class="wid">TRU-001</span></span><span class="wtitle">Trust score</span><span class="waits">also waits on: ORD-006 (stripe-checkout)</span><span class="wstripe">stripe-trust</span></div></div></div>
+      <div class="wcol"><div class="wcol-head">Wave 5<span>1</span></div><div class="wcol-body"><div class="wnode crit" data-fid="FEAT-TRU-002"><span class="wtop"><span class="qn">2</span><span class="wid">TRU-002</span></span><span class="wtitle">Verified badge</span><span class="wstripe">stripe-trust</span></div></div></div>
     </div></div></div>
   </section>
 
@@ -297,6 +385,7 @@
     <div class="ib-id"></div>
     <div class="ib-title"></div>
     <div class="ib-desc"></div>
+    <div class="ib-waits" style="display:none"></div>
     <div class="ib-meta"></div>
   </div>
 
@@ -304,7 +393,7 @@
 </main>
 
 <script>
-  const FEATS = {"FEAT-ORD-001":{"t":"Checkout","d":"Illustrative example feature.","l":"frontend, backend","p":"P1","s":"stripe-checkout"},"FEAT-ORD-002":{"t":"Address book","d":"Illustrative example feature.","l":"frontend, backend","p":"P2","s":"stripe-checkout"},"FEAT-ORD-003":{"t":"Cart merge","d":"Illustrative example feature.","l":"frontend, backend","p":"P1","s":"stripe-checkout"},"FEAT-ORD-004":{"t":"Discount codes","d":"Illustrative example feature, on the critical path.","l":"frontend, backend","p":"P1","s":"stripe-checkout"},"FEAT-ORD-005":{"t":"Saved carts","d":"Illustrative example feature.","l":"frontend, backend","p":"P3","s":"stripe-checkout"},"FEAT-ORD-006":{"t":"Reorder flow","d":"Illustrative example feature, on the critical path.","l":"frontend, backend","p":"P2","s":"stripe-checkout"},"FEAT-PAY-001":{"t":"Capture","d":"Illustrative example feature, on the critical path.","l":"backend, system","p":"P1","s":"stripe-payment"},"FEAT-PAY-002":{"t":"Refund","d":"Illustrative example feature, on the critical path.","l":"backend","p":"P2","s":"stripe-payment"},"FEAT-PAY-003":{"t":"Method vault","d":"Illustrative example feature.","l":"backend, system","p":"P2","s":"stripe-payment"},"FEAT-TRU-001":{"t":"Trust score","d":"Illustrative example feature, on the critical path.","l":"backend","p":"P2","s":"stripe-trust"},"FEAT-TRU-002":{"t":"Verified badge","d":"Illustrative example feature, on the critical path.","l":"frontend, backend","p":"P2","s":"stripe-trust"}};
+  const FEATS = {"FEAT-ORD-001":{"t":"Checkout","d":"Illustrative example feature.","l":"frontend, backend","p":"P1","s":"stripe-checkout"},"FEAT-ORD-002":{"t":"Address book","d":"Illustrative example feature.","l":"frontend, backend","p":"P2","s":"stripe-checkout"},"FEAT-ORD-003":{"t":"Cart merge","d":"Illustrative example feature.","l":"frontend, backend","p":"P1","s":"stripe-checkout"},"FEAT-ORD-004":{"t":"Discount codes","d":"Illustrative example feature, on the critical path.","l":"frontend, backend","p":"P1","s":"stripe-checkout"},"FEAT-ORD-005":{"t":"Saved carts","d":"Illustrative example feature.","l":"frontend, backend","p":"P3","s":"stripe-checkout"},"FEAT-ORD-006":{"t":"Reorder flow","d":"Illustrative example feature, on the critical path.","l":"frontend, backend","p":"P2","s":"stripe-checkout","w":"also waits on: PAY-002 (stripe-payment)"},"FEAT-PAY-001":{"t":"Capture","d":"Illustrative example feature, on the critical path.","l":"backend, system","p":"P1","s":"stripe-payment","w":"also waits on: ORD-004 (stripe-checkout)"},"FEAT-PAY-002":{"t":"Refund","d":"Illustrative example feature, on the critical path.","l":"backend","p":"P2","s":"stripe-payment"},"FEAT-PAY-003":{"t":"Method vault","d":"Illustrative example feature.","l":"backend, system","p":"P2","s":"stripe-payment"},"FEAT-TRU-001":{"t":"Trust score","d":"Illustrative example feature, on the critical path.","l":"backend","p":"P2","s":"stripe-trust","w":"also waits on: ORD-006 (stripe-checkout)"},"FEAT-TRU-002":{"t":"Verified badge","d":"Illustrative example feature, on the critical path.","l":"frontend, backend","p":"P2","s":"stripe-trust"}};
 
   function setLane(lane, open) {
     lane.classList.toggle('is-open', open);
@@ -344,6 +433,8 @@
     box.querySelector('.ib-id').textContent = id;
     box.querySelector('.ib-title').textContent = f.t;
     box.querySelector('.ib-desc').textContent = f.d || '(no description on file)';
+    const waitsEl = box.querySelector('.ib-waits');
+    if (f.w) { waitsEl.textContent = f.w; waitsEl.style.display = 'block'; } else { waitsEl.style.display = 'none'; }
     box.querySelector('.ib-meta').innerHTML =
       '<span>layer: ' + f.l + '</span><span>priority: ' + f.p + '</span><span>stripe: ' + f.s + '</span>';
     const r = el.getBoundingClientRect();
