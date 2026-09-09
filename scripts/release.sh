@@ -57,10 +57,35 @@ if [[ "$BUMP" != "patch" && "$BUMP" != "minor" && "$BUMP" != "major" ]]; then
   exit 1
 fi
 
+# Release-message hygiene gate - the message itself is never covered by
+# validate.py: it runs before this script writes the message into CHANGELOG.md,
+# the tag and the GitHub Release. That gap shipped a real client name in v5.39.0
+# to all three. Check the message against the same local blocklist first.
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if ! MSG_LEAK=$(BLOCKLIST="$SCRIPT_DIR/.project-blocklist" RELEASE_MSG="$MESSAGE" python3 - <<'PYEOF'
+import os, re, sys
+path = os.environ["BLOCKLIST"]
+if not os.path.isfile(path):          # public clone - no names to check, no-op
+    sys.exit(0)
+names = [l.strip() for l in open(path, encoding="utf-8") if l.strip()]
+if not names:
+    sys.exit(0)
+hits = sorted({m.group(0) for m in re.finditer(
+    "|".join(re.escape(n) for n in names), os.environ["RELEASE_MSG"], re.IGNORECASE)})
+if hits:
+    print(", ".join(hits))
+    sys.exit(1)
+PYEOF
+); then
+  echo "Error: release message contains a blocklisted project/client name: $MSG_LEAK"
+  echo "It would land in CHANGELOG.md, the git tag and the GitHub Release."
+  echo "Anonymize it (e.g. \"a real client\") and re-run."
+  exit 1
+fi
+
 # Structural integrity gate - never ship a release that fails validation.
 # Runs before any file is touched, so a broken repo aborts cleanly with no partial state.
 echo "Running structural validation..."
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 if ! python3 "$SCRIPT_DIR/validate.py"; then
   echo ""
   echo "Error: validation failed. Fix the integrity errors above before releasing."
