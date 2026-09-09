@@ -252,6 +252,20 @@ def check_command(name, path, rep):
     check_common_body(where, text, rep)
 
 
+def check_command_references(name, commands_dir, rep):
+    """A command may split its steps into commands/<name>/references/*.md (see
+    commands/pureinn). That content is still shipped command body - it must not
+    escape the content checks just because it moved out of COMMAND.md."""
+    refs_dir = os.path.join(commands_dir, name, "references")
+    if not os.path.isdir(refs_dir):
+        return
+    for fname in sorted(os.listdir(refs_dir)):
+        if not fname.endswith(".md"):
+            continue
+        path = os.path.join(refs_dir, fname)
+        check_common_body(f"commands/{name}/references/{fname}", read(path), rep)
+
+
 def check_common_body(where, text, rep, allow_stale_prd=False):
     """Checks that apply to both skills and commands."""
     # Cross-repo path leaks
@@ -393,6 +407,7 @@ def main():
             rep.err(f"commands/{name}", "directory has no COMMAND.md")
             continue
         check_command(name, path, rep)
+        check_command_references(name, commands_dir, rep)
 
     check_no_real_project_names(rep)
 
