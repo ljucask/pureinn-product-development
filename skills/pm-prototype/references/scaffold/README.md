@@ -31,7 +31,7 @@ Then in every prototype page:
 <script>
   Harness.on('state',   render);                  // empty | full | error | unauth
   Harness.on('variant', applyVariant);            // only if the config declares variants
-  Harness.on('time',    renderAtMinute);          // only if the config declares time
+  Harness.on('time',    renderAtMinute);          // only if THIS screen declares time
   button.addEventListener('click', function () { Harness.log('act:click'); });
 </script>
 ```
@@ -58,6 +58,34 @@ The artifact never depends on the harness. Open a page directly and it still run
 
 It also stays **visibly bounded**: the canvas remains behind it, the artifact keeps an outline and a shadow, and its pixel size is captioned underneath. A white artifact on a white page reads as something that failed to load, not as a phone.
 
+## Notes: three kinds, and they are not interchangeable
+
+All three share one geometry - a numbered pin on the element, a card on the rail, a curve joining them - and are told apart by colour and by a label on the card.
+
+| `kind` | Who writes it | When |
+|---|---|---|
+| `number` · `generated` · `system` · `connection` | the author, in the config | **disclosure**: the element is invented and someone could act on it with no way to verify it |
+| `convention` | the author, in the config | explains the prototype, not the product |
+| `comment` | a reviewer, at runtime | a remark left where it happened |
+
+The four disclosure kinds are the four categories that pass the test *"could someone act on this, with no way to verify it?"*. Invented names, avatars, titles and a scripted navigation path do **not** pass it and must not be annotated - over-labelling changes behaviour and buys nothing.
+
+Every disclosure note carries `real:`, what the element would be in production. **The "What is real" screen is generated from those notes**, so the list is never maintained twice and cannot drift from the screens. Declare it as a screen entry with `disclosure: true` and no `src`.
+
+**Closing a card collapses it to its pin; it does not delete it.** Clicking the pin brings it back. Only the `Notes` toggle removes the layer, and that state is not carried in a shared link - so no link can hand on a screen where an invented number has lost its label.
+
+A selector that matches nothing renders as an orphan card with a warning instead of vanishing, so a renamed class is visible rather than silent.
+
+## Getting feedback back
+
+`Add note` puts the artifact into comment mode: the next click inside it places a pin and opens an empty card. The shell cannot see that click on its own, so the client forwards it together with a selector - nothing is injected into the page but a cursor.
+
+Comments live in that reviewer's own `localStorage`. **Without a backend they reach you only when the reviewer presses Send**, which is why that control is permanent, counts what is waiting, and nudges once after the first comment. `Send` copies a formatted summary to the clipboard, opens a prefilled mail when `review.to` is set, and saves a text file. Set `review.submitTo` to an endpoint and it posts instead - the only reason to do that is a run with several reviewers where you cannot depend on each of them remembering.
+
+Open the harness with **`?review=1`** and the reviewer gets the task first, then three steps, then Start. Send it that way; the share button preserves the flag.
+
+Reviewers never see each other's comments. For an async test with real users that is required, not a shortcoming - a shared thread contaminates the sample the moment the second person reads the first.
+
 ## Beyond the contract
 
 Three conveniences the contract does not require, but that a reviewer expects from a tool like this:
@@ -76,7 +104,7 @@ The contract requires them; the kit cannot supply them:
 
 - **Fixtures** - realistic content in its own file, plausible for this audience, covering the unbounded cases. Never lorem ipsum on a task path.
 - **The four states themselves** - the harness switches them, the artifact renders them. An `unauth` state that renders identically to `full` is a missing state, not a satisfied one.
-- **The disclosure screen** - it belongs in `screens` as a normal entry, because it is part of the prototype, not part of the chrome.
+- **What the time scrubber means on each screen** - its scale, its label, and the one line saying what moving it demonstrates *there*. Declared per screen; a screen without a `time` block has no scrubber, which is the right answer wherever time is not part of the question.
 - **Which elements earn an annotation** - the test is *"could someone act on this, with no way to verify it?"*, not *"is it fake?"*
 
 ## Design intent
@@ -85,13 +113,17 @@ The chrome floats over a dotted canvas as translucent glass islands - the langua
 
 Two things were deliberately avoided. **Warm cream with terracotta**, because this framework's own design research names that exact combination as a generic 2026 AI-default cluster, and a file shipped as a reference should not look generated. And **anything left native** - a stock `<select>` is the loudest "unfinished" signal in a tool like this, so the screen picker is a real menu with keyboard navigation.
 
-Annotations: a numbered pin on the element, a card on the rail, a curve joining them, and hovering either end lights all three. The numbering is what makes a rail of several notes legible - without it the reader has to guess which card belongs to which pin.
+Annotations: a numbered pin on the element, a card on the rail, a curve joining them, and hovering either end lights all three. The numbering is what makes a rail of several notes legible - without it the reader has to guess which card belongs to which pin. Disclosure keeps the accent and the loudest pin because it carries the honesty contract; a convention recedes to grey; a comment is blue, visibly the reviewer's rather than the author's.
+
+The bottom bar is a labelled tool bar rather than a strip of icons: every group says what it is, the scrubber carries the current screen's own label and a line explaining what it demonstrates, and the feedback group ends in the one call to action the reviewer has to reach. Nothing animates on its own - motion only ever answers an action, because the prototype is what is being looked at.
 
 `prefers-reduced-motion` turns every animation off.
 
 ## Verified
 
-Driven end to end in a real browser before shipping, per the contract's own "test outside the generating agent" rule: all four states reaching the artifact, variants, time scrub, device presets firing the artifact's own media queries, artifact events arriving in the shell log, chrome hiding and restoring, annotation anchoring and dismissal, the rail releasing when no note is visible, the screen menu with keyboard navigation, the mockup frame, a real PNG written to disk, and a shared link restoring screen + state + variant + time + device + mockup in one go.
+Driven end to end in a real browser before shipping, per the contract's own "test outside the generating agent" rule: all four states reaching the artifact, variants, device presets firing the artifact's own media queries, artifact events arriving in the shell log, chrome hiding and restoring, annotation anchoring, the rail releasing when no note is visible, the screen menu with keyboard navigation, the mockup frame, a real PNG written to disk with no annotation layer in it, and a shared link restoring screen + state + variant + time + device + mockup in one go.
+
+The second round added: per-screen time appearing, disappearing and keeping each screen's own value across a switch; a comment placed by clicking inside the artifact, with a real selector computed for it; collapse to a pin and reopen; an orphan anchor; the generated disclosure screen; and the review brief.
 
 Bugs found that way, none of which a reading of the code would have caught:
 
@@ -101,3 +133,5 @@ Bugs found that way, none of which a reading of the code would have caught:
 - a connector-curve "improvement" scaled the bezier control points by the vertical gap, putting a control point past its own endpoint and tying the line in a knot
 - the disclosure tag was a `<span>`, so a lower-specificity rule lost to the generic one and it rendered brown-on-coral at 1.9:1
 - the dropdown's tick was an inline `<svg>` with no width, so it rendered at its intrinsic size and spilled across the menu
+- a cross-origin artifact reserved the annotation rail and then drew nothing into it, because the document was read only after the rail was measured
+- `.seg` and `.grp` set their own `display`, which beats the browser's rule for `[hidden]` - hiding the variant group did nothing at all

@@ -70,6 +70,8 @@ A **scrubber, not a timer.** Reason, and it is the deciding one: a reviewer goes
 
 It is also visibly a demo control, which is honest.
 
+**Declared per screen, never globally.** Time means a different thing on each one - minutes since an order here, days into a subscription there - so one scale across both measures nothing. A screen declares its own range, the label the reviewer reads, and **what moving it actually demonstrates here**; a screen with no time dimension simply has no scrubber. That explanation belongs in the shell beside the control. Putting it on the screen would add an element to the product surface and shift the layout being tested.
+
 ### 4. Variant switcher
 
 Named variants, switchable side by side. **Not optional when the prototype exists to choose a direction:** a single committed option produces inflated ratings and near-zero rejection - in the controlled study, none of 36 participants rejected the single design, while 3 of 12 rejected an alternative when shown three. If the prototype answers "which direction", it must carry more than one.
@@ -82,18 +84,29 @@ Viewport presets, at minimum mobile / tablet / desktop. Not cosmetic: it is the 
 
 ### 6. Annotation layer
 
-One primitive, two authors. An **anchor to an element**, a **visible connector**, a body of text, a toggle, a dismiss.
+One geometry - an **anchor to an element**, a **visible connector**, a body of text - carrying **three intents that must not look alike**:
 
-- The author uses it to explain a prototype convention, or to mark provenance for an element someone could act on.
-- A reviewer uses it to comment.
+| Intent | Written by | What it is for |
+|---|---|---|
+| **Disclosure** | the author | the element is invented and someone could act on it with no way to verify it. This one carries the honesty contract |
+| **Convention** | the author | explains the *prototype*, not the product - "this is the state after 14 sessions" |
+| **Comment** | a reviewer | a remark left where it happened, at runtime |
 
-Building these as two mechanisms is duplicated work and two inconsistent surfaces.
+Building three mechanisms would be duplicated work and three inconsistent surfaces. Letting them share a look is worse: a reviewer cannot tell an admission from a caption.
+
+**A disclosure note carries what the element would be in production**, not only what it is here. That pair is the contract - and it is what the disclosure screen is assembled from, so the same list is never written twice.
+
+**Closing a note collapses it to its pin. It never deletes it.** If an admission could be dismissed for good, and that state travelled in a shared link, someone could hand on a screen where an invented number carries no label - the one failure this layer exists to prevent. The whole layer still switches off in one action, because a reviewer must be able to see the artifact exactly as a user would; that is a visible toggle, and it is not carried in a shared link.
 
 **What earns an annotation** - the test is not "is it fake?" but **"could someone act on this, with no way to verify it?"**
 
 | Annotate | Leave alone |
 |---|---|
 | An unverifiable claim someone would act on: a number, a generated or AI output, a result attributed to a system (score, match, recommendation), a connection claim | Fakeness that is obvious or inconsequential: invented names, avatars, titles, a scripted navigation path |
+
+**Comments have to get back, and without a backend nothing is automatic.** They live in that reviewer's own browser and reach the author only when the reviewer sends them, which makes the prompt to do so part of the instrument rather than a button they might find: the task stated before they start, a send control that is always visible and counts what is waiting, and one nudge after the first comment. Where a run cannot depend on that - several reviewers, one pass - an endpoint removes the dependency, and that is the only reason to introduce one.
+
+That comments are per viewer is not a limitation to work around. An async test with real users **requires** commenters who cannot see each other; the sample is contaminated the moment the second person reads the first.
 
 **One exception, where it goes inside the artifact:** when the artifact will travel **without the shell** - a screenshot cropped into a deck - and the element carries a decision. Then provenance is baked into the element's own label: *"Projected - illustrative"* in the chart title, because that is what survives a crop.
 
@@ -125,6 +138,8 @@ The shell carries the boundary line. Depth belongs in a **dedicated screen** - n
 - **element by element**: what it is in the prototype, what it would be in production
 - **the classification** (below), and what it binds
 
+**Assembled from the disclosure notes, not written separately.** Every one of them already states what the element is here and what it would be in production, which is exactly this screen's table. Maintaining the two by hand guarantees they diverge, and the version the reviewer reads is the one that will be out of date.
+
 The effort answer to *"and how hard is it really"* belongs in the accompanying document, not on a product surface: it is the author's estimate, not a property of the product. Carry its basis (*"author's estimate, based on X"*) or a coarse band. When the basis cannot be written, "cannot estimate" is more honest than a grade someone will plan against.
 
 ---
@@ -134,6 +149,8 @@ The effort answer to *"and how hard is it really"* belongs in the accompanying d
 **Dead UI.** What looks interactive must respond. What cannot be made to move must not look interactive. This includes affordance, not just response: a horizontal rail that cannot be dragged on desktop reads as a static list.
 
 **One vertical slice, not a miniature roadmap.** The reliable unit is one decision-carrying path across the necessary UI and logic. A broad request produces added random features while the requested ones stay broken.
+
+**Annotate as you build, not afterwards.** The moment the agent creates an element that passes the "could someone act on this, with no way to verify it" test, it writes that element's disclosure note - what it is here, what it would be in production - in the same step. Left until the end, annotating becomes homework nobody does properly, and the disclosure screen is assembled from those notes anyway.
 
 **Bound every agent request.** State the audience and the question; name exactly what to build; require bundled synthetic data visibly labelled as sample; **forbid the adjacent temptations explicitly** ("do not add login, live AI grouping, external services, real merging"); require labelled controls, keyboard access and visible focus; keep instrumentation local; ask for runnable files, startup instructions, checks performed, known limitations and assumptions; and end with **"stop after this interaction."**
 
