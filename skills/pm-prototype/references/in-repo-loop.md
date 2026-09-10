@@ -80,7 +80,7 @@ When the prototype is an answer rather than a choice - a commissioned assignment
 
 ### 5. Device switcher
 
-Viewport presets, at minimum mobile / tablet / desktop. Not cosmetic: it is the instrument that catches what the research says breaks first - long labels in chips and fixed columns, dense layouts in narrow viewports, and anything that assumes two dimensions at 400% zoom.
+Viewport presets, at minimum mobile / tablet / desktop. **The change should be a movement, not a cut** - watching the frame travel between widths reads as one artifact at another size, where a jump cut reads as a different screen and the reviewer loses what they were looking at. Not cosmetic: it is the instrument that catches what the research says breaks first - long labels in chips and fixed columns, dense layouts in narrow viewports, and anything that assumes two dimensions at 400% zoom.
 
 ### 6. Annotation layer
 
@@ -109,6 +109,10 @@ Building three mechanisms would be duplicated work and three inconsistent surfac
 That comments are per viewer is not a limitation to work around. An async test with real users **requires** commenters who cannot see each other; the sample is contaminated the moment the second person reads the first.
 
 **One exception, where it goes inside the artifact:** when the artifact will travel **without the shell** - a screenshot cropped into a deck - and the element carries a decision. Then provenance is baked into the element's own label: *"Projected - illustrative"* in the chart title, because that is what survives a crop.
+
+### 6b. The screen list
+
+Whatever picks between screens must carry **a sentence per screen**, not only a name. A reviewer who has to work out what "02 Detail" means navigates by trial, and the first casualty is the order the showing was meant to follow - which `showing.md` treats as the thing that decides how the session goes.
 
 ### 7. Event log
 

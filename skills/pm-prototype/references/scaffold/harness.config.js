@@ -32,27 +32,40 @@ window.HARNESS_CONFIG = {
      a subscription on the next - and a single scale across both measures
      nothing. A screen without a `time` block simply has no scrubber.
 
+       desc    one sentence in the screen panel: which part of the flow this is.
+               A reviewer who has to guess what "02 Detail" means navigates by
+               trial, and loses the order the showing was meant to follow
        label   what the reviewer reads under the scrubber ("Minutes since order")
-       hint    what moving it actually demonstrates HERE. Shown beside the
-               scrubber in the shell bar - never over the artifact
+       hint    what moving it actually demonstrates HERE, in ONE SHORT LINE -
+               it sits beside the scrubber in the shell bar and clamps to two
+               small lines. Never rendered over the artifact
        format  turns the raw value into what the reviewer reads
      ───────────────────────────────────────────────────────────────────── */
   screens: [
     {
       label: '01 Entry',
       src: 'index.html',
+      desc: 'The dispatcher opens the day and sees jobs waiting to be assigned.',
       time: {
         min: 0, max: 45, step: 1,
         label: 'Minutes since order',
-        hint: 'Move it to watch the delivery estimate degrade as the courier stalls.',
+        hint: 'Watch the delivery estimate degrade as the courier stalls.',
         format: function (v) { return v + ' min'; }
       }
     },
-    { label: '02 Detail', src: 'detail.html' },
+    {
+      label: '02 Detail',
+      src: 'detail.html',
+      desc: 'One job opened - where the assignment is actually confirmed.'
+    },
 
     /* The disclosure screen is generated from the annotations below, so the
        same list is never maintained twice. Give it no `src`. */
-    { label: 'What is real', disclosure: true }
+    {
+      label: 'What is real',
+      disclosure: true,
+      desc: 'Generated from the notes: every simulated element, and what it would be in production.'
+    }
   ],
 
   /* Four states are the contract. Drop one only when it genuinely cannot exist

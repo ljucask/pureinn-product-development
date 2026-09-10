@@ -61,14 +61,14 @@
     --r-sm: 9px; --r-md: 12px; --r-lg: 18px; --r-xl: 22px;
     --ease: cubic-bezier(0.16, 1, 0.3, 1);
     --spring: cubic-bezier(.34,1.42,.5,1);
-    --fast: 150ms; --med: 300ms;
+    --fast: 150ms; --med: 300ms; --slow: 420ms;
 
     --font: "Inter", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
     --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
     --rail: 282px;
   }
   @media (prefers-reduced-motion: reduce) {
-    :root { --fast: 0ms; --med: 0ms; }
+    :root { --fast: 0ms; --med: 0ms; --slow: 0ms; }
     * { animation: none !important; }
   }
 
@@ -91,7 +91,7 @@
   /* an inline <svg> with no width renders at its intrinsic size and spills out
      of whatever holds it. Every icon here is sized by its own rule; this is the
      floor so the next one added cannot repeat the bug. */
-  button svg, .dd__check svg { display: block; width: 14px; height: 14px; flex: 0 0 auto; }
+  button svg { display: block; width: 14px; height: 14px; flex: 0 0 auto; }
   :focus-visible { outline: 2px solid var(--co); outline-offset: 3px; border-radius: 8px; }
 
   /* ══ stage: fills the window, chrome floats above it ══ */
@@ -103,7 +103,14 @@
   }
   body.has-notes .stage { padding-right: calc(26px + var(--rail)); }
 
-  .wrap { position: relative; flex: 0 0 auto; display: flex; }
+  .wrap {
+    position: relative; flex: 0 0 auto; display: flex;
+    /* the viewport change is the point of the device switcher - seeing the
+       frame travel between sizes reads as one artifact at another width,
+       where a jump cut reads as a different screen */
+    transition: width var(--slow) var(--ease), max-width var(--slow) var(--ease),
+                max-height var(--slow) var(--ease), padding var(--slow) var(--ease);
+  }
   .mock { flex: 1 1 auto; display: flex; flex-direction: column; min-width: 0; }
   #frame {
     display: block; flex: 1 1 auto; width: 100%;
@@ -314,45 +321,73 @@
     padding-left: 8px; user-select: none;
   }
 
-  /* ══ dropdown - a real menu, not a native select ══ */
-  .dd { position: relative; }
-  .dd__btn {
+  /* ══ screen navigator - a slide-out panel, dark against the light canvas ══
+     A dropdown lists names. A prototype's screens need a sentence each: which
+     part of the flow this is, and why it exists. That does not fit a menu row,
+     and it is the difference between a reviewer navigating and guessing. */
+  .navbtn {
     display: inline-flex; align-items: center; gap: 9px;
-    height: 34px; padding: 0 10px 0 12px;
+    height: 34px; padding: 0 13px 0 11px;
     background: #fff; border: 0; border-radius: var(--r-md);
     box-shadow: 0 0 0 1px var(--glass-ring), 0 1px 2px rgba(22,24,29,.06);
     color: var(--ink); font-size: 12px; font-weight: 600; cursor: pointer;
     transition: box-shadow var(--fast) var(--ease);
   }
-  .dd__btn:hover { box-shadow: 0 0 0 1px rgba(22,24,29,.16), 0 2px 6px rgba(22,24,29,.09); }
-  .dd__btn svg { width: 12px; height: 12px; color: var(--ink-3); transition: transform var(--fast) var(--ease); }
-  .dd.is-open .dd__btn svg { transform: rotate(180deg); }
-  .dd__menu {
-    position: absolute; top: calc(100% + 8px); left: 0; z-index: 20;
-    min-width: 214px; padding: 6px;
-    background: var(--glass-lit);
-    backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
-    border-radius: var(--r-lg);
-    box-shadow: inset 0 1px 0 var(--glass-edge), 0 0 0 1px var(--glass-ring), 0 18px 40px -14px rgba(22,24,29,.35);
-    opacity: 0; transform: translateY(-6px) scale(.97); transform-origin: top left;
-    pointer-events: none;
-    transition: opacity var(--fast) var(--ease), transform var(--fast) var(--ease);
+  .navbtn:hover { box-shadow: 0 0 0 1px rgba(22,24,29,.16), 0 2px 6px rgba(22,24,29,.09); }
+  .navbtn svg { width: 14px; height: 14px; color: var(--ink-3); }
+  .navbtn__n { font: 600 10px/1 var(--mono); color: var(--ink-3); }
+
+  .nav {
+    position: fixed; top: 0; left: 0; bottom: 0; z-index: 26;
+    display: flex; flex-direction: column;
+    width: 318px; padding: 18px 14px 16px;
+    background: linear-gradient(180deg, #1b1e25 0%, #141319 100%);
+    box-shadow: 1px 0 0 rgba(255,255,255,.05), 26px 0 60px -22px rgba(12,13,17,.65);
+    transform: translateX(-100%);
+    transition: transform var(--med) var(--ease);
+    overflow-y: auto; overscroll-behavior: contain;
   }
-  .dd.is-open .dd__menu { opacity: 1; transform: none; pointer-events: auto; }
-  .dd__item {
-    display: flex; align-items: center; gap: 9px; width: 100%;
-    padding: 8px 10px; border: 0; border-radius: 9px;
-    background: none; color: var(--ink-2);
-    font-size: 12.5px; font-weight: 500; text-align: left; cursor: pointer;
+  .nav.is-open { transform: none; }
+  .nav__top { display: flex; align-items: center; justify-content: space-between; padding: 4px 6px 14px; }
+  .nav__k { font: 700 9px/1 var(--mono); letter-spacing: .15em; text-transform: uppercase; color: #6d7482; }
+  .nav__x {
+    width: 26px; height: 26px; display: grid; place-items: center;
+    background: none; border: 0; border-radius: 8px;
+    color: #8b93a1; cursor: pointer;
     transition: background var(--fast) var(--ease), color var(--fast) var(--ease);
   }
-  .dd__item:hover, .dd__item.is-cursor { background: rgba(22,24,29,.06); color: var(--ink); }
-  .dd__item[aria-current="true"] { color: var(--ink); font-weight: 600; }
-  /* the span is sized, the svg inside it was not - without this it renders at
-     its intrinsic size and spills out of the row */
-  .dd__check { width: 14px; height: 14px; flex: 0 0 auto; opacity: 0; color: var(--co); }
-  .dd__check svg { display: block; width: 14px; height: 14px; }
-  .dd__item[aria-current="true"] .dd__check { opacity: 1; }
+  .nav__x:hover { background: rgba(255,255,255,.08); color: #fff; }
+  .nav__x svg { width: 12px; height: 12px; }
+  .nav__i {
+    position: relative; display: block; width: 100%;
+    padding: 11px 13px 12px 15px; margin-bottom: 3px;
+    background: none; border: 0; border-radius: 13px;
+    text-align: left; cursor: pointer;
+    transition: background var(--fast) var(--ease);
+  }
+  .nav__i:hover { background: rgba(255,255,255,.055); }
+  .nav__i.is-cursor { background: rgba(255,255,255,.075); }
+  .nav__i[aria-current="true"] { background: rgba(255,255,255,.09); }
+  .nav__i[aria-current="true"]::before {
+    content: ""; position: absolute; left: 5px; top: 15px; bottom: 15px; width: 3px;
+    border-radius: 3px; background: var(--grad-45);
+  }
+  .nav__t { display: block; font-size: 13px; font-weight: 620; color: #eef0f4; letter-spacing: -.005em; }
+  .nav__i[aria-current="true"] .nav__t { color: #fff; }
+  .nav__d { display: block; margin-top: 4px; font-size: 11.5px; line-height: 1.5; color: #868e9c; }
+  .nav__tag {
+    display: inline-block; margin-top: 7px; padding: 3px 7px; border-radius: 6px;
+    background: rgba(237,109,87,.16); color: #ff9d81;
+    font: 700 8.5px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase;
+  }
+  .nav__foot { margin-top: auto; padding: 14px 8px 2px; font-size: 11px; line-height: 1.5; color: #6d7482; }
+  .nav__scrim {
+    position: fixed; inset: 0; z-index: 25;
+    background: rgba(16,18,23,.34);
+    opacity: 0; pointer-events: none;
+    transition: opacity var(--med) var(--ease);
+  }
+  .nav__scrim.is-on { opacity: 1; pointer-events: auto; }
 
   /* ══ scrub ══ */
   .scrub { -webkit-appearance: none; appearance: none; width: 148px; height: 22px; background: none; cursor: grab; }
@@ -475,17 +510,20 @@
   .pin--collapsed:hover { opacity: 1; transform: scale(1.12); }
 
   /* ══ labelled control group - the bar reads as a tool, not a row of icons ══ */
-  .isle--b { align-items: flex-end; padding: 9px 11px; gap: 11px; }
-  .grp { display: flex; flex-direction: column; gap: 6px; }
+  .isle--b { align-items: stretch; padding: 9px 13px; gap: 13px; }
+  .grp { display: flex; flex-direction: column; justify-content: space-between; gap: 7px; }
   .grp__l {
     display: flex; align-items: center; gap: 6px; padding-left: 3px;
     font: 700 8.5px/1 var(--mono); letter-spacing: .13em; text-transform: uppercase;
     color: var(--ink-3); user-select: none; white-space: nowrap;
   }
   .grp__row { display: flex; align-items: center; gap: 7px; }
+  /* the hint sits BESIDE the scrubber, not under it: a group one row taller
+     than its neighbours makes the whole bar look broken */
   .grp__hint {
-    max-width: 34ch; padding-left: 3px;
-    font-size: 11px; line-height: 1.4; color: var(--ink-3);
+    flex: 0 0 auto; width: 26ch; padding-left: 2px;
+    font-size: 10.5px; line-height: 1.32; color: var(--ink-3);
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
   }
   .isle--b .sep { align-self: stretch; margin: 2px 1px; }
 
@@ -632,6 +670,7 @@
   <symbol id="i-x" viewBox="0 0 12 12"><path d="M2.5 2.5l7 7m0-7l-7 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
   <symbol id="i-down" viewBox="0 0 16 16"><path d="M8 2.5v8m0 0L5 7.7M8 10.5l3-2.8M2.5 13h11" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-image" viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="10" rx="1.8" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="6" cy="6.6" r="1.1" fill="currentColor"/><path d="M3 11.5l3.2-3 2.3 2 2-1.6L13 11.6" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 16 16"><path d="M8 1.8L14 5l-6 3.2L2 5zM2 8.4l6 3.2 6-3.2M2 11.6l6 3.2 6-3.2" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></symbol>
   <symbol id="i-pin" viewBox="0 0 16 16"><path d="M8 14.2s4.6-4 4.6-7.2A4.6 4.6 0 0 0 3.4 7c0 3.2 4.6 7.2 4.6 7.2z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><circle cx="8" cy="6.9" r="1.6" fill="currentColor"/></symbol>
   <symbol id="i-send" viewBox="0 0 16 16"><path d="M14 2L7 9m7-7l-4.6 12-2.4-5L2 6.6z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></symbol>
   <symbol id="i-share" viewBox="0 0 16 16"><path d="M11 5.2a1.8 1.8 0 1 0 0-3.6 1.8 1.8 0 0 0 0 3.6zM4.4 9.8a1.8 1.8 0 1 0 0-3.6 1.8 1.8 0 0 0 0 3.6zM11 14.4a1.8 1.8 0 1 0 0-3.6 1.8 1.8 0 0 0 0 3.6z" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M9.5 4.6L6 6.9m0 2.2l3.5 2.3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></symbol>
@@ -655,13 +694,20 @@
   <span class="title" data-title hidden></span>
   <span class="disclose__text" data-boundary>not a live service</span>
   <span class="sep"></span>
-  <div class="dd" data-dd>
-    <button class="dd__btn" type="button" data-dd-btn aria-haspopup="listbox" aria-expanded="false">
-      <span data-dd-current>Screen</span><svg><use href="#i-chevron"/></svg>
-    </button>
-    <div class="dd__menu" role="listbox" data-dd-menu></div>
-  </div>
+  <button class="navbtn" type="button" data-nav-btn aria-expanded="false" aria-controls="nav" title="All screens in this prototype">
+    <svg><use href="#i-layers"/></svg><span data-nav-current>Screen</span><span class="navbtn__n" data-nav-count></span>
+  </button>
 </div>
+
+<div class="nav__scrim" data-nav-scrim></div>
+<aside class="nav" id="nav" data-nav aria-label="Screens in this prototype">
+  <div class="nav__top">
+    <span class="nav__k">Screens</span>
+    <button class="nav__x" type="button" data-nav-close aria-label="Close the screen list"><svg><use href="#i-x"/></svg></button>
+  </div>
+  <div data-nav-list></div>
+  <p class="nav__foot">Every screen this prototype can reach. Anything not listed here does not exist in it.</p>
+</aside>
 
 <div class="isle isle--tr">
   <div class="seg" data-device-seg>
@@ -694,8 +740,8 @@
     <div class="grp__row">
       <input class="scrub" type="range" data-scrub aria-label="Time on this screen">
       <span class="time" data-time></span>
+      <span class="grp__hint" data-time-hint></span>
     </div>
-    <span class="grp__hint" data-time-hint></span>
   </div>
 
   <span class="sep"></span>
@@ -854,47 +900,82 @@
     requestAnimationFrame(function () { slide(seg); });
   }
 
-  /* ---------- dropdown ---------- */
-  var dd = document.querySelector('[data-dd]');
-  var ddBtn = dd.querySelector('[data-dd-btn]');
-  var ddMenu = dd.querySelector('[data-dd-menu]');
-  var ddCur = dd.querySelector('[data-dd-current]');
+  /* ---------- screen navigator ----------
+     A panel rather than a menu: each screen carries a sentence saying which
+     part of the flow it is. A reviewer who has to guess what "02 Detail" means
+     is navigating by trial, and the first thing they lose is the order the
+     showing was supposed to follow. */
+  var nav      = document.querySelector('[data-nav]');
+  var navBtn   = document.querySelector('[data-nav-btn]');
+  var navList  = document.querySelector('[data-nav-list]');
+  var navCur   = document.querySelector('[data-nav-current]');
+  var navScrim = document.querySelector('[data-nav-scrim]');
   var cursor = startScreen;
+
+  document.querySelector('[data-nav-count]').textContent = screens.length;
 
   screens.forEach(function (s, i) {
     var b = document.createElement('button');
-    b.type = 'button'; b.className = 'dd__item'; b.setAttribute('role', 'option');
+    b.type = 'button'; b.className = 'nav__i';
     b.setAttribute('aria-current', String(i === startScreen));
-    b.innerHTML = '<span class="dd__check">' + icon('i-check') + '</span><span></span>';
-    b.lastChild.textContent = s.label;
-    b.addEventListener('click', function () { pickScreen(i); closeDD(); });
-    ddMenu.appendChild(b);
+
+    var t = document.createElement('span');
+    t.className = 'nav__t'; t.textContent = s.label;
+    b.appendChild(t);
+
+    if (s.desc) {
+      var d = document.createElement('span');
+      d.className = 'nav__d'; d.textContent = s.desc;
+      b.appendChild(d);
+    }
+    if (s.disclosure) {
+      var tag = document.createElement('span');
+      tag.className = 'nav__tag'; tag.textContent = 'What is simulated';
+      b.appendChild(tag);
+    }
+    b.addEventListener('click', function () { pickScreen(i); closeNav(); });
+    navList.appendChild(b);
   });
-  ddCur.textContent = screens[startScreen].label;
+  navCur.textContent = screens[startScreen].label;
 
   function pickScreen(i) {
     current.screen = screens[i].src;
-    ddCur.textContent = screens[i].label;
-    ddMenu.querySelectorAll('.dd__item').forEach(function (o, j) { o.setAttribute('aria-current', String(j === i)); });
+    navCur.textContent = screens[i].label;
+    navList.querySelectorAll('.nav__i').forEach(function (o, j) { o.setAttribute('aria-current', String(j === i)); });
     cursor = i;
     load();
   }
-  function openDD() { dd.classList.add('is-open'); ddBtn.setAttribute('aria-expanded', 'true'); markCursor(); }
-  function closeDD() { dd.classList.remove('is-open'); ddBtn.setAttribute('aria-expanded', 'false'); }
   function markCursor() {
-    ddMenu.querySelectorAll('.dd__item').forEach(function (o, j) { o.classList.toggle('is-cursor', j === cursor); });
+    navList.querySelectorAll('.nav__i').forEach(function (o, j) { o.classList.toggle('is-cursor', j === cursor); });
   }
-  ddBtn.addEventListener('click', function (e) { e.stopPropagation(); dd.classList.contains('is-open') ? closeDD() : openDD(); });
-  document.addEventListener('click', function (e) { if (!dd.contains(e.target)) closeDD(); });
+  function openNav() {
+    nav.classList.add('is-open');
+    navScrim.classList.add('is-on');
+    navBtn.setAttribute('aria-expanded', 'true');
+    markCursor();
+    var on = navList.querySelector('[aria-current="true"]');
+    if (on) on.focus();
+  }
+  function closeNav() {
+    nav.classList.remove('is-open');
+    navScrim.classList.remove('is-on');
+    navBtn.setAttribute('aria-expanded', 'false');
+  }
+  function navOpen() { return nav.classList.contains('is-open'); }
+
+  navBtn.addEventListener('click', function () { navOpen() ? closeNav() : openNav(); });
+  navScrim.addEventListener('click', closeNav);
+  document.querySelector('[data-nav-close]').addEventListener('click', function () { closeNav(); navBtn.focus(); });
   document.addEventListener('keydown', function (e) {
-    if (!dd.classList.contains('is-open')) return;
-    if (e.key === 'Escape') { closeDD(); ddBtn.focus(); }
+    if (!navOpen()) return;
+    if (e.key === 'Escape') { closeNav(); navBtn.focus(); }
     if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
       e.preventDefault();
       cursor = (cursor + (e.key === 'ArrowDown' ? 1 : screens.length - 1)) % screens.length;
       markCursor();
+      navList.querySelectorAll('.nav__i')[cursor].focus();
     }
-    if (e.key === 'Enter') { e.preventDefault(); pickScreen(cursor); closeDD(); }
+    if (e.key === 'Enter') { e.preventDefault(); pickScreen(cursor); closeNav(); }
   });
 
   /* ---------- state + variant ---------- */
@@ -931,6 +1012,7 @@
     current.time = times[current.screen];
     timeLbl.textContent = t.label || 'Time';
     timeHint.textContent = t.hint || '';
+    timeHint.title = t.hint || '';   // the clamp cuts a long one; hover still has it
     timeHint.hidden = !t.hint;
     scrub.min = t.min; scrub.max = t.max; scrub.step = t.step || 1;
     scrub.value = current.time;
@@ -969,8 +1051,9 @@
     current.device = name;
     paintDevice();
     record('harness:device', name);
-    requestAnimationFrame(function () { slide(deviceSeg); drawAnnots(); });
+    requestAnimationFrame(function () { slide(deviceSeg); });
   });
+  wrap.addEventListener('transitionend', function (e) { if (e.target === wrap) drawAnnots(); });
   paintDevice();
   requestAnimationFrame(function () { slide(deviceSeg); });
 
@@ -997,7 +1080,7 @@
   document.querySelector('[data-bare]').addEventListener('click', function () { bare(true); });
   document.querySelector('[data-bare-off]').addEventListener('click', function () { bare(false); });
   document.addEventListener('keydown', function (e) {
-    if ((e.key === 'h' || e.key === 'H') && !e.metaKey && !e.ctrlKey && !dd.classList.contains('is-open') &&
+    if ((e.key === 'h' || e.key === 'H') && !e.metaKey && !e.ctrlKey && !navOpen() &&
         !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) {
       bare(!document.body.classList.contains('bare'));
     }
@@ -1405,11 +1488,16 @@
   var picking = false;
   var commentBtn = document.querySelector('[data-comment]');
 
+  var commentLabel = commentBtn.lastChild;
+
   function setPicking(on) {
     picking = on;
     commentBtn.setAttribute('aria-pressed', String(on));
+    // the button stays lit and says what to do until the click lands - a toast
+    // that has faded leaves the reviewer armed and not knowing it
+    commentLabel.textContent = on ? 'Click an element' : 'Add note';
     send('picking', on);
-    if (on) toast('Click anything in the prototype to attach a note. Esc cancels.', 3600);
+    if (on) toast('Click anything in the prototype to attach a note there. Esc cancels.', 4200);
   }
   commentBtn.addEventListener('click', function () { setPicking(!picking); });
   document.addEventListener('keydown', function (e) {

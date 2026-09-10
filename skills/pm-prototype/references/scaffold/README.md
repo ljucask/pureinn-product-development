@@ -52,11 +52,19 @@ The artifact never depends on the harness. Open a page directly and it still run
 
 ## Keys
 
-`h` hides and restores all chrome. In hidden mode the artifact is shown exactly as a user would see it - no islands, no notes, no device frame, no notch.
+`h` hides and restores all chrome. Arrow keys, Enter and Escape drive the screen panel while it is open. In hidden mode the artifact is shown exactly as a user would see it - no islands, no notes, no device frame, no notch.
 
 **The viewport does not change.** Only a desktop view goes full-bleed - there the window *is* the viewport, so white to the edges is honest. A phone or tablet keeps its own size, because otherwise "hide chrome" would silently swap the viewport under review for a different one.
 
 It also stays **visibly bounded**: the canvas remains behind it, the artifact keeps an outline and a shadow, and its pixel size is captioned underneath. A white artifact on a white page reads as something that failed to load, not as a phone.
+
+## The screen panel
+
+Screens live in a slide-out panel on the left, dark against the light canvas, opened from the button in the top-left island. Each entry carries its **name and one sentence** saying which part of the flow it is - `desc` in the config.
+
+That sentence is the reason it is a panel and not a dropdown. A reviewer who has to work out what *"02 Detail"* means is navigating by trial, and the first thing lost is the order the showing was meant to follow. The generated disclosure screen is tagged in the list, so nobody has to hunt for it.
+
+Arrow keys move through the list, Enter opens, Escape closes.
 
 ## Notes: three kinds, and they are not interchangeable
 
@@ -115,6 +123,8 @@ Two things were deliberately avoided. **Warm cream with terracotta**, because th
 
 Annotations: a numbered pin on the element, a card on the rail, a curve joining them, and hovering either end lights all three. The numbering is what makes a rail of several notes legible - without it the reader has to guess which card belongs to which pin. Disclosure keeps the accent and the loudest pin because it carries the honesty contract; a convention recedes to grey; a comment is blue, visibly the reviewer's rather than the author's.
 
+Changing device animates the frame between viewports rather than cutting to it. Seeing it travel reads as one artifact at another width; a jump cut reads as a different screen, and the reviewer loses the thread of what they were looking at. Annotations re-anchor when the movement finishes, not during it.
+
 The bottom bar is a labelled tool bar rather than a strip of icons: every group says what it is, the scrubber carries the current screen's own label and a line explaining what it demonstrates, and the feedback group ends in the one call to action the reviewer has to reach. Nothing animates on its own - motion only ever answers an action, because the prototype is what is being looked at.
 
 `prefers-reduced-motion` turns every animation off.
@@ -124,6 +134,8 @@ The bottom bar is a labelled tool bar rather than a strip of icons: every group 
 Driven end to end in a real browser before shipping, per the contract's own "test outside the generating agent" rule: all four states reaching the artifact, variants, device presets firing the artifact's own media queries, artifact events arriving in the shell log, chrome hiding and restoring, annotation anchoring, the rail releasing when no note is visible, the screen menu with keyboard navigation, the mockup frame, a real PNG written to disk with no annotation layer in it, and a shared link restoring screen + state + variant + time + device + mockup in one go.
 
 The second round added: per-screen time appearing, disappearing and keeping each screen's own value across a switch; a comment placed by clicking inside the artifact, with a real selector computed for it; collapse to a pin and reopen; an orphan anchor; the generated disclosure screen; and the review brief.
+
+The third: the screen panel with its descriptions and keyboard navigation, and the viewport transition - sampled mid-flight at 427px between a 1106px desktop and a 390px phone, with the annotations re-anchoring correctly once it settled.
 
 Bugs found that way, none of which a reading of the code would have caught:
 
