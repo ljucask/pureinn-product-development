@@ -54,7 +54,9 @@ The artifact never depends on the harness. Open a page directly and it still run
 
 `h` hides and restores all chrome. In hidden mode the artifact is shown exactly as a user would see it - no islands, no notes, no device frame, no notch.
 
-**The viewport does not change.** Only a desktop view goes full-bleed; a phone or tablet view keeps its own size, because otherwise "hide chrome" would silently swap the viewport being reviewed for a different one.
+**The viewport does not change.** Only a desktop view goes full-bleed - there the window *is* the viewport, so white to the edges is honest. A phone or tablet keeps its own size, because otherwise "hide chrome" would silently swap the viewport under review for a different one.
+
+It also stays **visibly bounded**: the canvas remains behind it, the artifact keeps an outline and a shadow, and its pixel size is captioned underneath. A white artifact on a white page reads as something that failed to load, not as a phone.
 
 ## Beyond the contract
 

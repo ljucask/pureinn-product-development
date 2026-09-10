@@ -451,8 +451,6 @@
   /* ══ chrome hidden - the artifact exactly as a user would see it ══ */
   body.bare .isle, body.bare .annots { opacity: 0; pointer-events: none; transform: translateY(8px); }
   body.bare .isle--b { transform: translateX(-50%) translateY(8px); }
-  body.bare .stage { padding: 0; }
-  body.bare #frame { border-radius: 0; box-shadow: none; }
   body.bare .mock {
     padding: 0 !important; background: none !important;
     box-shadow: none !important; border-radius: 0 !important;
@@ -461,16 +459,36 @@
      chrome - hiding chrome has to take every one of them with it */
   body.bare .mock::before, body.bare .mock::after { display: none !important; }
   body.bare .mock__bar { display: none !important; }
-  body.bare { background: #fff; }
-  /* only desktop goes full-bleed. A phone or tablet view must keep its own
-     size, or "hide chrome" silently changes the viewport being reviewed. */
+  /* Desktop goes full-bleed: the window IS the viewport, so white to the edges
+     is honest. A phone or tablet must keep its own size - otherwise "hide
+     chrome" silently swaps the viewport being reviewed for a different one -
+     and it must stay visibly bounded, or a white artifact on a white page
+     reads as something that failed to load rather than as a phone. */
+  body.bare:has(.wrap[data-device="desktop"]) { background: #fff; }
+  body.bare .stage:has(.wrap[data-device="desktop"]) { padding: 0; }
   body.bare .wrap[data-device="desktop"] {
     width: 100% !important; max-width: none !important;
     height: 100% !important; max-height: none !important;
     padding-bottom: 0 !important;
   }
+  body.bare .wrap[data-device="desktop"] #frame { border-radius: 0; box-shadow: none; }
+
+  body.bare .stage { padding: 34px 26px; }
   body.bare .wrap[data-device="tablet"]  { width: 834px !important; max-height: 1112px !important; }
   body.bare .wrap[data-device="mobile"]  { width: 390px !important; max-height: 844px !important; }
+  body.bare .wrap[data-device="tablet"] #frame,
+  body.bare .wrap[data-device="mobile"] #frame {
+    border-radius: 14px;
+    box-shadow: 0 0 0 1px rgba(22,24,29,.12), 0 26px 54px -22px rgba(22,24,29,.34);
+  }
+  /* a quiet caption so the size on screen is never a guess */
+  body.bare .wrap[data-device="tablet"]::after,
+  body.bare .wrap[data-device="mobile"]::after {
+    content: attr(data-size);
+    position: absolute; left: 50%; bottom: -26px; transform: translateX(-50%);
+    color: var(--ink-3); font: 500 11px/1 var(--mono);
+    letter-spacing: .06em; white-space: nowrap;
+  }
 
   /* capture mode: chrome and notes out of the way, mockup kept */
   body.shot .isle, body.shot .annots { opacity: 0; pointer-events: none; }
@@ -731,6 +749,7 @@
       o.innerHTML = icon('i-' + name) + (on ? name.charAt(0).toUpperCase() + name.slice(1) : '');
     });
     wrap.setAttribute('data-device', current.device);
+    wrap.setAttribute('data-size', { desktop: '', tablet: '834 x 1112', mobile: '390 x 844' }[current.device]);
     slide(deviceSeg);
   }
   deviceSeg.addEventListener('click', function (e) {
