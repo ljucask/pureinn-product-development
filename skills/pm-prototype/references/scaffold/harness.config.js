@@ -32,6 +32,8 @@ window.HARNESS_CONFIG = {
      a subscription on the next - and a single scale across both measures
      nothing. A screen without a `time` block simply has no scrubber.
 
+       icon    which glyph marks it in the screen panel, so the list is scannable:
+               list · detail · form · board · chart · user · lock · cog · map · info
        desc    one sentence in the screen panel: which part of the flow this is.
                A reviewer who has to guess what "02 Detail" means navigates by
                trial, and loses the order the showing was meant to follow
@@ -45,6 +47,7 @@ window.HARNESS_CONFIG = {
     {
       label: '01 Entry',
       src: 'index.html',
+      icon: 'list',
       desc: 'The dispatcher opens the day and sees jobs waiting to be assigned.',
       time: {
         min: 0, max: 45, step: 1,
@@ -56,6 +59,7 @@ window.HARNESS_CONFIG = {
     {
       label: '02 Detail',
       src: 'detail.html',
+      icon: 'detail',
       desc: 'One job opened - where the assignment is actually confirmed.'
     },
 
@@ -64,6 +68,7 @@ window.HARNESS_CONFIG = {
     {
       label: 'What is real',
       disclosure: true,
+      icon: 'info',
       desc: 'Generated from the notes: every simulated element, and what it would be in production.'
     }
   ],
@@ -111,6 +116,15 @@ window.HARNESS_CONFIG = {
 
      A third kind, 'comment', is written by reviewers at runtime and is never
      declared here.
+
+     SCOPE is separate from kind, and it is read from the note itself:
+       with a selector    → about that ELEMENT. It gets a pin, a curve, a number
+       without a selector → about the SCREEN it is declared under
+       under the '*' key  → about the PROTOTYPE, and shown on every screen
+
+     A number always means "look at the pin with the same number". Anything
+     without one is grouped in the rail under a header saying what it is about,
+     so a card with no line cannot be mistaken for one whose line failed.
      ───────────────────────────────────────────────────────────────────── */
   annotations: {
     // 'index.html': [
@@ -121,6 +135,11 @@ window.HARNESS_CONFIG = {
     //     text: 'The match score is fixed, not calculated.',
     //     real: 'Scored by the matching service against availability and rating.' },
     //   { kind: 'convention', text: 'This screen shows the state after 14 sessions.' }
+    // ],
+    //
+    // // shown on every screen - about the prototype rather than any one screen
+    // '*': [
+    //   { kind: 'convention', text: 'Nothing here is saved. A refresh starts over.' }
     // ]
   },
 
@@ -152,6 +171,7 @@ window.HARNESS_CONFIG = {
      ───────────────────────────────────────────────────────────────────── */
   review: {
     task: 'Try to assign the 08:30 job to a courier, then come back to the list.',
+    name: '',        // pre-fills the reviewer's name; they can change it
     to: '',          // your address, for the prefilled mail
     submitTo: ''     // optional endpoint. Empty = manual return
   }

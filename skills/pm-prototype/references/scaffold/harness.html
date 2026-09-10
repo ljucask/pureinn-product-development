@@ -65,7 +65,7 @@
 
     --font: "Inter", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
     --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
-    --rail: 282px;
+    --rail: 282px; --nav: 318px;
   }
   @media (prefers-reduced-motion: reduce) {
     :root { --fast: 0ms; --med: 0ms; --slow: 0ms; }
@@ -180,8 +180,10 @@
     background: #0d0d0f; box-shadow: inset 0 0 0 1px #3f3f45;
   }
 
-  /* MacBook: thin screen bezel, camera notch, and the base under it */
-  body.mock .wrap[data-device="desktop"] { --bez: 10px; padding-bottom: 22px; }
+  /* MacBook: thin screen bezel and camera notch. No base under the lid - it is
+     drawn hardware nobody is reviewing, and it eats vertical space the artifact
+     could have had. */
+  body.mock .wrap[data-device="desktop"] { --bez: 10px; }
   body.mock .wrap[data-device="desktop"] .mock {
     padding: var(--bez);
     background: #26272b;
@@ -203,14 +205,6 @@
     border-radius: 0 0 8px 8px;
   }
   body.mock .wrap[data-device="desktop"] .mock__bar { margin-top: 4px; }
-  /* the base: wider than the lid, with the notch for the fingertip */
-  body.mock .wrap[data-device="desktop"] .mock::after {
-    content: ""; position: absolute; z-index: 1;
-    left: -3.2%; width: 106.4%; top: 100%; height: 13px;
-    background: linear-gradient(180deg, #35363b, #1e1f23 62%, #17181b);
-    border-radius: 0 0 12px 12px;
-    box-shadow: 0 16px 26px -14px rgba(22,24,29,.6);
-  }
 
   body.mock .wrap[data-device="desktop"] .mock__bar { display: flex; }
   .mock__bar {
@@ -327,20 +321,29 @@
      and it is the difference between a reviewer navigating and guessing. */
   .navbtn {
     display: inline-flex; align-items: center; gap: 9px;
-    height: 34px; padding: 0 13px 0 11px;
+    height: 34px; padding: 0 13px 0 10px;
     background: #fff; border: 0; border-radius: var(--r-md);
     box-shadow: 0 0 0 1px var(--glass-ring), 0 1px 2px rgba(22,24,29,.06);
     color: var(--ink); font-size: 12px; font-weight: 600; cursor: pointer;
-    transition: box-shadow var(--fast) var(--ease);
+    transition: box-shadow var(--fast) var(--ease), background var(--fast) var(--ease);
   }
   .navbtn:hover { box-shadow: 0 0 0 1px rgba(22,24,29,.16), 0 2px 6px rgba(22,24,29,.09); }
-  .navbtn svg { width: 14px; height: 14px; color: var(--ink-3); }
+  .navbtn[aria-expanded="true"] { background: var(--grad-45); color: #fff; box-shadow: 0 2px 10px -3px rgba(237,109,87,.6); }
   .navbtn__n { font: 600 10px/1 var(--mono); color: var(--ink-3); }
+  .navbtn[aria-expanded="true"] .navbtn__n { color: rgba(255,255,255,.75); }
+  .bars { display: grid; gap: 3px; width: 14px; }
+  .bars i { display: block; height: 1.8px; border-radius: 2px; background: currentColor; }
+  .bars i:nth-child(2) { width: 10px; }
+
+  /* which screen is open, stated rather than implied by a control's label */
+  .cur { display: inline-flex; align-items: baseline; gap: 7px; padding: 0 4px 0 2px; }
+  .cur__k { font: 700 8.5px/1 var(--mono); letter-spacing: .13em; text-transform: uppercase; color: var(--ink-3); }
+  .cur__v { font-size: 12.5px; font-weight: 650; color: var(--ink); letter-spacing: -.01em; }
 
   .nav {
-    position: fixed; top: 0; left: 0; bottom: 0; z-index: 26;
+    position: fixed; top: 0; left: 0; bottom: 0; z-index: 5;
     display: flex; flex-direction: column;
-    width: 318px; padding: 18px 14px 16px;
+    width: var(--nav); padding: 18px 14px 16px;
     background: linear-gradient(180deg, #1b1e25 0%, #141319 100%);
     box-shadow: 1px 0 0 rgba(255,255,255,.05), 26px 0 60px -22px rgba(12,13,17,.65);
     transform: translateX(-100%);
@@ -359,8 +362,8 @@
   .nav__x:hover { background: rgba(255,255,255,.08); color: #fff; }
   .nav__x svg { width: 12px; height: 12px; }
   .nav__i {
-    position: relative; display: block; width: 100%;
-    padding: 11px 13px 12px 15px; margin-bottom: 3px;
+    position: relative; display: grid; grid-template-columns: 30px 1fr; align-items: start;
+    width: 100%; padding: 11px 13px 12px 13px; margin-bottom: 3px;
     background: none; border: 0; border-radius: 13px;
     text-align: left; cursor: pointer;
     transition: background var(--fast) var(--ease);
@@ -372,22 +375,29 @@
     content: ""; position: absolute; left: 5px; top: 15px; bottom: 15px; width: 3px;
     border-radius: 3px; background: var(--grad-45);
   }
+  .nav__ico {
+    grid-row: 1 / span 3; align-self: start; margin-top: 1px;
+    width: 24px; height: 24px; display: grid; place-items: center;
+    border-radius: 8px; background: rgba(255,255,255,.07); color: #97a0af;
+  }
+  .nav__ico svg { width: 14px; height: 14px; }
+  .nav__i[aria-current="true"] .nav__ico { background: rgba(237,109,87,.18); color: #ff9d81; }
   .nav__t { display: block; font-size: 13px; font-weight: 620; color: #eef0f4; letter-spacing: -.005em; }
   .nav__i[aria-current="true"] .nav__t { color: #fff; }
   .nav__d { display: block; margin-top: 4px; font-size: 11.5px; line-height: 1.5; color: #868e9c; }
   .nav__tag {
-    display: inline-block; margin-top: 7px; padding: 3px 7px; border-radius: 6px;
+    display: inline-block; justify-self: start; margin-top: 7px; padding: 3px 7px; border-radius: 6px;
     background: rgba(237,109,87,.16); color: #ff9d81;
     font: 700 8.5px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase;
   }
   .nav__foot { margin-top: auto; padding: 14px 8px 2px; font-size: 11px; line-height: 1.5; color: #6d7482; }
-  .nav__scrim {
-    position: fixed; inset: 0; z-index: 25;
-    background: rgba(16,18,23,.34);
-    opacity: 0; pointer-events: none;
-    transition: opacity var(--med) var(--ease);
-  }
-  .nav__scrim.is-on { opacity: 1; pointer-events: auto; }
+  /* Opening it MOVES the prototype rather than covering it: a panel over the
+     artifact hides the thing being reviewed, and the reviewer has to close it
+     to check what they just read. */
+  .stage, .isle--tl, .isle--b { transition: padding var(--med) var(--ease), left var(--med) var(--ease), transform var(--med) var(--ease); }
+  body.nav-open .stage  { padding-left: calc(26px + var(--nav)); }
+  body.nav-open .isle--tl { left: calc(18px + var(--nav)); }
+  body.nav-open .isle--b  { transform: translateX(calc(-50% + var(--nav) / 2)); }
 
   /* ══ scrub ══ */
   .scrub { -webkit-appearance: none; appearance: none; width: 148px; height: 22px; background: none; cursor: grab; }
@@ -471,6 +481,104 @@
   .note:hover .note__x, .note__x:focus-visible { opacity: 1; }
   .note__x:hover { color: var(--ink); background: rgba(22,24,29,.07); }
 
+  /* A rail section header. Without one, an unpinned note reads as a pin whose
+     line failed to draw - the reviewer cannot tell what it is attached to. */
+  .rail__h {
+    position: absolute; width: calc(var(--rail) - 36px);
+    display: flex; align-items: center; gap: 8px;
+    padding: 0 2px 0 3px;
+    font: 700 8.5px/1 var(--mono); letter-spacing: .13em; text-transform: uppercase;
+    color: var(--ink-3); pointer-events: none;
+    animation: slide var(--med) var(--ease) backwards;
+  }
+  .rail__h::after { content: ""; flex: 1 1 auto; height: 1px; background: var(--glass-ring); }
+  .rail__h svg { width: 12px; height: 12px; opacity: .7; }
+
+  /* an unpinned note carries a scope glyph where a pinned one carries a number */
+  .note__s {
+    flex: 0 0 auto; width: 21px; height: 21px; border-radius: 7px;
+    display: grid; place-items: center;
+    background: rgba(22,24,29,.06); color: var(--ink-3);
+  }
+  .note__s svg { width: 12px; height: 12px; }
+  .note--loose { background: rgba(255,255,255,.78); }
+
+  /* ══ severity - a dot, because a reviewer marks urgency in passing ══ */
+  .sev { display: inline-flex; align-items: center; gap: 4px; }
+  .sev button {
+    width: 18px; height: 18px; padding: 0; display: grid; place-items: center;
+    background: none; border: 0; border-radius: 50%; cursor: pointer;
+    transition: transform var(--fast) var(--spring);
+  }
+  .sev button i { width: 9px; height: 9px; border-radius: 50%; background: currentColor; opacity: .3; transition: opacity var(--fast) var(--ease), box-shadow var(--fast) var(--ease); }
+  .sev button:hover i { opacity: .6; }
+  .sev button[aria-pressed="true"] i { opacity: 1; box-shadow: 0 0 0 3px currentColor; }
+  .sev button[aria-pressed="true"] { transform: scale(1.05); }
+  .sev-low    { color: #3d7dd8; }
+  .sev-normal { color: #f0913a; }
+  .sev-high   { color: #e0483d; }
+  .dot {
+    width: 9px; height: 9px; border-radius: 50%; background: currentColor;
+    flex: 0 0 auto; box-shadow: 0 0 0 2.5px rgba(255,255,255,.75);
+  }
+  .note__foot { display: flex; align-items: center; gap: 8px; margin-top: 9px; font-size: 10.5px; color: var(--ink-3); }
+  .note__who { font-weight: 600; color: var(--ink-2); }
+  .note__act {
+    margin-left: auto; padding: 4px 9px; border: 0; border-radius: 7px;
+    background: rgba(22,24,29,.06); color: var(--ink-2);
+    font: 600 10.5px/1 var(--font); cursor: pointer;
+  }
+  .note__act:hover { background: rgba(22,24,29,.1); color: var(--ink); }
+  .note__add { display: flex; align-items: center; gap: 8px; margin-top: 11px; }
+  .note__add .sev { margin-right: auto; }
+  .note__save {
+    padding: 6px 12px; border: 0; border-radius: 8px; white-space: nowrap;
+    background: var(--grad-45); color: #fff;
+    font: 650 11px/1 var(--font); cursor: pointer;
+    box-shadow: 0 2px 9px -3px rgba(237,109,87,.7);
+  }
+  .note__save[disabled] { background: rgba(22,24,29,.08); color: var(--ink-3); box-shadow: none; cursor: default; }
+  .note__kbd { font: 600 9.5px/1 var(--mono); color: var(--ink-3); }
+  .note.is-saved { animation: saved 1.1s var(--ease); }
+  @keyframes saved {
+    0%   { box-shadow: inset 0 1px 0 var(--glass-edge), 0 0 0 2px #17a76b, 0 14px 30px -14px rgba(22,24,29,.3); }
+    100% { box-shadow: inset 0 1px 0 var(--glass-edge), 0 0 0 1.5px #3d7dd8, 0 14px 30px -14px rgba(22,24,29,.3); }
+  }
+
+  /* ══ placing a note: everything else steps back ══ */
+  .annots.is-focus .note:not(.is-active),
+  .annots.is-focus .pin:not(.is-active),
+  .annots.is-focus .rail__h { opacity: .28; }
+  .annots.is-focus path:not(.is-active) { opacity: .12; }
+  .annots .note, .annots .pin, .annots path { transition: opacity var(--med) var(--ease); }
+  .pin.is-active { animation: beat 1.6s var(--ease) infinite; }
+  @keyframes beat {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(242,243,246,.9), 0 0 0 0 rgba(61,125,216,.5), 0 4px 12px -2px rgba(61,125,216,.6); }
+    55%      { box-shadow: 0 0 0 3px rgba(242,243,246,.9), 0 0 0 12px rgba(61,125,216,0), 0 4px 12px -2px rgba(61,125,216,.6); }
+  }
+
+  /* ══ the send sheet - saying what will happen before it happens ══ */
+  .sheet {
+    position: fixed; right: 22px; bottom: 118px; z-index: 28;
+    width: 372px; max-height: 62vh; padding: 20px 20px 16px;
+    display: flex; flex-direction: column;
+    background: var(--glass-lit);
+    backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+    border-radius: var(--r-xl);
+    box-shadow: inset 0 1px 0 var(--glass-edge), 0 0 0 1px var(--glass-ring), 0 28px 60px -20px rgba(22,24,29,.45);
+    animation: rise var(--med) var(--spring);
+  }
+  .sheet__top { display: flex; align-items: baseline; justify-content: space-between; }
+  .sheet__h { margin: 0; font-size: 15px; font-weight: 680; letter-spacing: -.015em; }
+  .sheet__p { margin: 8px 0 0; font-size: 12px; line-height: 1.55; color: var(--ink-2); }
+  .sheet__list { margin: 14px 0 0; padding: 0 4px 0 0; list-style: none; overflow-y: auto; display: grid; gap: 8px; }
+  .sheet__list li { display: flex; gap: 8px; align-items: flex-start; font-size: 12px; line-height: 1.5; color: var(--ink-2); }
+  .sheet__where { display: block; font-size: 10.5px; color: var(--ink-3); }
+  .sheet__acts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px; }
+  .sheet__acts .cta { justify-content: center; }
+  .sheet__acts .ib { justify-content: center; background: rgba(22,24,29,.05); }
+  .sheet__acts .wide { grid-column: 1 / -1; }
+
   .note--orphan { box-shadow: inset 0 1px 0 var(--glass-edge), 0 0 0 1.5px #f0b429, 0 14px 30px -14px rgba(22,24,29,.3); }
   .note--orphan .note__n { background: linear-gradient(135deg,#f0b429,#ffc94f); }
   .note--orphan .note__body::after {
@@ -515,7 +623,11 @@
   .grp__l {
     display: flex; align-items: center; gap: 6px; padding-left: 3px;
     font: 700 8.5px/1 var(--mono); letter-spacing: .13em; text-transform: uppercase;
-    color: var(--ink-3); user-select: none; white-space: nowrap;
+    color: #b4553f; user-select: none; white-space: nowrap;
+  }
+  .grp__l::before {
+    content: ""; width: 5px; height: 5px; border-radius: 50%;
+    background: var(--grad-45); opacity: .85; flex: 0 0 auto;
   }
   .grp__row { display: flex; align-items: center; gap: 7px; }
   /* the hint sits BESIDE the scrubber, not under it: a group one row taller
@@ -579,7 +691,16 @@
     background: var(--grad-45); color: #fff;
     font: 700 10px/19px var(--font); text-align: center;
   }
-  .brief__go { margin-top: 20px; width: 100%; justify-content: center; }
+  .brief__name { display: block; margin-top: 18px; }
+  .brief__name span { display: block; margin-bottom: 6px; font: 700 8.5px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
+  .brief__name input {
+    width: 100%; height: 38px; padding: 0 13px;
+    background: #fff; border: 0; border-radius: var(--r-md);
+    box-shadow: 0 0 0 1px var(--glass-ring);
+    font-size: 13px; color: var(--ink);
+  }
+  .brief__name input:focus { outline: 0; box-shadow: 0 0 0 1.5px var(--co); }
+  .brief__go { margin-top: 16px; width: 100%; justify-content: center; }
 
   /* ══ toast ══ */
   .toast {
@@ -670,7 +791,22 @@
   <symbol id="i-x" viewBox="0 0 12 12"><path d="M2.5 2.5l7 7m0-7l-7 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
   <symbol id="i-down" viewBox="0 0 16 16"><path d="M8 2.5v8m0 0L5 7.7M8 10.5l3-2.8M2.5 13h11" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-image" viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="10" rx="1.8" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="6" cy="6.6" r="1.1" fill="currentColor"/><path d="M3 11.5l3.2-3 2.3 2 2-1.6L13 11.6" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="s-list" viewBox="0 0 16 16"><path d="M2.5 4h11M2.5 8h11M2.5 12h7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+  <symbol id="s-detail" viewBox="0 0 16 16"><rect x="2.5" y="2" width="11" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M5 5.8h6M5 8.4h6M5 11h3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></symbol>
+  <symbol id="s-form" viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="4" rx="1.4" fill="none" stroke="currentColor" stroke-width="1.4"/><rect x="2" y="9.5" width="12" height="4" rx="1.4" fill="none" stroke="currentColor" stroke-width="1.4" opacity=".55"/></symbol>
+  <symbol id="s-board" viewBox="0 0 16 16"><rect x="2" y="2.5" width="5" height="11" rx="1.4" fill="none" stroke="currentColor" stroke-width="1.4"/><rect x="9" y="2.5" width="5" height="6.5" rx="1.4" fill="none" stroke="currentColor" stroke-width="1.4"/></symbol>
+  <symbol id="s-chart" viewBox="0 0 16 16"><path d="M2.5 13.5v-4M6.5 13.5v-8M10.5 13.5v-5.5M14 13.5V3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  <symbol id="s-user" viewBox="0 0 16 16"><circle cx="8" cy="5.6" r="2.6" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M3 13.6a5 5 0 0 1 10 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></symbol>
+  <symbol id="s-lock" viewBox="0 0 16 16"><rect x="3.5" y="7" width="9" height="6.5" rx="1.8" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M5.8 7V5.4a2.2 2.2 0 0 1 4.4 0V7" fill="none" stroke="currentColor" stroke-width="1.4"/></symbol>
+  <symbol id="s-cog" viewBox="0 0 16 16"><circle cx="8" cy="8" r="2.3" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M8 1.8v1.6M8 12.6v1.6M14.2 8h-1.6M3.4 8H1.8M12.4 3.6l-1.1 1.1M4.7 11.3l-1.1 1.1M12.4 12.4l-1.1-1.1M4.7 4.7L3.6 3.6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></symbol>
+  <symbol id="s-map" viewBox="0 0 16 16"><path d="M8 14s4.4-4.1 4.4-7.3A4.4 4.4 0 0 0 3.6 6.7C3.6 9.9 8 14 8 14z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><circle cx="8" cy="6.6" r="1.5" fill="none" stroke="currentColor" stroke-width="1.3"/></symbol>
+  <symbol id="s-info" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.8" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M8 7.2v4M8 4.9v.1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
   <symbol id="i-layers" viewBox="0 0 16 16"><path d="M8 1.8L14 5l-6 3.2L2 5zM2 8.4l6 3.2 6-3.2M2 11.6l6 3.2 6-3.2" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></symbol>
+  <symbol id="i-tag" viewBox="0 0 16 16"><path d="M2.5 7.4V3a.5.5 0 0 1 .5-.5h4.4a1 1 0 0 1 .7.3l5.2 5.2a1 1 0 0 1 0 1.4l-4.4 4.4a1 1 0 0 1-1.4 0L2.8 8.6a1 1 0 0 1-.3-.7z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><circle cx="5.6" cy="5.6" r="1.1" fill="currentColor"/></symbol>
+  <symbol id="i-screen" viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="9" rx="1.8" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M6 14h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></symbol>
+  <symbol id="i-cube" viewBox="0 0 16 16"><path d="M8 1.8l5.5 3v6.4L8 14.2 2.5 11.2V4.8z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M2.5 4.8L8 7.8l5.5-3M8 7.8v6.4" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".6"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 16 16"><rect x="5.5" y="5.5" width="8" height="8" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M10.5 5.5v-1a1.6 1.6 0 0 0-1.6-1.6H4.1A1.6 1.6 0 0 0 2.5 4.5v4.8a1.6 1.6 0 0 0 1.6 1.6h1.4" fill="none" stroke="currentColor" stroke-width="1.4"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 16 16"><rect x="2" y="3.5" width="12" height="9" rx="1.8" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M2.6 5L8 8.8 13.4 5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></symbol>
   <symbol id="i-pin" viewBox="0 0 16 16"><path d="M8 14.2s4.6-4 4.6-7.2A4.6 4.6 0 0 0 3.4 7c0 3.2 4.6 7.2 4.6 7.2z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><circle cx="8" cy="6.9" r="1.6" fill="currentColor"/></symbol>
   <symbol id="i-send" viewBox="0 0 16 16"><path d="M14 2L7 9m7-7l-4.6 12-2.4-5L2 6.6z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></symbol>
   <symbol id="i-share" viewBox="0 0 16 16"><path d="M11 5.2a1.8 1.8 0 1 0 0-3.6 1.8 1.8 0 0 0 0 3.6zM4.4 9.8a1.8 1.8 0 1 0 0-3.6 1.8 1.8 0 0 0 0 3.6zM11 14.4a1.8 1.8 0 1 0 0-3.6 1.8 1.8 0 0 0 0 3.6z" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M9.5 4.6L6 6.9m0 2.2l3.5 2.3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></symbol>
@@ -690,16 +826,17 @@
 </div>
 
 <div class="isle isle--tl">
+  <button class="navbtn" type="button" data-nav-btn aria-expanded="false" aria-controls="nav" title="Open the list of screens">
+    <span class="bars" aria-hidden="true"><i></i><i></i><i></i></span>Screens<span class="navbtn__n" data-nav-count></span>
+  </button>
+  <span class="sep"></span>
+  <span class="cur"><span class="cur__k">Now</span><span class="cur__v" data-nav-current>Screen</span></span>
+  <span class="sep"></span>
   <span class="badge"><i class="badge__dot"></i><span class="badge__t">Prototype</span></span>
   <span class="title" data-title hidden></span>
   <span class="disclose__text" data-boundary>not a live service</span>
-  <span class="sep"></span>
-  <button class="navbtn" type="button" data-nav-btn aria-expanded="false" aria-controls="nav" title="All screens in this prototype">
-    <svg><use href="#i-layers"/></svg><span data-nav-current>Screen</span><span class="navbtn__n" data-nav-count></span>
-  </button>
 </div>
 
-<div class="nav__scrim" data-nav-scrim></div>
 <aside class="nav" id="nav" data-nav aria-label="Screens in this prototype">
   <div class="nav__top">
     <span class="nav__k">Screens</span>
@@ -718,7 +855,8 @@
   </div>
   <button class="ib ib--icon" type="button" data-mockup aria-pressed="false" title="Device mockup"><svg><use href="#i-frame"/></svg></button>
   <span class="sep"></span>
-  <button class="ib" type="button" data-toggle-annots aria-pressed="true"><svg><use href="#i-note"/></svg>Notes</button>
+  <button class="ib" type="button" data-toggle-labels aria-pressed="true" title="The author's disclosure and prototype notes"><svg><use href="#i-tag"/></svg>Labels</button>
+  <button class="ib" type="button" data-toggle-comments aria-pressed="true" title="Comments left in this browser"><svg><use href="#i-note"/></svg>Comments<span class="count" data-comment-count>0</span></button>
   <button class="ib" type="button" data-bare><svg><use href="#i-eye-off"/></svg>Hide <kbd>H</kbd></button>
 </div>
 
@@ -756,12 +894,29 @@
 
   <span class="sep"></span>
   <div class="grp">
-    <span class="grp__l">Feedback</span>
+    <span class="grp__l">Your notes</span>
     <div class="grp__row">
       <button class="ib" type="button" data-comment aria-pressed="false" title="Click an element in the prototype to attach a note"><svg><use href="#i-pin"/></svg>Add note</button>
-      <button class="cta" type="button" data-send data-idle="1"><svg><use href="#i-send"/></svg>Send<span class="cta__n" data-send-n>0</span></button>
     </div>
   </div>
+
+  <span class="sep"></span>
+  <div class="grp">
+    <span class="grp__l">When you finish</span>
+    <div class="grp__row">
+      <button class="cta" type="button" data-send data-idle="1" title="Review your notes and choose how to return them"><svg><use href="#i-send"/></svg>Return notes<span class="cta__n" data-send-n>0</span></button>
+    </div>
+  </div>
+</div>
+
+<div class="sheet" data-sheet hidden role="dialog" aria-labelledby="sheet-h">
+  <div class="sheet__top">
+    <h2 class="sheet__h" id="sheet-h">Return your notes</h2>
+    <button class="nav__x" type="button" data-sheet-close aria-label="Close"><svg><use href="#i-x"/></svg></button>
+  </div>
+  <p class="sheet__p" data-sheet-p></p>
+  <ul class="sheet__list" data-sheet-list></ul>
+  <div class="sheet__acts" data-sheet-acts></div>
 </div>
 
 <div class="brief" data-brief hidden>
@@ -774,6 +929,10 @@
       <li><span class="brief__i">2</span><span><strong>Add note</strong> at the bottom, then click anything on screen, to leave a remark where it happened.</span></li>
       <li><span class="brief__i">3</span><span>When you are done press <strong>Send</strong>. Nothing reaches us until you do.</span></li>
     </ul>
+    <label class="brief__name">
+      <span>Your name - it goes on the notes you leave</span>
+      <input type="text" data-brief-name placeholder="e.g. Jana" autocomplete="name">
+    </label>
     <button class="cta brief__go" type="button" data-brief-go>Start</button>
   </div>
 </div>
@@ -855,7 +1014,17 @@
     try { localStorage.setItem(KEY + ':' + k, JSON.stringify(v)); } catch (e) { /* private mode */ }
   }
   var collapsed = readStore('collapsed', {});
-  var comments  = readStore('comments', []);
+
+  /* A draft that survived a reload would hold the whole layer in writing mode
+     for ever, and an empty one is not a comment at all. So: empty drafts are
+     dropped, and a half-written one comes back as a saved note the reviewer
+     can edit - never as a live textarea nobody remembers opening. */
+  var comments = readStore('comments', []).filter(function (cm) {
+    return (cm.text || '').trim();
+  }).map(function (cm) {
+    cm.draft = false; cm.editing = false; cm.fresh = false;
+    return cm;
+  });
 
   if (cfg.boundary) document.querySelector('[data-boundary]').textContent = cfg.boundary;
   if (cfg.title || cfg.name) {
@@ -909,7 +1078,6 @@
   var navBtn   = document.querySelector('[data-nav-btn]');
   var navList  = document.querySelector('[data-nav-list]');
   var navCur   = document.querySelector('[data-nav-current]');
-  var navScrim = document.querySelector('[data-nav-scrim]');
   var cursor = startScreen;
 
   document.querySelector('[data-nav-count]').textContent = screens.length;
@@ -918,6 +1086,11 @@
     var b = document.createElement('button');
     b.type = 'button'; b.className = 'nav__i';
     b.setAttribute('aria-current', String(i === startScreen));
+
+    var ic = document.createElement('span');
+    ic.className = 'nav__ico';
+    ic.innerHTML = '<svg><use href="#s-' + (s.icon || (s.disclosure ? 'info' : 'detail')) + '"/></svg>';
+    b.appendChild(ic);
 
     var t = document.createElement('span');
     t.className = 'nav__t'; t.textContent = s.label;
@@ -950,7 +1123,7 @@
   }
   function openNav() {
     nav.classList.add('is-open');
-    navScrim.classList.add('is-on');
+    document.body.classList.add('nav-open');
     navBtn.setAttribute('aria-expanded', 'true');
     markCursor();
     var on = navList.querySelector('[aria-current="true"]');
@@ -958,13 +1131,15 @@
   }
   function closeNav() {
     nav.classList.remove('is-open');
-    navScrim.classList.remove('is-on');
+    document.body.classList.remove('nav-open');
     navBtn.setAttribute('aria-expanded', 'false');
   }
   function navOpen() { return nav.classList.contains('is-open'); }
 
   navBtn.addEventListener('click', function () { navOpen() ? closeNav() : openNav(); });
-  navScrim.addEventListener('click', closeNav);
+  // the stage moves rather than being covered, so the pins must be re-measured
+  // once it has finished moving
+  stage.addEventListener('transitionend', function (e) { if (e.propertyName === 'padding-left') drawAnnots(); });
   document.querySelector('[data-nav-close]').addEventListener('click', function () { closeNav(); navBtn.focus(); });
   document.addEventListener('keydown', function (e) {
     if (!navOpen()) return;
@@ -1086,13 +1261,21 @@
     }
   });
 
-  var annotsOn = true;
-  document.querySelector('[data-toggle-annots]').addEventListener('click', function () {
-    annotsOn = !annotsOn;
-    this.setAttribute('aria-pressed', String(annotsOn));
-    annotEl.hidden = !annotsOn;
-    drawAnnots();
-  });
+  /* Two audiences, two switches. "Notes" as one control meant a reviewer
+     hiding the author's disclosures to read their own remarks, or the reverse,
+     and neither is what they asked for. */
+  var labelsOn = true, commentsOn = true;
+  function toggle(sel, get, set) {
+    var b = document.querySelector(sel);
+    b.addEventListener('click', function () {
+      set(!get());
+      b.setAttribute('aria-pressed', String(get()));
+      annotEl.hidden = !labelsOn && !commentsOn;
+      drawAnnots();
+    });
+  }
+  toggle('[data-toggle-labels]',   function () { return labelsOn; },   function (v) { labelsOn = v; });
+  toggle('[data-toggle-comments]', function () { return commentsOn; }, function (v) { commentsOn = v; });
 
   /* ---------- share: a link to this exact screen and state ---------- */
   document.querySelector('[data-share]').addEventListener('click', function () {
@@ -1193,7 +1376,7 @@
       var DEV = {
         mobile:  { pad: 11, barH: 0,  outer: 56, inner: 45, bg: '#1c1c1e', base: 0 },
         tablet:  { pad: 17, barH: 0,  outer: 36, inner: 20, bg: '#2b2b2e', base: 0 },
-        desktop: { pad: 10, barH: 26, outer: 16, inner: 5,  bg: '#26272b', base: 13 }
+        desktop: { pad: 10, barH: 26, outer: 16, inner: 5,  bg: '#26272b', base: 0 }
       }[current.device];
       var pad  = current.mockup ? DEV.pad : 0;
       var barH = current.mockup ? DEV.barH : 0;
@@ -1241,11 +1424,6 @@
           ctx.fillStyle = DEV.bg;
           roundRect(ctx, bodyW / 2 - 71, -8, 142, 21, 8);
           ctx.fill();
-          var g = ctx.createLinearGradient(0, bodyH, 0, bodyH + base);
-          g.addColorStop(0, '#35363b'); g.addColorStop(.62, '#1e1f23'); g.addColorStop(1, '#17181b');
-          ctx.fillStyle = g;
-          roundRect(ctx, 0, bodyH, bodyW, base, 0);
-          ctx.fill();
         }
       }
 
@@ -1276,43 +1454,68 @@
   }
 
   /* ---------- annotations ----------
-     Three intents, one geometry: a numbered pin on the element, a card on the
-     rail, a curve joining them.
+     One geometry, three intents, and - separately - three SCOPES. The scope is
+     what a reviewer kept mistaking: a card with no line looked like a pin whose
+     line had failed to draw.
 
-       disclosure  the author admitting an invented element someone could act
-                   on with no way to verify it. Carries the honesty contract
-       convention  the author explaining the prototype, not the product
-       comment     a reviewer's remark, written here at runtime
+       element     it has a selector, so it has a pin, a curve and a NUMBER
+       screen      it is about this screen as a whole - no pin, no number
+       prototype   it is about the prototype, and rides along on every screen
 
-     Closing a card COLLAPSES it to its pin - it never deletes it. A disclosure
-     note that could be dismissed for good would let someone share a link where
-     an invented number carries no label, which is the one thing this layer
-     exists to prevent. The whole layer still goes away with the Notes toggle,
-     which is visibly a toggle and is not carried in a shared link. */
+     A number therefore always means "look at the pin with the same number".
+     Anything without one is grouped under a header that names what it is about. */
   var KINDS = {
     number:     { label: 'Simulated number',  cls: '' },
     generated:  { label: 'Generated output',  cls: '' },
     system:     { label: 'System result',     cls: '' },
     connection: { label: 'Connection claim',  cls: '' },
     convention: { label: 'Prototype note',    cls: 'convention' },
-    comment:    { label: 'Your comment',      cls: 'comment' }
+    comment:    { label: 'Comment',           cls: 'comment' }
   };
+  var SEV = { low: 'Low', normal: 'Normal', high: 'High' };
   function kindOf(a) { return KINDS[a.kind] || KINDS.number; }
 
+  var reviewerName = readStore('name', review.name || '');
+
   function notesFor(src) {
-    var declared = (annots[src] || []).map(function (a, i) {
-      return { a: a, id: src + '#' + i };
-    });
-    var mine = comments.filter(function (c) { return c.screen === src; })
-      .map(function (c) { return { a: { kind: 'comment', selector: c.selector, text: c.text, at: c.at }, id: c.id, comment: c }; });
-    return declared.concat(mine);
+    var out = [];
+    if (labelsOn) {
+      (annots[src] || []).forEach(function (a, i) {
+        out.push({ a: a, id: src + '#' + i, scope: a.selector ? 'element' : 'screen' });
+      });
+    }
+    if (commentsOn) {
+      comments.forEach(function (cm) {
+        if (cm.screen !== src) return;
+        out.push({
+          a: { kind: 'comment', selector: cm.selector, text: cm.text, at: cm.at },
+          id: cm.id, comment: cm, scope: cm.selector ? 'element' : 'screen'
+        });
+      });
+    }
+    if (labelsOn) {
+      (annots['*'] || []).forEach(function (a, i) {
+        out.push({ a: a, id: '*#' + i, scope: 'prototype' });
+      });
+    }
+    var order = { element: 0, screen: 1, prototype: 2 };
+    return out.sort(function (x, y) { return order[x.scope] - order[y.scope]; });
+  }
+
+  var HEADERS = {
+    screen:    { t: 'About this screen',    i: 'i-screen' },
+    prototype: { t: 'About this prototype', i: 'i-cube' }
+  };
+
+  function editing() {
+    return comments.some(function (cm) { return cm.draft || cm.editing; });
   }
 
   function drawAnnots() {
     if (document.body.classList.contains('bare')) return;
-    annotEl.querySelectorAll('.note, .pin').forEach(function (n) { n.remove(); });
+    annotEl.querySelectorAll('.note, .pin, .rail__h').forEach(function (n) { n.remove(); });
     svg.innerHTML = '';
-    if (!annotsOn || !frameReady) { document.body.classList.remove('has-notes'); return; }
+    if ((!labelsOn && !commentsOn) || !frameReady) { document.body.classList.remove('has-notes'); return; }
 
     var list = notesFor(current.screen);
     var open = list.filter(function (e) { return !collapsed[e.id]; });
@@ -1336,20 +1539,40 @@
     // reserving the rail resizes the frame; measure only once that has applied
     if (open.length && !had) { requestAnimationFrame(drawAnnots); return; }
 
+    annotEl.classList.toggle('is-focus', editing());
+
     var frameBox = frame.getBoundingClientRect();
     var wrapBox = wrap.getBoundingClientRect();
     var railX = wrapBox.width + 20;
     var stack = 4;
     var num = 0;
+    var seen = {};
 
     list.forEach(function (entry, n) {
       var a = entry.a;
       var id = entry.id;
       var kind = kindOf(a);
-      num++;
+      var cm = entry.comment;
+      var active = !!(cm && (cm.draft || cm.editing));
+
+      /* section header, once per scope */
+      if (entry.scope !== 'element' && !seen[entry.scope]) {
+        seen[entry.scope] = true;
+        var h = document.createElement('div');
+        h.className = 'rail__h';
+        h.innerHTML = icon(HEADERS[entry.scope].i) + '<span></span>';
+        h.querySelector('span').textContent = HEADERS[entry.scope].t;
+        annotEl.appendChild(h);
+        h.style.left = railX + 'px';
+        h.style.top = (stack + 8) + 'px';
+        stack = stack + 8 + h.offsetHeight + 9;
+      }
 
       var target = null;
-      try { target = a.selector ? doc.querySelector(a.selector) : null; } catch (e) { /* bad selector */ }
+      if (entry.scope === 'element') {
+        try { target = doc.querySelector(a.selector); } catch (e) { /* bad selector */ }
+        num++;
+      }
 
       var px, py;
       if (target) {
@@ -1374,11 +1597,19 @@
       }
 
       var note = document.createElement('div');
-      note.className = 'note' + (kind.cls ? ' note--' + kind.cls : '') + (a.selector && !target ? ' note--orphan' : '');
-      note.style.animationDelay = (n * 55) + 'ms';
+      note.className = 'note' + (kind.cls ? ' note--' + kind.cls : '') +
+                       (entry.scope === 'element' ? '' : ' note--loose') +
+                       (entry.scope === 'element' && !target ? ' note--orphan' : '') +
+                       (active ? ' is-active' : '');
+      note.style.animationDelay = (n * 45) + 'ms';
 
       var badge = document.createElement('span');
-      badge.className = 'note__n'; badge.textContent = num;
+      if (entry.scope === 'element') {
+        badge.className = 'note__n'; badge.textContent = num;
+      } else {
+        badge.className = 'note__s';
+        badge.innerHTML = icon(HEADERS[entry.scope].i);
+      }
 
       var body = document.createElement('div');
       body.className = 'note__body';
@@ -1386,25 +1617,8 @@
       klabel.className = 'note__kind'; klabel.textContent = kind.label;
       body.appendChild(klabel);
 
-      if (entry.comment) {
-        var ta = document.createElement('textarea');
-        ta.className = 'note__edit'; ta.rows = 2;
-        ta.placeholder = 'What did you want to say about this?';
-        ta.value = a.text || '';
-        ta.addEventListener('input', function () {
-          ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px';
-          entry.comment.text = ta.value;
-          writeStore('comments', comments);
-          paintSend();
-        });
-        body.appendChild(ta);
-        requestAnimationFrame(function () { ta.style.height = ta.scrollHeight + 'px'; });
-        if (a.at) {
-          var meta = document.createElement('span');
-          meta.className = 'note__meta';
-          meta.textContent = new Date(a.at).toLocaleString();
-          body.appendChild(meta);
-        }
+      if (cm) {
+        renderComment(body, note, cm, active);
       } else {
         var txt = document.createElement('span');
         txt.textContent = a.text;
@@ -1419,14 +1633,14 @@
 
       var x = document.createElement('button');
       x.className = 'note__x'; x.type = 'button';
-      x.setAttribute('aria-label', entry.comment ? 'Delete this comment' : 'Collapse note ' + num + ' to its pin');
-      x.title = entry.comment ? 'Delete' : 'Collapse to its pin';
+      x.setAttribute('aria-label', cm ? 'Delete this comment' : 'Collapse this note to its pin');
+      x.title = cm ? 'Delete' : (target ? 'Collapse to its pin' : 'Hide');
       x.innerHTML = icon('i-x');
       x.addEventListener('click', function () {
         note.classList.add('is-out');
         setTimeout(function () {
-          if (entry.comment) {
-            comments = comments.filter(function (c) { return c.id !== id; });
+          if (cm) {
+            comments = comments.filter(function (o) { return o.id !== id; });
             writeStore('comments', comments);
             paintSend();
           } else {
@@ -1445,8 +1659,8 @@
       note.style.top = top + 'px';
       stack = top + note.offsetHeight + 10;
 
-      if (entry.comment && entry.comment.fresh) {
-        entry.comment.fresh = false;
+      if (cm && cm.fresh) {
+        cm.fresh = false;
         var field = note.querySelector('.note__edit');
         if (field) field.focus();
       }
@@ -1454,10 +1668,10 @@
       if (!target) return;
 
       var pin = document.createElement('div');
-      pin.className = 'pin' + (kind.cls ? ' pin--' + kind.cls : '');
+      pin.className = 'pin' + (kind.cls ? ' pin--' + kind.cls : '') + (active ? ' is-active' : '');
       pin.textContent = num;
       pin.style.left = px + 'px'; pin.style.top = py + 'px';
-      pin.style.animationDelay = (n * 55) + 'ms';
+      pin.style.animationDelay = (n * 45) + 'ms';
       annotEl.appendChild(pin);
 
       var ny = top + note.offsetHeight / 2;
@@ -1467,6 +1681,7 @@
       var mid = px + (railX - px) / 2;
       var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
       path.setAttribute('d', 'M' + px + ' ' + py + ' C' + mid + ' ' + py + ' ' + mid + ' ' + ny + ' ' + railX + ' ' + ny);
+      if (active) path.classList.add('is-active');
       svg.appendChild(path);
 
       function lit(on) {
@@ -1481,13 +1696,110 @@
     });
   }
 
-  /* ---------- reviewer comments ----------
+  /* a comment is written, then committed. Left as a live textarea it is never
+     finished - there is no moment where the reviewer knows it counted. */
+  function renderComment(body, note, cm, active) {
+    if (active) {
+      var ta = document.createElement('textarea');
+      ta.className = 'note__edit'; ta.rows = 2;
+      ta.placeholder = 'What did you want to say about this?';
+      ta.value = cm.text || '';
+      ta.addEventListener('input', function () {
+        ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px';
+        cm.text = ta.value;
+        save.disabled = !ta.value.trim();
+      });
+      ta.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); commit(); }
+        if (e.key === 'Escape') { e.preventDefault(); cancel(); }
+      });
+      body.appendChild(ta);
+      requestAnimationFrame(function () { ta.style.height = ta.scrollHeight + 'px'; });
+
+      var sev = document.createElement('span');
+      sev.className = 'sev';
+      Object.keys(SEV).forEach(function (k) {
+        var b = document.createElement('button');
+        b.type = 'button'; b.className = 'sev-' + k;
+        b.title = SEV[k]; b.setAttribute('aria-label', 'Severity: ' + SEV[k]);
+        b.setAttribute('aria-pressed', String(cm.severity === k));
+        b.innerHTML = '<i></i>';
+        b.addEventListener('click', function () {
+          cm.severity = k;
+          sev.querySelectorAll('button').forEach(function (o) { o.setAttribute('aria-pressed', String(o === b)); });
+        });
+        sev.appendChild(b);
+      });
+
+      var save = document.createElement('button');
+      save.className = 'note__save'; save.type = 'button'; save.textContent = 'Add note';
+      save.disabled = !(cm.text || '').trim();
+      save.addEventListener('click', commit);
+
+      var kbd = document.createElement('span');
+      kbd.className = 'note__kbd'; kbd.textContent = 'Enter';
+
+      var row = document.createElement('div');
+      row.className = 'note__add';
+      row.appendChild(sev); row.appendChild(save); row.appendChild(kbd);
+      body.appendChild(row);
+
+      function commit() {
+        if (!(cm.text || '').trim()) return;
+        cm.draft = false; cm.editing = false;
+        cm.who = reviewerName || cm.who || '';
+        cm.at = new Date().toISOString();
+        writeStore('comments', comments);
+        paintSend();
+        drawAnnots();
+        var el = annotEl.querySelector('.note--comment');
+        if (el) el.classList.add('is-saved');
+        toast('Note added' + (cm.severity && cm.severity !== 'normal' ? ' (' + SEV[cm.severity] + ')' : '') + '. You can still edit it.');
+        record('harness:comment-added', cm.severity);
+      }
+      function cancel() {
+        if (cm.draft) comments = comments.filter(function (o) { return o.id !== cm.id; });
+        else cm.editing = false;
+        writeStore('comments', comments);
+        paintSend(); drawAnnots();
+      }
+      return;
+    }
+
+    var txt = document.createElement('span');
+    txt.textContent = cm.text;
+    body.appendChild(txt);
+
+    var foot = document.createElement('div');
+    foot.className = 'note__foot';
+    var dot = document.createElement('i');
+    dot.className = 'dot sev-' + (cm.severity || 'normal');
+    dot.title = SEV[cm.severity || 'normal'];
+    foot.appendChild(dot);
+
+    var who = document.createElement('span');
+    who.className = 'note__who';
+    who.textContent = cm.who || 'You';
+    foot.appendChild(who);
+
+    var when = document.createElement('span');
+    when.textContent = new Date(cm.at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    foot.appendChild(when);
+
+    var edit = document.createElement('button');
+    edit.className = 'note__act'; edit.type = 'button'; edit.textContent = 'Edit';
+    edit.addEventListener('click', function () { cm.editing = true; drawAnnots(); });
+    foot.appendChild(edit);
+
+    body.appendChild(foot);
+  }
+
+  /* ---------- placing a comment ----------
      The shell cannot see a click inside the artifact, so comment mode asks the
      artifact to forward the next one together with a selector for what was hit.
      Nothing is injected into the page - only the cursor changes. */
   var picking = false;
   var commentBtn = document.querySelector('[data-comment]');
-
   var commentLabel = commentBtn.lastChild;
 
   function setPicking(on) {
@@ -1506,37 +1818,52 @@
 
   function placeComment(selector, label) {
     setPicking(false);
-    var c = {
+    if (!commentsOn) {
+      commentsOn = true;
+      document.querySelector('[data-toggle-comments]').setAttribute('aria-pressed', 'true');
+    }
+    comments.push({
       id: 'c' + Date.now(),
       screen: current.screen,
       state: current.state,
       variant: current.variant,
       selector: selector || null,
       anchor: label || '',
+      who: reviewerName,
+      severity: 'normal',
       text: '',
       at: new Date().toISOString(),
+      draft: true,
       fresh: true
-    };
-    comments.push(c);
+    });
     writeStore('comments', comments);
     paintSend();
-    record('harness:comment', c.anchor);
+    record('harness:comment-placed', label || '');
     drawAnnots();
   }
 
-  /* ---------- sending it back ----------
+  /* ---------- returning them ----------
      There is no backend, so a comment reaches the author only when the reviewer
-     presses Send. That is the weak link in the whole mechanism, which is why
-     the control is permanent, counts what is waiting, and nudges once. */
-  var sendBtn = document.querySelector('[data-send]');
-  var sendN = document.querySelector('[data-send-n]');
+     sends it. The control therefore sits apart from the note tools, says what
+     it is for, and opens a sheet that shows what will be sent and lets the
+     reviewer pick how - rather than firing a mail client and a download at
+     someone who pressed a button next to "Add note". */
+  var sendBtn   = document.querySelector('[data-send]');
+  var sendN     = document.querySelector('[data-send-n]');
+  var sheet     = document.querySelector('[data-sheet]');
+  var sheetList = document.querySelector('[data-sheet-list]');
+  var sheetActs = document.querySelector('[data-sheet-acts]');
+  var commentN  = document.querySelector('[data-comment-count]');
   var nudged = false;
 
-  function written() { return comments.filter(function (c) { return (c.text || '').trim(); }); }
+  function written() {
+    return comments.filter(function (cm) { return !cm.draft && (cm.text || '').trim(); });
+  }
 
   function paintSend() {
     var n = written().length;
     sendN.textContent = n;
+    commentN.textContent = comments.length;
     sendBtn.setAttribute('data-idle', n ? '0' : '1');
     if (n && !nudged) {
       nudged = true;
@@ -1547,59 +1874,107 @@
 
   function feedbackText() {
     var lines = ['Prototype feedback - ' + (cfg.title || cfg.name || 'prototype'),
+                 (reviewerName ? 'From: ' + reviewerName : ''),
                  new Date().toLocaleString(), ''];
-    written().forEach(function (c, i) {
-      var s = screens[screenIndex(c.screen)];
-      lines.push((i + 1) + '. [' + (s ? s.label : c.screen) + ' / ' + c.state + ']' +
-                 (c.anchor ? ' near "' + c.anchor + '"' : ''));
-      lines.push('   ' + c.text.trim());
+    written().forEach(function (cm, i) {
+      var s = screens[screenIndex(cm.screen)];
+      lines.push((i + 1) + '. [' + (SEV[cm.severity || 'normal']) + '] ' +
+                 (s ? s.label : cm.screen) + ' / ' + cm.state +
+                 (cm.anchor ? ' - near "' + cm.anchor + '"' : ''));
+      lines.push('   ' + cm.text.trim());
       lines.push('');
     });
-    return lines.join('\n');
+    return lines.filter(function (l, i) { return !(i === 1 && !l); }).join('\n');
   }
 
-  sendBtn.addEventListener('click', async function () {
+  function actionBtn(cls, ico, label, fn, wide) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = cls + (wide ? ' wide' : '');
+    b.innerHTML = icon(ico) + '<span></span>';
+    b.lastChild.textContent = label;
+    b.addEventListener('click', fn);
+    return b;
+  }
+
+  function openSheet() {
     var list = written();
-    if (!list.length) { toast('No comments yet - press Add note, then click something.'); return; }
-    var text = feedbackText();
+    sheetList.innerHTML = '';
+    sheetActs.innerHTML = '';
+    document.querySelector('[data-sheet-p]').textContent = list.length
+      ? 'Nothing has left this browser yet. Pick how to return these ' + list.length + ' note' + (list.length === 1 ? '' : 's') + '.'
+      : 'No notes yet. Press Add note, then click the thing you want to comment on.';
 
-    if (review.submitTo) {
-      try {
-        await fetch(review.submitTo, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prototype: cfg.name || 'prototype', comments: list, events: events })
-        });
-        toast('Sent - ' + list.length + ' comment' + (list.length === 1 ? '' : 's') + ' delivered. Thank you.', 4200);
-        record('harness:feedback-sent', list.length);
-        return;
-      } catch (e) {
-        toast('The endpoint did not answer - falling back to copy and mail.', 4200);
+    list.forEach(function (cm) {
+      var li = document.createElement('li');
+      var d = document.createElement('i');
+      d.className = 'dot sev-' + (cm.severity || 'normal');
+      d.title = SEV[cm.severity || 'normal'];
+      var wrapS = document.createElement('span');
+      var s = screens[screenIndex(cm.screen)];
+      wrapS.textContent = cm.text.trim();
+      var where = document.createElement('span');
+      where.className = 'sheet__where';
+      where.textContent = (s ? s.label : cm.screen) + (cm.anchor ? ' - near "' + cm.anchor + '"' : '');
+      wrapS.appendChild(where);
+      li.appendChild(d); li.appendChild(wrapS);
+      sheetList.appendChild(li);
+    });
+
+    if (list.length) {
+      if (review.submitTo) {
+        sheetActs.appendChild(actionBtn('cta', 'i-send', 'Send to the author', submitEndpoint, true));
       }
+      sheetActs.appendChild(actionBtn('cta', 'i-copy', 'Copy', copyOut, !review.to));
+      if (review.to) sheetActs.appendChild(actionBtn('ib', 'i-mail', 'Email', mailOut));
+      sheetActs.appendChild(actionBtn('ib', 'i-down', 'Save as a file', fileOut, true));
     }
+    sheet.hidden = false;
+  }
+  function closeSheet() { sheet.hidden = true; }
 
-    var copied = false;
-    if (navigator.clipboard && location.protocol !== 'file:') {
-      try { await navigator.clipboard.writeText(text); copied = true; } catch (e) { /* denied */ }
+  async function submitEndpoint() {
+    try {
+      await fetch(review.submitTo, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prototype: cfg.name || 'prototype', from: reviewerName, comments: written(), events: events })
+      });
+      toast('Sent. Thank you - nothing else to do.', 4200);
+      record('harness:feedback-sent', written().length);
+      closeSheet();
+    } catch (e) {
+      toast('The endpoint did not answer. Copy or save the file instead.', 4600);
     }
-    if (review.to) {
-      var href = 'mailto:' + review.to +
-                 '?subject=' + encodeURIComponent('Prototype feedback - ' + (cfg.title || cfg.name || 'prototype')) +
-                 '&body=' + encodeURIComponent(text.slice(0, 1800));
-      window.open(href, '_blank');
-    }
-    var blob = new Blob([text], { type: 'text/plain' });
+  }
+  async function copyOut() {
+    try {
+      await navigator.clipboard.writeText(feedbackText());
+      toast('Copied. Paste it wherever you talk to the author.', 4200);
+      record('harness:feedback-copied', written().length);
+      closeSheet();
+    } catch (e) { toast('The browser refused the clipboard - save the file instead.', 4600); }
+  }
+  function mailOut() {
+    window.open('mailto:' + review.to +
+      '?subject=' + encodeURIComponent('Prototype feedback - ' + (cfg.title || cfg.name || 'prototype')) +
+      '&body=' + encodeURIComponent(feedbackText().slice(0, 1800)), '_blank');
+    record('harness:feedback-mailed', written().length);
+    closeSheet();
+  }
+  function fileOut() {
+    var blob = new Blob([feedbackText()], { type: 'text/plain' });
     var a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = (cfg.name || 'prototype') + '-feedback.txt';
     a.click();
     URL.revokeObjectURL(a.href);
+    record('harness:feedback-saved', written().length);
+    closeSheet();
+  }
 
-    toast(copied
-      ? 'Copied to your clipboard and saved as a file - paste or attach it and send it over.'
-      : 'Saved as a file - send it over and we have it.', 5200);
-    record('harness:feedback-sent', list.length);
-  });
+  sendBtn.addEventListener('click', function () { sheet.hidden ? openSheet() : closeSheet(); });
+  document.querySelector('[data-sheet-close]').addEventListener('click', closeSheet);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !sheet.hidden) closeSheet(); });
 
   window.addEventListener('beforeunload', function (e) {
     if (!written().length) return;
@@ -1610,12 +1985,16 @@
   /* ---------- review mode ---------- */
   if (reviewMode) {
     var brief = document.querySelector('[data-brief]');
+    var nameField = document.querySelector('[data-brief-name]');
     brief.hidden = false;
+    nameField.value = reviewerName;
     document.querySelector('[data-brief-task]').textContent =
       review.task || 'Use the prototype the way you normally would, and tell us where it does not make sense.';
     document.querySelector('[data-brief-go]').addEventListener('click', function () {
+      reviewerName = nameField.value.trim();
+      writeStore('name', reviewerName);
       brief.hidden = true;
-      record('harness:review-start');
+      record('harness:review-start', reviewerName);
     });
   }
   paintSend();
@@ -1631,19 +2010,24 @@
   function disclosureDoc() {
     var d = cfg.disclosure || {};
     var rows = [];
-    screens.forEach(function (s) {
-      (annots[s.src] || []).forEach(function (a) {
+    function collect(src, label) {
+      (annots[src] || []).forEach(function (a) {
         if (a.kind === 'convention') return;
-        rows.push('<tr><td class="s">' + esc(s.label) + '</td><td class="k">' + esc(kindOf(a).label) +
+        rows.push('<tr><td class="s">' + esc(label) + '</td><td class="k">' + esc(kindOf(a).label) +
                   '</td><td>' + esc(a.text) + '</td><td class="r">' + esc(a.real || '-') + '</td></tr>');
       });
-    });
+    }
+    screens.forEach(function (s) { collect(s.src, s.label); });
+    collect('*', 'Everywhere');
+
     var conventions = [];
-    screens.forEach(function (s) {
-      (annots[s.src] || []).forEach(function (a) {
-        if (a.kind === 'convention') conventions.push('<li><b>' + esc(s.label) + '</b> - ' + esc(a.text) + '</li>');
+    function collectC(src, label) {
+      (annots[src] || []).forEach(function (a) {
+        if (a.kind === 'convention') conventions.push('<li><b>' + esc(label) + '</b> - ' + esc(a.text) + '</li>');
       });
-    });
+    }
+    screens.forEach(function (s) { collectC(s.src, s.label); });
+    collectC('*', 'Everywhere');
 
     return '<!doctype html><html lang="en"><head><meta charset="utf-8">' +
       '<style>' +
