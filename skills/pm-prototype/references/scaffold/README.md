@@ -94,6 +94,16 @@ Open the harness with **`?review=1`** and the reviewer gets the task first, then
 
 Reviewers never see each other's comments. For an async test with real users that is required, not a shortcoming - a shared thread contaminates the sample the moment the second person reads the first.
 
+## Inspecting, comparing, presenting
+
+| | |
+|---|---|
+| **Grid** | cycles off → 8px → 64px. 8 asks whether an element sits on the rhythm, 64 whether the layout does. Drawn in the shell over the frame; the document under review is never touched |
+| **Side by side** | the same screen at 1280 / 834 / 390 at once, each rendered at its **real width** and then scaled to fit, so the artifact's own media queries fire. Annotations are anchored to the single frame, so they step aside here and say why |
+| **Present** | full screen, chrome down to prev / pause / next, each slot sweeping that screen's time across its range and scrolling the page through its own height |
+
+**A presentation may drive the artifact; it must not invent input.** With no `tour` it walks the screens in order at `present.hold` ms each. Declare a `tour` when the demo has a story, and each step says exactly what is shown - `screen`, `state`, `variant`, `time`, `scroll`, `click`, `say`, `hold`. `click` is the only thing that touches the artifact, it is declared rather than guessed, and the element is ringed before it fires. Arrow keys step, space pauses, Escape exits.
+
 ## Beyond the contract
 
 Three conveniences the contract does not require, but that a reviewer expects from a tool like this:
@@ -137,6 +147,8 @@ The second round added: per-screen time appearing, disappearing and keeping each
 
 The third: the screen panel with its descriptions and keyboard navigation, and the viewport transition - sampled mid-flight at 427px between a 1106px desktop and a 390px phone, with the annotations re-anchoring correctly once it settled.
 
+The fourth: note scopes and their rail headers, a comment written and committed with a name and a severity, the return sheet, the grid's three steps, side by side at 53% with all three widths measured, and a four-step tour played to the end - states switching, captions changing, time sweeping and the progress bar filling.
+
 Bugs found that way, none of which a reading of the code would have caught:
 
 - notes overflowed the viewport and forced sideways scrolling
@@ -145,5 +157,7 @@ Bugs found that way, none of which a reading of the code would have caught:
 - a connector-curve "improvement" scaled the bezier control points by the vertical gap, putting a control point past its own endpoint and tying the line in a knot
 - the disclosure tag was a `<span>`, so a lower-specificity rule lost to the generic one and it rendered brown-on-coral at 1.9:1
 - the dropdown's tick was an inline `<svg>` with no width, so it rendered at its intrinsic size and spilled across the menu
+- a draft comment survived a reload and held the whole annotation layer in writing mode for ever
+- the side-by-side container and the body-state class were both called `compare`, so `.compare { display: none }` matched `<body>` and blanked the entire document
 - a cross-origin artifact reserved the annotation rail and then drew nothing into it, because the document was read only after the rail was measured
 - `.seg` and `.grp` set their own `display`, which beats the browser's rule for `[hidden]` - hiding the variant group did nothing at all

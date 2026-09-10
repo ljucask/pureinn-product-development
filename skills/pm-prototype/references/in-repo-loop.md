@@ -42,7 +42,12 @@ Any harness must provide these, whatever the stack. A kit satisfies the contract
 
 **The reference implementation is in `scaffold/`** - copy `harness.html` and `harness-client.js` byte-for-byte, edit only `harness.config.js`. See `scaffold/README.md`. It must be served, not opened as `file://`.
 
-It also carries three things the contract does not require but a reviewer expects: a **device mockup** (off by default - it is presentation, and a usability test does not want it), a **share link** that restores screen, state, variant, time, device and mockup in one go, and a **PNG export** of the current screen that never includes the annotation layer. Treat them as conveniences, not contract items: a harness built in another stack is complete without them.
+It also carries a handful of things the contract does not require but a reviewer expects: a **device mockup** (off by default - it is presentation, and a usability test does not want it), a **share link** that restores screen, state, variant, time, device and mockup in one go, a **PNG export** of the current screen that never includes the annotation layer, an **alignment grid**, a **side-by-side** view of the same screen at three widths, and a **presentation mode**. Treat them as conveniences, not contract items: a harness built in another stack is complete without them.
+
+Two of those are worth a sentence, because they are easy to build wrongly:
+
+- **Side by side** must render each frame at its **real width** and scale it down. Shrinking one iframe to a narrow box shows the same layout smaller; it does not fire the artifact's own media queries, which is the entire question being asked.
+- **Presentation** may drive the artifact, but it must not **invent input**. Advancing screens, sweeping time and scrolling are the shell asking for things the artifact already does. A click belongs in a declared tour, ringed before it fires - a demo that improvises interaction shows an audience behaviour the prototype was never claimed to have.
 
 ### 1. State switcher
 

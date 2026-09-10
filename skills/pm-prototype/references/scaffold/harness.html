@@ -702,6 +702,93 @@
   .brief__name input:focus { outline: 0; box-shadow: 0 0 0 1.5px var(--co); }
   .brief__go { margin-top: 16px; width: 100%; justify-content: center; }
 
+  /* ══ grid overlay - alignment, checked against the artifact's own pixels ══
+     It lives in the shell, over the frame, so nothing is added to the document
+     under review. */
+  .grid {
+    position: absolute; left: 0; right: 0; top: 0; bottom: 0; z-index: 2;
+    pointer-events: none; opacity: 0;
+    transition: opacity var(--fast) var(--ease);
+  }
+  .grid[data-g] { opacity: 1; }
+  .grid[data-g="8"] {
+    background-image:
+      repeating-linear-gradient(to right, rgba(237,109,87,.17) 0 1px, transparent 1px 8px),
+      repeating-linear-gradient(to bottom, rgba(237,109,87,.17) 0 1px, transparent 1px 8px);
+  }
+  .grid[data-g="64"] {
+    background-image:
+      repeating-linear-gradient(to right, rgba(237,109,87,.34) 0 1px, transparent 1px 64px),
+      repeating-linear-gradient(to bottom, rgba(237,109,87,.34) 0 1px, transparent 1px 64px);
+  }
+  /* in a desktop mockup the browser bar sits above the artifact, so the grid
+     starts below it or every measurement is off by its height */
+  body.mock .wrap[data-device="desktop"] .grid { top: 26px; }
+
+  /* ══ side by side - the same screen at three widths ══ */
+  /* NB the container class and the body-state class must not be the same word:
+     body carries the state, so `.compare { display: none }` would match the
+     body itself and blank the whole document. */
+  .cmpset { display: none; gap: 26px; align-items: stretch; justify-content: center; height: 100%; }
+  body.compare .cmpset { display: flex; }
+  body.compare .wrap { display: none; }
+  body.compare .stage { justify-content: flex-start; }
+  .cmp { display: flex; flex-direction: column; gap: 9px; flex: 0 0 auto; height: 100%; }
+  .cmp__h {
+    display: flex; align-items: baseline; gap: 7px; padding-left: 2px;
+    font: 700 8.5px/1 var(--mono); letter-spacing: .13em; text-transform: uppercase; color: var(--ink-3);
+  }
+  .cmp__px { font-weight: 500; letter-spacing: .04em; opacity: .8; }
+  /* Each frame renders at its real width and is then scaled down to fit, so
+     the artifact's own media queries fire for that width - shrinking the
+     iframe instead would just be the same layout in a narrower box. */
+  .cmp__vp { position: relative; overflow: hidden; border-radius: var(--r-lg); box-shadow: 0 0 0 1px rgba(22,24,29,.07), 0 24px 50px -22px rgba(22,24,29,.3); }
+  .cmp iframe {
+    position: absolute; top: 0; left: 0;
+    display: block; border: 0; background: #fff;
+    transform-origin: top left;
+  }
+  .cmp__z { font-weight: 500; letter-spacing: .04em; color: var(--co); }
+
+  /* ══ presentation - the artifact, and only what is needed to move ══ */
+  body.present .isle, body.present .annots, body.present .nav, body.present .sheet { opacity: 0; pointer-events: none; }
+  body.present .stage { padding: 26px 26px 92px; }
+  body.present.nav-open .stage { padding-left: 26px; }
+  .show {
+    position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 29;
+    display: none; align-items: center; gap: 8px; padding: 8px 10px;
+    background: rgba(20,22,27,.82);
+    backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+    border-radius: var(--r-xl);
+    box-shadow: 0 18px 44px -16px rgba(12,13,17,.7);
+    color: #e8eaee;
+  }
+  body.present .show { display: flex; }
+  .show button {
+    display: inline-flex; align-items: center; gap: 7px;
+    height: 32px; padding: 0 11px;
+    background: none; border: 0; border-radius: 10px;
+    color: #c8ced8; font-size: 12px; font-weight: 550; cursor: pointer;
+    transition: background var(--fast) var(--ease), color var(--fast) var(--ease);
+  }
+  .show button:hover { background: rgba(255,255,255,.1); color: #fff; }
+  .show button svg { width: 14px; height: 14px; }
+  .show__t { padding: 0 8px; font-size: 12px; color: #fff; font-weight: 600; white-space: nowrap; }
+  .show__d { font: 500 11px/1 var(--mono); color: #8b93a1; }
+  .show__sep { width: 1px; height: 20px; background: rgba(255,255,255,.14); }
+  .show__bar { position: fixed; left: 0; top: 0; height: 2px; width: 0; z-index: 30; background: var(--grad-45); display: none; }
+  body.present .show__bar { display: block; }
+  .say {
+    position: fixed; left: 50%; bottom: 78px; transform: translateX(-50%); z-index: 29;
+    max-width: 60ch; padding: 11px 17px;
+    background: rgba(20,22,27,.88);
+    backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+    border-radius: 14px; color: #eef0f4; font-size: 13px; line-height: 1.5;
+    box-shadow: 0 18px 44px -16px rgba(12,13,17,.7);
+    animation: rise var(--med) var(--spring);
+  }
+  .say[hidden] { display: none; }
+
   /* ══ toast ══ */
   .toast {
     position: fixed; left: 50%; bottom: 84px; transform: translate(-50%, 10px);
@@ -802,6 +889,12 @@
   <symbol id="s-map" viewBox="0 0 16 16"><path d="M8 14s4.4-4.1 4.4-7.3A4.4 4.4 0 0 0 3.6 6.7C3.6 9.9 8 14 8 14z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><circle cx="8" cy="6.6" r="1.5" fill="none" stroke="currentColor" stroke-width="1.3"/></symbol>
   <symbol id="s-info" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.8" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M8 7.2v4M8 4.9v.1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
   <symbol id="i-layers" viewBox="0 0 16 16"><path d="M8 1.8L14 5l-6 3.2L2 5zM2 8.4l6 3.2 6-3.2M2 11.6l6 3.2 6-3.2" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></symbol>
+  <symbol id="i-columns" viewBox="0 0 16 16"><rect x="1.6" y="3" width="4" height="10" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.4"/><rect x="7" y="3" width="3.2" height="10" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.4"/><rect x="11.6" y="3" width="2.8" height="10" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.4"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 16 16"><path d="M2 6h12M2 10h12M6 2v12M10 2v12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><rect x="2" y="2" width="12" height="12" rx="1.8" fill="none" stroke="currentColor" stroke-width="1.4"/></symbol>
+  <symbol id="i-play" viewBox="0 0 16 16"><path d="M5 3.4l7 4.6-7 4.6z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 16 16"><path d="M6 3.5v9M10 3.5v9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+  <symbol id="i-prev" viewBox="0 0 16 16"><path d="M10 3.5L5.5 8l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-next" viewBox="0 0 16 16"><path d="M6 3.5L10.5 8 6 12.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-tag" viewBox="0 0 16 16"><path d="M2.5 7.4V3a.5.5 0 0 1 .5-.5h4.4a1 1 0 0 1 .7.3l5.2 5.2a1 1 0 0 1 0 1.4l-4.4 4.4a1 1 0 0 1-1.4 0L2.8 8.6a1 1 0 0 1-.3-.7z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><circle cx="5.6" cy="5.6" r="1.1" fill="currentColor"/></symbol>
   <symbol id="i-screen" viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="9" rx="1.8" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M6 14h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></symbol>
   <symbol id="i-cube" viewBox="0 0 16 16"><path d="M8 1.8l5.5 3v6.4L8 14.2 2.5 11.2V4.8z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M2.5 4.8L8 7.8l5.5-3M8 7.8v6.4" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".6"/></symbol>
@@ -820,8 +913,15 @@
         <span class="mock__url" data-mock-url></span>
       </div>
       <iframe id="frame" title="prototype"></iframe>
+      <div class="grid" data-grid></div>
     </div>
     <div class="annots" data-annots><svg class="lines" data-lines></svg></div>
+  </div>
+
+  <div class="cmpset" data-compare>
+    <div class="cmp"><span class="cmp__h">Desktop <span class="cmp__px">1280</span><span class="cmp__z" data-cmp-z></span></span><div class="cmp__vp"><iframe title="desktop" data-cmp="desktop" data-w="1280"></iframe></div></div>
+    <div class="cmp"><span class="cmp__h">Tablet <span class="cmp__px">834</span><span class="cmp__z" data-cmp-z></span></span><div class="cmp__vp"><iframe title="tablet" data-cmp="tablet" data-w="834"></iframe></div></div>
+    <div class="cmp"><span class="cmp__h">Mobile <span class="cmp__px">390</span><span class="cmp__z" data-cmp-z></span></span><div class="cmp__vp"><iframe title="mobile" data-cmp="mobile" data-w="390"></iframe></div></div>
   </div>
 </div>
 
@@ -854,6 +954,10 @@
     <button type="button" data-device-btn="mobile" aria-pressed="false" title="Mobile"><svg><use href="#i-mobile"/></svg></button>
   </div>
   <button class="ib ib--icon" type="button" data-mockup aria-pressed="false" title="Device mockup"><svg><use href="#i-frame"/></svg></button>
+  <button class="ib ib--icon" type="button" data-compare-btn aria-pressed="false" title="All three widths side by side"><svg><use href="#i-columns"/></svg></button>
+  <button class="ib" type="button" data-grid-btn aria-pressed="false" title="Alignment grid - 8px, then 64px"><svg><use href="#i-grid"/></svg><span data-grid-label>Grid</span></button>
+  <span class="sep"></span>
+  <button class="ib ib--icon" type="button" data-present title="Presentation mode"><svg><use href="#i-play"/></svg></button>
   <span class="sep"></span>
   <button class="ib" type="button" data-toggle-labels aria-pressed="true" title="The author's disclosure and prototype notes"><svg><use href="#i-tag"/></svg>Labels</button>
   <button class="ib" type="button" data-toggle-comments aria-pressed="true" title="Comments left in this browser"><svg><use href="#i-note"/></svg>Comments<span class="count" data-comment-count>0</span></button>
@@ -935,6 +1039,19 @@
     </label>
     <button class="cta brief__go" type="button" data-brief-go>Start</button>
   </div>
+</div>
+
+<div class="show__bar" data-show-bar></div>
+<div class="say" data-say hidden></div>
+<div class="show" data-show>
+  <button type="button" data-show-prev title="Previous"><svg><use href="#i-prev"/></svg></button>
+  <button type="button" data-show-play><svg><use href="#i-pause"/></svg><span data-show-play-t>Pause</span></button>
+  <button type="button" data-show-next title="Next"><svg><use href="#i-next"/></svg></button>
+  <span class="show__sep"></span>
+  <span class="show__t" data-show-title></span>
+  <span class="show__d" data-show-step></span>
+  <span class="show__sep"></span>
+  <button type="button" data-show-exit><svg><use href="#i-x"/></svg>Exit <kbd>Esc</kbd></button>
 </div>
 
 <button class="restore" type="button" data-bare-off>Show chrome <kbd>H</kbd></button>
@@ -2059,6 +2176,188 @@
       '</body></html>';
   }
 
+  /* ---------- alignment grid ----------
+     Two steps, because they answer different questions: 8px is whether an
+     element sits on the rhythm, 64px is whether the layout does. It is drawn in
+     the shell over the frame - the document under review is never touched. */
+  var gridEl = document.querySelector('[data-grid]');
+  var gridBtn = document.querySelector('[data-grid-btn]');
+  var gridLabel = document.querySelector('[data-grid-label]');
+  var GRIDS = [null, '8', '64'];
+  var gridAt = 0;
+  gridBtn.addEventListener('click', function () {
+    gridAt = (gridAt + 1) % GRIDS.length;
+    var g = GRIDS[gridAt];
+    if (g) gridEl.setAttribute('data-g', g); else gridEl.removeAttribute('data-g');
+    gridBtn.setAttribute('aria-pressed', String(!!g));
+    gridLabel.textContent = g ? g + 'px' : 'Grid';
+    record('harness:grid', g);
+  });
+
+  /* ---------- side by side ----------
+     One screen at three widths at once. Annotations are anchored to the single
+     frame, so they step aside here and say why rather than pointing at nothing. */
+  var compareOn = false;
+  var compareBtn = document.querySelector('[data-compare-btn]');
+  var cmpFrames = Array.prototype.slice.call(document.querySelectorAll('[data-cmp]'));
+
+  function loadCompare() {
+    var s = screens[screenIndex(current.screen)];
+    cmpFrames.forEach(function (f) {
+      if (s.disclosure) { f.removeAttribute('src'); f.srcdoc = disclosureDoc(); }
+      else { f.removeAttribute('srcdoc'); f.src = current.screen; }
+    });
+    fitCompare();
+  }
+
+  function fitCompare() {
+    if (!compareOn) return;
+    var box = stage.getBoundingClientRect();
+    var avail = box.width - 52 - 26 * (cmpFrames.length - 1);
+    var total = cmpFrames.reduce(function (n, f) { return n + parseInt(f.dataset.w, 10); }, 0);
+    var scale = Math.min(1, avail / total);
+    var h = Math.max(320, box.height - 46);
+    cmpFrames.forEach(function (f) {
+      var w = parseInt(f.dataset.w, 10);
+      f.style.width = w + 'px';
+      f.style.height = Math.round(h / scale) + 'px';
+      f.style.transform = 'scale(' + scale + ')';
+      var vp = f.parentNode;
+      vp.style.width = Math.round(w * scale) + 'px';
+      vp.style.height = Math.round(h) + 'px';
+      vp.parentNode.querySelector('[data-cmp-z]').textContent = Math.round(scale * 100) + '%';
+    });
+  }
+  compareBtn.addEventListener('click', function () {
+    compareOn = !compareOn;
+    compareBtn.setAttribute('aria-pressed', String(compareOn));
+    document.body.classList.toggle('compare', compareOn);
+    if (compareOn) {
+      document.body.classList.remove('has-notes');
+      loadCompare();
+      toast('Three widths, one screen. Notes and the device switcher wait until you come back.', 4600);
+    } else {
+      requestAnimationFrame(drawAnnots);
+    }
+    record('harness:compare', compareOn);
+  });
+
+  /* ---------- presentation ----------
+     Either a declared tour, or - with none - each screen in turn, its time swept
+     across its own range and the page scrolled through its own height. Clicks
+     only ever happen where a tour asks for one: inventing input would show the
+     audience something the prototype was never claimed to do. */
+  var presenting = false, playing = false, stepAt = 0, stepTimer = null, sweepTimer = null;
+  var tour = cfg.tour || null;
+  var HOLD = (cfg.present && cfg.present.hold) || 4000;
+  var showEl   = document.querySelector('[data-show]');
+  var showBar  = document.querySelector('[data-show-bar]');
+  var sayEl    = document.querySelector('[data-say]');
+  var showTitle = document.querySelector('[data-show-title]');
+  var showStep  = document.querySelector('[data-show-step]');
+  var playT     = document.querySelector('[data-show-play-t]');
+
+  function steps() {
+    if (tour && tour.length) return tour;
+    return screens.filter(function (s) { return !s.disclosure; })
+      .map(function (s) { return { screen: s.src, scroll: 1 }; });
+  }
+
+  function applyStep(i) {
+    var all = steps();
+    stepAt = (i + all.length) % all.length;
+    var st = all[stepAt];
+
+    if (st.screen && st.screen !== current.screen) pickScreen(screenIndex(st.screen));
+    if (st.state && states.indexOf(st.state) > -1) {
+      current.state = st.state;
+      var seg = document.querySelector('[data-states-group]');
+      seg.querySelectorAll('button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.textContent === st.state)); });
+      slide(seg);
+      send('state', st.state);
+    }
+    if (st.variant && variants.indexOf(st.variant) > -1) { current.variant = st.variant; send('variant', st.variant); }
+
+    showTitle.textContent = screens[screenIndex(current.screen)].label;
+    showStep.textContent = (stepAt + 1) + '/' + all.length;
+    sayEl.hidden = !st.say;
+    if (st.say) sayEl.textContent = st.say;
+
+    var hold = st.hold || HOLD;
+    clearInterval(sweepTimer);
+    var t0 = Date.now();
+    sweepTimer = setInterval(function () {
+      var p = Math.min(1, (Date.now() - t0) / hold);
+      showBar.style.width = (p * 100) + '%';
+
+      // the time dimension moves across its own range during the slot, so the
+      // audience sees the thing change rather than being told that it can
+      var tc = screenTime();
+      if (tc && st.time === undefined) {
+        var v = Math.round(tc.min + (tc.max - tc.min) * p);
+        if (v !== current.time) {
+          current.time = times[current.screen] = v;
+          scrub.value = v; paintScrub(); send('time', v);
+        }
+      }
+      if (st.scroll) send('scroll', p * (typeof st.scroll === 'number' ? st.scroll : 1));
+      if (p >= 1) clearInterval(sweepTimer);
+    }, 90);
+
+    if (st.time !== undefined && screenTime()) {
+      current.time = times[current.screen] = st.time;
+      scrub.value = st.time; paintScrub(); send('time', st.time);
+    }
+    if (st.click) setTimeout(function () { send('click', st.click); }, Math.min(1200, hold / 3));
+
+    clearTimeout(stepTimer);
+    if (playing) stepTimer = setTimeout(function () { applyStep(stepAt + 1); }, hold);
+  }
+
+  function setPlaying(on) {
+    playing = on;
+    playT.textContent = on ? 'Pause' : 'Play';
+    document.querySelector('[data-show-play]').querySelector('use')
+      .setAttribute('href', on ? '#i-pause' : '#i-play');
+    clearTimeout(stepTimer);
+    if (on) applyStep(stepAt);
+  }
+
+  function present(on) {
+    presenting = on;
+    document.body.classList.toggle('present', on);
+    if (on) {
+      if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(function () {});
+      closeNav();
+      stepAt = 0;
+      setPlaying(true);
+      record('harness:present', tour ? 'tour' : 'screens');
+    } else {
+      clearTimeout(stepTimer); clearInterval(sweepTimer);
+      playing = false;
+      showBar.style.width = '0';
+      sayEl.hidden = true;
+      if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(function () {});
+      requestAnimationFrame(drawAnnots);
+    }
+  }
+
+  document.querySelector('[data-present]').addEventListener('click', function () { present(true); });
+  document.querySelector('[data-show-exit]').addEventListener('click', function () { present(false); });
+  document.querySelector('[data-show-play]').addEventListener('click', function () { setPlaying(!playing); });
+  document.querySelector('[data-show-prev]').addEventListener('click', function () { setPlaying(false); applyStep(stepAt - 1); });
+  document.querySelector('[data-show-next]').addEventListener('click', function () { setPlaying(false); applyStep(stepAt + 1); });
+  document.addEventListener('keydown', function (e) {
+    if (!presenting) return;
+    if (e.key === 'Escape') present(false);
+    if (e.key === 'ArrowRight') { setPlaying(false); applyStep(stepAt + 1); }
+    if (e.key === 'ArrowLeft')  { setPlaying(false); applyStep(stepAt - 1); }
+    if (e.key === ' ') { e.preventDefault(); setPlaying(!playing); }
+  });
+  document.addEventListener('fullscreenchange', function () {
+    if (!document.fullscreenElement && presenting) present(false);
+  });
+
   /* ---------- event log ---------- */
   var countEl = document.querySelector('[data-event-count]');
   function countEvents() {
@@ -2086,14 +2385,25 @@
   });
 
   /* ---------- frame plumbing ---------- */
-  function send(kind, value) {
-    if (!frameReady) return;
-    frame.contentWindow.postMessage({ __harness: true, type: kind, value: value }, '*');
+  function send(kind, value, only) {
+    var msg = { __harness: true, type: kind, value: value };
+    if (only) { try { only.contentWindow.postMessage(msg, '*'); } catch (e) {} return; }
+    if (frameReady) frame.contentWindow.postMessage(msg, '*');
+    if (compareOn) {
+      cmpFrames.forEach(function (f) { try { f.contentWindow.postMessage(msg, '*'); } catch (e) {} });
+    }
   }
 
   window.addEventListener('message', function (e) {
     var d = e.data;
     if (!d || !d.__harness) return;
+    if (d.type === 'ready' && compareOn && cmpFrames.some(function (f) { return f.contentWindow === e.source; })) {
+      var f = cmpFrames.filter(function (x) { return x.contentWindow === e.source; })[0];
+      send('state', current.state, f);
+      send('variant', current.variant, f);
+      if (screenTime()) send('time', current.time, f);
+      return;
+    }
     if (d.type === 'ready') {
       frameReady = true;
       send('state', current.state);
@@ -2119,6 +2429,7 @@
       frame.src = current.screen;
     }
     mountTime();
+    if (compareOn) loadCompare();
     document.querySelector('[data-mock-url]').textContent =
       location.origin + '/' + (s.disclosure ? '' : current.screen);
     record('harness:screen', current.screen);
@@ -2132,6 +2443,7 @@
 
   window.addEventListener('resize', function () {
     document.querySelectorAll('.seg').forEach(slide);
+    fitCompare();
     drawAnnots();
   });
   stage.addEventListener('scroll', drawAnnots);

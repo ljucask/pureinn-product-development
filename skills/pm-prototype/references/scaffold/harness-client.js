@@ -110,12 +110,46 @@
     document.documentElement.style.cursor = picking ? 'crosshair' : '';
   }
 
+  /* Presentation mode drives the artifact from outside: it scrolls the page to
+     a fraction of its own height and, where a tour declares one, performs a
+     single click. Both are the shell asking the artifact to do something it
+     could already do - no synthetic input is invented, and nothing runs unless
+     the shell is presenting. */
+  function scrollTo(fraction) {
+    var doc = document.documentElement;
+    var max = Math.max(0, doc.scrollHeight - global.innerHeight);
+    global.scrollTo({ top: max * Math.min(1, Math.max(0, fraction)), behavior: 'smooth' });
+  }
+
+  function clickOn(selector) {
+    var el = null;
+    try { el = document.querySelector(selector); } catch (e) { /* bad selector */ }
+    if (!el) return;
+    el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    el.classList.add('harness-touch');
+    setTimeout(function () {
+      el.click();
+      setTimeout(function () { el.classList.remove('harness-touch'); }, 600);
+    }, 260);
+  }
+
   global.addEventListener('message', function (e) {
     var d = e.data;
     if (!d || !d.__harness) return;
     if (d.type === 'state' || d.type === 'time' || d.type === 'variant') apply(d.type, d.value);
     if (d.type === 'picking') setPicking(d.value);
+    if (d.type === 'scroll') scrollTo(d.value);
+    if (d.type === 'click') clickOn(d.value);
   });
+
+  /* the ring that shows where a presented click landed. Injected once, and only
+     ever visible on an element the shell is about to click. */
+  (function () {
+    var s = document.createElement('style');
+    s.textContent = '.harness-touch{position:relative;outline:2px solid rgba(237,109,87,.9);' +
+                    'outline-offset:3px;border-radius:4px;transition:outline-color .3s}';
+    document.head.appendChild(s);
+  })();
 
   document.addEventListener('click', onPickClick, true);
 

@@ -152,6 +152,40 @@ window.HARNESS_CONFIG = {
   },
 
   /* ─────────────────────────────────────────────────────────────────────
+     Presentation. Press the play button and the harness runs the prototype on
+     its own: full screen, chrome reduced to prev / pause / next, each slot
+     sweeping that screen's time across its range and scrolling the page
+     through its own height.
+
+     With no `tour` it simply walks the screens in order, `present.hold` ms
+     each. Declare a `tour` when the demo has a story - then each step says
+     exactly what is shown:
+
+       screen   which screen (its src)
+       state    empty | full | error | unauth
+       variant  when the prototype carries variants
+       time     a fixed value instead of the automatic sweep
+       scroll   0-1: how far down the page to travel during the slot
+       click    a selector to click, ONCE, part-way through the slot
+       say      a caption under the artifact - what the audience should notice
+       hold     ms for this step, overriding present.hold
+
+     `click` is the only thing that touches the artifact, it is declared rather
+     than guessed, and the element is ringed before it fires. A presentation
+     that invented input would show an audience behaviour the prototype was
+     never claimed to have.
+     ───────────────────────────────────────────────────────────────────── */
+  present: { hold: 4000 },
+
+  tour: null,
+  /* tour: [
+       { screen: 'index.html', state: 'empty', say: 'A dispatcher opening an empty morning.', hold: 3500 },
+       { screen: 'index.html', state: 'full',  scroll: 1, say: 'Jobs arrive; the estimate is the thing they act on.' },
+       { screen: 'index.html', click: '#assign', say: 'Assigning is one action - this is what we wanted to test.' },
+       { screen: 'detail.html', state: 'error', say: 'And what happens when the courier feed drops.' }
+     ], */
+
+  /* ─────────────────────────────────────────────────────────────────────
      Review mode. Open the harness with ?review=1 and the reviewer gets the
      task up front and a permanently visible Send control.
 
