@@ -41,7 +41,7 @@ This file is the flow. Detail that only one path needs lives in `references/` ne
 | `content-and-copy.md` | Step 3b - which language the prototype speaks, fixtures that carry weight, numbers that carry provenance | **every run** - content is part of the stimulus |
 | `showing.md` | Putting it in front of someone, and routing what comes back | before the first showing |
 | `in-repo-loop.md` | The harness shell contract, the rules of the iteration loop, stop and restart signals | the prototype is built here, by a coding agent |
-| `prototype-folder.md` | Step 7 - the folder an in-repo prototype lives in, `targets:`, the decision state | writing an in-repo prototype back |
+| `prototype-folder.md` | The folder an in-repo prototype lives in, `targets:`, provenance for `context/`, the decision state | **Step 3b - created before the build**, updated at 7, closed at 8 |
 | `promotion.md` | Classification before the first line of code; kill and promotion once there is a decision | Step 3b, then Step 8 |
 | `scaffold/` | The harness itself - copy it into the prototype's build folder | on the in-repo path |
 
@@ -113,7 +113,7 @@ Read `pureinn-variables.md`:
 **Detect mode:**
 - If the user references an existing prototype in `/prototypes/` - a spec file **or** a prototype folder - and talks about an outcome or result → **Result mode** (Step 8).
 - If a prototype folder exists whose `meta.md` still says `Decision: open`, say so before anything else. An open prototype with no decision is the state this whole structure exists to prevent.
-- Otherwise → **Spec mode** (Steps 1 → 3b → the chosen path → 7).
+- Otherwise → **Spec mode**: Steps 1 → 2 → 3 → 3b → the chosen path (Steps 4-6 live in `references/external-tools.md`, or the loop in `references/in-repo-loop.md`) → 7 → 7b → 8 when there is a result.
 
 **Interaction:** Group related questions (2-4 per round) and confirm before moving on. For any A/B/C/D choice, use the AskUserQuestion tool with one option marked **(Recommended)** - never print options as plain text. Keep open-ended questions free-text (don't fake options). If the user is unsure, propose 3-4 concrete options plus "Other". Surface an assumption the moment you make one; never fabricate to fill a gap. (Full standard: CLAUDE.md.)
 
@@ -139,14 +139,23 @@ That sequence can legitimately end with *"the cheapest test of your riskiest bel
 
 **Do not generate a spec before answering: what does the prototype earn us, and is it the cheapest way to earn it?** A prototype costs credits and time - it must de-risk something real. This gate is mandatory.
 
-1. **What are we validating?** Route to the primary intent:
+1. **What are we validating?** Name the uncertainty in the same vocabulary Step 3b uses, so it can be carried forward rather than re-elicited:
 
-| Intent | The prototype answers | Fidelity it needs |
-|---|---|---|
-| **UX / flow** | "Does this interaction make sense to the user?" | Clickable click-through, real screens, mock data |
-| **Concept / desirability** | "Do users actually want this at all?" | Just enough to be believable - landing + core screen |
-| **Technical feasibility** | "Can this even work / integrate?" | Functional, real data/API, thin but wired |
-| **Stakeholder / sales alignment** | "Something concrete to show and react to" | Polished front, no working backend |
+| Uncertainty | The prototype answers |
+|---|---|
+| **Flow comprehension** | "Does this interaction make sense to the user?" |
+| **Visual direction** | "Is this the right look and feel for what we are?" |
+| **Behaviour with real state** | "Does it actually work once there is data and state?" |
+| **Integration feasibility** | "Can this even work or integrate?" |
+| **Business-rule correctness** | "Do the rules and state transitions hold?" |
+| **Desirability** | "Do people want this at all?" |
+| **Stakeholder alignment** | "Is there something concrete enough to react to?" |
+
+**Depth is not decided here.** It follows from *who is looking*, at Step 3b - a flow question for an investor and the same flow question for a usability test need different things to be real. Naming the uncertainty here and the audience there is deliberate; assigning fidelity in both places would give one prototype two answers.
+
+Two rows short-circuit the rest of the flow, so check them now:
+- **Desirability** is not answered by a prototype alone. It reduces the cost of making a stimulus; only target-user behaviour supplies the evidence. Say so, and plan the observation rather than only the build.
+- **"Is it production-ready"** is not a prototype question at all. Route to normal delivery and stop.
 
 2. **Is a prototype worth it here?** Challenge honestly:
    - If the pattern is **well-understood, low-risk, standard** (a normal CRUD form, a settings page) → a prototype adds little. Say so and route to `pm-feature-design` / build directly.
@@ -209,6 +218,10 @@ Two conditional requirements fall out of the audience answer, so settle them now
 
 **Then classify it, before any code exists** - `references/promotion.md` § Classification. Disposable, Reference or Evolutionary decides the quality bar and where the code lives, so deciding it afterwards means the bar was never applied. Evolutionary code belongs on a branch in the real repo, under repo rules, not in the prototype folder. If nobody can say which one it is, that is itself a finding: it usually means the prototype is being built to impress rather than to answer something.
 
+**In-repo path: create the prototype folder now, before building.** Read `references/prototype-folder.md`. Everything decided in this step - the uncertainty, the audience, the classification, `targets:`, the declared stop condition - belongs in `meta.md`, the hypothesis from Step 2 belongs in `hypotheses.md`, and `build/` is where the code is about to go. Creating the folder afterwards would mean building somewhere undefined and moving it, and the decisions would be recorded after the work they were supposed to govern.
+
+Step 7 then updates that folder with what the build produced; it does not create it.
+
 ---
 
 ## Step 7: Write the prototype reference back
@@ -228,7 +241,7 @@ The `Prototype:` value depends on which path Step 3b took:
 | Path | What it points at |
 |---|---|
 | External tool | the spec file - `/prototypes/[FEAT-ID]-prototype-spec.md` |
-| In-repo | the prototype's folder - `/prototypes/[name]/`. **Read `references/prototype-folder.md` and create it there**; `meta.md` carries the uncertainty, audience, classification, `targets:`, the declared stop condition and the decision state |
+| In-repo | the prototype's folder - `/prototypes/[name]/`, **created back at Step 3b**. Update it here with what the build produced: the local harness URL, anything learned that changes `meta.md`, and the disclosure screen's contents. `Decision:` stays `open` until Step 8 |
 
 This makes the Feature Card show that a prototype was used and that a result is expected before build proceeds.
 
@@ -318,7 +331,7 @@ When the user comes back with an outcome, operate in **delta mode** - do not rew
 - [ ] Prototype language asked, and not confused with `artifact_language`
 - [ ] No lorem ipsum on any task path; fixtures time-relative rather than dated
 - [ ] Classification decided **before** the first line of code, and Evolutionary code on a real branch rather than in the prototype folder
-- [ ] In-repo path only: the prototype folder exists per `references/prototype-folder.md`, with `targets:` and a declared stop condition
+- [ ] In-repo path only: the prototype folder was created at Step 3b **before the build**, per `references/prototype-folder.md`, with `targets:` and a declared stop condition
 - [ ] Local `domain.md` / `rules.md` / `context/` exist only where the prototype deliberately diverges, and say in what way
 
 **Never skipped:**

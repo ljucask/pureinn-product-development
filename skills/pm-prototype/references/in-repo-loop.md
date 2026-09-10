@@ -4,6 +4,8 @@
 
 This path has no moment of handoff. There is no brief to compile and send - there is a running thing you iterate against. That difference is why it needs its own reference rather than a variation on the external one.
 
+**Where it lives.** The prototype folder was created at Step 3b, before this path started - `references/prototype-folder.md`. The harness and the artifact go in its `build/`, except for Evolutionary code, which goes on a branch in the real repo (see the last section). Nothing here creates a folder; if there isn't one, Step 3b was skipped and the decisions it records were never made.
+
 ---
 
 ## The harness shell

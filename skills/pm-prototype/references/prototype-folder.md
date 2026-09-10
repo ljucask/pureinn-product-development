@@ -1,6 +1,6 @@
 # pm-prototype - The prototype folder
 
-> Reference for `skills/pm-prototype/SKILL.md`. Read it at **Step 7** on the in-repo path, and at **Step 8** when recording a result. The external path writes a spec file instead and does not use this.
+> Reference for `skills/pm-prototype/SKILL.md`. On the in-repo path, read it at **Step 3b** - the folder is created before the build, not after it - then again at **Step 7** (update) and **Step 8** (record the decision). The external path writes a spec file instead and does not use this.
 
 A prototype gets its own folder, separate from the production registers. Not because separation is tidy, but because of what actually happens to prototypes: **most of them die, and that is their purpose.**
 

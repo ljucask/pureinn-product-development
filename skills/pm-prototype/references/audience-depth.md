@@ -39,14 +39,15 @@ That is also the moment a prototype quietly starts growing into a product, so it
 
 The audience largely predicts which uncertainty matters, so propose the row that follows from it and confirm rather than asking cold.
 
-| Uncertainty | Right form | Path | Tool |
+| Uncertainty (named at Step 2) | Right form | Path | Tool |
 |---|---|---|---|
-| Is the flow understandable? | wireframe or clickable flow | external | Figma, Figma Make |
-| Is the visual direction right? | visual design on a canvas | external | Claude Design, v0 |
-| Does the behaviour work with real state and data? | coded prototype, synthetic data | **in-repo** | a coding agent here; or v0 / Lovable when nothing in the real codebase matters yet |
-| Is the integration technically feasible? | technical spike | **in-repo** | a coding agent against the real interfaces |
-| Are business rules or state transitions correct? | executable acceptance cases | **in-repo** | visual completeness is actively misleading here |
-| Is it production-ready? | not a prototype | — | normal delivery. Say so and stop |
+| **Flow comprehension** | wireframe or clickable flow | external | Figma, Figma Make |
+| **Visual direction** | visual design on a canvas | external | Claude Design, v0 |
+| **Behaviour with real state** | coded prototype, synthetic data | **in-repo** | a coding agent here; or v0 / Lovable when nothing in the real codebase matters yet |
+| **Integration feasibility** | technical spike | **in-repo** | a coding agent against the real interfaces |
+| **Business-rule correctness** | executable acceptance cases | **in-repo** | visual completeness is actively misleading here |
+| **Desirability** | a stimulus plus an observation | either | neither path answers it alone - see below |
+| **Stakeholder alignment** | the path that carries the claim, at moderate fidelity | external, usually | polish is not the variable; a fait accompli reduces engagement |
 
 **Where the boundary really sits.** One-shot external generation is strongest for visual direction, interaction comprehension and making an abstract idea discussable. It is weak for custom architecture, data, integrations, and business-rule correctness - a generated happy path routinely bypasses the hard constraint. In-repo iteration is stronger wherever the answer depends on real interfaces, persistent state, permissions, or existing product behaviour.
 
