@@ -436,3 +436,57 @@ ARTIFACT CHAIN - FEATURE IMPLEMENTATION
 
 ---
 
+## Ako sa do frameworku vstupuje
+
+> The invocation shapes, in the user's words. STEP 0 in the router classifies these into modes - this section explains what each one does. Keep the two in sync: a new mode gets an entry here.
+
+### Greenfield - new product from scratch
+```
+/pureinn "B2B SaaS pre správu projektov v konštrukčných firmách"
+/pureinn "marketplace pre freelancerov a klientov"
+```
+Engine spustí intake (9 otázok), nascanuje existujúce dokumenty, vyberie Greenfield playbook, ukáže dashboard s Phase 1 skills queue.
+
+### Greenfield - máš research alebo čiastočné materiály
+```
+/pureinn "food delivery app" [+ vlož interview notes, research docs do working directory]
+```
+Engine prečíta dokumenty, zmapuje ich na fázy, identifikuje kde si, preskočí pokryté fázy.
+
+### Feature Implementation - pridávaš feature do existujúceho produktu
+```
+/pureinn "Acme CRM - chceme pridať AI asistenta do reportingu"
+/pureinn "náš e-shop, potrebujeme loyalty program"
+```
+Engine vyberie Feature playbook. Ak Phase 0 nie je hotová, začne kontextovým setupom (pureinn + common-ground + impeccable document). Ak Phase 0 existuje, smeruje priamo na Feature Viability Assessment.
+
+### Pokračovanie v rozpracovanom projekte
+```
+/pureinn acme-crm
+/pureinn-resume acme-crm
+```
+Engine prečíta `state.json`, obnoví kontext z `assessment.md`, zobrazí dashboard s aktuálnou fázou.
+
+### Skok do konkrétnej časti (stage shortcut)
+```
+/pureinn define                       # aktuálny projekt: skoč do Commercial Definition
+/pureinn acme model                   # projekt acme: skoč do Domain Modeling
+/pureinn discover "food delivery app" # nový projekt: rovno do Discovery (Pureinn založí workspace)
+```
+Keywordy: `setup` · `discover` · `validate` · `define` · `model` · `plan` · `build` (+ aliasy). Engine rozlíši keyword, over si podklad pre danú časť (ak chýba, ponúkne možnosti - nikdy nezablokuje), a ak workspace ešte neexistuje, najprv ho celý založí. Pre jeden konkrétny artefakt spusti priamo daný skill (`/jtbd-building`, `/pm-features-list`) - stage netreba.
+
+### Premýšľaš nahlas / máš brief, ešte nevieš či z toho bude projekt
+```
+/pureinn "dostali sme 3 hodiny na take-home, brief je v prílohe - čo s tým"
+/pureinn "klient chce prerobiť rezervácie, mám od nich len zápis z callu"
+```
+Engine brief prečíta, vráti čo pochopil a čo chýba, a ponúkne tri cesty: celý projekt, jedna fáza, alebo jeden skill hneď teraz. Workspace nezaloží, kým si nevyberieš.
+
+### Prehľad celého frameworku
+```
+/pureinn map
+/pureinn help
+```
+Zobrazí Framework Map - všetky playbooki, fázy, skills a artifact chains na jednom mieste.
+
+---

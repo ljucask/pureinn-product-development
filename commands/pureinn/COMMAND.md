@@ -11,59 +11,6 @@ $ARGUMENTS
 
 ---
 
-## Usage Patterns
-
-### Greenfield - new product from scratch
-```
-/pureinn "B2B SaaS pre správu projektov v konštrukčných firmách"
-/pureinn "marketplace pre freelancerov a klientov"
-```
-Engine spustí intake (9 otázok), nascanuje existujúce dokumenty, vyberie Greenfield playbook, ukáže dashboard s Phase 1 skills queue.
-
-### Greenfield - máš research alebo čiastočné materiály
-```
-/pureinn "food delivery app" [+ vlož interview notes, research docs do working directory]
-```
-Engine prečíta dokumenty, zmapuje ich na fázy, identifikuje kde si, preskočí pokryté fázy.
-
-### Feature Implementation - pridávaš feature do existujúceho produktu
-```
-/pureinn "Acme CRM - chceme pridať AI asistenta do reportingu"
-/pureinn "náš e-shop, potrebujeme loyalty program"
-```
-Engine vyberie Feature playbook. Ak Phase 0 nie je hotová, začne kontextovým setupom (pureinn + common-ground + impeccable document). Ak Phase 0 existuje, smeruje priamo na Feature Viability Assessment.
-
-### Pokračovanie v rozpracovanom projekte
-```
-/pureinn acme-crm
-/pureinn-resume acme-crm
-```
-Engine prečíta `state.json`, obnoví kontext z `assessment.md`, zobrazí dashboard s aktuálnou fázou.
-
-### Skok do konkrétnej časti (stage shortcut)
-```
-/pureinn define                       # aktuálny projekt: skoč do Commercial Definition
-/pureinn acme model                   # projekt acme: skoč do Domain Modeling
-/pureinn discover "food delivery app" # nový projekt: rovno do Discovery (Pureinn založí workspace)
-```
-Keywordy: `setup` · `discover` · `validate` · `define` · `model` · `plan` · `build` (+ aliasy). Engine rozlíši keyword, over si podklad pre danú časť (ak chýba, ponúkne možnosti - nikdy nezablokuje), a ak workspace ešte neexistuje, najprv ho celý založí. Pre jeden konkrétny artefakt spusti priamo daný skill (`/jtbd-building`, `/pm-features-list`) - stage netreba.
-
-### Premýšľaš nahlas / máš brief, ešte nevieš či z toho bude projekt
-```
-/pureinn "dostali sme 3 hodiny na take-home, brief je v prílohe - čo s tým"
-/pureinn "klient chce prerobiť rezervácie, mám od nich len zápis z callu"
-```
-Engine brief prečíta, vráti čo pochopil a čo chýba, a ponúkne tri cesty: celý projekt, jedna fáza, alebo jeden skill hneď teraz. Workspace nezaloží, kým si nevyberieš.
-
-### Prehľad celého frameworku
-```
-/pureinn map
-/pureinn help
-```
-Zobrazí Framework Map - všetky playbooki, fázy, skills a artifact chains na jednom mieste.
-
----
-
 ## Reference files
 
 This file is the router. The engine's steps live in `references/` next to it. **Read the reference file for the path you are on before producing any output for that path** - never work from memory of what a step used to say. Read only the file the current path needs, not all of them.
@@ -98,13 +45,15 @@ If none resolve, say so plainly and ask the user where the Pureinn plugin is ins
 
 **a) Classify `$ARGUMENTS` into exactly one of five modes.** Evaluate in this order, first match wins:
 
-| # | Mode | Trigger | Goes to |
-|---|---|---|---|
-| 1 | `map` | `map` / `help` | `references/framework-map.md`, nothing else |
-| 2 | `stage` | The argument is a **bare** stage/playbook keyword (see resolver below), optionally preceded by a project slug or followed by a quoted product idea | STEP 1C |
-| 3 | `resume` | Matches a known project slug that has a `state.json` | STEP 1B |
-| 4 | `new` | A product idea, or an explicit ask to start/build something | STEP 1A |
-| 5 | `explore` | The user is describing a situation, brief or problem out loud - thinking, not yet committing to a project | `references/entry.md` § STEP 0b |
+| # | Mode | Trigger | Example | Goes to |
+|---|---|---|---|---|
+| 1 | `map` | `map` / `help` | `/pureinn map` | `references/framework-map.md`, nothing else |
+| 2 | `stage` | The argument is a **bare** stage/playbook keyword (see resolver below), optionally preceded by a project slug or followed by a quoted product idea | `/pureinn define` · `/pureinn acme model` · `/pureinn discover "food delivery app"` | STEP 1C |
+| 3 | `resume` | Matches a known project slug that has a `state.json` | `/pureinn acme-crm` | STEP 1B |
+| 4 | `new` | A product idea, or an explicit ask to start/build something | `/pureinn "B2B SaaS pre správu projektov"` · `/pureinn "e-shop, potrebujeme loyalty program"` | STEP 1A |
+| 5 | `explore` | The user is describing a situation, brief or problem out loud - thinking, not yet committing to a project | `/pureinn "máme 3 hodiny na take-home, brief je v prílohe - čo s tým"` | `references/entry.md` § STEP 0b |
+
+The full user-facing usage patterns (what the engine does on each of these) live in `references/framework-map.md` - shown on `/pureinn map`. Do not restate them here; one list, one place.
 
 **b) Stage keyword disambiguation - the rule that prevents false positives.** Stage keywords are common English words (`build`, `plan`, `research`, `test`, `scope`, `start`). A keyword only routes to `stage` when the whole argument is a bare command:
 
