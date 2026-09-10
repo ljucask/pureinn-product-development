@@ -38,6 +38,8 @@ The shell is what gets shared, so the boundary travels with the artifact without
 
 Any harness must provide these, whatever the stack. A kit satisfies the contract for standalone HTML/CSS/JS; inside an existing repo or a published artifact the agent builds to the same contract in that stack.
 
+**The reference implementation is in `scaffold/`** - copy `harness.html` and `harness-client.js` byte-for-byte, edit only `harness.config.js`. See `scaffold/README.md`. It must be served, not opened as `file://`.
+
 ### 1. State switcher
 
 Four states, each reachable in **one action**:

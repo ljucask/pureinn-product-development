@@ -1,0 +1,451 @@
+<!doctype html>
+<!--
+  Prototype harness - the shell.
+
+  GENERATION CONTRACT. Copy this file byte-for-byte into the prototype's build
+  folder. Do not re-author it per prototype: its whole value is that the same
+  keystroke hides the chrome and the same event format comes out every time, so
+  findings are comparable across prototypes.
+
+  The only thing edited per prototype is `harness.config.js` next to it.
+
+  Why an iframe and not a container div: the device switcher has to trigger the
+  artifact's real media queries. Inside a div they respond to the window, not to
+  the container, so "mobile" would change nothing and the tool would be lying.
+  The cost is that this must be SERVED, not opened as file:// - browsers block
+  cross-document access for file:// frames.
+
+      python3 -m http.server 8000     then open  localhost:8000/harness.html
+
+  Contract implemented here: states · fixtures (client) · time scrub · variants ·
+  device presets · annotations · event log · disclosure line. See
+  ../in-repo-loop.md for what each one is for.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prototype harness</title>
+<style>
+  :root {
+    --sh-bg: #16181c;
+    --sh-panel: #212429;
+    --sh-line: #31353c;
+    --sh-text: #e6e8ec;
+    --sh-dim: #9aa1ad;
+    --sh-accent: #5b8def;
+    --sh-warn: #e0a03a;
+    --sh-radius: 6px;
+    --sh-bar: 44px;
+    --sh-rail: 262px;   /* reserved for the annotation rail - notes must never force sideways scrolling */
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    background: var(--sh-bg);
+    color: var(--sh-text);
+    font: 13px/1.45 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    display: flex;
+    flex-direction: column;
+  }
+  button, select { font: inherit; color: inherit; }
+
+  /* ---------- chrome ---------- */
+  .sh-bar {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 0 12px;
+    height: var(--sh-bar);
+    background: var(--sh-panel);
+    border-bottom: 1px solid var(--sh-line);
+  }
+  .sh-bar--bottom { border-bottom: 0; border-top: 1px solid var(--sh-line); flex-wrap: wrap; }
+  .sh-boundary {
+    color: var(--sh-warn);
+    font-weight: 600;
+    letter-spacing: .01em;
+    white-space: nowrap;
+  }
+  .sh-spacer { flex: 1 1 auto; }
+  .sh-group { display: flex; align-items: center; gap: 6px; }
+  .sh-label { color: var(--sh-dim); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; }
+
+  .sh-btn {
+    background: transparent;
+    border: 1px solid var(--sh-line);
+    border-radius: var(--sh-radius);
+    padding: 4px 10px;
+    cursor: pointer;
+  }
+  .sh-btn:hover { border-color: var(--sh-dim); }
+  .sh-btn[aria-pressed="true"] { background: var(--sh-accent); border-color: var(--sh-accent); color: #fff; }
+  .sh-btn--ghost { color: var(--sh-dim); }
+
+  .sh-scrub { width: 200px; accent-color: var(--sh-accent); }
+  .sh-time { color: var(--sh-dim); min-width: 46px; font-variant-numeric: tabular-nums; }
+
+  /* ---------- stage ---------- */
+  .sh-stage {
+    flex: 1 1 auto;
+    position: relative;
+    overflow: auto;
+    display: flex;
+    justify-content: center;
+    padding: 18px;
+    background: #0f1114;
+    /* deliberately no transition: notes are positioned from a measured frame
+       width, and an animating padding returns an intermediate measurement */
+  }
+  /* only when this screen actually has visible notes */
+  body.sh-has-notes .sh-stage { padding-right: calc(18px + var(--sh-rail)); }
+  .sh-frame-wrap { position: relative; flex: 0 0 auto; }
+  #sh-frame {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 8px 40px rgba(0,0,0,.45);
+  }
+  .sh-frame-wrap[data-device="desktop"] { width: 100%; max-width: 1280px; height: 100%; }
+  .sh-frame-wrap[data-device="tablet"]  { width: 834px;  height: 100%; max-height: 1112px; }
+  .sh-frame-wrap[data-device="mobile"]  { width: 390px;  height: 100%; max-height: 844px; }
+
+  /* ---------- annotations ---------- */
+  .sh-annots { position: absolute; inset: 0; pointer-events: none; }
+  .sh-annots svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .sh-annots line { stroke: var(--sh-accent); stroke-width: 1.5; stroke-dasharray: 3 3; }
+  .sh-note {
+    position: absolute;
+    pointer-events: auto;
+    width: calc(var(--sh-rail) - 32px);
+    background: var(--sh-panel);
+    border: 1px solid var(--sh-accent);
+    border-radius: var(--sh-radius);
+    padding: 7px 24px 7px 10px;
+    font-size: 12px;
+    line-height: 1.4;
+    box-shadow: 0 4px 18px rgba(0,0,0,.4);
+  }
+  .sh-note__x {
+    position: absolute; top: 3px; right: 4px;
+    background: none; border: 0; cursor: pointer;
+    color: var(--sh-dim); font-size: 14px; line-height: 1; padding: 2px 4px;
+  }
+  .sh-note__x:hover { color: var(--sh-text); }
+  .sh-note--orphan { border-color: var(--sh-warn); }
+  .sh-note--orphan::after { content: " (anchor not found)"; color: var(--sh-warn); }
+
+  /* ---------- hidden chrome ---------- */
+  body.sh-bare .sh-bar,
+  body.sh-bare .sh-annots { display: none; }
+  body.sh-bare .sh-stage { padding: 0; background: #fff; }
+  body.sh-bare .sh-frame-wrap { width: 100% !important; max-width: none !important; height: 100% !important; max-height: none !important; }
+  body.sh-bare #sh-frame { border-radius: 0; box-shadow: none; }
+  .sh-restore {
+    position: fixed; right: 10px; bottom: 10px; z-index: 9;
+    display: none;
+    background: var(--sh-panel); color: var(--sh-text);
+    border: 1px solid var(--sh-line); border-radius: var(--sh-radius);
+    padding: 4px 10px; cursor: pointer; opacity: .55;
+  }
+  .sh-restore:hover { opacity: 1; }
+  body.sh-bare .sh-restore { display: block; }
+</style>
+</head>
+<body>
+
+<div class="sh-bar">
+  <span class="sh-boundary" data-boundary>Prototype - not a live service</span>
+  <span class="sh-spacer"></span>
+  <div class="sh-group">
+    <span class="sh-label">Device</span>
+    <button class="sh-btn" data-device-btn="desktop" aria-pressed="true">Desktop</button>
+    <button class="sh-btn" data-device-btn="tablet" aria-pressed="false">Tablet</button>
+    <button class="sh-btn" data-device-btn="mobile" aria-pressed="false">Mobile</button>
+  </div>
+  <div class="sh-group">
+    <button class="sh-btn sh-btn--ghost" data-toggle-annots aria-pressed="true">Notes</button>
+    <button class="sh-btn sh-btn--ghost" data-bare title="Hide all chrome (h)">Hide chrome</button>
+  </div>
+</div>
+
+<div class="sh-stage">
+  <div class="sh-frame-wrap" data-device="desktop">
+    <iframe id="sh-frame" title="prototype"></iframe>
+    <div class="sh-annots" data-annots><svg data-annot-lines></svg></div>
+  </div>
+</div>
+
+<div class="sh-bar sh-bar--bottom">
+  <div class="sh-group">
+    <span class="sh-label">Screen</span>
+    <select class="sh-btn" data-screen></select>
+  </div>
+  <div class="sh-group" data-states-group>
+    <span class="sh-label">State</span>
+  </div>
+  <div class="sh-group" data-variants-group hidden>
+    <span class="sh-label">Variant</span>
+  </div>
+  <div class="sh-group" data-time-group hidden>
+    <span class="sh-label">Time</span>
+    <input class="sh-scrub" type="range" data-scrub>
+    <span class="sh-time" data-time></span>
+  </div>
+  <span class="sh-spacer"></span>
+  <div class="sh-group">
+    <span class="sh-label" data-event-count>0 events</span>
+    <button class="sh-btn sh-btn--ghost" data-export>Export log</button>
+  </div>
+</div>
+
+<button class="sh-restore" data-bare-off>Show chrome (h)</button>
+
+<script src="harness.config.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var cfg = window.HARNESS_CONFIG || {};
+  var screens  = cfg.screens  || [{ label: 'Prototype', src: 'index.html' }];
+  var states   = cfg.states   || ['empty', 'full', 'error', 'unauth'];
+  var variants = cfg.variants || [];
+  var time     = cfg.time     || null;
+  var annots   = cfg.annotations || {};
+
+  var frame   = document.getElementById('sh-frame');
+  var wrap    = document.querySelector('.sh-frame-wrap');
+  var stage   = document.querySelector('.sh-stage');
+  var annotEl = document.querySelector('[data-annots]');
+  var svg     = document.querySelector('[data-annot-lines]');
+
+  var events = [];
+  var current = { screen: screens[0].src, state: states.indexOf('full') > -1 ? 'full' : states[0],
+                  variant: variants[0] || 'default', time: time ? time.min : 0 };
+  var frameReady = false;
+
+  if (cfg.boundary) document.querySelector('[data-boundary]').textContent = cfg.boundary;
+
+  /* ---------- screens ---------- */
+  var screenSel = document.querySelector('[data-screen]');
+  screens.forEach(function (s) {
+    var o = document.createElement('option');
+    o.value = s.src; o.textContent = s.label;
+    screenSel.appendChild(o);
+  });
+  screenSel.addEventListener('change', function () {
+    current.screen = screenSel.value;
+    load();
+  });
+
+  /* ---------- pill groups ---------- */
+  function pills(group, values, key) {
+    values.forEach(function (v) {
+      var b = document.createElement('button');
+      b.className = 'sh-btn';
+      b.textContent = v;
+      b.setAttribute('aria-pressed', String(current[key] === v));
+      b.addEventListener('click', function () {
+        current[key] = v;
+        group.querySelectorAll('[aria-pressed]').forEach(function (o) {
+          o.setAttribute('aria-pressed', String(o === b));
+        });
+        send(key, v);
+        record('harness:' + key, v);
+      });
+      group.appendChild(b);
+    });
+  }
+  pills(document.querySelector('[data-states-group]'), states, 'state');
+  if (variants.length) {
+    var vg = document.querySelector('[data-variants-group]');
+    vg.hidden = false;
+    pills(vg, variants, 'variant');
+  }
+
+  /* ---------- time scrub ---------- */
+  if (time) {
+    var tg = document.querySelector('[data-time-group]');
+    tg.hidden = false;
+    var scrub = document.querySelector('[data-scrub]');
+    var out = document.querySelector('[data-time]');
+    scrub.min = time.min; scrub.max = time.max; scrub.step = time.step || 1;
+    scrub.value = current.time;
+    function fmtTime(v) { return time.format ? time.format(v) : String(v); }
+    out.textContent = fmtTime(current.time);
+    scrub.addEventListener('input', function () {
+      current.time = parseInt(scrub.value, 10);
+      out.textContent = fmtTime(current.time);
+      send('time', current.time);
+    });
+    // one record on release, not on every pixel of the drag
+    scrub.addEventListener('change', function () { record('harness:time', current.time); });
+  }
+
+  /* ---------- device ---------- */
+  document.querySelectorAll('[data-device-btn]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var d = b.getAttribute('data-device-btn');
+      wrap.setAttribute('data-device', d);
+      document.querySelectorAll('[data-device-btn]').forEach(function (o) {
+        o.setAttribute('aria-pressed', String(o === b));
+      });
+      record('harness:device', d);
+      requestAnimationFrame(drawAnnots);
+    });
+  });
+
+  /* ---------- chrome visibility ---------- */
+  function bare(on) { document.body.classList.toggle('sh-bare', on); if (!on) drawAnnots(); }
+  document.querySelector('[data-bare]').addEventListener('click', function () { bare(true); });
+  document.querySelector('[data-bare-off]').addEventListener('click', function () { bare(false); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'h' && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) {
+      bare(!document.body.classList.contains('sh-bare'));
+    }
+  });
+
+  var annotsOn = true;
+  document.querySelector('[data-toggle-annots]').addEventListener('click', function () {
+    annotsOn = !annotsOn;
+    this.setAttribute('aria-pressed', String(annotsOn));
+    annotEl.hidden = !annotsOn;
+    drawAnnots();
+  });
+
+  /* ---------- annotations ----------
+     An anchor to an element, a visible connector, a body, a dismiss.
+     One primitive: the author explains a convention with it, a reviewer
+     comments with it. Only elements that could be acted on need one. */
+  var dismissed = {};
+
+  function drawAnnots() {
+    if (document.body.classList.contains('sh-bare')) return;
+    annotEl.querySelectorAll('.sh-note').forEach(function (n) { n.remove(); });
+    svg.innerHTML = '';
+    if (!annotsOn || !frameReady) { document.body.classList.remove('sh-has-notes'); return; }
+
+    var list = annots[current.screen] || [];
+    var visible = list.filter(function (a, i) { return !dismissed[current.screen + '#' + i]; });
+    var had = document.body.classList.contains('sh-has-notes');
+    document.body.classList.toggle('sh-has-notes', visible.length > 0);
+    if (!visible.length) return;
+    // reserving the rail resizes the frame; measure only once that has applied
+    if (!had) { requestAnimationFrame(drawAnnots); return; }
+
+    var doc;
+    try { doc = frame.contentDocument; } catch (e) { return; }
+    if (!doc) return;
+
+    var frameBox = frame.getBoundingClientRect();
+    var wrapBox = wrap.getBoundingClientRect();
+    var stack = 0;
+
+    list.forEach(function (a, i) {
+      var id = current.screen + '#' + i;
+      if (dismissed[id]) return;
+
+      var target = null;
+      try { target = a.selector ? doc.querySelector(a.selector) : null; } catch (e) { /* bad selector */ }
+
+      var note = document.createElement('div');
+      note.className = 'sh-note' + (a.selector && !target ? ' sh-note--orphan' : '');
+      note.textContent = a.text;
+      var x = document.createElement('button');
+      x.className = 'sh-note__x';
+      x.type = 'button';
+      x.setAttribute('aria-label', 'dismiss note');
+      x.textContent = '×';
+      x.addEventListener('click', function () { dismissed[id] = true; drawAnnots(); });
+      note.appendChild(x);
+      annotEl.appendChild(note);
+
+      var top = stack;
+      note.style.left = (wrap.getBoundingClientRect().width + 16) + 'px';
+      note.style.top = top + 'px';
+      stack = top + note.offsetHeight + 10;
+
+      if (target) {
+        var t = target.getBoundingClientRect();
+        var ax = t.right + (frameBox.left - wrapBox.left);
+        var ay = t.top + t.height / 2 + (frameBox.top - wrapBox.top);
+        var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', ax);
+        line.setAttribute('y1', ay);
+        line.setAttribute('x2', frameBox.width + 16);
+        line.setAttribute('y2', top + note.offsetHeight / 2);
+        svg.appendChild(line);
+      }
+    });
+  }
+
+  /* ---------- event log ---------- */
+  function record(name, detail) {
+    events.push({ t: Date.now(), name: name, detail: detail === undefined ? null : detail,
+                  screen: current.screen, state: current.state, variant: current.variant });
+    document.querySelector('[data-event-count]').textContent =
+      events.length + (events.length === 1 ? ' event' : ' events');
+  }
+  document.querySelector('[data-export]').addEventListener('click', function () {
+    var blob = new Blob([JSON.stringify({
+      prototype: cfg.name || 'prototype',
+      exported: new Date().toISOString(),
+      note: 'Local prototype events. Never production analytics.',
+      events: events
+    }, null, 2)], { type: 'application/json' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = (cfg.name || 'prototype') + '-events.json';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+
+  /* ---------- frame plumbing ---------- */
+  function send(kind, value) {
+    if (!frameReady) return;
+    frame.contentWindow.postMessage({ __harness: true, type: kind, value: value }, '*');
+  }
+
+  window.addEventListener('message', function (e) {
+    var d = e.data;
+    if (!d || !d.__harness) return;
+    if (d.type === 'ready') {
+      frameReady = true;
+      send('state', current.state);
+      send('variant', current.variant);
+      if (time) send('time', current.time);
+      requestAnimationFrame(drawAnnots);
+    }
+    if (d.type === 'event') {
+      events.push(d.entry);
+      document.querySelector('[data-event-count]').textContent =
+        events.length + (events.length === 1 ? ' event' : ' events');
+    }
+  });
+
+  function load() {
+    frameReady = false;
+    svg.innerHTML = '';
+    annotEl.querySelectorAll('.sh-note').forEach(function (n) { n.remove(); });
+    frame.src = current.screen;
+    record('harness:screen', current.screen);
+  }
+
+  frame.addEventListener('load', function () {
+    // if the artifact does not include harness-client.js it never announces
+    // ready - the shell still works, it just cannot push state or draw lines
+    setTimeout(function () { if (!frameReady) drawAnnots(); }, 120);
+  });
+
+  window.addEventListener('resize', drawAnnots);
+  stage.addEventListener('scroll', drawAnnots);
+
+  load();
+})();
+</script>
+</body>
+</html>
