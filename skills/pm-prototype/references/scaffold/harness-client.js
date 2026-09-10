@@ -62,11 +62,62 @@
     return new Date(Date.now() - minutes * 60000);
   }
 
+  /* Comment mode. The shell cannot see clicks inside this document, so when a
+     reviewer is placing a comment the artifact forwards the one click and the
+     selector of what was hit. It is off unless the shell turns it on, and it
+     adds nothing to the page but a cursor. */
+  var picking = false;
+
+  function selectorFor(el) {
+    if (!el || el === document.body || el === document.documentElement) return null;
+    if (el.id) return '#' + CSS.escape(el.id);
+    for (var i = 0; i < el.attributes.length; i++) {
+      var a = el.attributes[i];
+      // a data- attribute is the most stable anchor an artifact can offer
+      if (a.name.indexOf('data-') === 0 && document.querySelectorAll('[' + a.name + ']').length === 1) {
+        return '[' + a.name + ']';
+      }
+    }
+    var path = [];
+    var node = el;
+    while (node && node !== document.body && path.length < 5) {
+      var part = node.tagName.toLowerCase();
+      var parent = node.parentElement;
+      if (parent) {
+        var same = Array.prototype.filter.call(parent.children, function (c) { return c.tagName === node.tagName; });
+        if (same.length > 1) part += ':nth-of-type(' + (same.indexOf(node) + 1) + ')';
+      }
+      path.unshift(part);
+      node = parent;
+    }
+    return path.length ? path.join(' > ') : null;
+  }
+
+  function onPickClick(e) {
+    if (!picking) return;
+    e.preventDefault();
+    e.stopPropagation();
+    var sel = selectorFor(e.target);
+    global.parent.postMessage({
+      __harness: true, type: 'pick',
+      selector: sel,
+      label: (e.target.textContent || '').trim().slice(0, 60)
+    }, '*');
+  }
+
+  function setPicking(on) {
+    picking = !!on;
+    document.documentElement.style.cursor = picking ? 'crosshair' : '';
+  }
+
   global.addEventListener('message', function (e) {
     var d = e.data;
     if (!d || !d.__harness) return;
     if (d.type === 'state' || d.type === 'time' || d.type === 'variant') apply(d.type, d.value);
+    if (d.type === 'picking') setPicking(d.value);
   });
+
+  document.addEventListener('click', onPickClick, true);
 
   /* Announce readiness so the shell can push the current selection. */
   if (embedded) global.parent.postMessage({ __harness: true, type: 'ready' }, '*');

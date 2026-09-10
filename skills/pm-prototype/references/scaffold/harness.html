@@ -73,6 +73,9 @@
   }
 
   * { box-sizing: border-box; }
+  /* every .seg, .grp and .isle sets its own display, which beats the UA
+     rule for [hidden] - without this floor, hiding one does nothing */
+  [hidden] { display: none !important; }
   html, body { height: 100%; margin: 0; }
   body {
     background:
@@ -95,7 +98,7 @@
   .stage {
     position: absolute; inset: 0;
     display: flex; align-items: center; justify-content: center;
-    padding: 86px 26px 96px;
+    padding: 86px 26px 134px;   /* the bottom island is a labelled tool bar, not a strip */
     overflow: auto;
   }
   body.has-notes .stage { padding-right: calc(26px + var(--rail)); }
@@ -440,6 +443,106 @@
     font: 700 9px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: #9a6c0a;
   }
 
+  /* ══ note kinds - three intents, and they must not look alike ══
+     Disclosure carries the honesty contract, so it keeps the accent and the
+     loudest pin. A convention explains the prototype and recedes. A comment
+     came from a reviewer and is visibly theirs, not the author's. */
+  .note__kind {
+    display: block; margin-bottom: 5px;
+    font: 700 8.5px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase;
+    color: var(--co);
+  }
+  .note--convention { background: rgba(255,255,255,.8); }
+  .note--convention .note__n { background: rgba(22,24,29,.34); box-shadow: none; }
+  .note--convention .note__kind { color: var(--ink-3); }
+  .pin--convention { background: rgba(22,24,29,.5); box-shadow: 0 0 0 3px rgba(242,243,246,.9), 0 4px 12px -2px rgba(22,24,29,.4); }
+
+  .note--comment { box-shadow: inset 0 1px 0 var(--glass-edge), 0 0 0 1.5px #3d7dd8, 0 14px 30px -14px rgba(22,24,29,.3); }
+  .note--comment .note__n { background: linear-gradient(135deg,#3d7dd8,#5aa2f0); box-shadow: 0 2px 6px -1px rgba(61,125,216,.5); }
+  .note--comment .note__kind { color: #2f6bc0; }
+  .pin--comment { background: linear-gradient(135deg,#3d7dd8,#5aa2f0); box-shadow: 0 0 0 3px rgba(242,243,246,.9), 0 4px 12px -2px rgba(61,125,216,.6); }
+  .note__edit {
+    width: 100%; margin-top: 2px; padding: 0; resize: none;
+    background: none; border: 0; outline: 0;
+    font: inherit; color: var(--ink); line-height: 1.55;
+  }
+  .note__edit::placeholder { color: var(--ink-3); }
+  .note__meta { display: block; margin-top: 7px; font-size: 10.5px; color: var(--ink-3); }
+
+  /* a collapsed note keeps its pin: nothing on a shared link can lose its
+     label, only the whole layer can be switched off, and that is a toggle */
+  .pin--collapsed { cursor: pointer; opacity: .82; }
+  .pin--collapsed:hover { opacity: 1; transform: scale(1.12); }
+
+  /* ══ labelled control group - the bar reads as a tool, not a row of icons ══ */
+  .isle--b { align-items: flex-end; padding: 9px 11px; gap: 11px; }
+  .grp { display: flex; flex-direction: column; gap: 6px; }
+  .grp__l {
+    display: flex; align-items: center; gap: 6px; padding-left: 3px;
+    font: 700 8.5px/1 var(--mono); letter-spacing: .13em; text-transform: uppercase;
+    color: var(--ink-3); user-select: none; white-space: nowrap;
+  }
+  .grp__row { display: flex; align-items: center; gap: 7px; }
+  .grp__hint {
+    max-width: 34ch; padding-left: 3px;
+    font-size: 11px; line-height: 1.4; color: var(--ink-3);
+  }
+  .isle--b .sep { align-self: stretch; margin: 2px 1px; }
+
+  .cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    height: 34px; padding: 0 15px; border: 0; border-radius: var(--r-md);
+    background: var(--grad-45); color: #fff;
+    font-size: 12px; font-weight: 650; cursor: pointer; white-space: nowrap;
+    box-shadow: 0 3px 14px -4px rgba(237,109,87,.8);
+    transition: transform var(--fast) var(--ease), box-shadow var(--fast) var(--ease), filter var(--fast) var(--ease);
+  }
+  .cta:hover { filter: brightness(1.06); box-shadow: 0 5px 18px -4px rgba(237,109,87,.9); }
+  .cta:active { transform: scale(.97); }
+  .cta[data-idle="1"] { background: rgba(22,24,29,.06); color: var(--ink-3); box-shadow: none; }
+  .cta.is-nudge { animation: nudge 1.5s var(--ease) 2; }
+  @keyframes nudge {
+    0%,100% { transform: none; }
+    12% { transform: translateY(-3px) scale(1.03); }
+    24% { transform: none; }
+  }
+  .cta__n {
+    min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px;
+    background: rgba(255,255,255,.26); font: 700 10px/18px var(--mono); text-align: center;
+  }
+  .cta[data-idle="1"] .cta__n { background: rgba(22,24,29,.08); }
+
+  /* ══ review mode - the task first, and what to do at the end ══ */
+  .brief {
+    position: fixed; inset: 0; z-index: 30;
+    display: grid; place-items: center; padding: 24px;
+    background: rgba(20,22,27,.42);
+    backdrop-filter: blur(7px); -webkit-backdrop-filter: blur(7px);
+    animation: fade var(--med) var(--ease);
+  }
+  @keyframes fade { from { opacity: 0 } }
+  .brief[hidden] { display: none; }
+  .brief__card {
+    width: min(460px, 100%); padding: 26px 26px 22px;
+    background: var(--glass-lit);
+    backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+    border-radius: var(--r-xl);
+    box-shadow: inset 0 1px 0 var(--glass-edge), 0 0 0 1px var(--glass-ring), 0 30px 70px -20px rgba(22,24,29,.5);
+    animation: rise var(--med) var(--spring);
+  }
+  @keyframes rise { from { opacity: 0; transform: translateY(14px) scale(.97); } }
+  .brief__k { font: 700 9px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--co); }
+  .brief__h { margin: 11px 0 0; font-size: 19px; font-weight: 680; letter-spacing: -.02em; line-height: 1.3; }
+  .brief__p { margin: 12px 0 0; font-size: 13px; line-height: 1.6; color: var(--ink-2); }
+  .brief__steps { margin: 16px 0 0; padding: 0; list-style: none; display: grid; gap: 9px; }
+  .brief__steps li { display: flex; gap: 10px; align-items: flex-start; font-size: 12.5px; color: var(--ink-2); line-height: 1.5; }
+  .brief__i {
+    flex: 0 0 auto; width: 19px; height: 19px; border-radius: 50%;
+    background: var(--grad-45); color: #fff;
+    font: 700 10px/19px var(--font); text-align: center;
+  }
+  .brief__go { margin-top: 20px; width: 100%; justify-content: center; }
+
   /* ══ toast ══ */
   .toast {
     position: fixed; left: 50%; bottom: 84px; transform: translate(-50%, 10px);
@@ -529,6 +632,8 @@
   <symbol id="i-x" viewBox="0 0 12 12"><path d="M2.5 2.5l7 7m0-7l-7 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
   <symbol id="i-down" viewBox="0 0 16 16"><path d="M8 2.5v8m0 0L5 7.7M8 10.5l3-2.8M2.5 13h11" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-image" viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="10" rx="1.8" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="6" cy="6.6" r="1.1" fill="currentColor"/><path d="M3 11.5l3.2-3 2.3 2 2-1.6L13 11.6" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 16 16"><path d="M8 14.2s4.6-4 4.6-7.2A4.6 4.6 0 0 0 3.4 7c0 3.2 4.6 7.2 4.6 7.2z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><circle cx="8" cy="6.9" r="1.6" fill="currentColor"/></symbol>
+  <symbol id="i-send" viewBox="0 0 16 16"><path d="M14 2L7 9m7-7l-4.6 12-2.4-5L2 6.6z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></symbol>
   <symbol id="i-share" viewBox="0 0 16 16"><path d="M11 5.2a1.8 1.8 0 1 0 0-3.6 1.8 1.8 0 0 0 0 3.6zM4.4 9.8a1.8 1.8 0 1 0 0-3.6 1.8 1.8 0 0 0 0 3.6zM11 14.4a1.8 1.8 0 1 0 0-3.6 1.8 1.8 0 0 0 0 3.6z" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M9.5 4.6L6 6.9m0 2.2l3.5 2.3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></symbol>
 </defs></svg>
 
@@ -572,21 +677,59 @@
 </div>
 
 <div class="isle isle--b">
-  <span class="label">State</span>
-  <div class="seg" data-states-group><div class="seg__thumb" data-thumb></div></div>
+  <div class="grp">
+    <span class="grp__l">State</span>
+    <div class="seg" data-states-group><div class="seg__thumb" data-thumb></div></div>
+  </div>
+
   <span class="sep" data-variants-sep hidden></span>
-  <span class="label" data-variants-label hidden>Variant</span>
-  <div class="seg" data-variants-group hidden><div class="seg__thumb" data-thumb></div></div>
+  <div class="grp" data-variants-grp hidden>
+    <span class="grp__l">Variant</span>
+    <div class="seg" data-variants-group><div class="seg__thumb" data-thumb></div></div>
+  </div>
+
   <span class="sep" data-time-sep hidden></span>
-  <span class="label" data-time-label hidden>Time</span>
-  <input class="scrub" type="range" data-scrub aria-label="Session time" hidden>
-  <span class="time" data-time hidden></span>
+  <div class="grp" data-time-grp hidden>
+    <span class="grp__l" data-time-label>Time</span>
+    <div class="grp__row">
+      <input class="scrub" type="range" data-scrub aria-label="Time on this screen">
+      <span class="time" data-time></span>
+    </div>
+    <span class="grp__hint" data-time-hint></span>
+  </div>
+
   <span class="sep"></span>
-  <button class="ib ib--icon" type="button" data-shot title="Export this screen as PNG"><svg><use href="#i-image"/></svg></button>
-  <button class="ib ib--icon" type="button" data-share title="Copy a link to this exact screen and state"><svg><use href="#i-share"/></svg></button>
+  <div class="grp">
+    <span class="grp__l">Capture</span>
+    <div class="grp__row">
+      <button class="ib ib--icon" type="button" data-shot title="Save this screen as a PNG"><svg><use href="#i-image"/></svg></button>
+      <button class="ib ib--icon" type="button" data-share title="Copy a link that opens this exact screen and state"><svg><use href="#i-share"/></svg></button>
+      <button class="ib" type="button" data-export title="Download the local event log"><svg><use href="#i-down"/></svg><span class="count" data-event-count>0</span></button>
+    </div>
+  </div>
+
   <span class="sep"></span>
-  <span class="count" data-event-count>0 events</span>
-  <button class="ib ib--icon" type="button" data-export title="Export event log"><svg><use href="#i-down"/></svg></button>
+  <div class="grp">
+    <span class="grp__l">Feedback</span>
+    <div class="grp__row">
+      <button class="ib" type="button" data-comment aria-pressed="false" title="Click an element in the prototype to attach a note"><svg><use href="#i-pin"/></svg>Add note</button>
+      <button class="cta" type="button" data-send data-idle="1"><svg><use href="#i-send"/></svg>Send<span class="cta__n" data-send-n>0</span></button>
+    </div>
+  </div>
+</div>
+
+<div class="brief" data-brief hidden>
+  <div class="brief__card" role="dialog" aria-modal="true" aria-labelledby="brief-h">
+    <span class="brief__k">Prototype review</span>
+    <h1 class="brief__h" id="brief-h" data-brief-h>What we would like you to try</h1>
+    <p class="brief__p" data-brief-task></p>
+    <ul class="brief__steps">
+      <li><span class="brief__i">1</span><span>Use it the way you normally would. Some data is simulated - the coral notes say which.</span></li>
+      <li><span class="brief__i">2</span><span><strong>Add note</strong> at the bottom, then click anything on screen, to leave a remark where it happened.</span></li>
+      <li><span class="brief__i">3</span><span>When you are done press <strong>Send</strong>. Nothing reaches us until you do.</span></li>
+    </ul>
+    <button class="cta brief__go" type="button" data-brief-go>Start</button>
+  </div>
 </div>
 
 <button class="restore" type="button" data-bare-off>Show chrome <kbd>H</kbd></button>
@@ -601,8 +744,20 @@
   var screens  = cfg.screens  || [{ label: 'Prototype', src: 'index.html' }];
   var states   = cfg.states   || ['empty', 'full', 'error', 'unauth'];
   var variants = cfg.variants || [];
-  var time     = cfg.time     || null;
   var annots   = cfg.annotations || {};
+  var review   = cfg.review || {};
+
+  // a generated screen has no file of its own; the shell renders it
+  screens.forEach(function (s, i) { if (!s.src) s.src = '__' + (s.disclosure ? 'disclosure' : 'screen' + i); });
+
+  function screenTime() {
+    var s = screens[screenIndex(current.screen)];
+    return (s && s.time) || null;
+  }
+  function screenIndex(src) {
+    var i = screens.findIndex(function (s) { return s.src === src; });
+    return i < 0 ? 0 : i;
+  }
 
   var frame   = document.getElementById('frame');
   var wrap    = document.querySelector('.wrap');
@@ -619,14 +774,42 @@
   var q = new URLSearchParams(location.search);
   var startScreen = screens.findIndex(function (s) { return s.src === q.get('screen'); });
   if (startScreen < 0) startScreen = 0;
+  var reviewMode = q.get('review') === '1';
   var current = {
     screen:  screens[startScreen].src,
     state:   states.indexOf(q.get('state')) > -1 ? q.get('state') : (states.indexOf('full') > -1 ? 'full' : states[0]),
     variant: variants.indexOf(q.get('variant')) > -1 ? q.get('variant') : (variants[0] || 'default'),
-    time:    time ? (q.has('t') ? Math.min(time.max, Math.max(time.min, parseInt(q.get('t'), 10) || time.min)) : time.min) : 0,
+    time:    0,
     device:  ['desktop','tablet','mobile'].indexOf(q.get('device')) > -1 ? q.get('device') : 'desktop',
     mockup:  q.get('mockup') === '1'
   };
+
+  /* Time is per screen, so the shared value belongs to the screen the link
+     opened on. Carrying one number across scales - minutes here, days there -
+     would restore a value that means nothing on the screen it lands in. */
+  var times = {};
+  screens.forEach(function (s) { if (s.time) times[s.src] = s.time.min; });
+  (function () {
+    var t0 = screens[startScreen].time;
+    if (t0 && q.has('t')) {
+      var v = parseInt(q.get('t'), 10);
+      if (!isNaN(v)) times[screens[startScreen].src] = Math.min(t0.max, Math.max(t0.min, v));
+    }
+    current.time = times[current.screen] || 0;
+  })();
+
+  /* Per-viewer memory. Never shared, never leaves this browser on its own -
+     which is also what an async test with real users requires. */
+  var KEY = 'harness:' + (cfg.name || 'prototype');
+  function readStore(k, fallback) {
+    try { return JSON.parse(localStorage.getItem(KEY + ':' + k)) || fallback; }
+    catch (e) { return fallback; }
+  }
+  function writeStore(k, v) {
+    try { localStorage.setItem(KEY + ':' + k, JSON.stringify(v)); } catch (e) { /* private mode */ }
+  }
+  var collapsed = readStore('collapsed', {});
+  var comments  = readStore('comments', []);
 
   if (cfg.boundary) document.querySelector('[data-boundary]').textContent = cfg.boundary;
   if (cfg.title || cfg.name) {
@@ -717,33 +900,52 @@
   /* ---------- state + variant ---------- */
   segment(document.querySelector('[data-states-group]'), states, 'state', function (v) { send('state', v); record('harness:state', v); });
   if (variants.length) {
-    ['[data-variants-sep]', '[data-variants-label]', '[data-variants-group]'].forEach(function (s) { document.querySelector(s).hidden = false; });
+    ['[data-variants-sep]', '[data-variants-grp]'].forEach(function (s) { document.querySelector(s).hidden = false; });
     segment(document.querySelector('[data-variants-group]'), variants, 'variant', function (v) { send('variant', v); record('harness:variant', v); });
   }
 
-  /* ---------- time scrub ---------- */
-  var scrub, timeOut;
+  /* ---------- time scrub, per screen ----------
+     Each screen declares its own scale, label and hint, or none at all. The
+     control rebuilds on every screen change and disappears where time has no
+     meaning - one global scale across screens would measure nothing. The hint
+     is anchored in the shell bar and never rendered over the artifact. */
+  var scrub    = document.querySelector('[data-scrub]');
+  var timeOut  = document.querySelector('[data-time]');
+  var timeGrp  = document.querySelector('[data-time-grp]');
+  var timeSep  = document.querySelector('[data-time-sep]');
+  var timeLbl  = document.querySelector('[data-time-label]');
+  var timeHint = document.querySelector('[data-time-hint]');
+
   function paintScrub() {
-    var pct = (current.time - time.min) / (time.max - time.min) * 100;
+    var t = screenTime();
+    if (!t) return;
+    var pct = (current.time - t.min) / (t.max - t.min) * 100;
     scrub.style.setProperty('--pct', pct + '%');
-    timeOut.textContent = time.format ? time.format(current.time) : String(current.time);
+    timeOut.textContent = t.format ? t.format(current.time) : String(current.time);
   }
-  if (time) {
-    ['[data-time-sep]', '[data-time-label]'].forEach(function (s) { document.querySelector(s).hidden = false; });
-    scrub = document.querySelector('[data-scrub]');
-    timeOut = document.querySelector('[data-time]');
-    scrub.hidden = false; timeOut.hidden = false;
-    scrub.min = time.min; scrub.max = time.max; scrub.step = time.step || 1;
+
+  function mountTime() {
+    var t = screenTime();
+    timeGrp.hidden = timeSep.hidden = !t;
+    if (!t) return;
+    current.time = times[current.screen];
+    timeLbl.textContent = t.label || 'Time';
+    timeHint.textContent = t.hint || '';
+    timeHint.hidden = !t.hint;
+    scrub.min = t.min; scrub.max = t.max; scrub.step = t.step || 1;
     scrub.value = current.time;
     paintScrub();
-    scrub.addEventListener('input', function () {
-      current.time = parseInt(scrub.value, 10);
-      paintScrub();
-      send('time', current.time);
-    });
-    // one record on release, not on every pixel of the drag
-    scrub.addEventListener('change', function () { record('harness:time', current.time); });
   }
+
+  scrub.addEventListener('input', function () {
+    current.time = parseInt(scrub.value, 10);
+    times[current.screen] = current.time;
+    paintScrub();
+    send('time', current.time);
+  });
+  // one record on release, not on every pixel of the drag
+  scrub.addEventListener('change', function () { record('harness:time', current.time); });
+  mountTime();
 
   /* ---------- device ---------- */
   var deviceSeg = document.querySelector('[data-device-seg]');
@@ -816,9 +1018,10 @@
     p.set('screen', current.screen);
     p.set('state', current.state);
     if (variants.length) p.set('variant', current.variant);
-    if (time) p.set('t', current.time);
+    if (screenTime()) p.set('t', current.time);
     p.set('device', current.device);
     if (current.mockup) p.set('mockup', '1');
+    if (reviewMode) p.set('review', '1');
     var url = location.origin + location.pathname + '?' + p.toString();
 
     function done() {
@@ -990,10 +1193,37 @@
   }
 
   /* ---------- annotations ----------
-     A numbered pin on the element, a card on the rail, a curve joining them.
-     One primitive: the author explains a convention with it, a reviewer
-     comments with it. Only elements someone could act on need one. */
-  var dismissed = {};
+     Three intents, one geometry: a numbered pin on the element, a card on the
+     rail, a curve joining them.
+
+       disclosure  the author admitting an invented element someone could act
+                   on with no way to verify it. Carries the honesty contract
+       convention  the author explaining the prototype, not the product
+       comment     a reviewer's remark, written here at runtime
+
+     Closing a card COLLAPSES it to its pin - it never deletes it. A disclosure
+     note that could be dismissed for good would let someone share a link where
+     an invented number carries no label, which is the one thing this layer
+     exists to prevent. The whole layer still goes away with the Notes toggle,
+     which is visibly a toggle and is not carried in a shared link. */
+  var KINDS = {
+    number:     { label: 'Simulated number',  cls: '' },
+    generated:  { label: 'Generated output',  cls: '' },
+    system:     { label: 'System result',     cls: '' },
+    connection: { label: 'Connection claim',  cls: '' },
+    convention: { label: 'Prototype note',    cls: 'convention' },
+    comment:    { label: 'Your comment',      cls: 'comment' }
+  };
+  function kindOf(a) { return KINDS[a.kind] || KINDS.number; }
+
+  function notesFor(src) {
+    var declared = (annots[src] || []).map(function (a, i) {
+      return { a: a, id: src + '#' + i };
+    });
+    var mine = comments.filter(function (c) { return c.screen === src; })
+      .map(function (c) { return { a: { kind: 'comment', selector: c.selector, text: c.text, at: c.at }, id: c.id, comment: c }; });
+    return declared.concat(mine);
+  }
 
   function drawAnnots() {
     if (document.body.classList.contains('bare')) return;
@@ -1001,48 +1231,127 @@
     svg.innerHTML = '';
     if (!annotsOn || !frameReady) { document.body.classList.remove('has-notes'); return; }
 
-    var list = annots[current.screen] || [];
-    var visible = [];
-    list.forEach(function (a, i) { if (!dismissed[current.screen + '#' + i]) visible.push({ a: a, i: i }); });
+    var list = notesFor(current.screen);
+    var open = list.filter(function (e) { return !collapsed[e.id]; });
+
+    /* Read the artifact BEFORE reserving the rail. A cross-origin document
+       cannot be read at all, and reserving space first would leave an empty
+       rail beside the frame with nothing ever drawn into it. */
+    var doc;
+    try { doc = frame.contentDocument; } catch (e) { doc = null; }
+    if (!doc) {
+      document.body.classList.remove('has-notes');
+      if (list.length && !drawAnnots._warned) {
+        drawAnnots._warned = true;
+        toast('Notes need the artifact on this origin - it cannot be read from another domain.', 5200);
+      }
+      return;
+    }
 
     var had = document.body.classList.contains('has-notes');
-    document.body.classList.toggle('has-notes', visible.length > 0);
-    if (!visible.length) return;
+    document.body.classList.toggle('has-notes', open.length > 0);
     // reserving the rail resizes the frame; measure only once that has applied
-    if (!had) { requestAnimationFrame(drawAnnots); return; }
-
-    var doc;
-    try { doc = frame.contentDocument; } catch (e) { return; }
-    if (!doc) return;
+    if (open.length && !had) { requestAnimationFrame(drawAnnots); return; }
 
     var frameBox = frame.getBoundingClientRect();
     var wrapBox = wrap.getBoundingClientRect();
     var railX = wrapBox.width + 20;
     var stack = 4;
+    var num = 0;
 
-    visible.forEach(function (entry, n) {
+    list.forEach(function (entry, n) {
       var a = entry.a;
-      var id = current.screen + '#' + entry.i;
-      var num = n + 1;
+      var id = entry.id;
+      var kind = kindOf(a);
+      num++;
 
       var target = null;
       try { target = a.selector ? doc.querySelector(a.selector) : null; } catch (e) { /* bad selector */ }
 
+      var px, py;
+      if (target) {
+        var t = target.getBoundingClientRect();
+        px = Math.min(t.right + (frameBox.left - wrapBox.left), frameBox.width - 14);
+        py = t.top + t.height / 2 + (frameBox.top - wrapBox.top);
+      }
+
+      /* collapsed: the pin stays, the card is gone until the pin is clicked */
+      if (collapsed[id]) {
+        if (!target) return;
+        var cp = document.createElement('div');
+        cp.className = 'pin pin--collapsed' + (kind.cls ? ' pin--' + kind.cls : '');
+        cp.textContent = num;
+        cp.title = 'Show this note';
+        cp.style.left = px + 'px'; cp.style.top = py + 'px';
+        cp.addEventListener('click', function () {
+          delete collapsed[id]; writeStore('collapsed', collapsed); drawAnnots();
+        });
+        annotEl.appendChild(cp);
+        return;
+      }
+
       var note = document.createElement('div');
-      note.className = 'note' + (a.selector && !target ? ' note--orphan' : '');
+      note.className = 'note' + (kind.cls ? ' note--' + kind.cls : '') + (a.selector && !target ? ' note--orphan' : '');
       note.style.animationDelay = (n * 55) + 'ms';
 
       var badge = document.createElement('span');
       badge.className = 'note__n'; badge.textContent = num;
+
       var body = document.createElement('div');
-      body.className = 'note__body'; body.textContent = a.text;
+      body.className = 'note__body';
+      var klabel = document.createElement('span');
+      klabel.className = 'note__kind'; klabel.textContent = kind.label;
+      body.appendChild(klabel);
+
+      if (entry.comment) {
+        var ta = document.createElement('textarea');
+        ta.className = 'note__edit'; ta.rows = 2;
+        ta.placeholder = 'What did you want to say about this?';
+        ta.value = a.text || '';
+        ta.addEventListener('input', function () {
+          ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px';
+          entry.comment.text = ta.value;
+          writeStore('comments', comments);
+          paintSend();
+        });
+        body.appendChild(ta);
+        requestAnimationFrame(function () { ta.style.height = ta.scrollHeight + 'px'; });
+        if (a.at) {
+          var meta = document.createElement('span');
+          meta.className = 'note__meta';
+          meta.textContent = new Date(a.at).toLocaleString();
+          body.appendChild(meta);
+        }
+      } else {
+        var txt = document.createElement('span');
+        txt.textContent = a.text;
+        body.appendChild(txt);
+        if (a.real) {
+          var real = document.createElement('span');
+          real.className = 'note__meta';
+          real.textContent = 'In production: ' + a.real;
+          body.appendChild(real);
+        }
+      }
+
       var x = document.createElement('button');
       x.className = 'note__x'; x.type = 'button';
-      x.setAttribute('aria-label', 'Dismiss note ' + num);
+      x.setAttribute('aria-label', entry.comment ? 'Delete this comment' : 'Collapse note ' + num + ' to its pin');
+      x.title = entry.comment ? 'Delete' : 'Collapse to its pin';
       x.innerHTML = icon('i-x');
       x.addEventListener('click', function () {
         note.classList.add('is-out');
-        setTimeout(function () { dismissed[id] = true; drawAnnots(); }, 160);
+        setTimeout(function () {
+          if (entry.comment) {
+            comments = comments.filter(function (c) { return c.id !== id; });
+            writeStore('comments', comments);
+            paintSend();
+          } else {
+            collapsed[id] = true;
+            writeStore('collapsed', collapsed);
+          }
+          drawAnnots();
+        }, 160);
       });
 
       note.appendChild(badge); note.appendChild(body); note.appendChild(x);
@@ -1053,14 +1362,17 @@
       note.style.top = top + 'px';
       stack = top + note.offsetHeight + 10;
 
+      if (entry.comment && entry.comment.fresh) {
+        entry.comment.fresh = false;
+        var field = note.querySelector('.note__edit');
+        if (field) field.focus();
+      }
+
       if (!target) return;
 
-      var t = target.getBoundingClientRect();
-      var px = Math.min(t.right + (frameBox.left - wrapBox.left), frameBox.width - 14);
-      var py = t.top + t.height / 2 + (frameBox.top - wrapBox.top);
-
       var pin = document.createElement('div');
-      pin.className = 'pin'; pin.textContent = num;
+      pin.className = 'pin' + (kind.cls ? ' pin--' + kind.cls : '');
+      pin.textContent = num;
       pin.style.left = px + 'px'; pin.style.top = py + 'px';
       pin.style.animationDelay = (n * 55) + 'ms';
       annotEl.appendChild(pin);
@@ -1086,10 +1398,201 @@
     });
   }
 
+  /* ---------- reviewer comments ----------
+     The shell cannot see a click inside the artifact, so comment mode asks the
+     artifact to forward the next one together with a selector for what was hit.
+     Nothing is injected into the page - only the cursor changes. */
+  var picking = false;
+  var commentBtn = document.querySelector('[data-comment]');
+
+  function setPicking(on) {
+    picking = on;
+    commentBtn.setAttribute('aria-pressed', String(on));
+    send('picking', on);
+    if (on) toast('Click anything in the prototype to attach a note. Esc cancels.', 3600);
+  }
+  commentBtn.addEventListener('click', function () { setPicking(!picking); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && picking) setPicking(false);
+  });
+
+  function placeComment(selector, label) {
+    setPicking(false);
+    var c = {
+      id: 'c' + Date.now(),
+      screen: current.screen,
+      state: current.state,
+      variant: current.variant,
+      selector: selector || null,
+      anchor: label || '',
+      text: '',
+      at: new Date().toISOString(),
+      fresh: true
+    };
+    comments.push(c);
+    writeStore('comments', comments);
+    paintSend();
+    record('harness:comment', c.anchor);
+    drawAnnots();
+  }
+
+  /* ---------- sending it back ----------
+     There is no backend, so a comment reaches the author only when the reviewer
+     presses Send. That is the weak link in the whole mechanism, which is why
+     the control is permanent, counts what is waiting, and nudges once. */
+  var sendBtn = document.querySelector('[data-send]');
+  var sendN = document.querySelector('[data-send-n]');
+  var nudged = false;
+
+  function written() { return comments.filter(function (c) { return (c.text || '').trim(); }); }
+
+  function paintSend() {
+    var n = written().length;
+    sendN.textContent = n;
+    sendBtn.setAttribute('data-idle', n ? '0' : '1');
+    if (n && !nudged) {
+      nudged = true;
+      sendBtn.classList.add('is-nudge');
+      setTimeout(function () { sendBtn.classList.remove('is-nudge'); }, 3200);
+    }
+  }
+
+  function feedbackText() {
+    var lines = ['Prototype feedback - ' + (cfg.title || cfg.name || 'prototype'),
+                 new Date().toLocaleString(), ''];
+    written().forEach(function (c, i) {
+      var s = screens[screenIndex(c.screen)];
+      lines.push((i + 1) + '. [' + (s ? s.label : c.screen) + ' / ' + c.state + ']' +
+                 (c.anchor ? ' near "' + c.anchor + '"' : ''));
+      lines.push('   ' + c.text.trim());
+      lines.push('');
+    });
+    return lines.join('\n');
+  }
+
+  sendBtn.addEventListener('click', async function () {
+    var list = written();
+    if (!list.length) { toast('No comments yet - press Add note, then click something.'); return; }
+    var text = feedbackText();
+
+    if (review.submitTo) {
+      try {
+        await fetch(review.submitTo, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prototype: cfg.name || 'prototype', comments: list, events: events })
+        });
+        toast('Sent - ' + list.length + ' comment' + (list.length === 1 ? '' : 's') + ' delivered. Thank you.', 4200);
+        record('harness:feedback-sent', list.length);
+        return;
+      } catch (e) {
+        toast('The endpoint did not answer - falling back to copy and mail.', 4200);
+      }
+    }
+
+    var copied = false;
+    if (navigator.clipboard && location.protocol !== 'file:') {
+      try { await navigator.clipboard.writeText(text); copied = true; } catch (e) { /* denied */ }
+    }
+    if (review.to) {
+      var href = 'mailto:' + review.to +
+                 '?subject=' + encodeURIComponent('Prototype feedback - ' + (cfg.title || cfg.name || 'prototype')) +
+                 '&body=' + encodeURIComponent(text.slice(0, 1800));
+      window.open(href, '_blank');
+    }
+    var blob = new Blob([text], { type: 'text/plain' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = (cfg.name || 'prototype') + '-feedback.txt';
+    a.click();
+    URL.revokeObjectURL(a.href);
+
+    toast(copied
+      ? 'Copied to your clipboard and saved as a file - paste or attach it and send it over.'
+      : 'Saved as a file - send it over and we have it.', 5200);
+    record('harness:feedback-sent', list.length);
+  });
+
+  window.addEventListener('beforeunload', function (e) {
+    if (!written().length) return;
+    e.preventDefault();
+    e.returnValue = '';
+  });
+
+  /* ---------- review mode ---------- */
+  if (reviewMode) {
+    var brief = document.querySelector('[data-brief]');
+    brief.hidden = false;
+    document.querySelector('[data-brief-task]').textContent =
+      review.task || 'Use the prototype the way you normally would, and tell us where it does not make sense.';
+    document.querySelector('[data-brief-go]').addEventListener('click', function () {
+      brief.hidden = true;
+      record('harness:review-start');
+    });
+  }
+  paintSend();
+
+  /* ---------- the disclosure screen, generated from the annotations ----------
+     The same list is never maintained twice: every disclosure note is an entry
+     here, so a note added during the build cannot be missing from the screen
+     the reviewer reads. */
+  function esc(s) {
+    return String(s === undefined || s === null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+  function disclosureDoc() {
+    var d = cfg.disclosure || {};
+    var rows = [];
+    screens.forEach(function (s) {
+      (annots[s.src] || []).forEach(function (a) {
+        if (a.kind === 'convention') return;
+        rows.push('<tr><td class="s">' + esc(s.label) + '</td><td class="k">' + esc(kindOf(a).label) +
+                  '</td><td>' + esc(a.text) + '</td><td class="r">' + esc(a.real || '-') + '</td></tr>');
+      });
+    });
+    var conventions = [];
+    screens.forEach(function (s) {
+      (annots[s.src] || []).forEach(function (a) {
+        if (a.kind === 'convention') conventions.push('<li><b>' + esc(s.label) + '</b> - ' + esc(a.text) + '</li>');
+      });
+    });
+
+    return '<!doctype html><html lang="en"><head><meta charset="utf-8">' +
+      '<style>' +
+      'body{margin:0;padding:44px 40px;font:14px/1.65 ui-sans-serif,-apple-system,"Segoe UI",system-ui,sans-serif;color:#14161b;background:#fff}' +
+      'h1{margin:0;font-size:23px;letter-spacing:-.02em}' +
+      'h2{margin:34px 0 12px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#7c838f}' +
+      '.pair{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}' +
+      '.pair div{padding:16px 18px;border-radius:14px;background:#f6f7f9}' +
+      '.pair b{display:block;margin-bottom:6px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#7c838f}' +
+      '.pair .yes b{color:#ed6d57}' +
+      'table{width:100%;border-collapse:collapse;font-size:13px}' +
+      'th{text-align:left;padding:0 12px 9px 0;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:#7c838f;font-weight:600}' +
+      'td{padding:11px 12px 11px 0;border-top:1px solid #eceef1;vertical-align:top}' +
+      '.k{white-space:nowrap;color:#ed6d57;font-weight:600}.s{white-space:nowrap;color:#7c838f}.r{color:#474d57}' +
+      'ul{padding-left:18px;color:#474d57}li{margin:6px 0}' +
+      'p.n{color:#7c838f;font-size:12.5px}' +
+      '</style></head><body>' +
+      '<h1>' + esc(cfg.title || cfg.name || 'Prototype') + ' - what is real</h1>' +
+      '<div class="pair"><div class="yes"><b>This prototype shows</b>' + esc(d.proves || '-') + '</div>' +
+      '<div><b>It does not show</b>' + esc(d.doesNotProve || '-') + '</div></div>' +
+      (d.classification ? '<h2>Classification</h2><p>' + esc(d.classification) +
+        ' - what it binds is described in the accompanying document, not here.</p>' : '') +
+      '<h2>Element by element</h2>' +
+      (rows.length
+        ? '<table><tr><th>Screen</th><th>Kind</th><th>In this prototype</th><th>In production</th></tr>' + rows.join('') + '</table>'
+        : '<p class="n">No simulated elements have been declared. If that is genuinely true, say so out loud when showing it - a prototype with nothing faked is unusual.</p>') +
+      (conventions.length ? '<h2>Prototype conventions</h2><ul>' + conventions.join('') + '</ul>' : '') +
+      '<p class="n">Generated from the harness annotations, so this page cannot drift from the notes on the screens.</p>' +
+      '</body></html>';
+  }
+
   /* ---------- event log ---------- */
+  var countEl = document.querySelector('[data-event-count]');
   function countEvents() {
-    document.querySelector('[data-event-count]').textContent =
-      events.length + (events.length === 1 ? ' event' : ' events');
+    countEl.textContent = events.length;
+    countEl.parentNode.title = events.length + (events.length === 1 ? ' event' : ' events') +
+      ' recorded locally. Download them as JSON - never production analytics.';
   }
   function record(name, detail) {
     events.push({ t: Date.now(), name: name, detail: detail === undefined ? null : detail,
@@ -1123,18 +1626,29 @@
       frameReady = true;
       send('state', current.state);
       send('variant', current.variant);
-      if (time) send('time', current.time);
+      if (screenTime()) send('time', current.time);
+      if (picking) send('picking', true);
       requestAnimationFrame(drawAnnots);
     }
     if (d.type === 'event') { events.push(d.entry); countEvents(); }
+    if (d.type === 'pick') { placeComment(d.selector, d.label); }
   });
 
   function load() {
     frameReady = false;
     svg.innerHTML = '';
     annotEl.querySelectorAll('.note, .pin').forEach(function (n) { n.remove(); });
-    frame.src = current.screen;
-    document.querySelector('[data-mock-url]').textContent = location.origin + '/' + current.screen;
+    var s = screens[screenIndex(current.screen)];
+    if (s.disclosure) {
+      frame.removeAttribute('src');
+      frame.srcdoc = disclosureDoc();
+    } else {
+      frame.removeAttribute('srcdoc');
+      frame.src = current.screen;
+    }
+    mountTime();
+    document.querySelector('[data-mock-url]').textContent =
+      location.origin + '/' + (s.disclosure ? '' : current.screen);
     record('harness:screen', current.screen);
   }
 

@@ -1,6 +1,11 @@
 /*
   Prototype harness - the only file edited per prototype.
 
+  This file belongs to the shell, not to the artifact. The prototype never
+  reads it and never knows it exists; the only thing that crosses into the
+  artifact is a value over postMessage. So nothing declared here can shift a
+  layout or add an element to a screen.
+
   Everything here is declaration, not logic. If you find yourself writing
   behaviour in this file, it belongs in the artifact instead.
 */
@@ -19,13 +24,35 @@ window.HARNESS_CONFIG = {
      disclosure screen, not in this line. */
   boundary: 'not a live service. Data and some interactions are simulated.',
 
-  /* Every screen the reviewer can reach. First one loads on open.
-     A disclosure screen ("what is real and what is simulated") belongs here as
-     a normal entry - it is part of the prototype, not part of the chrome. */
+  /* ─────────────────────────────────────────────────────────────────────
+     Screens. First one loads on open.
+
+     `time` is declared per screen, never globally: time means something
+     different on each one - minutes since an order on one screen, days into
+     a subscription on the next - and a single scale across both measures
+     nothing. A screen without a `time` block simply has no scrubber.
+
+       label   what the reviewer reads under the scrubber ("Minutes since order")
+       hint    what moving it actually demonstrates HERE. Shown beside the
+               scrubber in the shell bar - never over the artifact
+       format  turns the raw value into what the reviewer reads
+     ───────────────────────────────────────────────────────────────────── */
   screens: [
-    { label: '01 Entry',      src: 'index.html' },
-    { label: '02 Detail',     src: 'detail.html' },
-    { label: 'What is real',  src: 'simulated.html' }
+    {
+      label: '01 Entry',
+      src: 'index.html',
+      time: {
+        min: 0, max: 45, step: 1,
+        label: 'Minutes since order',
+        hint: 'Move it to watch the delivery estimate degrade as the courier stalls.',
+        format: function (v) { return v + ' min'; }
+      }
+    },
+    { label: '02 Detail', src: 'detail.html' },
+
+    /* The disclosure screen is generated from the annotations below, so the
+       same list is never maintained twice. Give it no `src`. */
+    { label: 'What is real', disclosure: true }
   ],
 
   /* Four states are the contract. Drop one only when it genuinely cannot exist
@@ -39,27 +66,80 @@ window.HARNESS_CONFIG = {
      Leave empty when the prototype is an answer rather than a choice. */
   variants: [],
 
-  /* A scrubber, not a timer. Omit this block entirely if the artifact has no
-     time dimension. `format` turns the raw value into what the reviewer reads. */
-  time: null,
-  /* time: {
-       min: 0,
-       max: 45,
-       step: 1,
-       format: function (v) { return (v < 10 ? '0' : '') + v + ':00'; }
-     }, */
+  /* ─────────────────────────────────────────────────────────────────────
+     Notes, keyed by screen src. Two kinds, and they are not interchangeable.
 
-  /* Notes anchored to elements inside the artifact, keyed by screen src.
-     `selector` runs inside the artifact document; omit it for a note with no
-     anchor. An annotation earns its place when someone could ACT on the element
-     and has no way to verify it - a number, a generated output, a result
-     attributed to a system, a connection claim. Invented names, avatars and
-     scripted navigation do not need one. */
+     DISCLOSURE - the element is invented and someone could act on it with no
+     way to verify it. The test is not "is it fake?" but:
+
+         Could someone ACT on this, with NO WAY to verify it?
+
+     Four categories pass that test, and `kind` must be one of them:
+       'number'      a figure someone would plan against
+       'generated'   an AI or generated output
+       'system'      a result attributed to a system - score, match, ranking
+       'connection'  a claim that something is connected or synced
+
+     Invented names, avatars, titles and a scripted navigation path do NOT
+     pass it and must not be annotated. Over-labelling changes behaviour and
+     buys nothing.
+
+     Every disclosure note carries `real:` - what the element would be in
+     production. That pair is what the generated disclosure screen is built
+     from, and it is required by the harness contract.
+
+     CONVENTION - `kind: 'convention'`. Explains the prototype, not the
+     product ("this is the state after 14 sessions"). No `real:`; it describes
+     nothing that would ship.
+
+     `selector` runs inside the artifact document. Omit it for a note with no
+     anchor. A selector that matches nothing renders as an orphan card rather
+     than disappearing, so a renamed class is visible instead of silent.
+
+     A third kind, 'comment', is written by reviewers at runtime and is never
+     declared here.
+     ───────────────────────────────────────────────────────────────────── */
   annotations: {
     // 'index.html': [
-    //   { selector: '[data-metric]', text: 'Projected - author estimate, not measured.' },
-    //   { selector: '.feed',         text: 'Sample data. Ordering is fixed, not ranked.' },
-    //   { text: 'This screen shows the state after 14 sessions.' }
+    //   { kind: 'number',     selector: '[data-eta]',
+    //     text: 'Projected - author estimate, not measured.',
+    //     real: 'Computed from the courier feed and live traffic.' },
+    //   { kind: 'system',     selector: '.match',
+    //     text: 'The match score is fixed, not calculated.',
+    //     real: 'Scored by the matching service against availability and rating.' },
+    //   { kind: 'convention', text: 'This screen shows the state after 14 sessions.' }
     // ]
+  },
+
+  /* The generated disclosure screen's opening pair. Both halves are stated -
+     what the prototype proves is worthless without what it does not. */
+  disclosure: {
+    proves: 'That the assignment flow is understandable end to end, and where it stalls.',
+    doesNotProve: 'Anything about performance, permissions, or whether the matching logic is correct.',
+    classification: 'Reference'   // Disposable | Reference | Evolutionary
+  },
+
+  /* ─────────────────────────────────────────────────────────────────────
+     Review mode. Open the harness with ?review=1 and the reviewer gets the
+     task up front and a permanently visible Send control.
+
+     Without a backend, comments live in that reviewer's own browser and reach
+     you only when they press Send - which is exactly why the prompt to do it
+     has to be unmissable rather than a button they might find.
+
+     `submitTo` is optional and empty by default. Filled in (a form endpoint -
+     Formspree, a Google Form, your own handler) comments post themselves and
+     nothing depends on the reviewer remembering. Left empty, Send copies to
+     the clipboard, offers a prefilled mail, and can save a file.
+
+     One consequence worth keeping: reviewers cannot see each other's comments.
+     For an async test with real users that is required, not a limitation - a
+     shared thread contaminates the sample the moment the second person reads
+     the first.
+     ───────────────────────────────────────────────────────────────────── */
+  review: {
+    task: 'Try to assign the 08:30 job to a courier, then come back to the list.',
+    to: '',          // your address, for the prefilled mail
+    submitTo: ''     // optional endpoint. Empty = manual return
   }
 };
