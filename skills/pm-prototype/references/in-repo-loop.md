@@ -168,6 +168,8 @@ Visual polish, stakeholder enthusiasm and deployability are **not** finish crite
 
 ## Classification decides where the code lives
 
+> Full detail, plus kill and promotion, in `promotion.md`. Repeated here because it governs how the loop is run, not only what happens afterwards.
+
 Made **before the first line of code**, because it sets the quality bar:
 
 | Classification | Meaning | Where the code lives |

@@ -50,11 +50,22 @@ More than two audiences triggers a warning and a request for the primary one - a
 
 ## What it produces
 
-**Spec mode (default):** either a tool-ready prototype spec for an external tool, or an in-repo prototype folder with its harness - whichever the path decision reached.
+**Spec mode (default):** either a tool-ready prototype spec for an external tool, or an in-repo prototype folder with its harness - whichever the path decision reached. The in-repo folder sits at `prototypes/[name]/` and carries the uncertainty, the audience, the classification, a `targets:` link back to the production artifact it is about, a declared stop condition, and the hypotheses/findings pair.
 
-**Result mode (re-run after prototype exists):** captures what the prototype proved or disproved, makes a decision, and cascades back to:
-- Feature Card (if feature-scoped) - adds prototype reference and outcome
-- Hypothesis Register - updates hypothesis status with prototype evidence
+**Prototypes stay out of the production registers.** Most prototypes die - that is what they are for - so a killed one should cost a deleted folder, not a clean-up of dead FEAT-IDs, speculative entities and rows in the delivery plan. Prototype feature IDs are `PRT-` rather than `FEAT-`, so one can never be mistaken for a committed feature.
+
+**Promotion is layer by layer, not a rewrite:** the thin card becomes a Feature Card with a real FEAT-ID and `promoted_from:`, local rules and entities move into the global registers, and the prototype folder freezes as history.
+
+**Result mode (re-run after prototype exists):** records the verdict as one of four states - **never "validated"**:
+
+| State | What follows |
+|---|---|
+| Supported within scope | cascades to the Feature Card and hypothesis register |
+| Refuted within scope | cascades, and a kill must clear five conditions before it is recorded |
+| **Prototype or study failure** | **cascades nowhere** - the instrument did not expose the hypothesis, so belief in the product is unchanged and the test gets re-run |
+| Inconclusive | cascades nowhere; schedules another round or a different method |
+
+The third state is the one teams skip, and skipping it is how a broken test becomes a verdict on an idea.
 
 ---
 

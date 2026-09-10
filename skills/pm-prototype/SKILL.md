@@ -37,7 +37,9 @@ This file is the flow. Detail that only one path needs lives in `references/` ne
 | `way-in.md` | Step 1 - getting from a raw idea to something buildable, and deciding whether code is the right test at all | the scope is a thought rather than a named chunk |
 | `hypotheses.md` | Steps 2 and 8 - what makes a hypothesis testable, what thresholds are defensible, and the four verdict states | writing the success criterion, and recording the result |
 | `audience-depth.md` | Step 3b - who it is for, how deep that makes it, and which path builds it | **every run**, right after ingestion |
-| `in-repo-loop.md` | The harness shell contract, the rules of the iteration loop, stop and restart signals, classification | the prototype is built here, by a coding agent |
+| `in-repo-loop.md` | The harness shell contract, the rules of the iteration loop, stop and restart signals | the prototype is built here, by a coding agent |
+| `prototype-folder.md` | Step 7 - the folder an in-repo prototype lives in, `targets:`, the decision state | writing an in-repo prototype back |
+| `promotion.md` | Classification before the first line of code; kill and promotion once there is a decision | Step 3b, then Step 8 |
 | `scaffold/` | The harness itself - copy it into the prototype's build folder | on the in-repo path |
 
 ---
@@ -196,6 +198,8 @@ Two conditional requirements fall out of the audience answer, so settle them now
 - **Variants** are mandatory when the prototype exists to *choose* a direction, and wrong when it is an answer to a decided one.
 - **Behaviour capture** earns its place the moment real users touch it, and is overhead when a reader reviews it alone.
 
+**Then classify it, before any code exists** - `references/promotion.md` § Classification. Disposable, Reference or Evolutionary decides the quality bar and where the code lives, so deciding it afterwards means the bar was never applied. Evolutionary code belongs on a branch in the real repo, under repo rules, not in the prototype folder. If nobody can say which one it is, that is itself a finding: it usually means the prototype is being built to impress rather than to answer something.
+
 ---
 
 ## Step 7: Write the prototype reference back
@@ -215,7 +219,7 @@ The `Prototype:` value depends on which path Step 3b took:
 | Path | What it points at |
 |---|---|
 | External tool | the spec file - `/prototypes/[FEAT-ID]-prototype-spec.md` |
-| In-repo | the prototype's folder - `/prototypes/[name]/`, whose `meta.md` carries the classification and `targets:` |
+| In-repo | the prototype's folder - `/prototypes/[name]/`. **Read `references/prototype-folder.md` and create it there**; `meta.md` carries the uncertainty, audience, classification, `targets:`, the declared stop condition and the decision state |
 
 This makes the Feature Card show that a prototype was used and that a result is expected before build proceeds.
 
@@ -264,6 +268,14 @@ When the user comes back with an outcome, operate in **delta mode** - do not rew
 
 4. **Before a kill is recorded, check it is defensible** - all five conditions in `references/hypotheses.md` § 4. Before that bar is met, "iterate the representation" is usually the more accurate conclusion than "the idea is wrong".
 
+5. **Act on the decision** - `references/promotion.md`. The verdict is what the evidence says; the decision is what you do about it, and they are not the same field.
+
+   | Decision | What happens |
+   |---|---|
+   | **Kill** | findings kept, code not. Folder deleted or archived with the reason; production registers untouched; an Evolutionary branch closed explicitly rather than abandoned |
+   | **Promote** | layer by layer - thin card becomes a Feature Card with a real `FEAT-ID` and `promoted_from:`; local rules and entities move into the global registers; the folder then **freezes as history and is never edited again** |
+   | **Partial** | promote what earned it, kill the rest **explicitly**, and record which was which. A partial decision that does not say what was dropped is an open decision wearing a decided label |
+
 ---
 
 ## Internal completeness checklist
@@ -280,7 +292,10 @@ When the user comes back with an outcome, operate in **delta mode** - do not rew
 - [ ] Audience named, and depth chosen from it rather than from habit (Step 3b)
 - [ ] Path stated out loud with its reason before building
 - [ ] External path only: compiled build prompt following the tool's construction rules (`references/external-tools.md`; Lovable rules if Lovable)
-- [ ] In-repo path only: harness in place per `references/in-repo-loop.md`, all four states reachable, classification decided before the first line of code
+- [ ] In-repo path only: harness in place per `references/in-repo-loop.md`, all four states reachable
+- [ ] Classification decided **before** the first line of code, and Evolutionary code on a real branch rather than in the prototype folder
+- [ ] In-repo path only: the prototype folder exists per `references/prototype-folder.md`, with `targets:` and a declared stop condition
+- [ ] Local `domain.md` / `rules.md` / `context/` exist only where the prototype deliberately diverges, and say in what way
 
 **Never skipped:**
 - [ ] Intent gate ran (prototype justified, or user chose to proceed anyway)
@@ -304,11 +319,18 @@ When the user comes back with an outcome, operate in **delta mode** - do not rew
 
 ## Save to
 
+Both paths write under `pureinn-workspace/[project-slug]/prototypes/`, in different shapes:
+
 ```
-pureinn-workspace/[project-slug]/prototypes/[scope-slug]-prototype-spec.md
+prototypes/[scope-slug]-prototype-spec.md     external path - one spec file
+prototypes/[prototype-name]/                  in-repo path - a folder
 ```
 
-Feature-scoped: `[FEAT-ID]-prototype-spec.md`. Initiative/product/slice: a descriptive `[scope-slug]`.
+External path, feature-scoped: `[FEAT-ID]-prototype-spec.md`. Initiative, product or slice: a descriptive `[scope-slug]`.
+
+In-repo path: a kebab-case folder named for what it explores - `ama-lifecycle`, `pricing-tiers` - never for a date or a version. Shape in `references/prototype-folder.md`.
+
+**Never both for the same prototype.** One prototype, one artifact; two means they drift and nobody knows which one is current.
 
 `prototypes/` is a cross-cutting operational folder (like `meetings/`, `team/`) - created on demand, not part of the phase artifact flow.
 
