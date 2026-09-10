@@ -4,8 +4,8 @@
 
 **Phase:** Cross-phase (Discovery → Build)  
 **Agent mode:** `synthesis` - runs fully autonomously  
-**Version:** 1.1.0  
-**Triggers:** prototype, prototyping, proof of concept, POC, spike, validate before build, lovable, base44, v0, figma make, clickable prototype, mockup, throwaway, quick validation
+**Version:** 1.2.0  
+**Triggers:** prototype, prototyping, proof of concept, POC, spike, validate before build, lovable, base44, v0, figma make, clickable prototype, mockup, throwaway, quick validation, in-repo prototype, coding agent prototype, prototype harness
 
 ---
 
@@ -19,9 +19,38 @@ Any time there is genuine uncertainty worth de-risking cheaply before production
 
 ---
 
+## Two paths, chosen for you
+
+The skill no longer assumes the prototype is built somewhere else. At **Step 3b** it decides how deep the prototype has to be and which of two structurally different paths builds it:
+
+| Path | What it is | What you get |
+|---|---|---|
+| **External tool** | one-shot handoff - the brief is compiled, sent, and iterated through the tool | tool-ready spec (`prototypes/[scope-slug]-spec.md`), pushed via MCP or paste-ready |
+| **In-repo** | a continuous loop with a coding agent - no brief to compile, no moment of handoff | a prototype folder with a harness carrying the four states, fixtures, a time scrubber, variants, device presets, an annotation layer and a local event log |
+
+**The path is an output of the flow, not a question you answer up front.** It follows from who the prototype is for and which uncertainty it resolves - a flow-comprehension question and a business-rule-correctness question do not belong on the same path.
+
+---
+
+## Audience decides depth
+
+"Deep enough to decide" means nothing until you say who is looking. Each audience makes different things non-negotiable and different things safely fake:
+
+| Audience | Must be real | May be faked | What kills it |
+|---|---|---|---|
+| Internal team / feasibility | domain model, rules, edge states | visuals, branding, breadth | a pretty UI over logic that does not work |
+| Investor / exec | narrative, key screens, defensible numbers | breadth, edge states, real data | numbers that collapse on the first question |
+| Users (usability test) | flow, copy, realistic content, empty and error states | backend, scale, performance | a dead button - the test is void |
+| Idea validation | the one uncertain mechanism | everything else | widening scope before the core is proven |
+| Client / pitch | their domain language, their real scenario | generality, architecture | a generic example instead of their world |
+
+More than two audiences triggers a warning and a request for the primary one - a prototype serving three at once usually serves none, and that is the moment it quietly starts becoming a product.
+
+---
+
 ## What it produces
 
-**Spec mode (default):** tool-ready prototype spec (`prototypes/[scope-slug]-spec.md`) - a structured build prompt optimized for the selected prototyping tool. Pushed via MCP if a tool endpoint is configured; otherwise output as a paste-ready block.
+**Spec mode (default):** either a tool-ready prototype spec for an external tool, or an in-repo prototype folder with its harness - whichever the path decision reached.
 
 **Result mode (re-run after prototype exists):** captures what the prototype proved or disproved, makes a decision, and cascades back to:
 - Feature Card (if feature-scoped) - adds prototype reference and outcome
@@ -40,7 +69,7 @@ Any time there is genuine uncertainty worth de-risking cheaply before production
 
 | Mode | Trigger | What it does |
 |---|---|---|
-| **Spec mode** | No prototype exists yet | Gate-check → scope intake → ingest inputs → compile tool-ready spec → push or paste |
+| **Spec mode** | No prototype exists yet | Gate-check → scope intake → ingest inputs → audience, depth and path → build by the path that fits |
 | **Result mode** | Prototype exists, you have results | Capture what was proved/disproved → decision → cascade to Feature Card / hypotheses |
 
 ---
@@ -63,6 +92,8 @@ The skill reads the `Prototyping` section of `pureinn-variables.md` to find conf
 If no endpoint is configured, the skill outputs a paste-ready build prompt block and reminds the user to add an endpoint to `pureinn-variables.md` for future push.
 
 Supported tools: Lovable, v0/Vercel, Base44, Figma Make.
+
+**On the in-repo path no endpoint is needed** - the prototype is built here, against a harness copied from the skill's own `references/scaffold/`. The harness must be served rather than opened as a file, because the artifact runs in an iframe so the device switcher triggers its real media queries.
 
 ---
 

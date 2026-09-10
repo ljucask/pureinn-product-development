@@ -1,6 +1,6 @@
 # pm-prototype - In-repo loop reference
 
-> Reference for `skills/pm-prototype/SKILL.md`. The path where the prototype is built here, by a coding agent, rather than handed to an external tool. Read it when Step 4 routes to the in-repo path.
+> Reference for `skills/pm-prototype/SKILL.md`. The path where the prototype is built here, by a coding agent, rather than handed to an external tool. Read it when Step 3b routes to the in-repo path.
 
 This path has no moment of handoff. There is no brief to compile and send - there is a running thing you iterate against. That difference is why it needs its own reference rather than a variation on the external one.
 
@@ -177,3 +177,7 @@ Made **before the first line of code**, because it sets the quality bar:
 | **Evolutionary** | deliberately may reach production | **the real repo, on a branch** - repo rules, security, tests and review from the first line. The prototype folder holds the spec and a pointer |
 
 The dangerous middle is *throwaway quality with evolutionary expectations*. Evolutionary code inside a prototype folder sits outside repo rules, which defeats the classification.
+
+---
+
+When the loop reaches one of its finish conditions, return to `SKILL.md` and run **Step 7 (Write the prototype reference back)**, then **Step 8 (Result mode)** once there is a result to record.
