@@ -34,6 +34,7 @@ This file is the flow. Detail that only one path needs lives in `references/` ne
 |---|---|---|
 | `spec-artifact.md` | Step 5 - the prototype spec's shape (universal, tool-agnostic core) | compiling the spec |
 | `external-tools.md` | Step 4 - tool selection · Lovable construction rules and operational tactics · Step 6 - handoff | the prototype is built by an external tool |
+| `in-repo-loop.md` | The harness shell contract, the rules of the iteration loop, stop and restart signals, classification | the prototype is built here, by a coding agent |
 
 ---
 
