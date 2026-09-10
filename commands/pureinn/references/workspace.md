@@ -108,6 +108,13 @@ Create `pureinn-workspace/[project-slug]/pureinn-variables.md` with the followin
 | Dashboard | Page | |
 | Feature Backlog | DB | |
 
+## Repository
+
+| Key | Value |
+|---|---|
+| github_repo_url | |
+| local_repo_path | |
+
 ## Product (Phase 2-3)
 
 | Key | Type | Skill | URL |
@@ -318,6 +325,11 @@ When a skill needs a Notion URL, it:
     "business_model": "[Paid | Freemium | Free | Unknown]"
   },
   "team_structure": "[Solo | Small founding team | Team with roles | Corporate]",
+  "repo": {
+    "present": "[local | remote | none_yet | none]",
+    "local_path": "[absolute path, or null]",
+    "url": "[git remote URL, or null]"
+  },
   "artifact_language": "[English | other language name - default English]",
   "documents_found": ["[list of filenames read]"],
   "assessment_file": "assessment.md",
@@ -360,6 +372,27 @@ Note: `registers` flags are set to `true` by pm-entity-registry and pm-business-
 Note: `phases_completed` uses string identifiers - "1", "2", "3a", "3b", "4", "5", "6-7". Phase 3 split is tracked as two separate entries.
 Note: `phase_3a_verdict` stores the Go/No-Go outcome: "GO", "PIVOT", or "STOP". Set by /pm-hypotheses [Results mode] or by "done elsewhere" import. Phase 3b entry is blocked until this field is "GO" - except commissioned builds (mandate given), where Phase 3a sits in `phases_skipped` and the field stays unset.
 Note: `artifact_language` gates prose translation only (see CLAUDE.md "Artifact language" standard) - IDs, frontmatter keys/enum values, section headers, and file names stay English regardless of this setting. Set once at STEP 6, read by any skill carrying the "Artifact language" inline block; skills without that block yet just behave as English-default.
+
+---
+
+---
+
+## Repo context
+
+Set in **STEP 0f** and stored in `state.json` → `repo`. It is a routing signal, not decoration: several parts of the framework are only possible on one side of it, and offering them when they cannot work is how the engine wastes the user's time.
+
+| `repo.present` | What it means | What it unlocks | What it rules out |
+|---|---|---|---|
+| `local` | Code is on this machine at `local_path` | `/pm-reverse-extract` (bootstrap registers from real code), `/pm-reconcile` (Rebuild), `/common-ground`, `/impeccable document` as the design-context source, in-repo prototypes, `mutex_tags` from real file contention | - |
+| `remote` | A repository exists but is not checked out here | Reading the repo needs a clone first - offer that before anything that reads code | Everything in the `local` row, until it is cloned |
+| `none_yet` | Greenfield; code will exist later | Full Greenfield path. Re-ask at Phase 6 entry, when a repo usually appears | Code-reading skills, in-repo prototypes |
+| `none` | Research, strategy or a pitch with no build | Strategy and definition phases only | The whole Phase 6-7 delivery cycle - say so early rather than routing the user there |
+
+**Rules:**
+- Never offer a code-reading skill when `present` is `none_yet` / `none`, and never claim to have read code that is only a `remote` URL.
+- When `present` is `remote` and something needs the code, offer the clone as an explicit step; do not silently clone.
+- `none_yet` is not permanent. When a Phase 6 stripe opens and `repo.present` is still `none_yet`, ask again - that is the moment the answer usually changes.
+- A wrong value here is worse than an empty one. If the user is unsure, record `none_yet` and re-ask rather than guessing a path.
 
 ---
 

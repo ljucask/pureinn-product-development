@@ -76,6 +76,22 @@ When genuinely ambiguous, treat it as `explore` - it can always route into `new`
 
 **e) Run the document scan.** Read `references/entry.md` § STEP 0a and run it at the depth its table gives for the classified mode. This runs on every path including resume and stage entry - not only on new-project intake.
 
+**f) Establish repo context.** Whether a codebase exists is a **routing signal**, not a config detail - it decides whether the code can be read at all, which design-context source is available, and whether anything can be built in-repo. Ask once per project, never on every run:
+
+| Mode | What to do |
+|---|---|
+| `map` | skip |
+| `resume`, `stage` with a `state.json` | read `repo` from it. Only if the key is absent (project predates this field) ask once and write it |
+| `new`, `explore` | ask as part of this gate |
+
+Use **AskUserQuestion**, one question - "Is there a codebase for this?":
+- **Local path** - the code is on this machine *(recommend when the product already exists)*; capture the path
+- **Remote URL only** - a repository exists but is not checked out here; capture the URL
+- **None yet** - greenfield, code will exist later *(recommend for a new product)*
+- **None, and there won't be** - research, strategy or a pitch with no build
+
+Record the answer in `state.json` → `repo` and in `pureinn-variables.md` (both shapes in `references/workspace.md`). In `explore` mode, hold the answer in the session only - explore writes no files. What each answer unlocks is in `references/workspace.md` § Repo context; do not re-derive it here.
+
 Only then continue to the step the mode points at.
 
 ### Stage Keyword Resolver

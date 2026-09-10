@@ -13,7 +13,7 @@ Depth of the scan depends on the mode classified in STEP 0:
 | Mode | Scan |
 |---|---|
 | `new`, `explore` | **Full** - the whole tree, nothing is known yet |
-| `resume`, `stage` | **Delta** - list the tree, then report only what is *not* already recorded in `state.json` (`documents_ingested`) or `assessment.md`. Do not re-read what has already been ingested |
+| `resume`, `stage` | **Delta** - list the tree, then report only what is *not* already recorded in `state.json` (`documents_found`) or `assessment.md`. Do not re-read what has already been ingested |
 | `map` | none - skip the scan entirely |
 
 Apply the **Deep source ingestion** standard to whatever you do read: traverse subfolders, follow references, never treat an index or summary table as the content itself.
@@ -57,7 +57,7 @@ Read them into this project now?
 
 Use **AskUserQuestion**: read them now and note which artifacts may need a re-run *(Recommended)* · ignore for this session · ignore permanently (record in `state.json`).
 
-If the user reads them in, record the files in `state.json` → `documents_ingested`, and name the artifacts whose conclusions the new material could change (the cascade rule from the Adaptive execution standard - e.g. new interview notes → `pm-personas`, `jtbd-building`, `pm-problem-validation`). Do not silently rewrite those artifacts here; surface them so the user decides.
+If the user reads them in, record the files in `state.json` → `documents_found`, and name the artifacts whose conclusions the new material could change (the cascade rule from the Adaptive execution standard - e.g. new interview notes → `pm-personas`, `jtbd-building`, `pm-problem-validation`). Do not silently rewrite those artifacts here; surface them so the user decides.
 
 **Delta scan - nothing new:** say nothing. Continue to the path's own step. Silence is the correct output when there is nothing to report.
 

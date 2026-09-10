@@ -17,6 +17,17 @@ Map to playbook:
 - C → **Feature**
 - D → **Rebuild**
 
+**Cross-check against repo context** (`state.json` → `repo`, set in STEP 0f). Feature and Rebuild both read real code; a mismatch here produces a playbook that cannot execute its first step:
+
+| Answer | `repo.present` | What to do |
+|---|---|---|
+| C or D | `local` | Proceed - the playbook has what it needs |
+| C or D | `remote` | Offer to clone first; the entry skill (`/pm-reverse-extract`, `/pm-reconcile`) cannot read a URL |
+| C or D | `none_yet` / `none` | Stop and reconcile the contradiction before routing: the product exists but no code is reachable. Either the code is somewhere not yet named (update `repo`), or "exists" means a live product they cannot access - in which case say plainly that Feature/Rebuild degrade to what can be inferred from documents and the live product, not from code |
+| A or B | `local` | Worth one question - existing code with a from-scratch answer usually means a prototype or a predecessor system that is worth reading before deciding |
+
+Never route into a code-reading playbook while claiming code access the project does not have.
+
 **Feature playbook note:**
 Feature Implementation does not start at Phase 1. It starts at Phase 0 (context setup).
 Phase 0 runs once per project onboarding - not per feature. After Phase 0, each feature goes through Feature Viability Assessment before any spec work begins.
