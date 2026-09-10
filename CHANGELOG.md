@@ -2,7 +2,7 @@
 
 ## [5.39.0] - 2026-08-10
 
-### pm-stripe delivery_plan.html companion: build-order (qn) + cross-stripe wait (w) annotations added to Kanban, Timeline, and Dependency graph views, plus an always-visible Legend panel and infobox wiring - validated as a live prototype on Vezmee's 53-feature plan
+### pm-stripe delivery_plan.html companion: build-order (qn) + cross-stripe wait (w) annotations added to Kanban, Timeline, and Dependency graph views, plus an always-visible Legend panel and infobox wiring - validated as a live prototype on a real client's 53-feature plan
 
 ---
 

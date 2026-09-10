@@ -17,7 +17,11 @@ The Pureinn product development framework published as a Claude Code plugin. Con
   plugin.json       - Package metadata (name, version, author, paths)
   marketplace.json  - Marketplace registration metadata
 commands/
-  pureinn/          - Main orchestrator (entry point, routing, exit gates)
+  pureinn/          - Main orchestrator
+    COMMAND.md      - Router only: input classification, decision table, stage resolver, STEP 1A-1C
+    references/     - The engine's steps, read on demand by the router
+                      intake.md · assessment.md · playbooks.md · workspace.md
+                      dashboard.md · framework-map.md
   pureinn-resume/   - Resume paused project
 skills/
   [skill-name]/
@@ -358,7 +362,7 @@ Not every team member is equally fluent in English. A project may set `artifact_
 
 **Runtime delivery (critical, same reason as agent-mode).** `CLAUDE.md` is author-facing only - not loaded at end-user runtime. The behavior must reach the user through the **skill itself**, via a compact `## Artifact language` block inline near the top of `SKILL.md` (after the H1, alongside the Agent mode block where one exists). This section is the single authoring source of truth; the inline block is the runtime instance. Keep them in sync when the rule changes.
 
-**The setting:** `state.json` field `artifact_language` (a human-readable language name, e.g. `"English"`, `"Slovak"`, `"German"`) - set once at workspace setup (`/pureinn` STEP 6), default `"English"`. Zero risk to existing projects: the default is a no-op.
+**The setting:** `state.json` field `artifact_language` (a human-readable language name, e.g. `"English"`, `"Slovak"`, `"German"`) - set once at workspace setup (`/pureinn` STEP 6, in `commands/pureinn/references/workspace.md`), default `"English"`. Zero risk to existing projects: the default is a no-op.
 
 **What translates and what never does - this line is absolute, not a judgment call:**
 
