@@ -40,6 +40,8 @@ Any harness must provide these, whatever the stack. A kit satisfies the contract
 
 **The reference implementation is in `scaffold/`** - copy `harness.html` and `harness-client.js` byte-for-byte, edit only `harness.config.js`. See `scaffold/README.md`. It must be served, not opened as `file://`.
 
+It also carries three things the contract does not require but a reviewer expects: a **device mockup** (off by default - it is presentation, and a usability test does not want it), a **share link** that restores screen, state, variant, time, device and mockup in one go, and a **PNG export** of the current screen that never includes the annotation layer. Treat them as conveniences, not contract items: a harness built in another stack is complete without them.
+
 ### 1. State switcher
 
 Four states, each reachable in **one action**:
