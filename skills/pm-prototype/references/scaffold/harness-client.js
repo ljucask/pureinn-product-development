@@ -98,9 +98,17 @@
     e.preventDefault();
     e.stopPropagation();
     var sel = selectorFor(e.target);
+    var r = e.target.getBoundingClientRect();
+    /* Where INSIDE the element the click landed, as a fraction of its box. A
+       pin parked at the element's edge points at the right thing and the wrong
+       place; a reviewer aims at a word, not at a bounding box. The fraction
+       survives re-layout, which a raw pixel offset would not. */
     global.parent.postMessage({
       __harness: true, type: 'pick',
       selector: sel,
+      rx: r.width ? (e.clientX - r.left) / r.width : 0.5,
+      ry: r.height ? (e.clientY - r.top) / r.height : 0.5,
+      vx: e.clientX, vy: e.clientY,
       label: (e.target.textContent || '').trim().slice(0, 60)
     }, '*');
   }
@@ -121,16 +129,31 @@
     global.scrollTo({ top: max * Math.min(1, Math.max(0, fraction)), behavior: 'smooth' });
   }
 
+  /* Presentation aims first, then clicks. The shell needs to know where the
+     target actually is so its pointer can travel there and be seen arriving -
+     a click that happens with no visible approach reads as a glitch, not as a
+     demonstration. */
+  function aimAt(selector) {
+    var el = null;
+    try { el = document.querySelector(selector); } catch (e) { /* bad selector */ }
+    if (!el) { global.parent.postMessage({ __harness: true, type: 'point', selector: selector, found: false }, '*'); return; }
+    el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    setTimeout(function () {
+      var r = el.getBoundingClientRect();
+      global.parent.postMessage({
+        __harness: true, type: 'point', selector: selector, found: true,
+        x: r.left + r.width / 2, y: r.top + r.height / 2
+      }, '*');
+    }, 340);
+  }
+
   function clickOn(selector) {
     var el = null;
     try { el = document.querySelector(selector); } catch (e) { /* bad selector */ }
     if (!el) return;
-    el.scrollIntoView({ block: 'center', behavior: 'smooth' });
     el.classList.add('harness-touch');
-    setTimeout(function () {
-      el.click();
-      setTimeout(function () { el.classList.remove('harness-touch'); }, 600);
-    }, 260);
+    el.click();
+    setTimeout(function () { el.classList.remove('harness-touch'); }, 700);
   }
 
   global.addEventListener('message', function (e) {
@@ -139,6 +162,7 @@
     if (d.type === 'state' || d.type === 'time' || d.type === 'variant') apply(d.type, d.value);
     if (d.type === 'picking') setPicking(d.value);
     if (d.type === 'scroll') scrollTo(d.value);
+    if (d.type === 'aim') aimAt(d.value);
     if (d.type === 'click') clickOn(d.value);
   });
 

@@ -19,10 +19,11 @@ window.HARNESS_CONFIG = {
      rather than "Acme". */
   title: '',
 
-  /* The qualifier after the word "Prototype" in the chrome, which is always
-     there. Say what is simulated in one clause - depth belongs on the
-     disclosure screen, not in this line. */
-  boundary: 'not a live service. Data and some interactions are simulated.',
+  /* One clause on the disclosure screen, under its title. The chrome carries
+     the PROTOTYPE badge and nothing else: the same sentence in the top bar was
+     a third statement of something the badge already implies and the
+     disclosure screen already says properly. */
+  boundary: 'Not a live service. Data and some interactions are simulated.',
 
   /* ─────────────────────────────────────────────────────────────────────
      Screens. First one loads on open.

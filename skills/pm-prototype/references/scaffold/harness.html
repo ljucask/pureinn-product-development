@@ -65,7 +65,7 @@
 
     --font: "Inter", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
     --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
-    --rail: 282px; --nav: 318px;
+    --rail: 308px; --nav: 318px;
   }
   @media (prefers-reduced-motion: reduce) {
     :root { --fast: 0ms; --med: 0ms; --slow: 0ms; }
@@ -363,27 +363,33 @@
   .nav__x svg { width: 12px; height: 12px; }
   .nav__i {
     position: relative; display: grid; grid-template-columns: 30px 1fr; align-items: start;
-    width: 100%; padding: 11px 13px 12px 13px; margin-bottom: 3px;
+    width: 100%; padding: 11px 34px 12px 13px; margin-bottom: 3px;
     background: none; border: 0; border-radius: 13px;
     text-align: left; cursor: pointer;
     transition: background var(--fast) var(--ease);
   }
   .nav__i:hover { background: rgba(255,255,255,.055); }
   .nav__i.is-cursor { background: rgba(255,255,255,.075); }
-  .nav__i[aria-current="true"] { background: rgba(255,255,255,.09); }
-  .nav__i[aria-current="true"]::before {
-    content: ""; position: absolute; left: 5px; top: 15px; bottom: 15px; width: 3px;
-    border-radius: 3px; background: var(--grad-45);
+  .nav__i[aria-current="true"] {
+    background: linear-gradient(135deg, rgba(237,109,87,.92), rgba(255,157,92,.86));
+    box-shadow: 0 8px 22px -10px rgba(237,109,87,.9);
   }
+  .nav__no {
+    position: absolute; top: 13px; right: 13px;
+    font: 600 10px/1 var(--mono); color: #6d7482;
+  }
+  .nav__i[aria-current="true"] .nav__no { color: rgba(255,255,255,.8); }
   .nav__ico {
     grid-row: 1 / span 3; align-self: start; margin-top: 1px;
     width: 24px; height: 24px; display: grid; place-items: center;
     border-radius: 8px; background: rgba(255,255,255,.07); color: #97a0af;
   }
   .nav__ico svg { width: 14px; height: 14px; }
-  .nav__i[aria-current="true"] .nav__ico { background: rgba(237,109,87,.18); color: #ff9d81; }
+  .nav__i[aria-current="true"] .nav__ico { background: rgba(255,255,255,.2); color: #fff; }
   .nav__t { display: block; font-size: 13px; font-weight: 620; color: #eef0f4; letter-spacing: -.005em; }
   .nav__i[aria-current="true"] .nav__t { color: #fff; }
+  .nav__i[aria-current="true"] .nav__d { color: rgba(255,255,255,.82); }
+  .nav__i[aria-current="true"] .nav__tag { background: rgba(255,255,255,.22); color: #fff; }
   .nav__d { display: block; margin-top: 4px; font-size: 11.5px; line-height: 1.5; color: #868e9c; }
   .nav__tag {
     display: inline-block; justify-self: start; margin-top: 7px; padding: 3px 7px; border-radius: 6px;
@@ -421,6 +427,18 @@
 
   /* ══ annotations ══ */
   .annots { position: absolute; inset: 0; pointer-events: none; z-index: 4; }
+  /* The cards sit in a column that scrolls on its own. Absolutely positioned
+     they ran off the bottom of the window as soon as a few notes existed, and
+     the one being written was the first to go. */
+  .rail {
+    position: absolute; top: 0; bottom: 0;
+    width: calc(var(--rail) - 50px);
+    display: flex; flex-direction: column; gap: 10px;
+    padding: 4px 7px 10px; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain;
+    pointer-events: auto; scrollbar-width: thin;
+  }
+  .rail::-webkit-scrollbar { width: 6px; }
+  .rail::-webkit-scrollbar-thumb { background: rgba(22,24,29,.18); border-radius: 3px; }
   .annots svg.lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
   .annots path {
     fill: none; stroke: var(--co); stroke-width: 1.5; stroke-linecap: round; opacity: .55;
@@ -444,8 +462,7 @@
   @keyframes pop { from { opacity: 0; transform: scale(.4); } }
 
   .note {
-    position: absolute; pointer-events: auto;
-    width: calc(var(--rail) - 36px);
+    flex: 0 0 auto; pointer-events: auto;
     display: flex; gap: 10px; align-items: flex-start; padding: 13px;
     background: var(--glass-lit);
     backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
@@ -484,15 +501,21 @@
   /* A rail section header. Without one, an unpinned note reads as a pin whose
      line failed to draw - the reviewer cannot tell what it is attached to. */
   .rail__h {
-    position: absolute; width: calc(var(--rail) - 36px);
+    flex: 0 0 auto;
     display: flex; align-items: center; gap: 8px;
-    padding: 0 2px 0 3px;
+    padding: 5px 6px 5px 5px; border: 0; border-radius: 9px;
+    background: none; cursor: pointer;
     font: 700 8.5px/1 var(--mono); letter-spacing: .13em; text-transform: uppercase;
-    color: var(--ink-3); pointer-events: none;
+    color: var(--ink-3); text-align: left;
     animation: slide var(--med) var(--ease) backwards;
+    transition: background var(--fast) var(--ease), color var(--fast) var(--ease);
   }
-  .rail__h::after { content: ""; flex: 1 1 auto; height: 1px; background: var(--glass-ring); }
+  .rail__h:hover { background: rgba(22,24,29,.05); color: var(--ink-2); }
+  .rail__h span { flex: 1 1 auto; }
+  .rail__h b { font: 600 9px/1 var(--mono); opacity: .75; }
   .rail__h svg { width: 12px; height: 12px; opacity: .7; }
+  .rail__h svg:last-child { width: 10px; height: 10px; transition: transform var(--fast) var(--ease); }
+  .rail__h.is-shut svg:last-child { transform: rotate(-90deg); }
 
   /* an unpinned note carries a scope glyph where a pinned one carries a number */
   .note__s {
@@ -529,8 +552,8 @@
     font: 600 10.5px/1 var(--font); cursor: pointer;
   }
   .note__act:hover { background: rgba(22,24,29,.1); color: var(--ink); }
-  .note__add { display: flex; align-items: center; gap: 8px; margin-top: 11px; }
-  .note__add .sev { margin-right: auto; }
+  .note__add { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; margin-top: 11px; }
+  .note__save { margin-left: auto; }
   .note__save {
     padding: 6px 12px; border: 0; border-radius: 8px; white-space: nowrap;
     background: var(--grad-45); color: #fff;
@@ -610,6 +633,12 @@
     font: inherit; color: var(--ink); line-height: 1.55;
   }
   .note__edit::placeholder { color: var(--ink-3); }
+  .note__who-in {
+    width: 100%; height: 28px; margin: 2px 0 6px; padding: 0 9px;
+    background: rgba(22,24,29,.045); border: 0; border-radius: 7px;
+    font: 600 11.5px/1 var(--font); color: var(--ink);
+  }
+  .note__who-in:focus { outline: 0; box-shadow: 0 0 0 1.5px #3d7dd8; background: #fff; }
   .note__meta { display: block; margin-top: 7px; font-size: 10.5px; color: var(--ink-3); }
 
   /* a collapsed note keeps its pin: nothing on a shared link can lose its
@@ -789,6 +818,27 @@
   }
   .say[hidden] { display: none; }
 
+  /* The presented pointer. A click with no visible approach reads as a glitch;
+     seeing the cursor travel is what makes a run look like someone using it. */
+  .ghost {
+    position: fixed; left: 0; top: 0; z-index: 31;
+    width: 26px; height: 26px; margin: -3px 0 0 -3px;
+    opacity: 0; pointer-events: none;
+    transition: transform 900ms cubic-bezier(.32,.72,.24,1), opacity var(--med) var(--ease);
+  }
+  .ghost svg { width: 26px; height: 26px; filter: drop-shadow(0 3px 7px rgba(22,24,29,.45)); }
+  body.present .ghost.is-on { opacity: 1; }
+  .ghost::after {
+    content: ""; position: absolute; left: 2px; top: 2px; width: 14px; height: 14px;
+    border-radius: 50%; background: rgba(237,109,87,.5);
+    transform: scale(0); opacity: 0;
+  }
+  .ghost.is-tap::after { animation: tap 620ms var(--ease); }
+  @keyframes tap {
+    0%   { transform: scale(.2); opacity: .9; }
+    100% { transform: scale(3.4); opacity: 0; }
+  }
+
   /* ══ toast ══ */
   .toast {
     position: fixed; left: 50%; bottom: 84px; transform: translate(-50%, 10px);
@@ -915,7 +965,7 @@
       <iframe id="frame" title="prototype"></iframe>
       <div class="grid" data-grid></div>
     </div>
-    <div class="annots" data-annots><svg class="lines" data-lines></svg></div>
+    <div class="annots" data-annots><svg class="lines" data-lines></svg><div class="rail" data-rail></div></div>
   </div>
 
   <div class="cmpset" data-compare>
@@ -934,7 +984,6 @@
   <span class="sep"></span>
   <span class="badge"><i class="badge__dot"></i><span class="badge__t">Prototype</span></span>
   <span class="title" data-title hidden></span>
-  <span class="disclose__text" data-boundary>not a live service</span>
 </div>
 
 <aside class="nav" id="nav" data-nav aria-label="Screens in this prototype">
@@ -1041,6 +1090,9 @@
   </div>
 </div>
 
+<div class="ghost" data-ghost>
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 2.5l13.2 7.6-5.7 1.3-2.2 5.6z" fill="#fff" stroke="#14161b" stroke-width="1.5" stroke-linejoin="round"/></svg>
+</div>
 <div class="show__bar" data-show-bar></div>
 <div class="say" data-say hidden></div>
 <div class="show" data-show>
@@ -1086,6 +1138,7 @@
   var mockEl  = document.querySelector('[data-mock]');
   var stage   = document.querySelector('.stage');
   var annotEl = document.querySelector('[data-annots]');
+  var railEl  = document.querySelector('[data-rail]');
   var svg     = document.querySelector('[data-lines]');
   var toastEl = document.querySelector('[data-toast]');
 
@@ -1131,6 +1184,7 @@
     try { localStorage.setItem(KEY + ':' + k, JSON.stringify(v)); } catch (e) { /* private mode */ }
   }
   var collapsed = readStore('collapsed', {});
+  var folded    = readStore('folded', {});
 
   /* A draft that survived a reload would hold the whole layer in writing mode
      for ever, and an empty one is not a comment at all. So: empty drafts are
@@ -1143,7 +1197,6 @@
     return cm;
   });
 
-  if (cfg.boundary) document.querySelector('[data-boundary]').textContent = cfg.boundary;
   if (cfg.title || cfg.name) {
     var titleEl = document.querySelector('[data-title]');
     titleEl.textContent = cfg.title || cfg.name;
@@ -1203,6 +1256,11 @@
     var b = document.createElement('button');
     b.type = 'button'; b.className = 'nav__i';
     b.setAttribute('aria-current', String(i === startScreen));
+
+    var no = document.createElement('span');
+    no.className = 'nav__no';
+    no.textContent = (i + 1) < 10 ? '0' + (i + 1) : String(i + 1);
+    b.appendChild(no);
 
     var ic = document.createElement('span');
     ic.className = 'nav__ico';
@@ -1615,7 +1673,10 @@
         out.push({ a: a, id: '*#' + i, scope: 'prototype' });
       });
     }
-    var order = { element: 0, screen: 1, prototype: 2 };
+    /* Loose notes lead the rail and pinned ones follow. Put them last and every
+       comment a reviewer adds shoves them further down the screen, so the two
+       headers never sit still long enough to be read as headers. */
+    var order = { screen: 0, prototype: 1, element: 2 };
     return out.sort(function (x, y) { return order[x.scope] - order[y.scope]; });
   }
 
@@ -1628,9 +1689,37 @@
     return comments.some(function (cm) { return cm.draft || cm.editing; });
   }
 
+  var pairs = [];
+
+  /* The curves are drawn after the cards have been laid out, and redrawn when
+     the rail is scrolled - the card end of a line moves with it. */
+  function drawLines() {
+    svg.innerHTML = '';
+    var wrapBox = wrap.getBoundingClientRect();
+    var railBox = railEl.getBoundingClientRect();
+    pairs.forEach(function (pr) {
+      var nb = pr.note.getBoundingClientRect();
+      var ny = nb.top + nb.height / 2 - wrapBox.top;
+      var visible = nb.bottom > railBox.top + 4 && nb.top < railBox.bottom - 4;
+      if (!visible) { pr.path = null; return; }
+      var railX = railBox.left - wrapBox.left;
+      var mid = pr.px + (railX - pr.px) / 2;
+      var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      // control points at the horizontal midpoint. Deliberately not scaled by
+      // the vertical gap: any reach larger than half the horizontal span puts
+      // a control point past the far end and the curve ties itself in a knot.
+      path.setAttribute('d', 'M' + pr.px + ' ' + pr.py + ' C' + mid + ' ' + pr.py + ' ' + mid + ' ' + ny + ' ' + railX + ' ' + ny);
+      if (pr.active) path.classList.add('is-active');
+      svg.appendChild(path);
+      pr.path = path;
+    });
+  }
+
   function drawAnnots() {
     if (document.body.classList.contains('bare')) return;
-    annotEl.querySelectorAll('.note, .pin, .rail__h').forEach(function (n) { n.remove(); });
+    annotEl.querySelectorAll('.pin').forEach(function (n) { n.remove(); });
+    railEl.innerHTML = '';
+    pairs = [];
     svg.innerHTML = '';
     if ((!labelsOn && !commentsOn) || !frameReady) { document.body.classList.remove('has-notes'); return; }
 
@@ -1661,7 +1750,7 @@
     var frameBox = frame.getBoundingClientRect();
     var wrapBox = wrap.getBoundingClientRect();
     var railX = wrapBox.width + 20;
-    var stack = 4;
+    railEl.style.left = railX + 'px';
     var num = 0;
     var seen = {};
 
@@ -1675,15 +1764,23 @@
       /* section header, once per scope */
       if (entry.scope !== 'element' && !seen[entry.scope]) {
         seen[entry.scope] = true;
-        var h = document.createElement('div');
-        h.className = 'rail__h';
-        h.innerHTML = icon(HEADERS[entry.scope].i) + '<span></span>';
+        var shut = !!folded[entry.scope];
+        var n = list.filter(function (o) { return o.scope === entry.scope; }).length;
+        var h = document.createElement('button');
+        h.type = 'button';
+        h.className = 'rail__h' + (shut ? ' is-shut' : '');
+        h.innerHTML = icon(HEADERS[entry.scope].i) + '<span></span><b></b>' + icon('i-chevron');
         h.querySelector('span').textContent = HEADERS[entry.scope].t;
-        annotEl.appendChild(h);
-        h.style.left = railX + 'px';
-        h.style.top = (stack + 8) + 'px';
-        stack = stack + 8 + h.offsetHeight + 9;
+        h.querySelector('b').textContent = n;
+        h.title = (shut ? 'Show' : 'Hide') + ' these ' + n;
+        h.addEventListener('click', function () {
+          folded[entry.scope] = !folded[entry.scope];
+          writeStore('folded', folded);
+          drawAnnots();
+        });
+        railEl.appendChild(h);
       }
+      if (entry.scope !== 'element' && folded[entry.scope]) return;
 
       var target = null;
       if (entry.scope === 'element') {
@@ -1694,8 +1791,14 @@
       var px, py;
       if (target) {
         var t = target.getBoundingClientRect();
-        px = Math.min(t.right + (frameBox.left - wrapBox.left), frameBox.width - 14);
-        py = t.top + t.height / 2 + (frameBox.top - wrapBox.top);
+        /* A comment carries the fraction of the element the reviewer actually
+           clicked, so the pin sits on the word they meant. A declared note has
+           no such point and parks at the element's right edge. */
+        var hasPoint = cm && typeof cm.rx === 'number';
+        px = hasPoint ? t.left + t.width * cm.rx : t.right;
+        py = hasPoint ? t.top + t.height * cm.ry : t.top + t.height / 2;
+        px = Math.min(px + (frameBox.left - wrapBox.left), frameBox.width - 14);
+        py = py + (frameBox.top - wrapBox.top);
       }
 
       /* collapsed: the pin stays, the card is gone until the pin is clicked */
@@ -1769,17 +1872,15 @@
       });
 
       note.appendChild(badge); note.appendChild(body); note.appendChild(x);
-      annotEl.appendChild(note);
-
-      var top = stack;
-      note.style.left = railX + 'px';
-      note.style.top = top + 'px';
-      stack = top + note.offsetHeight + 10;
+      railEl.appendChild(note);
 
       if (cm && cm.fresh) {
         cm.fresh = false;
-        var field = note.querySelector('.note__edit');
-        if (field) field.focus();
+        requestAnimationFrame(function () {
+          note.scrollIntoView({ block: 'nearest' });
+          var field = note.querySelector('.note__who-in') || note.querySelector('.note__edit');
+          if (field) field.focus();
+        });
       }
 
       if (!target) return;
@@ -1791,32 +1892,42 @@
       pin.style.animationDelay = (n * 45) + 'ms';
       annotEl.appendChild(pin);
 
-      var ny = top + note.offsetHeight / 2;
-      // control points at the horizontal midpoint. Deliberately not scaled by
-      // the vertical gap: any reach larger than half the horizontal span puts
-      // a control point past the far end and the curve ties itself in a knot.
-      var mid = px + (railX - px) / 2;
-      var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-      path.setAttribute('d', 'M' + px + ' ' + py + ' C' + mid + ' ' + py + ' ' + mid + ' ' + ny + ' ' + railX + ' ' + ny);
-      if (active) path.classList.add('is-active');
-      svg.appendChild(path);
+      var pr = { pin: pin, note: note, px: px, py: py, active: active, path: null };
+      pairs.push(pr);
 
       function lit(on) {
         note.classList.toggle('is-lit', on);
         pin.classList.toggle('is-lit', on);
-        path.classList.toggle('is-lit', on);
+        if (pr.path) pr.path.classList.toggle('is-lit', on);
       }
       note.addEventListener('mouseenter', function () { lit(true); });
       note.addEventListener('mouseleave', function () { lit(false); });
       pin.addEventListener('mouseenter', function () { lit(true); });
       pin.addEventListener('mouseleave', function () { lit(false); });
     });
+
+    requestAnimationFrame(drawLines);
   }
 
   /* a comment is written, then committed. Left as a live textarea it is never
      finished - there is no moment where the reviewer knows it counted. */
   function renderComment(body, note, cm, active) {
     if (active) {
+      /* Review mode asks for a name up front, but most notes get written by the
+         author in an ordinary session where that card never appears. So the
+         first note asks, once, right where it is needed. */
+      if (!reviewerName) {
+        var who = document.createElement('input');
+        who.className = 'note__who-in'; who.type = 'text';
+        who.placeholder = 'Your name'; who.autocomplete = 'name';
+        who.addEventListener('input', function () { cm.who = who.value.trim(); });
+        who.addEventListener('change', function () {
+          reviewerName = who.value.trim();
+          if (reviewerName) writeStore('name', reviewerName);
+        });
+        body.appendChild(who);
+      }
+
       var ta = document.createElement('textarea');
       ta.className = 'note__edit'; ta.rows = 2;
       ta.placeholder = 'What did you want to say about this?';
@@ -1853,18 +1964,19 @@
       save.disabled = !(cm.text || '').trim();
       save.addEventListener('click', commit);
 
-      var kbd = document.createElement('span');
-      kbd.className = 'note__kbd'; kbd.textContent = 'Enter';
+      var sevLabel = document.createElement('span');
+      sevLabel.className = 'note__kbd'; sevLabel.textContent = 'Severity';
 
       var row = document.createElement('div');
       row.className = 'note__add';
-      row.appendChild(sev); row.appendChild(save); row.appendChild(kbd);
+      row.appendChild(sevLabel); row.appendChild(sev); row.appendChild(save);
       body.appendChild(row);
 
       function commit() {
         if (!(cm.text || '').trim()) return;
         cm.draft = false; cm.editing = false;
-        cm.who = reviewerName || cm.who || '';
+        cm.who = cm.who || reviewerName || '';
+        if (!reviewerName && cm.who) { reviewerName = cm.who; writeStore('name', reviewerName); }
         cm.at = new Date().toISOString();
         writeStore('comments', comments);
         paintSend();
@@ -1933,7 +2045,7 @@
     if (e.key === 'Escape' && picking) setPicking(false);
   });
 
-  function placeComment(selector, label) {
+  function placeComment(d) {
     setPicking(false);
     if (!commentsOn) {
       commentsOn = true;
@@ -1944,8 +2056,10 @@
       screen: current.screen,
       state: current.state,
       variant: current.variant,
-      selector: selector || null,
-      anchor: label || '',
+      selector: d.selector || null,
+      rx: typeof d.rx === 'number' ? d.rx : undefined,
+      ry: typeof d.ry === 'number' ? d.ry : undefined,
+      anchor: d.label || '',
       who: reviewerName,
       severity: 'normal',
       text: '',
@@ -1955,7 +2069,7 @@
     });
     writeStore('comments', comments);
     paintSend();
-    record('harness:comment-placed', label || '');
+    record('harness:comment-placed', d.label || '');
     drawAnnots();
   }
 
@@ -2163,6 +2277,7 @@
       'p.n{color:#7c838f;font-size:12.5px}' +
       '</style></head><body>' +
       '<h1>' + esc(cfg.title || cfg.name || 'Prototype') + ' - what is real</h1>' +
+      (cfg.boundary ? '<p class="n">' + esc(cfg.boundary) + '</p>' : '') +
       '<div class="pair"><div class="yes"><b>This prototype shows</b>' + esc(d.proves || '-') + '</div>' +
       '<div><b>It does not show</b>' + esc(d.doesNotProve || '-') + '</div></div>' +
       (d.classification ? '<h2>Classification</h2><p>' + esc(d.classification) +
@@ -2279,7 +2394,7 @@
     if (st.variant && variants.indexOf(st.variant) > -1) { current.variant = st.variant; send('variant', st.variant); }
 
     showTitle.textContent = screens[screenIndex(current.screen)].label;
-    showStep.textContent = (stepAt + 1) + '/' + all.length;
+    showStep.textContent = (stepAt + 1) + '/' + all.length + (tour && tour.length ? ' · tour' : ' · screens');
     sayEl.hidden = !st.say;
     if (st.say) sayEl.textContent = st.say;
 
@@ -2308,10 +2423,35 @@
       current.time = times[current.screen] = st.time;
       scrub.value = st.time; paintScrub(); send('time', st.time);
     }
-    if (st.click) setTimeout(function () { send('click', st.click); }, Math.min(1200, hold / 3));
+    if (st.click) {
+      // aim first: the artifact reports where the target is, the pointer travels
+      // there, and only then does the click fire
+      pendingClick = st.click;
+      setTimeout(function () { send('aim', st.click); }, Math.min(700, hold / 5));
+    } else {
+      ghost.classList.remove('is-on');
+    }
 
     clearTimeout(stepTimer);
     if (playing) stepTimer = setTimeout(function () { applyStep(stepAt + 1); }, hold);
+  }
+
+  var ghost = document.querySelector('[data-ghost]');
+  var pendingClick = null;
+
+  function aimed(d) {
+    if (!presenting || !d.found || d.selector !== pendingClick) { pendingClick = null; return; }
+    var box = frame.getBoundingClientRect();
+    ghost.classList.add('is-on');
+    ghost.style.transform = 'translate(' + (box.left + d.x) + 'px,' + (box.top + d.y) + 'px)';
+    setTimeout(function () {
+      if (!presenting) return;
+      ghost.classList.add('is-tap');
+      send('click', pendingClick);
+      record('harness:present-click', pendingClick);
+      pendingClick = null;
+      setTimeout(function () { ghost.classList.remove('is-tap'); }, 700);
+    }, 950);
   }
 
   function setPlaying(on) {
@@ -2335,6 +2475,8 @@
     } else {
       clearTimeout(stepTimer); clearInterval(sweepTimer);
       playing = false;
+      pendingClick = null;
+      ghost.classList.remove('is-on', 'is-tap');
       showBar.style.width = '0';
       sayEl.hidden = true;
       if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(function () {});
@@ -2343,6 +2485,9 @@
   }
 
   document.querySelector('[data-present]').addEventListener('click', function () { present(true); });
+  document.querySelector('[data-present]').title = tour && tour.length
+    ? 'Play the declared tour - ' + tour.length + ' steps'
+    : 'Play every screen in turn. Declare a tour in the config for a scripted run';
   document.querySelector('[data-show-exit]').addEventListener('click', function () { present(false); });
   document.querySelector('[data-show-play]').addEventListener('click', function () { setPlaying(!playing); });
   document.querySelector('[data-show-prev]').addEventListener('click', function () { setPlaying(false); applyStep(stepAt - 1); });
@@ -2413,7 +2558,8 @@
       requestAnimationFrame(drawAnnots);
     }
     if (d.type === 'event') { events.push(d.entry); countEvents(); }
-    if (d.type === 'pick') { placeComment(d.selector, d.label); }
+    if (d.type === 'pick') { placeComment(d); }
+    if (d.type === 'point') { aimed(d); }
   });
 
   function load() {
@@ -2447,6 +2593,7 @@
     drawAnnots();
   });
   stage.addEventListener('scroll', drawAnnots);
+  document.querySelector('[data-rail]').addEventListener('scroll', drawLines);
 
   load();
 })();

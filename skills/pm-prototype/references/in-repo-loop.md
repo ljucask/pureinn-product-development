@@ -47,7 +47,7 @@ It also carries a handful of things the contract does not require but a reviewer
 Two of those are worth a sentence, because they are easy to build wrongly:
 
 - **Side by side** must render each frame at its **real width** and scale it down. Shrinking one iframe to a narrow box shows the same layout smaller; it does not fire the artifact's own media queries, which is the entire question being asked.
-- **Presentation** may drive the artifact, but it must not **invent input**. Advancing screens, sweeping time and scrolling are the shell asking for things the artifact already does. A click belongs in a declared tour, ringed before it fires - a demo that improvises interaction shows an audience behaviour the prototype was never claimed to have.
+- **Presentation** may drive the artifact, but it must not **invent input**. Advancing screens, sweeping time and scrolling are the shell asking for things the artifact already does. A click belongs in a declared tour, ringed before it fires - a demo that improvises interaction shows an audience behaviour the prototype was never claimed to have. Show a **pointer travelling to the target** before it fires: a click with no visible approach reads as a glitch rather than as someone using the thing.
 
 ### 1. State switcher
 
@@ -98,6 +98,8 @@ One geometry - an **anchor to an element**, a **visible connector**, a body of t
 | **Comment** | a reviewer | a remark left where it happened, at runtime |
 
 Building three mechanisms would be duplicated work and three inconsistent surfaces. Letting them share a look is worse: a reviewer cannot tell an admission from a caption.
+
+**A note anchors where the reviewer pointed, not at the element's edge.** They aim at a word; a pin parked at the bounding box points at the right thing in the wrong place. Store the position as a fraction of the element, so it survives re-layout.
 
 **A disclosure note carries what the element would be in production**, not only what it is here. That pair is the contract - and it is what the disclosure screen is assembled from, so the same list is never written twice.
 

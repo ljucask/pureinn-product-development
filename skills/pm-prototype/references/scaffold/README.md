@@ -60,7 +60,7 @@ It also stays **visibly bounded**: the canvas remains behind it, the artifact ke
 
 ## The screen panel
 
-Screens live in a slide-out panel on the left, dark against the light canvas, opened from the button in the top-left island. Each entry carries its **name and one sentence** saying which part of the flow it is - `desc` in the config.
+Screens live in a slide-out panel on the left, dark against the light canvas, opened by the `Screens` button at the far left of the top bar - which stays lit while it is open, with the current screen named beside it. Opening it **moves** the prototype rather than covering it. Each row carries its number on the right, and the open screen is a filled accent block rather than a marker beside a dark one. Each entry carries its **name and one sentence** saying which part of the flow it is - `desc` in the config.
 
 That sentence is the reason it is a panel and not a dropdown. A reviewer who has to work out what *"02 Detail"* means is navigating by trial, and the first thing lost is the order the showing was meant to follow. The generated disclosure screen is tagged in the list, so nobody has to hunt for it.
 
@@ -80,11 +80,15 @@ The four disclosure kinds are the four categories that pass the test *"could som
 
 Every disclosure note carries `real:`, what the element would be in production. **The "What is real" screen is generated from those notes**, so the list is never maintained twice and cannot drift from the screens. Declare it as a screen entry with `disclosure: true` and no `src`.
 
+**A note lands where you clicked**, not at the element's edge - the position is kept as a fraction of the element so it survives re-layout. Notes without an anchor are grouped at the **top** of the rail under `About this screen` and `About this prototype`, each collapsible: put them last and every comment added shoves them further down, so they never sit still long enough to read as headers.
+
 **Closing a card collapses it to its pin; it does not delete it.** Clicking the pin brings it back. Only the `Notes` toggle removes the layer, and that state is not carried in a shared link - so no link can hand on a screen where an invented number has lost its label.
 
 A selector that matches nothing renders as an orphan card with a warning instead of vanishing, so a renamed class is visible rather than silent.
 
 ## Getting feedback back
+
+The reviewer's name is asked in the review brief, and - because most notes get written in an ordinary session where that card never appears - once more on the first note, inline. Severity is a labelled row of three dots: blue, orange, red.
 
 `Add note` puts the artifact into comment mode: the next click inside it places a pin and opens an empty card. The shell cannot see that click on its own, so the client forwards it together with a selector - nothing is injected into the page but a cursor.
 
@@ -101,6 +105,8 @@ Reviewers never see each other's comments. For an async test with real users tha
 | **Grid** | cycles off → 8px → 64px. 8 asks whether an element sits on the rhythm, 64 whether the layout does. Drawn in the shell over the frame; the document under review is never touched |
 | **Side by side** | the same screen at 1280 / 834 / 390 at once, each rendered at its **real width** and then scaled to fit, so the artifact's own media queries fire. Annotations are anchored to the single frame, so they step aside here and say why |
 | **Present** | full screen, chrome down to prev / pause / next, each slot sweeping that screen's time across its range and scrolling the page through its own height |
+
+A **pointer travels to each declared target and taps it**, so a run reads as someone using the prototype rather than as screens changing on their own.
 
 **A presentation may drive the artifact; it must not invent input.** With no `tour` it walks the screens in order at `present.hold` ms each. Declare a `tour` when the demo has a story, and each step says exactly what is shown - `screen`, `state`, `variant`, `time`, `scroll`, `click`, `say`, `hold`. `click` is the only thing that touches the artifact, it is declared rather than guessed, and the element is ringed before it fires. Arrow keys step, space pauses, Escape exits.
 
@@ -127,6 +133,8 @@ The contract requires them; the kit cannot supply them:
 
 ## Design intent
 
+The top bar carries the `PROTOTYPE` badge and the name, and no boundary sentence: the badge already implies it and the disclosure screen says it properly, so a third statement in the chrome was noise.
+
 The chrome floats over a dotted canvas as translucent glass islands - the language every current prototyping tool speaks - with Pureinn's live coral-to-gold gradient as the accent. Three islands, so the disclosure is never mixed into a toolbar: it is not a control and must not look like one.
 
 Two things were deliberately avoided. **Warm cream with terracotta**, because this framework's own design research names that exact combination as a generic 2026 AI-default cluster, and a file shipped as a reference should not look generated. And **anything left native** - a stock `<select>` is the loudest "unfinished" signal in a tool like this, so the screen picker is a real menu with keyboard navigation.
@@ -147,6 +155,8 @@ The second round added: per-screen time appearing, disappearing and keeping each
 
 The third: the screen panel with its descriptions and keyboard navigation, and the viewport transition - sampled mid-flight at 427px between a 1106px desktop and a 390px phone, with the annotations re-anchoring correctly once it settled.
 
+The fifth: a note landing on the exact spot clicked rather than the element's edge, the name asked inline on the first note, the rail scrolling with its curves redrawn, and the presented pointer travelling to a target and tapping it.
+
 The fourth: note scopes and their rail headers, a comment written and committed with a name and a severity, the return sheet, the grid's three steps, side by side at 53% with all three widths measured, and a four-step tour played to the end - states switching, captions changing, time sweeping and the progress bar filling.
 
 Bugs found that way, none of which a reading of the code would have caught:
@@ -159,5 +169,6 @@ Bugs found that way, none of which a reading of the code would have caught:
 - the dropdown's tick was an inline `<svg>` with no width, so it rendered at its intrinsic size and spilled across the menu
 - a draft comment survived a reload and held the whole annotation layer in writing mode for ever
 - the side-by-side container and the body-state class were both called `compare`, so `.compare { display: none }` matched `<body>` and blanked the entire document
+- the rail positioned its cards absolutely, so once a few notes existed the newest ran off the bottom of the window - and the one being written was the first to go
 - a cross-origin artifact reserved the annotation rail and then drew nothing into it, because the document was read only after the rail was measured
 - `.seg` and `.grp` set their own `display`, which beats the browser's rule for `[hidden]` - hiding the variant group did nothing at all
