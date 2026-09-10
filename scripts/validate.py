@@ -252,6 +252,20 @@ def check_command(name, path, rep):
     check_common_body(where, text, rep)
 
 
+def check_skill_references(name, skills_dir, rep):
+    """A skill may split detail into skills/<name>/references/*.md (pm-prototype,
+    pm-stripe, pm-diagrams). That is still shipped skill body - it must not escape
+    the content checks just because it moved out of SKILL.md."""
+    refs_dir = os.path.join(skills_dir, name, "references")
+    if not os.path.isdir(refs_dir):
+        return
+    for fname in sorted(os.listdir(refs_dir)):
+        if not fname.endswith(".md"):
+            continue
+        path = os.path.join(refs_dir, fname)
+        check_common_body(f"skills/{name}/references/{fname}", read(path), rep)
+
+
 def check_command_references(name, commands_dir, rep):
     """A command may split its steps into commands/<name>/references/*.md (see
     commands/pureinn). That content is still shipped command body - it must not
@@ -400,6 +414,7 @@ def main():
             rep.err(f"skills/{name}", "directory has no SKILL.md")
             continue
         check_skill(name, path, existing, rep)
+        check_skill_references(name, skills_dir, rep)
 
     for name in command_names:
         path = os.path.join(commands_dir, name, "COMMAND.md")
