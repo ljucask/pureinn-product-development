@@ -35,6 +35,7 @@ This file is the flow. Detail that only one path needs lives in `references/` ne
 | `spec-artifact.md` | Step 5 - the prototype spec's shape (universal, tool-agnostic core) | compiling the spec |
 | `external-tools.md` | Step 4 - tool selection · Lovable construction rules and operational tactics · Step 6 - handoff | the prototype is built by an external tool |
 | `way-in.md` | Step 1 - getting from a raw idea to something buildable, and deciding whether code is the right test at all | the scope is a thought rather than a named chunk |
+| `hypotheses.md` | Steps 2 and 8 - what makes a hypothesis testable, what thresholds are defensible, and the four verdict states | writing the success criterion, and recording the result |
 | `audience-depth.md` | Step 3b - who it is for, how deep that makes it, and which path builds it | **every run**, right after ingestion |
 | `in-repo-loop.md` | The harness shell contract, the rules of the iteration loop, stop and restart signals, classification | the prototype is built here, by a coding agent |
 | `scaffold/` | The harness itself - copy it into the prototype's build folder | on the in-repo path |
@@ -151,7 +152,9 @@ That sequence can legitimately end with *"the cheapest test of your riskiest bel
    Ísť rovno na /pm-feature-design (build), alebo napriek tomu prototypovať?
    ```
 
-3. **Define the success criterion up front.** One sentence: "The prototype succeeds if [observable signal] - otherwise we [change / halt]." This becomes the anchor of both the spec and the result capture.
+3. **Define the success criterion up front, as a hypothesis that can fail.** Read `references/hypotheses.md` § 1 and write it in the formulation there - because, we believe, this prototype represents / does not represent, we will measure, kill-iterate-persevere criteria including the ambiguous zone, and the rival explanation.
+
+   The short form - *"the prototype succeeds if [observable signal], otherwise we [change / halt]"* - is the minimum, and it is only usable when the signal is **behaviour rather than opinion** and the threshold is written down before anyone sees a result. A threshold agreed after seeing the data is a rationalisation, not a threshold.
 
    If `references/way-in.md` ran, its **test contract already is this criterion** - carry it forward rather than writing a second one. Two success criteria for one prototype means the result can always be narrated against whichever one it happened to clear.
 
@@ -229,25 +232,37 @@ When the user comes back with an outcome, operate in **delta mode** - do not rew
 1. **Capture what happened:** what was built, what was tested, with whom (if users saw it).
 2. **Verdict against the success criterion:**
 
+**Read `references/hypotheses.md` § 4 before writing the verdict.** The four states are not a relabelling of pass/fail - the third one exists to stop a broken test being recorded as a verdict on the idea.
+
 ```markdown
 ## Result
 
 **Date:** [YYYY-MM-DD]
-**Built:** [what the prototype ended up being - URL]
-**Tested with:** [users / stakeholders / self]
+**Built:** [what the prototype ended up being - URL or folder]
+**Audience:** [who it was actually shown to]
+**Tested with:** [n, and who they were - "self" is a valid and important answer]
 
-### Verdict
-[ ] Validated - success criterion met → proceed to real build
-[ ] Partially validated - [what held, what did not] → adjust before build
-[ ] Invalidated - [what broke the assumption] → halt / rethink
+### Verdict - one of four, never "validated"
+[ ] Supported within scope - cleared the precommitted bar, for [population / context / represented dimension], with [stated uncertainty]
+[ ] Refuted within scope - crossed the negative threshold, rival explanations checked by [control]
+[ ] Prototype or study failure - the instrument did not expose the hypothesis. **Belief in the product is unchanged**
+[ ] Inconclusive - fell in the ambiguous zone, or too weak for this decision
 
-**What we learned:** [the actual signal]
+**Where it failed, if it did:** [study instrument / representation / interaction design / value proposition / feasibility-viability - the failure tree in references/hypotheses.md § 4]
+
+**What we observed:** [behaviour, not opinion]
+**What we did not test:** [the excluded dimensions named in the hypothesis]
+**Known distortions:** [demand effects if the maker moderated; staged behaviour; small n and the bound it actually supports]
 ```
 
-3. **Cascade** (surface, do not silently edit):
-   - Feature-scoped → update the Feature Card prototype reference (`Result: validated/invalidated`); if invalidated, flag before `pm-feature-design` / build.
-   - Hypothesis-linked → update the hypothesis register (`confirmed / refuted / new signal`); recommend `/pm-hypotheses`.
+3. **Cascade** (surface, do not silently edit) - and only on the two states that carry evidence:
+   - Feature-scoped → update the Feature Card prototype reference with the state; if refuted, flag before `pm-feature-design` / build.
+   - Hypothesis-linked → update the hypothesis register; recommend `/pm-hypotheses`.
    - If the result changes scope or desirability → recommend re-checking `pm-prd` / `pm-features-list` / `pm-mvp-scope`.
+
+   **A prototype-or-study failure cascades nowhere.** It updates nothing downstream, because nothing was learned about the product - it says the instrument needs fixing and the test re-running. **Inconclusive** cascades nothing either; it schedules another round or a different method.
+
+4. **Before a kill is recorded, check it is defensible** - all five conditions in `references/hypotheses.md` § 4. Before that bar is met, "iterate the representation" is usually the more accurate conclusion than "the idea is wrong".
 
 ---
 
@@ -256,7 +271,7 @@ When the user comes back with an outcome, operate in **delta mode** - do not rew
 <!-- Claude reference only -->
 
 **Every prototype spec must have:**
-- [ ] Scope + intent + explicit success criterion
+- [ ] Scope + intent + a success criterion written as a hypothesis that can fail, with its ambiguous zone, before anyone sees a result
 - [ ] In-scope / out-of-scope (out-of-scope fence is non-negotiable)
 - [ ] Primary screen named + build-first
 - [ ] Flow narrative
@@ -272,6 +287,13 @@ When the user comes back with an outcome, operate in **delta mode** - do not rew
 - [ ] MCP warning shown before any live call
 - [ ] Feature Card prototype reference written (if feature-scoped) - reference only, spec sections untouched
 - [ ] Lovable target: Knowledge Base loaded (`set_project_knowledge`) + confirm-understanding gate passed before any code
+
+**Result mode:**
+- [ ] Verdict is one of the four states - never the word "validated"
+- [ ] A prototype-or-study failure cascaded nowhere
+- [ ] Small-n results reported as the bound they support, not as a percentage
+- [ ] Demand effects named when the maker was also the moderator
+- [ ] Synthetic-user output never recorded as user evidence
 
 **Never guessed (hard rule):**
 - Screens, flows, entities, fields, features, copy must come from real artifacts or user input - never fabricated

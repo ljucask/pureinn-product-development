@@ -19,8 +19,10 @@ Generate `[scope]-prototype-spec.md`. It has two layers:
 **Scope:** [feature FEAT-ID / initiative / product / slice]
 **User type (if scoped):** [type or "all"]
 **Intent:** [UX-flow / concept / feasibility / stakeholder]
+**Audience:** [primary audience from Step 3b - it decides what must be real]
 **Target tool:** [Lovable / v0 / Figma Make / manual]
-**Success criterion:** [The prototype succeeds if [observable signal], otherwise we [action].]
+**Success criterion:** [the hypothesis from Step 2, in the formulation in `references/hypotheses.md` § 1 - including the ambiguous zone and the rival explanation]
+**This prototype does not represent:** [the excluded dimensions - stated here so the result cannot quietly claim them]
 **Status:** Spec ready → awaiting build
 
 ---
@@ -64,9 +66,11 @@ Generate `[scope]-prototype-spec.md`. It has two layers:
 
 ## 6. Acceptance signals (maps to success criterion)
 
-[The concrete things a user/tester must be able to do or feel for the prototype to have answered the question.]
+[The concrete things a user or tester must be able to **do** for the prototype to have answered the question. Behaviour, not opinion - "found the source detail and corrected the group unaided", not "understood the screen".]
 
 - [ ] [signal]
+
+**Thresholds, written before anyone sees a result:** clears the bar at [x], crosses the negative threshold at [y], anything between is inconclusive and means another round rather than a decision.
 
 ---
 
