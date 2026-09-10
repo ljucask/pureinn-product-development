@@ -17,6 +17,11 @@
 
       python3 -m http.server 8000     then open  localhost:8000/harness.html
 
+  Design intent: the chrome frames the artifact and must never compete with it.
+  Fast-and-precise direction - Linear, Raycast, Stripe Dashboard - which means
+  restraint, one accent used sparingly, hairlines rather than borders, real
+  depth, and motion short enough to read as response rather than animation.
+
   Contract implemented here: states · fixtures (client) · time scrub · variants ·
   device presets · annotations · event log · disclosure line. See
   ../in-repo-loop.md for what each one is for.
@@ -28,148 +33,354 @@
 <title>Prototype harness</title>
 <style>
   :root {
-    --sh-bg: #16181c;
-    --sh-panel: #212429;
-    --sh-line: #31353c;
-    --sh-text: #e6e8ec;
-    --sh-dim: #9aa1ad;
-    --sh-accent: #5b8def;
-    --sh-warn: #e0a03a;
-    --sh-radius: 6px;
-    --sh-bar: 44px;
-    --sh-rail: 262px;   /* reserved for the annotation rail - notes must never force sideways scrolling */
+    /* surfaces - near-black, low chroma, so the artifact carries all the colour */
+    --sh-void:     #08090b;
+    --sh-chrome:   #101216;
+    --sh-raise:    #171a1f;
+    --sh-hair:     rgba(255,255,255,.07);
+    --sh-hair-lit: rgba(255,255,255,.14);
+
+    --sh-fg:      #edeff2;
+    --sh-fg-mute: #8b93a1;
+    --sh-fg-dim:  #5c636f;
+
+    --sh-accent: #6e8cff;
+    --sh-flag:   #d9a441;
+
+    --sh-r-sm: 6px;
+    --sh-r-md: 9px;
+    --sh-r-lg: 13px;
+    --sh-bar:  46px;
+    --sh-rail: 268px;
+
+    --sh-ease: cubic-bezier(.22,.61,.36,1);
+    --sh-fast: 130ms;
+    --sh-med:  220ms;
+
+    --sh-font: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", system-ui, sans-serif;
+    --sh-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
   }
+  @media (prefers-reduced-motion: reduce) {
+    :root { --sh-fast: 0ms; --sh-med: 0ms; }
+    * { animation: none !important; }
+  }
+
   * { box-sizing: border-box; }
   html, body { height: 100%; margin: 0; }
   body {
-    background: var(--sh-bg);
-    color: var(--sh-text);
-    font: 13px/1.45 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--sh-void);
+    color: var(--sh-fg);
+    font: 13px/1.5 var(--sh-font);
+    -webkit-font-smoothing: antialiased;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
   }
-  button, select { font: inherit; color: inherit; }
+  button, select, input { font: inherit; color: inherit; }
+  :focus-visible { outline: 2px solid var(--sh-accent); outline-offset: 2px; border-radius: 4px; }
 
-  /* ---------- chrome ---------- */
+  /* ══ chrome bars ══ */
   .sh-bar {
     flex: 0 0 auto;
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 0 12px;
+    gap: 18px;
+    padding: 0 14px;
     height: var(--sh-bar);
-    background: var(--sh-panel);
-    border-bottom: 1px solid var(--sh-line);
+    background: rgba(16,18,22,.9);
+    backdrop-filter: saturate(160%) blur(14px);
+    -webkit-backdrop-filter: saturate(160%) blur(14px);
+    position: relative;
+    z-index: 3;
   }
-  .sh-bar--bottom { border-bottom: 0; border-top: 1px solid var(--sh-line); flex-wrap: wrap; }
+  .sh-bar::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--sh-hair) 10%, var(--sh-hair) 90%, transparent);
+  }
+  .sh-bar--bottom { order: 3; }
+  .sh-bar--bottom::after { top: 0; bottom: auto; }
+
   .sh-boundary {
-    color: var(--sh-warn);
-    font-weight: 600;
-    letter-spacing: .01em;
+    display: inline-flex; align-items: center; gap: 8px;
+    color: var(--sh-fg-dim);
+    font-size: 12px;
     white-space: nowrap;
+    min-width: 0;
   }
-  .sh-spacer { flex: 1 1 auto; }
-  .sh-group { display: flex; align-items: center; gap: 6px; }
-  .sh-label { color: var(--sh-dim); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; }
-
-  .sh-btn {
-    background: transparent;
-    border: 1px solid var(--sh-line);
-    border-radius: var(--sh-radius);
-    padding: 4px 10px;
-    cursor: pointer;
+  .sh-boundary b { color: var(--sh-fg); font-weight: 550; letter-spacing: -.01em; }
+  .sh-boundary span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .sh-dot {
+    flex: 0 0 auto;
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--sh-flag);
+    box-shadow: 0 0 0 3px rgba(217,164,65,.16);
   }
-  .sh-btn:hover { border-color: var(--sh-dim); }
-  .sh-btn[aria-pressed="true"] { background: var(--sh-accent); border-color: var(--sh-accent); color: #fff; }
-  .sh-btn--ghost { color: var(--sh-dim); }
 
-  .sh-scrub { width: 200px; accent-color: var(--sh-accent); }
-  .sh-time { color: var(--sh-dim); min-width: 46px; font-variant-numeric: tabular-nums; }
+  .sh-spacer { flex: 1 1 auto; min-width: 8px; }
+  .sh-group { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; }
+  .sh-label {
+    color: var(--sh-fg-dim);
+    font-size: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .08em;
+    user-select: none;
+  }
 
-  /* ---------- stage ---------- */
+  /* ══ segmented control - one sliding thumb, not a row of boxes ══ */
+  .sh-seg {
+    position: relative;
+    display: inline-flex;
+    padding: 3px;
+    background: var(--sh-void);
+    border: 1px solid var(--sh-hair);
+    border-radius: var(--sh-r-md);
+  }
+  .sh-seg__thumb {
+    position: absolute; top: 3px; bottom: 3px; left: 0; width: 0;
+    border-radius: calc(var(--sh-r-md) - 3px);
+    background: var(--sh-raise);
+    box-shadow: 0 1px 2px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.06);
+    transition: transform var(--sh-med) var(--sh-ease), width var(--sh-med) var(--sh-ease);
+    pointer-events: none;
+  }
+  .sh-seg button {
+    position: relative; z-index: 1;
+    background: none; border: 0;
+    padding: 4px 11px;
+    border-radius: calc(var(--sh-r-md) - 3px);
+    color: var(--sh-fg-dim);
+    font-size: 12px; font-weight: 500;
+    cursor: pointer; white-space: nowrap;
+    transition: color var(--sh-fast) var(--sh-ease);
+  }
+  .sh-seg button:hover { color: var(--sh-fg-mute); }
+  .sh-seg button[aria-pressed="true"] { color: var(--sh-fg); }
+
+  /* ══ ghost buttons ══ */
+  .sh-ghost {
+    background: none; border: 1px solid transparent;
+    padding: 5px 10px; border-radius: var(--sh-r-sm);
+    color: var(--sh-fg-dim);
+    font-size: 12px; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 7px;
+    transition: color var(--sh-fast) var(--sh-ease), background var(--sh-fast) var(--sh-ease);
+  }
+  .sh-ghost:hover { color: var(--sh-fg); background: rgba(255,255,255,.05); }
+  .sh-ghost[aria-pressed="true"] { color: var(--sh-fg-mute); }
+  .sh-ghost kbd {
+    font: 500 10px/1 var(--sh-mono);
+    padding: 3px 5px; border-radius: 4px;
+    background: rgba(255,255,255,.06);
+    color: var(--sh-fg-dim);
+  }
+
+  /* ══ select ══ */
+  .sh-select {
+    appearance: none; -webkit-appearance: none;
+    background: var(--sh-void) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238b93a1' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 10px center;
+    border: 1px solid var(--sh-hair);
+    border-radius: var(--sh-r-sm);
+    padding: 5px 28px 5px 10px;
+    font-size: 12px; cursor: pointer;
+    transition: border-color var(--sh-fast) var(--sh-ease);
+  }
+  .sh-select:hover { border-color: var(--sh-hair-lit); }
+
+  /* ══ scrub ══ */
+  .sh-scrub {
+    -webkit-appearance: none; appearance: none;
+    width: 168px; height: 18px; background: none; cursor: grab;
+  }
+  .sh-scrub:active { cursor: grabbing; }
+  .sh-scrub::-webkit-slider-runnable-track {
+    height: 3px; border-radius: 2px;
+    background: linear-gradient(90deg, var(--sh-accent) var(--sh-pct,0%), rgba(255,255,255,.1) var(--sh-pct,0%));
+  }
+  .sh-scrub::-moz-range-track { height: 3px; border-radius: 2px; background: rgba(255,255,255,.1); }
+  .sh-scrub::-moz-range-progress { height: 3px; border-radius: 2px; background: var(--sh-accent); }
+  .sh-scrub::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 13px; height: 13px; margin-top: -5px;
+    border-radius: 50%; background: #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,.6);
+    transition: transform var(--sh-fast) var(--sh-ease);
+  }
+  .sh-scrub::-moz-range-thumb {
+    width: 13px; height: 13px; border: 0;
+    border-radius: 50%; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.6);
+  }
+  .sh-scrub:hover::-webkit-slider-thumb { transform: scale(1.15); }
+  .sh-time {
+    color: var(--sh-fg-mute);
+    font: 500 12px/1 var(--sh-mono);
+    font-variant-numeric: tabular-nums;
+    min-width: 44px;
+  }
+  .sh-count { color: var(--sh-fg-dim); font-size: 12px; font-variant-numeric: tabular-nums; }
+
+  /* ══ stage ══ */
   .sh-stage {
+    order: 2;
     flex: 1 1 auto;
     position: relative;
     overflow: auto;
     display: flex;
     justify-content: center;
-    padding: 18px;
-    background: #0f1114;
-    /* deliberately no transition: notes are positioned from a measured frame
-       width, and an animating padding returns an intermediate measurement */
+    padding: 22px;
+    background:
+      radial-gradient(120% 80% at 50% 0%, rgba(110,140,255,.055), transparent 62%),
+      var(--sh-void);
   }
-  /* only when this screen actually has visible notes */
-  body.sh-has-notes .sh-stage { padding-right: calc(18px + var(--sh-rail)); }
+  /* the rail is reserved only while a note is actually visible.
+     no transition here on purpose: notes are positioned from a measured frame
+     width, and an animating padding returns an intermediate measurement */
+  body.sh-has-notes .sh-stage { padding-right: calc(22px + var(--sh-rail)); }
+
   .sh-frame-wrap { position: relative; flex: 0 0 auto; }
   #sh-frame {
-    display: block;
-    width: 100%;
-    height: 100%;
-    border: 0;
-    background: #fff;
-    border-radius: 4px;
-    box-shadow: 0 8px 40px rgba(0,0,0,.45);
+    display: block; width: 100%; height: 100%;
+    border: 0; background: #fff;
+    border-radius: var(--sh-r-lg);
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,.08),
+      0 24px 64px -14px rgba(0,0,0,.75),
+      0 2px 8px rgba(0,0,0,.4);
   }
-  .sh-frame-wrap[data-device="desktop"] { width: 100%; max-width: 1280px; height: 100%; }
-  .sh-frame-wrap[data-device="tablet"]  { width: 834px;  height: 100%; max-height: 1112px; }
-  .sh-frame-wrap[data-device="mobile"]  { width: 390px;  height: 100%; max-height: 844px; }
+  .sh-frame-wrap[data-device="desktop"] { width: 100%; max-width: 1440px; height: 100%; }
+  .sh-frame-wrap[data-device="tablet"]  { width: 834px; height: 100%; max-height: 1112px; }
+  .sh-frame-wrap[data-device="mobile"]  { width: 390px; height: 100%; max-height: 844px; }
 
-  /* ---------- annotations ---------- */
-  .sh-annots { position: absolute; inset: 0; pointer-events: none; }
+  /* ══ annotations - a numbered pin, a card on the rail, a curve joining them ══ */
+  .sh-annots { position: absolute; inset: 0; pointer-events: none; z-index: 2; }
   .sh-annots svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-  .sh-annots line { stroke: var(--sh-accent); stroke-width: 1.5; stroke-dasharray: 3 3; }
+  .sh-annots path {
+    fill: none;
+    stroke: var(--sh-accent);
+    stroke-width: 1.25;
+    opacity: .4;
+    transition: opacity var(--sh-fast) var(--sh-ease), stroke-width var(--sh-fast) var(--sh-ease);
+  }
+  .sh-annots path.is-lit { opacity: 1; stroke-width: 1.75; }
+
+  .sh-pin {
+    position: absolute;
+    width: 21px; height: 21px;
+    margin: -10.5px 0 0 -10.5px;
+    border-radius: 50%;
+    background: var(--sh-accent);
+    color: #fff;
+    font: 600 11px/21px var(--sh-font);
+    text-align: center;
+    pointer-events: auto;
+    box-shadow: 0 0 0 3px rgba(110,140,255,.22), 0 2px 6px rgba(0,0,0,.5);
+    transition: transform var(--sh-fast) var(--sh-ease), box-shadow var(--sh-fast) var(--sh-ease);
+    animation: sh-pop var(--sh-med) var(--sh-ease) backwards;
+  }
+  .sh-pin.is-lit {
+    transform: scale(1.15);
+    box-shadow: 0 0 0 5px rgba(110,140,255,.26), 0 2px 10px rgba(0,0,0,.6);
+  }
+  @keyframes sh-pop { from { opacity: 0; transform: scale(.6); } }
+
   .sh-note {
     position: absolute;
     pointer-events: auto;
-    width: calc(var(--sh-rail) - 32px);
-    background: var(--sh-panel);
-    border: 1px solid var(--sh-accent);
-    border-radius: var(--sh-radius);
-    padding: 7px 24px 7px 10px;
-    font-size: 12px;
-    line-height: 1.4;
-    box-shadow: 0 4px 18px rgba(0,0,0,.4);
+    width: calc(var(--sh-rail) - 34px);
+    display: flex; gap: 9px; align-items: flex-start;
+    padding: 11px 11px 12px;
+    background: linear-gradient(180deg, #191c22, #14161b);
+    border: 1px solid var(--sh-hair);
+    border-radius: var(--sh-r-lg);
+    box-shadow: 0 12px 32px -12px rgba(0,0,0,.8), inset 0 1px 0 rgba(255,255,255,.045);
+    font-size: 12px; line-height: 1.5;
+    color: var(--sh-fg-mute);
+    transition: border-color var(--sh-fast) var(--sh-ease), transform var(--sh-fast) var(--sh-ease);
+    animation: sh-in var(--sh-med) var(--sh-ease) backwards;
   }
-  .sh-note__x {
-    position: absolute; top: 3px; right: 4px;
-    background: none; border: 0; cursor: pointer;
-    color: var(--sh-dim); font-size: 14px; line-height: 1; padding: 2px 4px;
-  }
-  .sh-note__x:hover { color: var(--sh-text); }
-  .sh-note--orphan { border-color: var(--sh-warn); }
-  .sh-note--orphan::after { content: " (anchor not found)"; color: var(--sh-warn); }
+  @keyframes sh-in { from { opacity: 0; transform: translateX(10px); } }
+  .sh-note.is-lit { border-color: rgba(110,140,255,.45); transform: translateX(-2px); }
+  .sh-note.is-out { animation: sh-out 150ms var(--sh-ease) forwards; }
+  @keyframes sh-out { to { opacity: 0; transform: translateX(14px) scale(.97); } }
 
-  /* ---------- hidden chrome ---------- */
-  body.sh-bare .sh-bar,
-  body.sh-bare .sh-annots { display: none; }
-  body.sh-bare .sh-stage { padding: 0; background: #fff; }
-  body.sh-bare .sh-frame-wrap { width: 100% !important; max-width: none !important; height: 100% !important; max-height: none !important; }
-  body.sh-bare #sh-frame { border-radius: 0; box-shadow: none; }
-  .sh-restore {
-    position: fixed; right: 10px; bottom: 10px; z-index: 9;
-    display: none;
-    background: var(--sh-panel); color: var(--sh-text);
-    border: 1px solid var(--sh-line); border-radius: var(--sh-radius);
-    padding: 4px 10px; cursor: pointer; opacity: .55;
+  .sh-note__n {
+    flex: 0 0 auto;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: rgba(110,140,255,.16);
+    color: var(--sh-accent);
+    font: 600 10px/18px var(--sh-font);
+    text-align: center;
   }
-  .sh-restore:hover { opacity: 1; }
-  body.sh-bare .sh-restore { display: block; }
+  .sh-note__body { flex: 1 1 auto; min-width: 0; }
+  .sh-note__x {
+    flex: 0 0 auto;
+    width: 20px; height: 20px; margin: -1px -2px 0 0;
+    background: none; border: 0; border-radius: 5px;
+    color: var(--sh-fg-dim); cursor: pointer;
+    line-height: 1; font-size: 15px;
+    opacity: 0;
+    transition: opacity var(--sh-fast) var(--sh-ease), color var(--sh-fast) var(--sh-ease), background var(--sh-fast) var(--sh-ease);
+  }
+  .sh-note:hover .sh-note__x, .sh-note__x:focus-visible { opacity: 1; }
+  .sh-note__x:hover { color: var(--sh-fg); background: rgba(255,255,255,.07); }
+
+  .sh-note--orphan { border-color: rgba(217,164,65,.4); }
+  .sh-note--orphan .sh-note__n { background: rgba(217,164,65,.16); color: var(--sh-flag); }
+  .sh-note--orphan .sh-note__body::after {
+    content: "anchor not found";
+    display: block; margin-top: 6px;
+    font-size: 10px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--sh-flag);
+  }
+
+  /* ══ chrome hidden - the artifact exactly as a user would see it ══ */
+  body.sh-bare .sh-bar, body.sh-bare .sh-annots { display: none; }
+  body.sh-bare .sh-stage { padding: 0; background: #fff; }
+  body.sh-bare .sh-frame-wrap {
+    width: 100% !important; max-width: none !important;
+    height: 100% !important; max-height: none !important;
+  }
+  body.sh-bare #sh-frame { border-radius: 0; box-shadow: none; }
+
+  .sh-restore {
+    position: fixed; right: 14px; bottom: 14px; z-index: 9;
+    display: none; align-items: center; gap: 7px;
+    padding: 7px 11px;
+    background: rgba(16,18,22,.92);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--sh-hair);
+    border-radius: var(--sh-r-md);
+    color: var(--sh-fg-mute);
+    font-size: 12px; cursor: pointer;
+    box-shadow: 0 8px 24px -8px rgba(0,0,0,.6);
+    opacity: .4;
+    transition: opacity var(--sh-fast) var(--sh-ease), color var(--sh-fast) var(--sh-ease);
+  }
+  .sh-restore:hover { opacity: 1; color: var(--sh-fg); }
+  .sh-restore kbd {
+    font: 500 10px/1 var(--sh-mono);
+    padding: 3px 5px; border-radius: 4px;
+    background: rgba(255,255,255,.06); color: var(--sh-fg-dim);
+  }
+  body.sh-bare .sh-restore { display: inline-flex; }
 </style>
 </head>
 <body>
 
 <div class="sh-bar">
-  <span class="sh-boundary" data-boundary>Prototype - not a live service</span>
+  <span class="sh-boundary">
+    <i class="sh-dot"></i>
+    <b>Prototype</b>
+    <span data-boundary>not a live service</span>
+  </span>
   <span class="sh-spacer"></span>
-  <div class="sh-group">
-    <span class="sh-label">Device</span>
-    <button class="sh-btn" data-device-btn="desktop" aria-pressed="true">Desktop</button>
-    <button class="sh-btn" data-device-btn="tablet" aria-pressed="false">Tablet</button>
-    <button class="sh-btn" data-device-btn="mobile" aria-pressed="false">Mobile</button>
+  <div class="sh-seg" data-device-seg>
+    <div class="sh-seg__thumb" data-thumb></div>
+    <button type="button" data-device-btn="desktop" aria-pressed="true">Desktop</button>
+    <button type="button" data-device-btn="tablet" aria-pressed="false">Tablet</button>
+    <button type="button" data-device-btn="mobile" aria-pressed="false">Mobile</button>
   </div>
   <div class="sh-group">
-    <button class="sh-btn sh-btn--ghost" data-toggle-annots aria-pressed="true">Notes</button>
-    <button class="sh-btn sh-btn--ghost" data-bare title="Hide all chrome (h)">Hide chrome</button>
+    <button class="sh-ghost" type="button" data-toggle-annots aria-pressed="true">Notes</button>
+    <button class="sh-ghost" type="button" data-bare>Hide chrome <kbd>H</kbd></button>
   </div>
 </div>
 
@@ -183,27 +394,29 @@
 <div class="sh-bar sh-bar--bottom">
   <div class="sh-group">
     <span class="sh-label">Screen</span>
-    <select class="sh-btn" data-screen></select>
+    <select class="sh-select" data-screen></select>
   </div>
-  <div class="sh-group" data-states-group>
+  <div class="sh-group">
     <span class="sh-label">State</span>
+    <div class="sh-seg" data-states-group><div class="sh-seg__thumb" data-thumb></div></div>
   </div>
-  <div class="sh-group" data-variants-group hidden>
+  <div class="sh-group" data-variants-wrap hidden>
     <span class="sh-label">Variant</span>
+    <div class="sh-seg" data-variants-group><div class="sh-seg__thumb" data-thumb></div></div>
   </div>
   <div class="sh-group" data-time-group hidden>
     <span class="sh-label">Time</span>
-    <input class="sh-scrub" type="range" data-scrub>
+    <input class="sh-scrub" type="range" data-scrub aria-label="Session time">
     <span class="sh-time" data-time></span>
   </div>
   <span class="sh-spacer"></span>
   <div class="sh-group">
-    <span class="sh-label" data-event-count>0 events</span>
-    <button class="sh-btn sh-btn--ghost" data-export>Export log</button>
+    <span class="sh-count" data-event-count>0 events</span>
+    <button class="sh-ghost" type="button" data-export>Export log</button>
   </div>
 </div>
 
-<button class="sh-restore" data-bare-off>Show chrome (h)</button>
+<button class="sh-restore" type="button" data-bare-off>Show chrome <kbd>H</kbd></button>
 
 <script src="harness.config.js"></script>
 <script>
@@ -230,6 +443,36 @@
 
   if (cfg.boundary) document.querySelector('[data-boundary]').textContent = cfg.boundary;
 
+  /* ---------- segmented controls ---------- */
+  function slide(seg) {
+    var thumb = seg.querySelector('[data-thumb]');
+    var on = seg.querySelector('[aria-pressed="true"]');
+    if (!thumb) return;
+    if (!on) { thumb.style.width = '0px'; return; }
+    thumb.style.width = on.offsetWidth + 'px';
+    thumb.style.transform = 'translateX(' + on.offsetLeft + 'px)';
+  }
+
+  function segment(seg, values, key, onPick) {
+    values.forEach(function (v) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = v;
+      b.setAttribute('aria-pressed', String(current[key] === v));
+      b.addEventListener('click', function () {
+        if (current[key] === v) return;
+        current[key] = v;
+        seg.querySelectorAll('[aria-pressed]').forEach(function (o) {
+          o.setAttribute('aria-pressed', String(o === b));
+        });
+        slide(seg);
+        onPick(v);
+      });
+      seg.appendChild(b);
+    });
+    requestAnimationFrame(function () { slide(seg); });
+  }
+
   /* ---------- screens ---------- */
   var screenSel = document.querySelector('[data-screen]');
   screens.forEach(function (s) {
@@ -242,44 +485,34 @@
     load();
   });
 
-  /* ---------- pill groups ---------- */
-  function pills(group, values, key) {
-    values.forEach(function (v) {
-      var b = document.createElement('button');
-      b.className = 'sh-btn';
-      b.textContent = v;
-      b.setAttribute('aria-pressed', String(current[key] === v));
-      b.addEventListener('click', function () {
-        current[key] = v;
-        group.querySelectorAll('[aria-pressed]').forEach(function (o) {
-          o.setAttribute('aria-pressed', String(o === b));
-        });
-        send(key, v);
-        record('harness:' + key, v);
-      });
-      group.appendChild(b);
-    });
-  }
-  pills(document.querySelector('[data-states-group]'), states, 'state');
+  /* ---------- state + variant ---------- */
+  segment(document.querySelector('[data-states-group]'), states, 'state', function (v) {
+    send('state', v); record('harness:state', v);
+  });
   if (variants.length) {
-    var vg = document.querySelector('[data-variants-group]');
-    vg.hidden = false;
-    pills(vg, variants, 'variant');
+    document.querySelector('[data-variants-wrap]').hidden = false;
+    segment(document.querySelector('[data-variants-group]'), variants, 'variant', function (v) {
+      send('variant', v); record('harness:variant', v);
+    });
   }
 
   /* ---------- time scrub ---------- */
+  var scrub, timeOut;
+  function paintScrub() {
+    var pct = (current.time - time.min) / (time.max - time.min) * 100;
+    scrub.style.setProperty('--sh-pct', pct + '%');
+    timeOut.textContent = time.format ? time.format(current.time) : String(current.time);
+  }
   if (time) {
-    var tg = document.querySelector('[data-time-group]');
-    tg.hidden = false;
-    var scrub = document.querySelector('[data-scrub]');
-    var out = document.querySelector('[data-time]');
+    document.querySelector('[data-time-group]').hidden = false;
+    scrub = document.querySelector('[data-scrub]');
+    timeOut = document.querySelector('[data-time]');
     scrub.min = time.min; scrub.max = time.max; scrub.step = time.step || 1;
     scrub.value = current.time;
-    function fmtTime(v) { return time.format ? time.format(v) : String(v); }
-    out.textContent = fmtTime(current.time);
+    paintScrub();
     scrub.addEventListener('input', function () {
       current.time = parseInt(scrub.value, 10);
-      out.textContent = fmtTime(current.time);
+      paintScrub();
       send('time', current.time);
     });
     // one record on release, not on every pixel of the drag
@@ -287,24 +520,30 @@
   }
 
   /* ---------- device ---------- */
-  document.querySelectorAll('[data-device-btn]').forEach(function (b) {
-    b.addEventListener('click', function () {
-      var d = b.getAttribute('data-device-btn');
-      wrap.setAttribute('data-device', d);
-      document.querySelectorAll('[data-device-btn]').forEach(function (o) {
-        o.setAttribute('aria-pressed', String(o === b));
-      });
-      record('harness:device', d);
-      requestAnimationFrame(drawAnnots);
+  var deviceSeg = document.querySelector('[data-device-seg]');
+  deviceSeg.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-device-btn]');
+    if (!b || b.getAttribute('aria-pressed') === 'true') return;
+    deviceSeg.querySelectorAll('[aria-pressed]').forEach(function (o) {
+      o.setAttribute('aria-pressed', String(o === b));
     });
+    slide(deviceSeg);
+    wrap.setAttribute('data-device', b.getAttribute('data-device-btn'));
+    record('harness:device', b.getAttribute('data-device-btn'));
+    requestAnimationFrame(drawAnnots);
   });
+  requestAnimationFrame(function () { slide(deviceSeg); });
 
   /* ---------- chrome visibility ---------- */
-  function bare(on) { document.body.classList.toggle('sh-bare', on); if (!on) drawAnnots(); }
+  function bare(on) {
+    document.body.classList.toggle('sh-bare', on);
+    if (!on) requestAnimationFrame(drawAnnots);
+  }
   document.querySelector('[data-bare]').addEventListener('click', function () { bare(true); });
   document.querySelector('[data-bare-off]').addEventListener('click', function () { bare(false); });
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'h' && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) {
+    if ((e.key === 'h' || e.key === 'H') && !e.metaKey && !e.ctrlKey &&
+        !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) {
       bare(!document.body.classList.contains('sh-bare'));
     }
   });
@@ -318,19 +557,23 @@
   });
 
   /* ---------- annotations ----------
-     An anchor to an element, a visible connector, a body, a dismiss.
+     A numbered pin on the element, a card on the rail, a curve joining them.
      One primitive: the author explains a convention with it, a reviewer
-     comments with it. Only elements that could be acted on need one. */
+     comments with it. Only elements someone could act on need one. */
   var dismissed = {};
 
   function drawAnnots() {
     if (document.body.classList.contains('sh-bare')) return;
-    annotEl.querySelectorAll('.sh-note').forEach(function (n) { n.remove(); });
+    annotEl.querySelectorAll('.sh-note, .sh-pin').forEach(function (n) { n.remove(); });
     svg.innerHTML = '';
     if (!annotsOn || !frameReady) { document.body.classList.remove('sh-has-notes'); return; }
 
     var list = annots[current.screen] || [];
-    var visible = list.filter(function (a, i) { return !dismissed[current.screen + '#' + i]; });
+    var visible = [];
+    list.forEach(function (a, i) {
+      if (!dismissed[current.screen + '#' + i]) visible.push({ a: a, i: i });
+    });
+
     var had = document.body.classList.contains('sh-has-notes');
     document.body.classList.toggle('sh-has-notes', visible.length > 0);
     if (!visible.length) return;
@@ -343,52 +586,92 @@
 
     var frameBox = frame.getBoundingClientRect();
     var wrapBox = wrap.getBoundingClientRect();
-    var stack = 0;
+    var railX = wrapBox.width + 18;
+    var stack = 4;
 
-    list.forEach(function (a, i) {
-      var id = current.screen + '#' + i;
-      if (dismissed[id]) return;
+    visible.forEach(function (entry, n) {
+      var a = entry.a;
+      var id = current.screen + '#' + entry.i;
+      var num = n + 1;
 
       var target = null;
       try { target = a.selector ? doc.querySelector(a.selector) : null; } catch (e) { /* bad selector */ }
 
       var note = document.createElement('div');
       note.className = 'sh-note' + (a.selector && !target ? ' sh-note--orphan' : '');
-      note.textContent = a.text;
+      note.style.animationDelay = (n * 45) + 'ms';
+
+      var badge = document.createElement('span');
+      badge.className = 'sh-note__n';
+      badge.textContent = num;
+
+      var body = document.createElement('div');
+      body.className = 'sh-note__body';
+      body.textContent = a.text;
+
       var x = document.createElement('button');
       x.className = 'sh-note__x';
       x.type = 'button';
-      x.setAttribute('aria-label', 'dismiss note');
+      x.setAttribute('aria-label', 'Dismiss note ' + num);
       x.textContent = '×';
-      x.addEventListener('click', function () { dismissed[id] = true; drawAnnots(); });
-      note.appendChild(x);
+      x.addEventListener('click', function () {
+        note.classList.add('is-out');
+        setTimeout(function () { dismissed[id] = true; drawAnnots(); }, 150);
+      });
+
+      note.appendChild(badge); note.appendChild(body); note.appendChild(x);
       annotEl.appendChild(note);
 
       var top = stack;
-      note.style.left = (wrap.getBoundingClientRect().width + 16) + 'px';
+      note.style.left = railX + 'px';
       note.style.top = top + 'px';
       stack = top + note.offsetHeight + 10;
 
-      if (target) {
-        var t = target.getBoundingClientRect();
-        var ax = t.right + (frameBox.left - wrapBox.left);
-        var ay = t.top + t.height / 2 + (frameBox.top - wrapBox.top);
-        var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        line.setAttribute('x1', ax);
-        line.setAttribute('y1', ay);
-        line.setAttribute('x2', frameBox.width + 16);
-        line.setAttribute('y2', top + note.offsetHeight / 2);
-        svg.appendChild(line);
+      if (!target) return;
+
+      var t = target.getBoundingClientRect();
+      var px = Math.min(t.right + (frameBox.left - wrapBox.left), frameBox.width - 13);
+      var py = t.top + t.height / 2 + (frameBox.top - wrapBox.top);
+
+      var pin = document.createElement('div');
+      pin.className = 'sh-pin';
+      pin.textContent = num;
+      pin.style.left = px + 'px';
+      pin.style.top = py + 'px';
+      pin.style.animationDelay = (n * 45) + 'ms';
+      annotEl.appendChild(pin);
+
+      var ny = top + note.offsetHeight / 2;
+      // control points at the horizontal midpoint. Deliberately not scaled by
+      // the vertical gap: any reach larger than half the horizontal span puts
+      // a control point past the far end and the curve ties itself in a knot.
+      var mid = px + (railX - px) / 2;
+      var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', 'M' + px + ' ' + py +
+        ' C' + mid + ' ' + py + ' ' + mid + ' ' + ny + ' ' + railX + ' ' + ny);
+      svg.appendChild(path);
+
+      function lit(on) {
+        note.classList.toggle('is-lit', on);
+        pin.classList.toggle('is-lit', on);
+        path.classList.toggle('is-lit', on);
       }
+      note.addEventListener('mouseenter', function () { lit(true); });
+      note.addEventListener('mouseleave', function () { lit(false); });
+      pin.addEventListener('mouseenter', function () { lit(true); });
+      pin.addEventListener('mouseleave', function () { lit(false); });
     });
   }
 
   /* ---------- event log ---------- */
+  function countEvents() {
+    document.querySelector('[data-event-count]').textContent =
+      events.length + (events.length === 1 ? ' event' : ' events');
+  }
   function record(name, detail) {
     events.push({ t: Date.now(), name: name, detail: detail === undefined ? null : detail,
                   screen: current.screen, state: current.state, variant: current.variant });
-    document.querySelector('[data-event-count]').textContent =
-      events.length + (events.length === 1 ? ' event' : ' events');
+    countEvents();
   }
   document.querySelector('[data-export]').addEventListener('click', function () {
     var blob = new Blob([JSON.stringify({
@@ -420,17 +703,13 @@
       if (time) send('time', current.time);
       requestAnimationFrame(drawAnnots);
     }
-    if (d.type === 'event') {
-      events.push(d.entry);
-      document.querySelector('[data-event-count]').textContent =
-        events.length + (events.length === 1 ? ' event' : ' events');
-    }
+    if (d.type === 'event') { events.push(d.entry); countEvents(); }
   });
 
   function load() {
     frameReady = false;
     svg.innerHTML = '';
-    annotEl.querySelectorAll('.sh-note').forEach(function (n) { n.remove(); });
+    annotEl.querySelectorAll('.sh-note, .sh-pin').forEach(function (n) { n.remove(); });
     frame.src = current.screen;
     record('harness:screen', current.screen);
   }
@@ -441,7 +720,10 @@
     setTimeout(function () { if (!frameReady) drawAnnots(); }, 120);
   });
 
-  window.addEventListener('resize', drawAnnots);
+  window.addEventListener('resize', function () {
+    document.querySelectorAll('.sh-seg').forEach(slide);
+    drawAnnots();
+  });
   stage.addEventListener('scroll', drawAnnots);
 
   load();

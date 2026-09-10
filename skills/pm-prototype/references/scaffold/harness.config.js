@@ -9,9 +9,10 @@ window.HARNESS_CONFIG = {
   /* Used in the exported event log's filename and header. */
   name: 'prototype',
 
-  /* The boundary line, always visible in the chrome. Say what is simulated in
-     one clause - depth belongs on the disclosure screen, not in this line. */
-  boundary: 'Prototype - not a live service. Data and some interactions are simulated.',
+  /* The qualifier after the word "Prototype" in the chrome, which is always
+     there. Say what is simulated in one clause - depth belongs on the
+     disclosure screen, not in this line. */
+  boundary: 'not a live service. Data and some interactions are simulated.',
 
   /* Every screen the reviewer can reach. First one loads on open.
      A disclosure screen ("what is real and what is simulated") belongs here as
