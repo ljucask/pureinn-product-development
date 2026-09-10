@@ -108,8 +108,9 @@ Read `pureinn-variables.md`:
 - **Feature Backlog** key (if the scope is a feature - to resolve/verify the FEAT-ID).
 
 **Detect mode:**
-- If the user references an existing prototype spec in `/prototypes/` and talks about an outcome/result → **Result mode** (Step 8).
-- Otherwise → **Spec mode** (Steps 1-7).
+- If the user references an existing prototype in `/prototypes/` - a spec file **or** a prototype folder - and talks about an outcome or result → **Result mode** (Step 8).
+- If a prototype folder exists whose `meta.md` still says `Decision: open`, say so before anything else. An open prototype with no decision is the state this whole structure exists to prevent.
+- Otherwise → **Spec mode** (Steps 1 → 3b → the chosen path → 7).
 
 **Interaction:** Group related questions (2-4 per round) and confirm before moving on. For any A/B/C/D choice, use the AskUserQuestion tool with one option marked **(Recommended)** - never print options as plain text. Keep open-ended questions free-text (don't fake options). If the user is unsure, propose 3-4 concrete options plus "Other". Surface an assumption the moment you make one; never fabricate to fill a gap. (Full standard: CLAUDE.md.)
 
@@ -338,11 +339,13 @@ In-repo path: a kebab-case folder named for what it explores - `ama-lifecycle`, 
 
 ## Handoff
 
-**Čo si teraz má:** Tool-ready prototype spec - viem ho pushnúť do Lovable/v0/Figma Make (alebo vložiť manuálne) a dostať funkčný/klikací prototyp, ktorý validuje konkrétnu neistotu **pred** reálnym buildom. Feature má zapísanú referenciu, že prototyp beží a čaká sa výsledok.
+**Čo si teraz má:** Prototyp, ktorý odpovedá na jednu konkrétnu neistotu **pred** reálnym buildom - buď ako zadanie pripravené pre externý nástroj, alebo postavený tu v repe nad harnessom so stavmi, časom, variantmi a event logom. Hypotéza má vopred zapísaný prah aj nejednoznačné pásmo, takže výsledok sa nedá dodatočne prerozprávať.
 
 **Ďalší krok:**
-- Po postavení prototypu → spusti `/pm-prototype` znova (result mode) a zapíš verdikt.
-- Ak validované → `/pm-feature-design [FEAT-ID]` pre produkčný spec.
-- Ak validované na úrovni iniciatívy/konceptu → `/pm-hypotheses` (aktualizuj hypotézu) alebo `/pm-prd`.
+- Po postavení → spusti `/pm-prototype` znova (result mode) a zapíš verdikt ako jeden zo štyroch stavov.
+- **Supported within scope** → `/pm-feature-design [FEAT-ID]` pre produkčný spec, alebo promócia podľa `references/promotion.md`.
+- **Refuted within scope** → kill, ale až keď prejde piatimi podmienkami. Findings zostávajú, kód nie.
+- **Prototype or study failure** → oprav nástroj a zopakuj test. Nikam to nekaskáduje a nemení to presvedčenie o produkte.
+- Ak sa dotklo hypotézy alebo scope → `/pm-hypotheses`, prípadne re-check `pm-prd` / `pm-features-list` / `pm-mvp-scope`.
 
-**Môžeš preskočiť ak:** Ide o štandardný, nízko-rizikový pattern bez otvorenej neistoty - vtedy prototyp nepridáva hodnotu a ide sa rovno na `/pm-feature-design`.
+**Môžeš preskočiť ak:** Ide o štandardný, nízko-rizikový pattern bez otvorenej neistoty - vtedy prototyp nepridáva hodnotu a ide sa rovno na `/pm-feature-design`. A ak beží `references/way-in.md`, môže legitímne skončiť tým, že najlacnejším testom tvojho najrizikovejšieho predpokladu **nie je prototyp** - vtedy je správne skončiť tam.
