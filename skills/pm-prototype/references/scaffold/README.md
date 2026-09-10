@@ -100,3 +100,4 @@ Bugs found that way, none of which a reading of the code would have caught:
 - the chrome printed "Prototype" twice, once from the markup and once from the config default
 - a connector-curve "improvement" scaled the bezier control points by the vertical gap, putting a control point past its own endpoint and tying the line in a knot
 - the disclosure tag was a `<span>`, so a lower-specificity rule lost to the generic one and it rendered brown-on-coral at 1.9:1
+- the dropdown's tick was an inline `<svg>` with no width, so it rendered at its intrinsic size and spilled across the menu
