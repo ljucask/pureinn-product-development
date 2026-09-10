@@ -185,12 +185,16 @@ Create `pureinn-workspace/[project-slug]/pureinn-variables.md` with the followin
 | Meetings | DB | pm-meeting | |
 | Open Questions | DB | pm-hypotheses | |
 
-## Design (Phase 6-7)
+## Design context (cross-phase)
+
+Not a Phase 6-7 setting. Design context is an input constraint - it applies from the moment anything visual is discussed. Sources combine; fill in whichever exist. See § Design context below for how they compose.
 
 | Key | Description | Value |
 |---|---|---|
 | figma_project_url | Figma project URL - root of the product design file. Read by pm-feature-design when Figma MCP is connected. | |
 | figma_design_system_url | Figma design system / component library URL (if separate from main project file). | |
+| live_product_url | The product as it actually ships, if there is one. Browsable with Playwright. | |
+| design_reference_urls | Products whose design is a deliberate reference or direction - not the product itself. Comma-separated. | |
 
 ## Prototyping (cross-phase)
 
@@ -393,6 +397,32 @@ Set in **STEP 0f** and stored in `state.json` → `repo`. It is a routing signal
 - When `present` is `remote` and something needs the code, offer the clone as an explicit step; do not silently clone.
 - `none_yet` is not permanent. When a Phase 6 stripe opens and `repo.present` is still `none_yet`, ask again - that is the moment the answer usually changes.
 - A wrong value here is worse than an empty one. If the user is unsure, record `none_yet` and re-ask rather than guessing a path.
+
+---
+
+---
+
+## Design context
+
+Design context is an **input constraint**, not a build-time detail: the moment anything visual is discussed - a prototype, a screen in a Feature Card, a pitch - the answer depends on what the product already looks like and what it is allowed to look like. That is why the variables sit in a cross-phase section rather than under Phase 6-7.
+
+**Sources compose - this is not a choice between them.** A real design context is usually assembled: a reference site for direction, a screenshot of one screen someone sent, tokens read out of the codebase, a Figma library for the intended system. Each source answers a different question, so use every one that exists and say which part came from where.
+
+| Source | Answers | How to get it | Available when |
+|---|---|---|---|
+| Codebase | What the product *is* - tokens actually in use, real components, real constraints | `/impeccable document` → PRODUCT.md + DESIGN.md; or read the theme/token files directly | `repo.present` = `local` |
+| Figma | What the product is *meant to be* - the intended system, states not built yet | Figma MCP via `figma_project_url` / `figma_design_system_url` | a design file exists |
+| Live product | What actually *ships* - real layout, spacing, interaction, copy | Playwright: browse `live_product_url`, capture screens, inspect computed styles | there is a public/reachable product |
+| Screenshot / image | One specific screen, or a direction someone showed you | attach the file where it is needed (pm-prototype and pm-feature-design both accept images) | someone sent one |
+| Reference products | Direction and taste - what "good" means here | Playwright over `design_reference_urls`, or screenshots | the user named references |
+| Claude Design | Producing or iterating the design when there is nothing to read yet | the `design` skill / canvas | greenfield, or a redesign |
+
+**Rules for composing:**
+- **Mark provenance.** "Spacing scale from the codebase, colour direction from the reference site" is usable; a merged description with no source attached is not - the next person cannot tell what is fact and what is aspiration.
+- **When sources disagree, name the conflict, do not average it.** Code says one thing and Figma another is the normal case (design drift), and it is information: `[CONFLICT - code ships X / Figma specifies Y]`. Apply the Deep source ingestion standard's reconciliation rule.
+- **Codebase and live product are evidence. Figma and references are intent.** For "what does it look like today" trust the first two; for "what should it look like" trust the second two.
+- **A reference is not the product.** Never fold `design_reference_urls` into the description of the product's own design - keep them in a separate line.
+- **There is no automated extraction procedure here, and none is needed to start.** Point Playwright at the URL, look at the product, and write down what you find where it is used. If this becomes repetitive across projects, that is the signal to make it a skill - see BACKLOG.md.
 
 ---
 

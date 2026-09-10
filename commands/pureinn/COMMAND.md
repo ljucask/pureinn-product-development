@@ -92,6 +92,8 @@ Use **AskUserQuestion**, one question - "Is there a codebase for this?":
 
 Record the answer in `state.json` → `repo` and in `pureinn-variables.md` (both shapes in `references/workspace.md`). In `explore` mode, hold the answer in the session only - explore writes no files. What each answer unlocks is in `references/workspace.md` § Repo context; do not re-derive it here.
 
+**One follow-up, only when it applies:** if the product exists but the code is not reachable (`remote`, `none`), ask for the live product URL and record it as `live_product_url`. That is the one case where the product's design can be read from nowhere else - see `references/workspace.md` § Design context. Do not ask this on a greenfield run; there is nothing to look at yet.
+
 Only then continue to the step the mode points at.
 
 ### Stage Keyword Resolver
