@@ -48,6 +48,17 @@ More than two audiences triggers a warning and a request for the primary one - a
 
 ---
 
+## Decisions made before anything is generated
+
+| | |
+|---|---|
+| **Design direction** | inherit the product's existing look, own a new one, or evolve away from it. If own: which of four directions - fast and precise, calm and clear, friendly and guided, visual and immersive - **and the one it must not resemble**. Skipping this does not produce "no direction"; it produces the convergent default, which is recognisable |
+| **Language** | which language the prototype itself speaks. **Not `artifact_language`** - a workspace can write English artifacts for a prototype that must speak Slovak, and testing the wrong language tests the wrong thing |
+| **Content** | representative, never filler on a task path, and fixtures computed from now rather than hardcoded - a prototype that has visibly rotted between the build and the showing discredits itself for free |
+| **Classification** | Disposable, Reference or Evolutionary, decided **before the first line of code**, because it sets the quality bar and Evolutionary code belongs on a real branch under repo rules |
+
+---
+
 ## What it produces
 
 **Spec mode (default):** either a tool-ready prototype spec for an external tool, or an in-repo prototype folder with its harness - whichever the path decision reached. The in-repo folder sits at `prototypes/[name]/` and carries the uncertainty, the audience, the classification, a `targets:` link back to the production artifact it is about, a declared stop condition, and the hypotheses/findings pair.

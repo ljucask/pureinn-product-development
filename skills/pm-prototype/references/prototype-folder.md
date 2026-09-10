@@ -47,6 +47,27 @@ A prototype that simply uses existing entities references them in `meta.md` and 
 
 The same test applies to `context/`: if the global personas serve, point at them. If the prototype explores a segment the global work never covered, a thin local file is right - and it carries its provenance, because context assembled from research is not the same evidence as context from customer interviews.
 
+### Filling `context/` when the global artifacts do not serve
+
+Three sources, and they combine rather than compete:
+
+| Source | When |
+|---|---|
+| **Global artifacts** | they already answer it. Reference, never duplicate |
+| **Targeted research in this session** | a narrow, specific gap. Run it scoped to one question at a time, in parallel where the questions are independent, each writing one file into `context/` |
+| **External deep research** | the question deserves depth and time that an in-session pass cannot give |
+
+The middle row is what stops the prototype track stalling or inventing: it can fill its own context gaps. Depth follows the audience row in `audience-depth.md`, not production depth - this is a prototype's context, not the product's.
+
+**Every context file states where it came from and how strong that is**, using the four evidence classes from `hypotheses.md` § 3:
+
+```markdown
+**Provenance:** EVIDENCE-BASED INFERENCE - desk research, [sources], [date].
+Not customer contact. Replace before any claim about this segment leaves the prototype.
+```
+
+A researched persona is `EVIDENCE-BASED INFERENCE`. An agent-generated one is `SYNTHETIC HYPOTHESIS` - **never** `SOURCE FACT`, even when it was grounded in a real description. A prototype built on the first and presented as the second is exactly the failure the evidence discipline exists to prevent, and `findings.md` inherits the weakness of whatever the conclusion rested on.
+
 ---
 
 ## meta.md

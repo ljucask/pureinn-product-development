@@ -17,6 +17,15 @@ If no tool is configured, default to producing the spec paste-ready and note pus
 
 ## Lovable build-prompt construction rules
 
+**What the brief carries from Step 3b.** The decisions made there are not in-repo-only - an external tool needs them stated or it will substitute its own:
+
+- **Audience and depth** - what must be real, and what may be admitted-fake. `references/audience-depth.md`
+- **Design direction and its rejection** - `references/design-direction.md`
+- **The prototype's language**, and realistic content rather than filler on any task path - `references/content-and-copy.md`
+- **Classification** - Disposable, Reference or Evolutionary, since it sets the quality bar the output is judged against
+
+---
+
 **These are baked in - when the target is Lovable, the compiled build prompt MUST follow them.** They come from the Lovable Prompting Bible and are what separates a usable first prompt from a credit-burning mess. For other tools, apply the same underlying principles (front-load, fence scope, explicit stack, flow narrative, plan-first) adapted to the tool.
 
 1. **The first prompt is everything.** `create_project(initial_message)` sets the tone for the entire build. It must be complete and precise upfront - not "we'll clarify later."
@@ -35,7 +44,7 @@ If no tool is configured, default to producing the spec paste-ready and note pus
 
 8. **Flow as narrative.** "User lands on X → clicks Y → sees Z." Maps from pm-process-flows.
 
-9. **Design guidance concrete.** Design principles, color palette, typography, layout, nav. Always mobile-first and responsive on shadcn/Tailwind breakpoints - no custom breakpoints unless required.
+9. **Design guidance concrete.** Not "make it nice" - the direction, the rejection and the eight decisions from `references/design-direction.md`: background, text, accent and semantic colours; type family and scale; spacing density; radius; border and shadow policy; motion; imagery; hierarchy. Name one product it should feel close to and one it must **not** resemble. A tool given no direction returns the convergent default, and one prompt of vagueness costs more to correct than it saved. Always mobile-first and responsive on shadcn/Tailwind breakpoints - no custom breakpoints unless required.
 
 10. **Data model only if functional.** Entities + key states → Supabase tables. A static click-through skips this ("use mock data, no backend").
 

@@ -37,6 +37,9 @@ This file is the flow. Detail that only one path needs lives in `references/` ne
 | `way-in.md` | Step 1 - getting from a raw idea to something buildable, and deciding whether code is the right test at all | the scope is a thought rather than a named chunk |
 | `hypotheses.md` | Steps 2 and 8 - what makes a hypothesis testable, what thresholds are defensible, and the four verdict states | writing the success criterion, and recording the result |
 | `audience-depth.md` | Step 3b - who it is for, how deep that makes it, and which path builds it | **every run**, right after ingestion |
+| `design-direction.md` | Step 3b - inherit, own or evolve; the four directions; escaping the default look | **before anything visual is generated**, on either path |
+| `content-and-copy.md` | Step 3b - which language the prototype speaks, fixtures that carry weight, numbers that carry provenance | **every run** - content is part of the stimulus |
+| `showing.md` | Putting it in front of someone, and routing what comes back | before the first showing |
 | `in-repo-loop.md` | The harness shell contract, the rules of the iteration loop, stop and restart signals | the prototype is built here, by a coding agent |
 | `prototype-folder.md` | Step 7 - the folder an in-repo prototype lives in, `targets:`, the decision state | writing an in-repo prototype back |
 | `promotion.md` | Classification before the first line of code; kill and promotion once there is a decision | Step 3b, then Step 8 |
@@ -199,6 +202,11 @@ Two conditional requirements fall out of the audience answer, so settle them now
 - **Variants** are mandatory when the prototype exists to *choose* a direction, and wrong when it is an answer to a decided one.
 - **Behaviour capture** earns its place the moment real users touch it, and is overhead when a reader reviews it alone.
 
+**Then settle the two things that decide what gets generated**, both before anything visual exists:
+
+- **Design direction** - `references/design-direction.md`. Inherit, own or evolve; and if own, which of the four directions plus the one it must **not** resemble. Skipping this does not produce "no direction", it produces the default one, and the default is recognisable.
+- **Language and content** - `references/content-and-copy.md`. Ask which language the prototype itself is written in; this is **not** `artifact_language`, which governs Pureinn's artifacts. A workspace can write English artifacts for a prototype that must speak Slovak, and testing the wrong language tests the wrong thing.
+
 **Then classify it, before any code exists** - `references/promotion.md` § Classification. Disposable, Reference or Evolutionary decides the quality bar and where the code lives, so deciding it afterwards means the bar was never applied. Evolutionary code belongs on a branch in the real repo, under repo rules, not in the prototype folder. If nobody can say which one it is, that is itself a finding: it usually means the prototype is being built to impress rather than to answer something.
 
 ---
@@ -227,6 +235,18 @@ This makes the Feature Card show that a prototype was used and that a result is 
 **If initiative/product-scoped:** log the prototype as a validation instrument against the relevant hypothesis in the hypothesis register (or note it for `pm-hypotheses`).
 
 External path: save the spec to `/prototypes/` (Step: Save to). In-repo path: the folder is already the artifact - do not also write a spec file for it, or the same prototype exists twice and the two will drift.
+
+---
+
+## Step 7b: Showing it
+
+Before the prototype goes in front of anyone, read `references/showing.md`. Three things there change the result rather than the presentation:
+
+- **Show alternatives, or mark what is unresolved.** Single-option framing is the strongest documented distortion - in the controlled study none of 36 participants rejected the design shown alone.
+- **Run the before-it-leaves-the-room checklist** - credentials, internal comments, production connections, and the built app's **network requests**, not just its screens.
+- **Route what comes back.** A request raised in a comment becomes an `OQ-` or a plan item; comments that flow nowhere are just another channel, and the person who raised one learns not to bother.
+
+If the maker is also the moderator - the normal case here - apply the demand-effect controls, and where they were not possible, **name it in `findings.md`** rather than presenting the result as clean.
 
 ---
 
@@ -294,6 +314,9 @@ When the user comes back with an outcome, operate in **delta mode** - do not rew
 - [ ] Path stated out loud with its reason before building
 - [ ] External path only: compiled build prompt following the tool's construction rules (`references/external-tools.md`; Lovable rules if Lovable)
 - [ ] In-repo path only: harness in place per `references/in-repo-loop.md`, all four states reachable
+- [ ] Design direction chosen, with the rejection named - not defaulted into
+- [ ] Prototype language asked, and not confused with `artifact_language`
+- [ ] No lorem ipsum on any task path; fixtures time-relative rather than dated
 - [ ] Classification decided **before** the first line of code, and Evolutionary code on a real branch rather than in the prototype folder
 - [ ] In-repo path only: the prototype folder exists per `references/prototype-folder.md`, with `targets:` and a declared stop condition
 - [ ] Local `domain.md` / `rules.md` / `context/` exist only where the prototype deliberately diverges, and say in what way
@@ -303,6 +326,11 @@ When the user comes back with an outcome, operate in **delta mode** - do not rew
 - [ ] MCP warning shown before any live call
 - [ ] Feature Card prototype reference written (if feature-scoped) - reference only, spec sections untouched
 - [ ] Lovable target: Knowledge Base loaded (`set_project_knowledge`) + confirm-understanding gate passed before any code
+
+**Before showing:**
+- [ ] Alternatives shown, or the unresolved dimensions explicitly marked
+- [ ] Credentials, internal comments, production connections and telemetry cleared - network requests inspected, not just screens
+- [ ] Prototype events kept out of production analytics
 
 **Result mode:**
 - [ ] Verdict is one of the four states - never the word "validated"

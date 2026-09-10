@@ -59,9 +59,12 @@ Generate `[scope]-prototype-spec.md`. It has two layers:
 
 ## 5. Design guidance
 
-- **Fidelity:** [static click-through / functional]
+- **Fidelity:** [static click-through / functional] - from the audience row, not from habit
 - **For whom:** [persona - tone, polish level]
-- **Look:** [design principles, color, typography, layout, nav - or "tool default taste"]
+- **Direction:** [inherit / own / evolve. If own: which of the four, and the one it must NOT resemble]
+- **The eight decisions:** [background, text, accent and semantic colours · type family and scale · spacing density · radius · border and shadow · motion · imagery · hierarchy]
+- **Language:** [the language the prototype itself is written in - not artifact_language]
+- **Content:** representative, never filler on a task path. Fixtures time-relative, never dated.
 - **Responsive:** mobile-first, shadcn + Tailwind breakpoints.
 
 ## 6. Acceptance signals (maps to success criterion)
