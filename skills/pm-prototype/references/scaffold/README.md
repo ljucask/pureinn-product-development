@@ -10,6 +10,8 @@ The reference implementation of the contract in [`../in-repo-loop.md`](../in-rep
 | `harness-client.js` | yes | no |
 | `harness.config.js` | as a starting point | **yes - this is the only one** |
 
+Set `title` in the config: it names the prototype in the chrome and in the browser tab. It is the prototype's name, not the product's - *"AMA lifecycle v1"* rather than *"Acme"*.
+
 Why byte-for-byte: the value is that the same keystroke hides the chrome and the same event format comes out of every prototype, so findings stay comparable. A harness re-invented per prototype has neither.
 
 ## Use
@@ -50,7 +52,9 @@ The artifact never depends on the harness. Open a page directly and it still run
 
 ## Keys
 
-`h` hides and restores all chrome. In hidden mode the artifact fills the window exactly as a user would see it - no bars, no notes, no frame. One action, both directions.
+`h` hides and restores all chrome. In hidden mode the artifact is shown exactly as a user would see it - no islands, no notes, no device frame, no notch.
+
+**The viewport does not change.** Only a desktop view goes full-bleed; a phone or tablet view keeps its own size, because otherwise "hide chrome" would silently swap the viewport being reviewed for a different one.
 
 ## Beyond the contract
 
@@ -58,9 +62,9 @@ Three conveniences the contract does not require, but that a reviewer expects fr
 
 | | |
 |---|---|
-| **Mockup** | A device frame around the artifact - browser chrome on desktop and tablet, a notch on mobile. Off by default: it is presentation, and a usability test does not want it |
+| **Mockup** | A device frame around the artifact, modelled on the real hardware rather than a generic rounded rectangle: iPhone with its Dynamic Island and side buttons, iPad with an even bezel and camera, MacBook with a camera notch, browser chrome and the base under the lid. Off by default: it is presentation, and a usability test does not want it |
 | **Share** | Copies a link carrying the whole state - screen, state, variant, time, device, mockup. The recipient opens *exactly* what you were looking at, and can keep clicking. For a prototype that beats sending a static image |
-| **Export PNG** | Saves the current screen, with the mockup if it is on and **never** with the annotation layer - annotations are chrome, not product |
+| **Export PNG** | Saves the current screen, with the mockup if it is on - **the same frame, cut-outs included**, because a mockup that loses its notch on export is a different mockup - and **never** with the annotation layer, since annotations are chrome, not product |
 
 **The honest limit on export.** No browser API rasterises another document, so the artifact's DOM is cloned into an SVG foreignObject with its stylesheets inlined. That works, and it is fragile: cross-origin images, webfonts and canvas content will not come through. Every failure drops into capture mode - chrome and notes hidden, a message telling you to take a system screenshot - rather than saving something silently wrong.
 

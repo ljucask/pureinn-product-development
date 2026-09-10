@@ -6,8 +6,13 @@
 */
 window.HARNESS_CONFIG = {
 
-  /* Used in the exported event log's filename and header. */
+  /* Used in the exported event log's filename and in screenshot filenames. */
   name: 'prototype',
+
+  /* Shown in the chrome and in the browser tab. Falls back to `name`.
+     This is the prototype's name, not the product's - "AMA lifecycle v1"
+     rather than "Acme". */
+  title: '',
 
   /* The qualifier after the word "Prototype" in the chrome, which is always
      there. Say what is simulated in one clause - depth belongs on the

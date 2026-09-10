@@ -113,20 +113,92 @@
   .wrap[data-device="tablet"]  { width: calc(834px + var(--bez) * 2); height: 100%; max-height: calc(1112px + var(--bez) * 2); }
   .wrap[data-device="mobile"]  { width: calc(390px + var(--bez) * 2); height: 100%; max-height: calc(844px + var(--bez) * 2); }
 
-  /* ══ mockup: a device frame around the artifact ══ */
-  body.mock { --bez: 12px; }
-  body.mock .mock {
+  /* ══ mockup: device frames modelled on the real hardware ══
+     Each device sets its own bezel, corner radius and cut-out. The numbers are
+     proportional to the real thing rather than a generic rounded rectangle,
+     which is what made the first attempt look like a toy. */
+  body.mock .mock { position: relative; }
+  body.mock #frame { box-shadow: none; }
+
+  /* iPhone: thin uniform bezel, deep corner radius, Dynamic Island */
+  body.mock .wrap[data-device="mobile"] { --bez: 11px; }
+  body.mock .wrap[data-device="mobile"] .mock {
     padding: var(--bez);
-    background: var(--mock-bg);
-    border-radius: calc(var(--r-lg) + var(--bez));
+    background: #1c1c1e;
+    border-radius: 56px;
     box-shadow:
-      inset 0 1px 0 rgba(255,255,255,.09),
-      0 0 0 1px rgba(22,24,29,.5),
-      0 34px 70px -26px rgba(22,24,29,.45);
+      inset 0 0 0 1.5px #3a3a3e,
+      inset 0 1px 0 rgba(255,255,255,.14),
+      0 0 0 1px rgba(0,0,0,.5),
+      0 40px 80px -30px rgba(22,24,29,.55);
   }
-  body.mock #frame { box-shadow: none; border-radius: 8px; }
-  body.mock .wrap[data-device="desktop"] .mock__bar,
-  body.mock .wrap[data-device="tablet"] .mock__bar { display: flex; }
+  body.mock .wrap[data-device="mobile"] #frame { border-radius: 45px; }
+  body.mock .wrap[data-device="mobile"] .mock::before {
+    content: ""; position: absolute; z-index: 2;
+    top: calc(var(--bez) + 9px); left: 50%; transform: translateX(-50%);
+    width: 112px; height: 33px; border-radius: 999px; background: #000;
+  }
+  /* left side: silent switch, then the volume pair */
+  body.mock .wrap[data-device="mobile"] .mock::after {
+    content: ""; position: absolute; z-index: 1; left: -2.5px; top: 118px;
+    width: 3px; height: 26px; border-radius: 2px;
+    background: #2a2a2e;
+    box-shadow: 0 48px 0 3px #2a2a2e, 0 100px 0 3px #2a2a2e;
+  }
+
+  /* iPad: even bezel all round, softer radius, a single camera dot */
+  body.mock .wrap[data-device="tablet"] { --bez: 17px; }
+  body.mock .wrap[data-device="tablet"] .mock {
+    padding: var(--bez);
+    background: #2b2b2e;
+    border-radius: 36px;
+    box-shadow:
+      inset 0 0 0 1.5px #45454a,
+      inset 0 1px 0 rgba(255,255,255,.12),
+      0 0 0 1px rgba(0,0,0,.45),
+      0 40px 80px -30px rgba(22,24,29,.5);
+  }
+  body.mock .wrap[data-device="tablet"] #frame { border-radius: 20px; }
+  body.mock .wrap[data-device="tablet"] .mock::before {
+    content: ""; position: absolute; z-index: 2;
+    top: 7px; left: 50%; transform: translateX(-50%);
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #0d0d0f; box-shadow: inset 0 0 0 1px #3f3f45;
+  }
+
+  /* MacBook: thin screen bezel, camera notch, and the base under it */
+  body.mock .wrap[data-device="desktop"] { --bez: 10px; padding-bottom: 22px; }
+  body.mock .wrap[data-device="desktop"] .mock {
+    padding: var(--bez);
+    background: #26272b;
+    border-radius: 16px;
+    box-shadow:
+      inset 0 0 0 1.5px #3d3e44,
+      inset 0 1px 0 rgba(255,255,255,.1),
+      0 0 0 1px rgba(0,0,0,.45),
+      0 44px 80px -34px rgba(22,24,29,.5);
+  }
+  body.mock .wrap[data-device="desktop"] #frame { border-radius: 5px; }
+  /* the camera notch lives in the bezel, so it must not reach far enough down
+     to collide with the browser bar inside the screen */
+  body.mock .wrap[data-device="desktop"] .mock::before {
+    content: ""; position: absolute; z-index: 3;
+    top: 0; left: 50%; transform: translateX(-50%);
+    width: 142px; height: 13px;
+    background: #26272b;
+    border-radius: 0 0 8px 8px;
+  }
+  body.mock .wrap[data-device="desktop"] .mock__bar { margin-top: 4px; }
+  /* the base: wider than the lid, with the notch for the fingertip */
+  body.mock .wrap[data-device="desktop"] .mock::after {
+    content: ""; position: absolute; z-index: 1;
+    left: -3.2%; width: 106.4%; top: 100%; height: 13px;
+    background: linear-gradient(180deg, #35363b, #1e1f23 62%, #17181b);
+    border-radius: 0 0 12px 12px;
+    box-shadow: 0 16px 26px -14px rgba(22,24,29,.6);
+  }
+
+  body.mock .wrap[data-device="desktop"] .mock__bar { display: flex; }
   .mock__bar {
     align-items: center; gap: 7px;
     height: 26px; padding: 0 4px 8px;
@@ -140,12 +212,6 @@
     color: rgba(255,255,255,.5); font: 500 10px/1 var(--mono);
     overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
   }
-  /* mobile gets a notch instead of a browser bar */
-  body.mock .wrap[data-device="mobile"] .mock::before {
-    content: ""; position: absolute; top: calc(var(--bez) + 5px); left: 50%; transform: translateX(-50%);
-    width: 96px; height: 20px; border-radius: 999px; background: var(--mock-bg); z-index: 2;
-  }
-  body.mock .wrap[data-device="mobile"] .mock { position: relative; }
 
   /* ══ glass island ══ */
   .isle {
@@ -180,9 +246,14 @@
   }
   @keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: .4 } }
   .badge__t { font: 700 10px/1 var(--mono); letter-spacing: .11em; text-transform: uppercase; }
+  .title {
+    color: var(--ink); font-size: 13px; font-weight: 650; letter-spacing: -.01em;
+    max-width: 26ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .title + .disclose__text::before { content: "·"; padding-right: 7px; color: rgba(22,24,29,.25); }
   .disclose__text {
     color: var(--ink-3); font-size: 12px; padding-right: 6px;
-    max-width: 40ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    max-width: 34ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
 
   .sep { width: 1px; align-self: stretch; margin: 3px 2px; background: var(--glass-ring); }
@@ -381,11 +452,25 @@
   body.bare .isle, body.bare .annots { opacity: 0; pointer-events: none; transform: translateY(8px); }
   body.bare .isle--b { transform: translateX(-50%) translateY(8px); }
   body.bare .stage { padding: 0; }
-  body.bare .wrap { width: 100% !important; max-width: none !important; height: 100% !important; max-height: none !important; }
   body.bare #frame { border-radius: 0; box-shadow: none; }
-  body.bare .mock { padding: 0 !important; background: none !important; box-shadow: none !important; border-radius: 0 !important; }
+  body.bare .mock {
+    padding: 0 !important; background: none !important;
+    box-shadow: none !important; border-radius: 0 !important;
+  }
+  /* the frame, the notch, the island, the camera dot and the base are all
+     chrome - hiding chrome has to take every one of them with it */
+  body.bare .mock::before, body.bare .mock::after { display: none !important; }
   body.bare .mock__bar { display: none !important; }
   body.bare { background: #fff; }
+  /* only desktop goes full-bleed. A phone or tablet view must keep its own
+     size, or "hide chrome" silently changes the viewport being reviewed. */
+  body.bare .wrap[data-device="desktop"] {
+    width: 100% !important; max-width: none !important;
+    height: 100% !important; max-height: none !important;
+    padding-bottom: 0 !important;
+  }
+  body.bare .wrap[data-device="tablet"]  { width: 834px !important; max-height: 1112px !important; }
+  body.bare .wrap[data-device="mobile"]  { width: 390px !important; max-height: 844px !important; }
 
   /* capture mode: chrome and notes out of the way, mockup kept */
   body.shot .isle, body.shot .annots { opacity: 0; pointer-events: none; }
@@ -437,6 +522,7 @@
 
 <div class="isle isle--tl">
   <span class="badge"><i class="badge__dot"></i><span class="badge__t">Prototype</span></span>
+  <span class="title" data-title hidden></span>
   <span class="disclose__text" data-boundary>not a live service</span>
   <span class="sep"></span>
   <div class="dd" data-dd>
@@ -518,6 +604,12 @@
   };
 
   if (cfg.boundary) document.querySelector('[data-boundary]').textContent = cfg.boundary;
+  if (cfg.title || cfg.name) {
+    var titleEl = document.querySelector('[data-title]');
+    titleEl.textContent = cfg.title || cfg.name;
+    titleEl.hidden = false;
+    document.title = (cfg.title || cfg.name) + ' - prototype';
+  }
   function icon(id) { return '<svg><use href="#' + id + '"/></svg>'; }
 
   function toast(msg, ms) {
@@ -784,32 +876,66 @@
       img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgStr);
       await loaded;
 
-      var pad = current.mockup ? 12 : 0;
-      var barH = (current.mockup && current.device !== 'mobile') ? 26 : 0;
+      /* the exported frame must be the frame on screen, cut-outs included -
+         a mockup that loses its notch on export is a different mockup */
+      var DEV = {
+        mobile:  { pad: 11, barH: 0,  outer: 56, inner: 45, bg: '#1c1c1e', base: 0 },
+        tablet:  { pad: 17, barH: 0,  outer: 36, inner: 20, bg: '#2b2b2e', base: 0 },
+        desktop: { pad: 10, barH: 26, outer: 16, inner: 5,  bg: '#26272b', base: 13 }
+      }[current.device];
+      var pad  = current.mockup ? DEV.pad : 0;
+      var barH = current.mockup ? DEV.barH : 0;
+      var base = current.mockup ? DEV.base : 0;
+
       var canvas = document.createElement('canvas');
-      canvas.width = (w + pad * 2) * scale;
-      canvas.height = (h + barH + pad * 2) * scale;
+      canvas.width  = (w + pad * 2) * scale;
+      canvas.height = (h + barH + pad * 2 + base) * scale;
       var ctx = canvas.getContext('2d');
       ctx.scale(scale, scale);
 
+      var bodyW = w + pad * 2, bodyH = h + barH + pad * 2;
+
       if (current.mockup) {
-        ctx.fillStyle = '#22252c';
-        roundRect(ctx, 0, 0, w + pad * 2, h + barH + pad * 2, 18 + pad);
+        ctx.fillStyle = DEV.bg;
+        roundRect(ctx, 0, 0, bodyW, bodyH, DEV.outer);
         ctx.fill();
         if (barH) {
-          ['#4a4f57', '#4a4f57', '#4a4f57'].forEach(function (c, k) {
-            ctx.fillStyle = c; ctx.beginPath();
-            ctx.arc(pad + 8 + k * 15, pad + 12, 4.5, 0, Math.PI * 2); ctx.fill();
-          });
+          ctx.fillStyle = 'rgba(255,255,255,.22)';
+          for (var k = 0; k < 3; k++) {
+            ctx.beginPath(); ctx.arc(pad + 8 + k * 16, pad + 11, 4.5, 0, Math.PI * 2); ctx.fill();
+          }
         }
       }
+
       ctx.save();
-      roundRect(ctx, pad, pad + barH, w, h, current.mockup ? 8 : 14);
+      roundRect(ctx, pad, pad + barH, w, h, current.mockup ? DEV.inner : 14);
       ctx.clip();
       ctx.fillStyle = '#fff';
       ctx.fillRect(pad, pad + barH, w, h);
       ctx.drawImage(img, pad, pad + barH, w, h);
       ctx.restore();
+
+      if (current.mockup) {
+        if (current.device === 'mobile') {           // Dynamic Island
+          ctx.fillStyle = '#000';
+          roundRect(ctx, bodyW / 2 - 56, pad + 9, 112, 33, 17);
+          ctx.fill();
+        }
+        if (current.device === 'tablet') {           // camera
+          ctx.fillStyle = '#0d0d0f';
+          ctx.beginPath(); ctx.arc(bodyW / 2, 10.5, 3.5, 0, Math.PI * 2); ctx.fill();
+        }
+        if (current.device === 'desktop') {          // camera notch + base
+          ctx.fillStyle = DEV.bg;
+          roundRect(ctx, bodyW / 2 - 71, -8, 142, 21, 8);
+          ctx.fill();
+          var g = ctx.createLinearGradient(0, bodyH, 0, bodyH + base);
+          g.addColorStop(0, '#35363b'); g.addColorStop(.62, '#1e1f23'); g.addColorStop(1, '#17181b');
+          ctx.fillStyle = g;
+          roundRect(ctx, 0, bodyH, bodyW, base, 0);
+          ctx.fill();
+        }
+      }
 
       canvas.toBlob(function (blob) {
         if (!blob) { captureMode('The browser refused to rasterise this screen. Chrome is hidden - take a system screenshot.'); return; }
