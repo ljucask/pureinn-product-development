@@ -48,6 +48,13 @@ Engine prečíta `state.json`, obnoví kontext z `assessment.md`, zobrazí dashb
 ```
 Keywordy: `setup` · `discover` · `validate` · `define` · `model` · `plan` · `build` (+ aliasy). Engine rozlíši keyword, over si podklad pre danú časť (ak chýba, ponúkne možnosti - nikdy nezablokuje), a ak workspace ešte neexistuje, najprv ho celý založí. Pre jeden konkrétny artefakt spusti priamo daný skill (`/jtbd-building`, `/pm-features-list`) - stage netreba.
 
+### Premýšľaš nahlas / máš brief, ešte nevieš či z toho bude projekt
+```
+/pureinn "dostali sme 3 hodiny na take-home, brief je v prílohe - čo s tým"
+/pureinn "klient chce prerobiť rezervácie, mám od nich len zápis z callu"
+```
+Engine brief prečíta, vráti čo pochopil a čo chýba, a ponúkne tri cesty: celý projekt, jedna fáza, alebo jeden skill hneď teraz. Workspace nezaloží, kým si nevyberieš.
+
 ### Prehľad celého frameworku
 ```
 /pureinn map
@@ -75,7 +82,8 @@ If none resolve, say so plainly and ask the user where the Pureinn plugin is ins
 
 | Reference file | Contains | Read it when |
 |---|---|---|
-| `intake.md` | STEP 2 - Document Scan, STEP 3 - Intake Questions | new project (STEP 1A path) |
+| `entry.md` | STEP 0a - Document Scan, STEP 0b - Explore mode | **every** path, at STEP 0 |
+| `intake.md` | STEP 2 - Documents recap, STEP 3 - Intake Questions | new project (STEP 1A path) |
 | `assessment.md` | STEP 3B - Assessment, STEP 3C - Fast Track Detection | after intake |
 | `playbooks.md` | STEP 4 - Playbook Selection, STEP 5 - Starting Phase, Phase → Skills Reference | selecting a playbook, or listing a phase's skills |
 | `workspace.md` | STEP 6 - Workspace Setup (tree, `state.json`, `pureinn-variables.md`) | scaffolding a workspace |
@@ -84,18 +92,42 @@ If none resolve, say so plainly and ask the user where the Pureinn plugin is ins
 
 ---
 
-## Special Commands
+## STEP 0 - Intent Gate
 
-Evaluate `$ARGUMENTS` in this order (first match wins):
+**Hard rule: this step completes before any other output.** No dashboard, no intake question, no artifact, no advice - classify first. The engine's worst failure is answering a free-text brief conversationally and never entering the framework at all.
 
-1. **`map` / `help`** → Skip all steps. Read `references/framework-map.md` and display the FRAMEWORK MAP.
+**a) Classify `$ARGUMENTS` into exactly one of five modes.** Evaluate in this order, first match wins:
 
-2. **First token is a stage/playbook keyword** (see Stage Keyword Resolver below) → Go to **STEP 1C (Stage Entry)**.
-   The keyword may stand alone (`/pureinn define`), be preceded by a project slug (`/pureinn acme define`), or be followed by a fresh product idea (`/pureinn discover "food delivery app"`).
+| # | Mode | Trigger | Goes to |
+|---|---|---|---|
+| 1 | `map` | `map` / `help` | `references/framework-map.md`, nothing else |
+| 2 | `stage` | The argument is a **bare** stage/playbook keyword (see resolver below), optionally preceded by a project slug or followed by a quoted product idea | STEP 1C |
+| 3 | `resume` | Matches a known project slug that has a `state.json` | STEP 1B |
+| 4 | `new` | A product idea, or an explicit ask to start/build something | STEP 1A |
+| 5 | `explore` | The user is describing a situation, brief or problem out loud - thinking, not yet committing to a project | `references/entry.md` § STEP 0b |
 
-3. **Matches a known project slug with an existing `state.json`** → Go to **STEP 1B (Resume path)**.
+**b) Stage keyword disambiguation - the rule that prevents false positives.** Stage keywords are common English words (`build`, `plan`, `research`, `test`, `scope`, `start`). A keyword only routes to `stage` when the whole argument is a bare command:
 
-4. **Otherwise** → Go to **STEP 1A (New / intake path)**.
+- at most 3 tokens, **and**
+- no sentence punctuation (`.` `,` `?` `!` `:` `;`), **and**
+- the keyword is the first or second token (a slug may precede it)
+
+A keyword sitting inside a longer sentence is prose, not a command. `/pureinn build` is stage entry; `/pureinn "we need to build a loyalty program for our shop"` is not - it is `new` or `explore`. The one exception is a keyword followed by a quoted idea (`/pureinn discover "food delivery app"`), which stays stage entry by design.
+
+**c) Distinguishing `new` from `explore`** - both are free text, and the difference is commitment, not length:
+
+| Signal | Points to |
+|---|---|
+| Names a product or an idea to build, asks to start, uses "I want to build / we're making" | `new` |
+| Describes a situation, an assignment, a client brief, a problem to think about; asks what to do; has a deadline attached; pastes material for an opinion | `explore` |
+
+When genuinely ambiguous, treat it as `explore` - it can always route into `new` one step later, and it never creates a workspace the user did not ask for. The reverse mistake is expensive.
+
+**d) Confirm before acting on free text.** If the input is free text longer than ~10 words, echo the classification back and confirm with **one** AskUserQuestion before proceeding - never a series. Show what you understood in one line, then offer the classified mode as the recommended option and the neighbouring mode as the alternative. Short, unambiguous inputs (`map`, a bare keyword, a known slug) are not confirmed - that would be friction with no benefit.
+
+**e) Run the document scan.** Read `references/entry.md` § STEP 0a and run it at the depth its table gives for the classified mode. This runs on every path including resume and stage entry - not only on new-project intake.
+
+Only then continue to the step the mode points at.
 
 ### Stage Keyword Resolver
 
@@ -154,13 +186,13 @@ Store the answer. Save as `"guidance_mode": true` or `false` in state.json.
 - ON: Before each phase and before recommending each skill, Claude adds 2-3 sentences of context - what this phase is trying to achieve, what to watch out for, common mistakes. Applied consistently throughout the workflow, not just at the start.
 - OFF: Pure routing. Dashboard + skills queue, no explanatory text.
 
-Then read `references/intake.md` and run **STEP 2 (Document Scan and Intake)**.
+Then read `references/intake.md` and run **STEP 2 (Documents recap)** - the scan itself already ran in STEP 0.
 
 ---
 
 ## STEP 1B - Resume Path
 
-A state.json exists for this project. Read it, then read `references/dashboard.md` and go directly to **STEP 7 (Dashboard)**.
+A state.json exists for this project. Read it, then read `references/dashboard.md` and go to **STEP 7 (Dashboard)**. If the STEP 0 delta scan found new material, surface it before the dashboard - new inputs can change what the right next action is.
 
 ---
 

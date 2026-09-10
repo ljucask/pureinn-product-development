@@ -1,37 +1,17 @@
 # Pureinn - Intake reference
 
-> Reference for `commands/pureinn/COMMAND.md`. Document scan and the 3-round intake.
+> Reference for `commands/pureinn/COMMAND.md`. The 3-round intake. The document scan lives in `entry.md` (STEP 0a) because it runs on every path.
 
-## STEP 2 - Document Scan and Intake
+## STEP 2 - Documents recap
 
-First, scan the entire working directory recursively for any existing documents (.md, .txt, .pdf, .docx, .csv, notes, research files - anything that could be product or research material). Exclude code files, system files, dependency/build directories (`node_modules/`, `.git/`, `dist/`, `build/`), and this framework's own operational files (`.claude/`, `pureinn-workspace/`).
+The document scan already ran in **STEP 0** (`references/entry.md` § STEP 0a) - it runs on every path, not just this one. Do **not** scan again here.
 
-**If documents are found outside the framework:**
+Carry its result into the intake:
 
-Read them. Then inform the user:
+- **Documents were found and read** → say in one line what they cover and what phase they map to, so the intake questions below can skip what the documents already answer. Do not re-ask what a document states plainly.
+- **No documents** → continue to STEP 3 with none. This is a normal starting point, not a gap to apologize for.
 
-```
-I found the following files that may be relevant:
-
-  [list of files with paths]
-
-I'll include these in the analysis. If you have additional documents
-not yet in the directory, add them now and let me know - otherwise
-we'll proceed with what's here.
-```
-
-**If no documents found:**
-
-```
-I don't see any existing documents in the directory.
-
-If you have research notes, specs, interview transcripts, or anything
-else relevant - add them anywhere in this directory and let me know.
-
-If you're starting from scratch, say "nothing" and we'll go from there.
-```
-
-Wait for confirmation. If user adds files, read them. If "nothing", proceed to Step 3 with no documents.
+If the user adds files at any point during the intake, read them and fold them in - the scan is not a one-shot gate.
 
 ---
 
