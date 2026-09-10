@@ -34,6 +34,7 @@ This file is the flow. Detail that only one path needs lives in `references/` ne
 |---|---|---|
 | `spec-artifact.md` | Step 5 - the prototype spec's shape (universal, tool-agnostic core) | compiling the spec |
 | `external-tools.md` | Step 4 - tool selection · Lovable construction rules and operational tactics · Step 6 - handoff | the prototype is built by an external tool |
+| `way-in.md` | Step 1 - getting from a raw idea to something buildable, and deciding whether code is the right test at all | the scope is a thought rather than a named chunk |
 | `audience-depth.md` | Step 3b - who it is for, how deep that makes it, and which path builds it | **every run**, right after ingestion |
 | `in-repo-loop.md` | The harness shell contract, the rules of the iteration loop, stop and restart signals, classification | the prototype is built here, by a coding agent |
 | `scaffold/` | The harness itself - copy it into the prototype's build folder | on the in-repo path |
@@ -121,6 +122,10 @@ Establish exactly what is being prototyped. Ask as plain text, only what is not 
 
 Surface an assumption if you infer the scope rather than being told it.
 
+**If what arrived is a raw idea rather than a scoped chunk** - a sentence, a situation, a hunch, or a `/pureinn` run in `explore` mode - **read `references/way-in.md` and run it first.** Everything downstream assumes a concept that already has an actor, a mechanism and a killer assumption; without those the intent gate has nothing to weigh and the prototype gets built for a problem nobody stated.
+
+That sequence can legitimately end with *"the cheapest test of your riskiest belief is not a prototype"*. If it does, say so and stop - that is the skill working, not failing.
+
 ---
 
 ## Step 2: Intent gate (Impact over Activity)
@@ -147,6 +152,8 @@ Surface an assumption if you infer the scope rather than being told it.
    ```
 
 3. **Define the success criterion up front.** One sentence: "The prototype succeeds if [observable signal] - otherwise we [change / halt]." This becomes the anchor of both the spec and the result capture.
+
+   If `references/way-in.md` ran, its **test contract already is this criterion** - carry it forward rather than writing a second one. Two success criteria for one prototype means the result can always be narrated against whichever one it happened to clear.
 
 ---
 
@@ -254,6 +261,7 @@ When the user comes back with an outcome, operate in **delta mode** - do not rew
 - [ ] Primary screen named + build-first
 - [ ] Flow narrative
 - [ ] Fidelity stated (static vs functional)
+- [ ] Raw idea: the way-in ran, and the code-vs-no-code decision was made explicitly rather than assumed
 - [ ] Audience named, and depth chosen from it rather than from habit (Step 3b)
 - [ ] Path stated out loud with its reason before building
 - [ ] External path only: compiled build prompt following the tool's construction rules (`references/external-tools.md`; Lovable rules if Lovable)

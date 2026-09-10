@@ -97,7 +97,9 @@ Assumptions go inline, in the format from the Skill question pattern: `Assumptio
 | One stage | The upstream work exists already (their own research, a client mandate) and one part of the framework is what's missing | Continue as mode `stage`: STEP 1C |
 | One skill, no workspace | Short-horizon work - a take-home, a pitch, a teardown, a single decision to make today | Run that one skill directly. No workspace, no `state.json` |
 
-For the third route, name the specific skill and why it fits - `/pm-scope-brief` for a commissioned definition, `/pm-stress-test` to pressure-test a position before a meeting, `/pm-prototype` when something visual has to exist, `/pm-root-cause` for an in-flight anomaly. Do not list the catalogue; recommend one and say what it produces.
+For the third route, name the specific skill and why it fits - `/pm-scope-brief` for a commissioned definition, `/pm-stress-test` to pressure-test a position before a meeting, `/pm-prototype` when something has to exist to be judged, `/pm-root-cause` for an in-flight anomaly. Do not list the catalogue; recommend one and say what it produces.
+
+`/pm-prototype` is the right recommendation more often than it looks, because it does not assume you already have something to prototype: given a raw idea it runs its own way-in first (actor and situation, three rival frames, the tiebreaker, a theory of value, the killer assumption, a test contract) and will tell you plainly when the cheapest test of that assumption is **not** a prototype.
 
 Always include a fourth way out: *"Neither - I just wanted to think it through"*. Explore mode is allowed to end without routing anywhere, and must not nag.
 
