@@ -268,7 +268,21 @@
   .isle--b { flex: 0 1 auto; flex-wrap: wrap; row-gap: 10px; }
   /* notes are a different job from driving the prototype, and they had
      outgrown being a group inside someone else's bar */
-  .isle--notes { flex: 0 1 auto; flex-wrap: wrap; row-gap: 10px; align-items: stretch; padding: 9px 13px; gap: 13px; }
+  /* The notes bar is a different job from driving the prototype, so it looks
+     like one: a warm ground under the reviewer's tools, the cool glass left to
+     the controls. */
+  .isle--notes {
+    flex: 0 1 auto; flex-wrap: wrap; row-gap: 10px; align-items: stretch;
+    padding: 9px 13px; gap: 13px;
+    background: linear-gradient(135deg, rgba(255,236,229,.88), rgba(255,247,235,.86));
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.85),
+      0 0 0 1px rgba(237,109,87,.16),
+      0 12px 32px -12px rgba(237,109,87,.3),
+      0 2px 6px -2px rgba(22,24,29,.08);
+  }
+  .isle--notes .grp__l { color: #a04a35; }
+  .isle--notes .ib:hover { background: rgba(237,109,87,.12); }
   @media (max-width: 900px) { .dock > .isle { flex: 1 1 100%; } }
 
   /* Two fixed islands grow towards each other; below these widths the left one
@@ -924,6 +938,40 @@
   body.is-fixed [data-device-seg], body.is-fixed [data-mockup],
   body.is-fixed [data-promo-btn] { opacity: .35; pointer-events: none; }
 
+  /* ══ menus - the toolbar stops growing and starts folding ══
+     Fourteen controls in a row is a list of everything the tool can do, not a
+     way to do any of it. Three of those controls - pin, screen note, overall -
+     were the SAME action with three targets, and the difference does not fit in
+     a button label. In a menu it gets a line. */
+  .stash { display: none !important; }
+  .caret { width: 11px !important; height: 11px !important; opacity: .5; margin-left: -2px; }
+  .ib[aria-expanded="true"] .caret { transform: rotate(180deg); }
+  .menu {
+    position: fixed; z-index: 29; min-width: 264px; max-width: 320px; padding: 7px;
+    background: var(--glass-lit);
+    backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+    border-radius: var(--r-lg);
+    box-shadow: inset 0 1px 0 var(--glass-edge), 0 0 0 1px var(--glass-ring), 0 22px 50px -18px rgba(22,24,29,.42);
+    animation: rise var(--fast) var(--spring);
+  }
+  .menu[hidden] { display: none; }
+  .menu__i {
+    display: flex; gap: 11px; align-items: flex-start; width: 100%;
+    padding: 9px 11px; border: 0; border-radius: 11px;
+    background: none; text-align: left; cursor: pointer;
+    transition: background var(--fast) var(--ease);
+  }
+  .menu__i:hover { background: rgba(22,24,29,.06); }
+  .menu__i svg { width: 15px; height: 15px; margin-top: 1px; color: var(--co); flex: 0 0 auto; }
+  .menu__txt { flex: 1 1 auto; min-width: 0; }
+  .menu__i b { display: block; font-size: 12.5px; font-weight: 620; color: var(--ink); }
+  .menu__i span { display: block; margin-top: 2px; font-size: 11px; line-height: 1.45; color: var(--ink-3); }
+  .menu__sep { height: 1px; margin: 5px 9px; background: var(--glass-ring); }
+  .menu__h {
+    display: block; padding: 7px 11px 5px;
+    font: 700 8px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3);
+  }
+
   /* ══ marks and spotlight ══
      An annotation explains; a mark POINTS. They are different jobs and the
      second one had nothing: no way to say "this region", only "this element".
@@ -974,7 +1022,8 @@
   /* the spotlight: a hole in a dark sheet, following the pointer */
   .spot {
     position: absolute; inset: 0; z-index: 5; display: none;
-    pointer-events: none; transition: opacity var(--med) var(--ease);
+    pointer-events: none; border-radius: var(--r-lg);
+    transition: background 90ms linear;
   }
   body.is-spot .spot { display: block; }
   body.is-spot .stage { cursor: crosshair; }
@@ -1462,6 +1511,7 @@
   <button class="ib" type="button" data-toggle-comments aria-pressed="true" title="Comments left in this browser"><svg><use href="#i-note"/></svg>Comments<span class="count" data-comment-count>0</span></button>
   <span class="sep"></span>
   <!-- modes: they take the whole surface over, rather than changing one thing on it -->
+  <button class="ib ib--icon" type="button" data-spot aria-pressed="false" title="Spotlight - dim everything except what you point at"><svg><use href="#i-spot"/></svg></button>
   <button class="ib" type="button" data-present title="Full screen, screens playing through on their own"><svg><use href="#i-present"/></svg>Present</button>
   <button class="ib" type="button" data-bare title="Hide every control and see the artifact exactly as a user would"><svg><use href="#i-eye-off"/></svg>Hide menu <kbd>H</kbd></button>
 </div>
@@ -1489,19 +1539,9 @@
 
   <span class="sep"></span>
   <div class="grp">
-    <span class="grp__l">Capture</span>
+    <span class="grp__l">Take it out</span>
     <div class="grp__row">
-      <button class="ib ib--icon" type="button" data-shot title="Save this screen as a PNG"><svg><use href="#i-image"/></svg></button>
-      <button class="ib maker" type="button" data-export title="Download the local event log"><svg><use href="#i-down"/></svg><span class="count" data-event-count>0</span></button>
-    </div>
-  </div>
-
-  <span class="sep maker"></span>
-  <div class="grp maker">
-    <span class="grp__l">Send it on</span>
-    <div class="grp__row">
-      <button class="ib" type="button" data-share title="Opens at this exact screen, state, time and device - no task, no prompt to send anything back"><svg><use href="#i-share"/></svg>This view</button>
-      <button class="ib" type="button" data-invite title="Opens with the task, their name on every note, and a prompt to send them back"><svg><use href="#i-user"/></svg>For review</button>
+      <button class="ib" type="button" data-menu="share" aria-haspopup="menu" aria-expanded="false"><svg><use href="#i-share"/></svg>Share<svg class="caret"><use href="#i-chevron"/></svg></button>
     </div>
   </div>
 
@@ -1511,22 +1551,10 @@
      enough controls to stop being a group in someone else's bar. -->
 <div class="isle isle--notes">
   <div class="grp">
-    <span class="grp__l">Mark something</span>
+    <span class="grp__l">Say something</span>
     <div class="grp__row">
-      <button class="ib" type="button" data-comment aria-pressed="false" title="Click an element in the prototype to attach a note"><svg><use href="#i-pin"/></svg>Pin</button>
-      <button class="ib ib--icon" type="button" data-mark="box" aria-pressed="false" title="Draw a box around something"><svg><use href="#i-box"/></svg></button>
-      <button class="ib ib--icon" type="button" data-mark="pen" aria-pressed="false" title="Marker pen - drag across what you mean"><svg><use href="#i-pen"/></svg></button>
-      <button class="ib ib--icon" type="button" data-spot aria-pressed="false" title="Spotlight - dim everything except what you point at"><svg><use href="#i-spot"/></svg></button>
-    </div>
-  </div>
-
-  <span class="sep"></span>
-  <div class="grp">
-    <span class="grp__l">Write one</span>
-    <div class="grp__row">
-      <button class="ib" type="button" data-loose title="A note about this screen, without pointing at anything"><svg><use href="#i-note"/></svg>Note</button>
-      <button class="ib" type="button" data-summary title="One covering note about the whole prototype"><svg><use href="#i-cube"/></svg>Overall</button>
-      <button class="ib ib--icon" type="button" data-open-notes title="Read, filter and edit every note"><svg><use href="#i-list"/></svg></button>
+      <button class="ib" type="button" data-menu="note" aria-haspopup="menu" aria-expanded="false"><svg><use href="#i-note"/></svg><span data-note-label>Add note</span><svg class="caret"><use href="#i-chevron"/></svg></button>
+      <button class="ib" type="button" data-menu="mark" aria-haspopup="menu" aria-expanded="false"><svg><use href="#i-pen"/></svg><span data-mark-label>Mark</span><svg class="caret"><use href="#i-chevron"/></svg></button>
     </div>
   </div>
 
@@ -1535,8 +1563,24 @@
     <span class="grp__l">When you finish</span>
     <div class="grp__row">
       <button class="cta" type="button" data-send data-idle="1" title="Review your notes and choose how to return them"><svg><use href="#i-send"/></svg>Return notes<span class="cta__n" data-send-n>0</span></button>
+      <button class="ib ib--icon" type="button" data-menu="notes" aria-haspopup="menu" aria-expanded="false" title="More"><svg class="caret"><use href="#i-chevron"/></svg></button>
     </div>
   </div>
+</div>
+
+<!-- The real controls, kept out of sight: every listener in this file still
+     attaches to them, and the menus above simply press them. -->
+<div class="stash" hidden>
+  <button type="button" data-comment aria-pressed="false"></button>
+  <button type="button" data-loose></button>
+  <button type="button" data-summary></button>
+  <button type="button" data-mark="box" aria-pressed="false"></button>
+  <button type="button" data-mark="pen" aria-pressed="false"></button>
+  <button type="button" data-open-notes></button>
+  <button type="button" data-share></button>
+  <button type="button" data-invite></button>
+  <button type="button" data-shot></button>
+  <button type="button" data-export><span class="count" data-event-count>0</span></button>
 </div>
 </div>
 
@@ -3014,6 +3058,85 @@
     body.appendChild(foot);
   }
 
+  /* ---------- menus ----------
+     One popover implementation, four menus. Each item gets a line of its own to
+     say what it does, which is the whole reason the flat toolbar could not
+     distinguish three kinds of note. */
+  var openMenu = null;
+
+  function press(sel) { var b = document.querySelector(sel); if (b) b.click(); }
+
+  var MENUS = {
+    note: function () { return [
+      { h: 'What is the note about?' },
+      { ico: 'i-pin',  t: 'Something I click',   d: 'Pins it to that element, where the pointer lands', fn: function () { press('[data-comment]'); } },
+      { ico: 'i-screen', t: 'This screen',       d: 'No anchor - for what the screen as a whole gets wrong', fn: function () { press('[data-loose]'); } },
+      { ico: 'i-cube', t: 'The whole prototype', d: 'One covering note, carried at the top of what you send', fn: function () { press('[data-summary]'); } }
+    ]; },
+    mark: function () { return [
+      { h: 'Point at something' },
+      { ico: 'i-box', t: 'Box',        d: 'Drag a rectangle around it', fn: function () { press('[data-mark="box"]'); } },
+      { ico: 'i-pen', t: 'Marker pen', d: 'Drag across it, like a highlighter', fn: function () { press('[data-mark="pen"]'); } }
+    ]; },
+    share: function () { return [
+      { h: 'Send it to someone' },
+      { ico: 'i-share', t: 'Copy this view',   d: 'This exact screen, state, time and device. No task attached', fn: function () { press('[data-share]'); } },
+      { ico: 'i-user',  t: 'Invite to review', d: 'Opens with the task and a prompt to send notes back', fn: function () { press('[data-invite]'); } },
+      { sep: true },
+      { h: 'Take a copy' },
+      { ico: 'i-image', t: 'Screenshot',    d: 'This screen as a PNG, without the annotation layer', fn: function () { press('[data-shot]'); } },
+      { ico: 'i-down',  t: 'Event log',     d: 'What was clicked, in order. Local only, never analytics', fn: function () { press('[data-export]'); }, maker: true }
+    ]; },
+    notes: function () { return [
+      { ico: 'i-list', t: 'View all notes', d: 'Read, filter and edit every note in one place', fn: function () { press('[data-open-notes]'); } }
+    ]; }
+  };
+
+  function closeMenu() {
+    if (!openMenu) return;
+    openMenu.el.remove();
+    openMenu.btn.setAttribute('aria-expanded', 'false');
+    openMenu = null;
+  }
+
+  function showMenu(btn, key) {
+    if (openMenu && openMenu.key === key) { closeMenu(); return; }
+    closeMenu();
+    var el = document.createElement('div');
+    el.className = 'menu'; el.setAttribute('role', 'menu');
+    MENUS[key]().forEach(function (it) {
+      if (it.maker && reviewMode) return;
+      if (it.sep) { var s = document.createElement('div'); s.className = 'menu__sep'; el.appendChild(s); return; }
+      if (it.h) { var h = document.createElement('span'); h.className = 'menu__h'; h.textContent = it.h; el.appendChild(h); return; }
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'menu__i'; b.setAttribute('role', 'menuitem');
+      b.innerHTML = icon(it.ico) + '<span class="menu__txt"><b></b><span></span></span>';
+      b.querySelector('b').textContent = it.t;
+      b.querySelector('.menu__txt span').textContent = it.d;
+      b.addEventListener('click', function () { closeMenu(); it.fn(); });
+      el.appendChild(b);
+    });
+    document.body.appendChild(el);
+    var r = btn.getBoundingClientRect();
+    var w = el.getBoundingClientRect().width;
+    var h2 = el.getBoundingClientRect().height;
+    el.style.left = Math.max(12, Math.min(r.left, window.innerWidth - w - 12)) + 'px';
+    el.style.top = Math.max(12, r.top - h2 - 10) + 'px';
+    btn.setAttribute('aria-expanded', 'true');
+    openMenu = { el: el, btn: btn, key: key };
+  }
+
+  document.querySelectorAll('[data-menu]').forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      showMenu(btn, btn.getAttribute('data-menu'));
+    });
+  });
+  document.addEventListener('click', function (e) {
+    if (openMenu && !openMenu.el.contains(e.target)) closeMenu();
+  });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeMenu(); });
+
   /* ---------- marks: box and marker pen ----------
      Kept as fractions of the frame, so a mark drawn on a laptop is still on the
      same words after a resize or a device change. It belongs to a screen, a
@@ -3032,6 +3155,10 @@
     markBtns().forEach(function (b) {
       b.setAttribute('aria-pressed', String(b.getAttribute('data-mark') === marking));
     });
+    var mk = document.querySelector('[data-menu="mark"]');
+    mk.setAttribute('aria-pressed', String(!!marking));
+    document.querySelector('[data-mark-label]').textContent =
+      marking === 'box' ? 'Drag a box' : marking === 'pen' ? 'Drag across' : 'Mark';
     if (marking) {
       toast(marking === 'box'
         ? 'Drag a box around what you mean. It stays with this screen.'
@@ -3203,9 +3330,12 @@
   var spotOn = false;
   var spotBtn = document.querySelector('[data-spot]');
 
+  /* Small and soft. A wide hard-edged hole reads as a broken overlay; what is
+     wanted is the rest of the screen quietly stepping back. */
   function paintSpot(x, y) {
     spotEl.style.background =
-      'radial-gradient(circle 130px at ' + x + 'px ' + y + 'px, rgba(20,22,27,0) 0, rgba(20,22,27,0) 62%, rgba(20,22,27,.62) 100%)';
+      'radial-gradient(circle 86px at ' + x + 'px ' + y + 'px,' +
+      ' rgba(20,22,27,0) 0, rgba(20,22,27,.04) 45%, rgba(20,22,27,.22) 72%, rgba(20,22,27,.40) 100%)';
   }
   spotBtn.addEventListener('click', function () {
     spotOn = !spotOn;
@@ -3503,7 +3633,9 @@
     commentBtn.setAttribute('aria-pressed', String(on));
     // the button stays lit and says what to do until the click lands - a toast
     // that has faded leaves the reviewer armed and not knowing it
-    commentLabel.textContent = on ? 'Click an element' : 'Add note';
+    var mb = document.querySelector('[data-menu="note"]');
+    mb.setAttribute('aria-pressed', String(on));
+    document.querySelector('[data-note-label]').textContent = on ? 'Click an element' : 'Add note';
     send('picking', on);
     if (on) toast('Click anything in the prototype to attach a note there. Esc cancels.', 4200);
   }

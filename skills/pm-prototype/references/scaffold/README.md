@@ -123,7 +123,20 @@ Every disclosure note carries `real:`, what the element would be in production. 
 
 Both bottom bars live in **one dock** that wraps when the window runs out, so they lay out against each other instead of overlapping on a width nobody tested. The simulation panel, the return sheet and the note rail all read the dock's measured height rather than assuming it.
 
-**Notes have their own island**, bottom right: *Mark something* (pin, box, marker, spotlight), *Write one* (an unanchored note, the overall note, the editor) and *When you finish*. They had outgrown being a group inside the bar that drives the prototype.
+The bottom folded from fourteen controls to six, grouped by intent rather than listed:
+
+| | |
+|---|---|
+| **State** | the segmented switch, used constantly, one click |
+| **Simulate** | the chip and its panel |
+| **Share ▾** | *Copy this view* · *Invite to review* · *Screenshot* · *Event log* - one family: taking something out of here |
+| **Add note ▾** | *Something I click* · *This screen* · *The whole prototype* - one action with three targets, and no three button labels can say that. In a menu each gets a line |
+| **Mark ▾** | *Box* · *Marker pen* |
+| **Return notes (n)** | stays visible and keeps its count. Without a backend nothing reaches you until it is pressed, so folding it away would break the one mechanism it serves |
+
+Spotlight moved up beside `Present`: it is a way of showing someone something, not a way of recording anything.
+
+**Notes have their own island**, bottom right, on a warm ground rather than the cool glass - it is a different job from driving the prototype and it looks like one: *Mark something* (pin, box, marker, spotlight), *Write one* (an unanchored note, the overall note, the editor) and *When you finish*. They had outgrown being a group inside the bar that drives the prototype.
 
 **Not every note points at something.** `Note` writes one about the screen with no anchor - "this screen has no way back" does not belong pinned to an arbitrary button. And after a box or a marker stroke, a bubble offers *Add a note here* for a few seconds and then gets out of the way.
 
@@ -257,6 +270,8 @@ Driven end to end in a real browser before shipping, per the contract's own "tes
 The second round added: per-screen time appearing, disappearing and keeping each screen's own value across a switch; a comment placed by clicking inside the artifact, with a real selector computed for it; collapse to a pin and reopen; an orphan anchor; the generated disclosure screen; and the review brief.
 
 The third: the screen panel with its descriptions and keyboard navigation, and the viewport transition - sampled mid-flight at 427px between a 1106px desktop and a 390px phone, with the annotations re-anchoring correctly once it settled.
+
+The twentieth: the three note scopes reached from one menu and a screen note written through it, the Share menu carrying all four exports, and the mark menu relabelling its button to "Drag a box" while armed.
 
 The nineteenth: both bottom bars side by side at 1700 with a 12px gap, wrapping to two rows at 1200 and with both panels open, and everything above them following the measured height.
 

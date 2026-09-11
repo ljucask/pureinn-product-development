@@ -160,6 +160,10 @@ Building three mechanisms would be duplicated work and three inconsistent surfac
 
 **A mark asks for a note.** Having said "here", the next thing wanted is usually "and this is why" - so offer it beside what was just drawn, and let the offer go away on its own. Asking outright makes every highlight a two-step chore.
 
+**A toolbar that only grows stops being usable.** Past a dozen controls a bar is a list of everything the tool can do rather than a way to do any of it - so it has to start **folding by intent**: a few named controls, each opening what belongs to it. The test is whether a row of buttons can carry the distinction: *pin to an element*, *note on this screen* and *note on the whole prototype* are one action with three targets, and no three button labels will ever say that. In a menu each gets a line, and the difference becomes obvious.
+
+**What must never fold is the thing the loop depends on.** The return control stays visible and keeps its count: without a backend nothing reaches the author until it is pressed, and hiding it inside a menu would break the one mechanism it exists to serve.
+
 **Two bars cannot be positioned independently.** Once the shell has more than one bar at the bottom, anchoring each on its own means they overlap on some window nobody tested, and no amount of breakpoint guessing fixes it - they have to lay out *against each other*, in one container that wraps. Everything that floats above them then has to read the container's measured height rather than assume it.
 
 **Edit where the reader is looking.** A register that throws you back to the artifact to change a word loses the list you were working through. The same is true in reverse: a note being written beside the prototype should be able to carry on in the register without starting again.
