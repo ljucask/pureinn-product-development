@@ -121,6 +121,8 @@ Every disclosure note carries `real:`, what the element would be in production. 
 
 **Comments take emphasis and one picture** - bold, italic, underline, and an attached reference image, because *"make it look like this"* with a screenshot is worth ten sentences. Pasted markup is stripped to `b/i/u/br/img` and an image is scaled to 1100px before it is kept, or the second note fills the browser's quota.
 
+Both bottom bars live in **one dock** that wraps when the window runs out, so they lay out against each other instead of overlapping on a width nobody tested. The simulation panel, the return sheet and the note rail all read the dock's measured height rather than assuming it.
+
 **Notes have their own island**, bottom right: *Mark something* (pin, box, marker, spotlight), *Write one* (an unanchored note, the overall note, the editor) and *When you finish*. They had outgrown being a group inside the bar that drives the prototype.
 
 **Not every note points at something.** `Note` writes one about the screen with no anchor - "this screen has no way back" does not belong pinned to an arbitrary button. And after a box or a marker stroke, a bubble offers *Add a note here* for a few seconds and then gets out of the way.
@@ -255,6 +257,8 @@ Driven end to end in a real browser before shipping, per the contract's own "tes
 The second round added: per-screen time appearing, disappearing and keeping each screen's own value across a switch; a comment placed by clicking inside the artifact, with a real selector computed for it; collapse to a pin and reopen; an orphan anchor; the generated disclosure screen; and the review brief.
 
 The third: the screen panel with its descriptions and keyboard navigation, and the viewport transition - sampled mid-flight at 427px between a 1106px desktop and a 390px phone, with the annotations re-anchoring correctly once it settled.
+
+The nineteenth: both bottom bars side by side at 1700 with a 12px gap, wrapping to two rows at 1200 and with both panels open, and everything above them following the measured height.
 
 The eighteenth: the spotlight no longer blanking the page, a note written with no anchor, a box offering a note and getting one, editing inside the panel, and a CSV with one row per note.
 

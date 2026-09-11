@@ -98,7 +98,7 @@
   .stage {
     position: absolute; inset: 0;
     display: flex; align-items: center; justify-content: safe center;
-    padding: 86px 26px 134px;   /* the bottom island is a labelled tool bar, not a strip */
+    padding: 86px 26px calc(var(--dockh, 108px) + 30px);
     /* The note rail is absolutely positioned into the reserved right padding,
        which counts as scrollable overflow - so the stage grew a horizontal
        scrollbar, and once it was scrolled the artifact shifted left and the
@@ -251,16 +251,25 @@
   }
   .isle--tl { top: 16px; left: 18px; padding-right: 15px; }
   .isle--tr { top: 16px; right: 18px; }
-  .isle--b  { bottom: 18px; left: 50%; transform: translateX(-50%); }
-  /* its own island: notes are a different job from driving the prototype, and
-     they have outgrown being a group inside someone else's bar */
-  .isle--notes { bottom: 18px; right: 18px; align-items: stretch; padding: 9px 13px; gap: 13px; }
-  body.is-notes .isle--notes { right: calc(18px + var(--npanel)); }
-  @media (max-width: 1500px) {
-    .isle--b { left: 18px; transform: none; }
-    body.is-nav .isle--b { left: calc(18px + var(--nav)); transform: none; }
-    body.is-notes .isle--b, body.is-notes.is-nav .isle--b { transform: none; }
+  /* Two bars positioned independently will eventually overlap, and no amount of
+     breakpoint guessing fixes it - they have to lay out against each other. One
+     dock, two islands inside it, wrapping when the window runs out.
+     `wrap-reverse` so the notes bar climbs ABOVE the controls rather than
+     dropping off the bottom edge. */
+  .dock {
+    position: fixed; left: 18px; right: 18px; bottom: 18px; z-index: 6;
+    display: flex; flex-wrap: wrap-reverse; align-items: flex-end;
+    justify-content: center; gap: 12px; pointer-events: none;
+    transition: left var(--med) var(--ease), right var(--med) var(--ease);
   }
+  .dock > .isle { position: static; transform: none; pointer-events: auto; }
+  body.is-nav .dock { left: calc(18px + var(--nav)); }
+  body.is-notes .dock { right: calc(18px + var(--npanel)); }
+  .isle--b { flex: 0 1 auto; flex-wrap: wrap; row-gap: 10px; }
+  /* notes are a different job from driving the prototype, and they had
+     outgrown being a group inside someone else's bar */
+  .isle--notes { flex: 0 1 auto; flex-wrap: wrap; row-gap: 10px; align-items: stretch; padding: 9px 13px; gap: 13px; }
+  @media (max-width: 900px) { .dock > .isle { flex: 1 1 100%; } }
 
   /* Two fixed islands grow towards each other; below these widths the left one
      sheds what it can spare rather than sliding under the right one. */
@@ -467,11 +476,9 @@
   /* Opening it MOVES the prototype rather than covering it: a panel over the
      artifact hides the thing being reviewed, and the reviewer has to close it
      to check what they just read. */
-  .stage, .isle--tl, .isle--b { transition: padding var(--med) var(--ease), left var(--med) var(--ease), transform var(--med) var(--ease); }
+  .stage, .isle--tl, .isle--tr { transition: padding var(--med) var(--ease), left var(--med) var(--ease), right var(--med) var(--ease); }
   body.is-nav .stage  { padding-left: calc(26px + var(--nav)); }
   body.is-nav .isle--tl { left: calc(18px + var(--nav)); }
-  body.is-nav .isle--b  { transform: translateX(calc(-50% + var(--nav) / 2)); }
-  body.is-nav .isle--notes { /* anchored right; the panel moves it, not the nav */ }
 
   /* ══ scrub ══ */
   .scrub { -webkit-appearance: none; appearance: none; width: 148px; height: 22px; background: none; cursor: grab; }
@@ -503,7 +510,7 @@
      drifted off the edge with a horizontal scrollbar behind it. The reserved
      padding is fixed, so the rail's home is fixed too. */
   .rail {
-    position: fixed; top: 86px; bottom: 134px; right: 26px; z-index: 4;
+    position: fixed; top: 86px; bottom: calc(var(--dockh, 108px) + 30px); right: 26px; z-index: 4;
     width: calc(var(--rail) - 50px);
     display: flex; flex-direction: column; gap: 10px;
     padding: 4px 7px 10px; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain;
@@ -659,12 +666,16 @@
   }
   .note__save[disabled] { background: rgba(22,24,29,.08); color: var(--ink-3); box-shadow: none; cursor: default; }
   .note__kbd { font: 700 8.5px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); flex: 0 0 auto; }
-  .note__more {
-    padding: 5px 9px; border: 0; border-radius: 7px;
-    background: rgba(22,24,29,.05); color: var(--ink-3);
-    font: 600 10.5px/1 var(--font); cursor: pointer; white-space: nowrap;
+  .note__grow {
+    flex: 0 0 auto; width: 22px; height: 22px; margin: -2px 0 0 0;
+    display: grid; place-items: center;
+    background: none; border: 0; border-radius: 7px;
+    color: var(--ink-3); cursor: pointer; opacity: 0;
+    transition: opacity var(--fast) var(--ease), color var(--fast) var(--ease), background var(--fast) var(--ease);
   }
-  .note__more:hover { background: rgba(22,24,29,.1); color: var(--ink-2); }
+  .note__grow svg { width: 12px; height: 12px; }
+  .note:hover .note__grow, .note__grow:focus-visible { opacity: 1; }
+  .note__grow:hover { color: var(--ink); background: rgba(22,24,29,.07); }
   .note.is-saved { animation: saved 1.1s var(--ease); }
   @keyframes saved {
     0%   { box-shadow: inset 0 1px 0 var(--glass-edge), 0 0 0 2px #17a76b, 0 14px 30px -14px rgba(22,24,29,.3); }
@@ -704,7 +715,7 @@
 
   /* ══ the send sheet - saying what will happen before it happens ══ */
   .sheet {
-    position: fixed; right: 22px; bottom: 118px; z-index: 28;
+    position: fixed; right: 22px; bottom: calc(var(--dockh, 108px) + 22px); z-index: 28;
     width: 372px; max-height: 62vh; padding: 20px 20px 16px;
     display: flex; flex-direction: column;
     background: var(--glass-lit);
@@ -738,7 +749,7 @@
     transition: color var(--fast) var(--ease);
   }
   .lnk:hover { color: var(--ink); text-decoration-color: var(--co); }
-  .sheet--invite { bottom: 118px; }
+  .sheet--invite { bottom: calc(var(--dockh, 108px) + 22px); }
   .picks { margin-top: 14px; display: grid; gap: 7px; }
   .picks > .sheet__where { margin-bottom: 1px; }
   .pick {
@@ -985,8 +996,6 @@
   .notes.is-open { transform: none; }
   body.is-notes .stage { padding-right: calc(26px + var(--npanel)); }
   body.is-notes .isle--tr { right: calc(18px + var(--npanel)); }
-  body.is-notes .isle--b { transform: translateX(calc(-50% - var(--npanel) / 2)); }
-  body.is-notes.nav-open .isle--b { transform: translateX(calc(-50% + var(--nav) / 2 - var(--npanel) / 2)); }
   body.is-notes .rail { display: none; }
   body.is-notes .sim { transform: translateX(calc(-50% - var(--npanel) / 2)); }
 
@@ -1061,7 +1070,7 @@
      This is where the situation lives, and where the next dimensions - audience,
      data volume, locale, connection - will go without the bar growing a row. */
   .sim {
-    position: fixed; left: 50%; bottom: 122px; z-index: 27;
+    position: fixed; left: 50%; bottom: calc(var(--dockh, 108px) + 26px); z-index: 27;
     width: min(420px, calc(100vw - 40px)); padding: 16px 18px 14px;
     transform: translateX(-50%);
     background: var(--glass-lit);
@@ -1209,7 +1218,7 @@
   /* ══ presentation - the artifact, and only what is needed to move ══ */
   body.is-present .isle, body.is-present .annots, body.is-present .rail, body.is-present .nav, body.is-present .sheet { opacity: 0; pointer-events: none; }
   body.is-present .stage { padding: 26px 26px 92px; }
-  body.is-present.nav-open .stage { padding-left: 26px; }
+  body.is-present.is-nav .stage { padding-left: 26px; }
   .show {
     position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 29;
     display: none; align-items: center; gap: 8px; padding: 8px 10px;
@@ -1373,6 +1382,7 @@
   <symbol id="i-box" viewBox="0 0 16 16"><rect x="2.4" y="3.6" width="11.2" height="8.8" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.4" stroke-dasharray="2.6 2"/></symbol>
   <symbol id="i-pen" viewBox="0 0 16 16"><path d="M11.6 1.9l2.5 2.5-7.6 7.6-3.3.8.8-3.3z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M2.2 14.2h11.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity=".5"/></symbol>
   <symbol id="i-spot" viewBox="0 0 16 16"><circle cx="8" cy="8" r="3.2" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M8 1.4v1.8M8 12.8v1.8M14.6 8h-1.8M3.2 8H1.4M12.7 3.3l-1.3 1.3M4.6 11.4l-1.3 1.3M12.7 12.7l-1.3-1.3M4.6 4.6L3.3 3.3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></symbol>
+  <symbol id="i-grow" viewBox="0 0 16 16"><path d="M6.2 2.4H2.4v3.8M9.8 13.6h3.8V9.8M2.4 2.4l4.6 4.6M13.6 13.6L9 9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-list" viewBox="0 0 16 16"><path d="M5.5 4.5h8M5.5 8h8M5.5 11.5h8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="2.6" cy="4.5" r="1" fill="currentColor"/><circle cx="2.6" cy="8" r="1" fill="currentColor"/><circle cx="2.6" cy="11.5" r="1" fill="currentColor"/></symbol>
   <symbol id="i-sim" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.9" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M8 4.6V8l2.4 1.6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-reset" viewBox="0 0 16 16"><path d="M3.2 8a4.8 4.8 0 1 0 1.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M2.4 2.8v2.9h2.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
@@ -1456,6 +1466,7 @@
   <button class="ib" type="button" data-bare title="Hide every control and see the artifact exactly as a user would"><svg><use href="#i-eye-off"/></svg>Hide menu <kbd>H</kbd></button>
 </div>
 
+<div class="dock" data-dock>
 <div class="isle isle--b">
   <div class="grp">
     <span class="grp__l">State</span>
@@ -1526,6 +1537,7 @@
       <button class="cta" type="button" data-send data-idle="1" title="Review your notes and choose how to return them"><svg><use href="#i-send"/></svg>Return notes<span class="cta__n" data-send-n>0</span></button>
     </div>
   </div>
+</div>
 </div>
 
 <div class="sheet sheet--invite" data-invite-sheet hidden role="dialog" aria-labelledby="invite-h">
@@ -2702,20 +2714,19 @@
         }, 160);
       });
 
-      if (cm && !active) {
-        var toPanel = document.createElement('button');
-        toPanel.className = 'note__open'; toPanel.type = 'button';
-        toPanel.title = 'Open this one in the note editor';
-        toPanel.setAttribute('aria-label', 'Open in the note editor');
-        toPanel.innerHTML = icon('i-list');
-        toPanel.addEventListener('click', function () {
-          focusNote = cm;
-          openNotes(true);
-        });
-        note.appendChild(toPanel);
+      note.appendChild(badge); note.appendChild(body);
+      if (cm) {
+        // a quiet way out to the editor: the action row is for finishing the
+        // note, not for navigating away from it
+        var grow = document.createElement('button');
+        grow.className = 'note__grow'; grow.type = 'button';
+        grow.title = 'Carry on in the note editor';
+        grow.setAttribute('aria-label', 'Open in the note editor');
+        grow.innerHTML = icon('i-grow');
+        grow.addEventListener('click', function () { panelEdit = cm; openNotes(true); });
+        note.appendChild(grow);
       }
-
-      note.appendChild(badge); note.appendChild(body); note.appendChild(x);
+      note.appendChild(x);
       railEl.appendChild(note);
 
       if (cm && cm.fresh) {
@@ -2939,15 +2950,9 @@
       sevLabel.className = 'note__kbd'; sevLabel.textContent = 'Severity';
       if (isSummary) sevLabel.hidden = true;
 
-      var more = document.createElement('button');
-      more.type = 'button'; more.className = 'note__more';
-      more.textContent = 'More room';
-      more.title = 'Carry on writing this in the note editor';
-      more.addEventListener('click', function () { panelEdit = cm; openNotes(true); });
-
       var row = document.createElement('div');
       row.className = 'note__add';
-      row.appendChild(sevLabel); row.appendChild(sev); row.appendChild(more); row.appendChild(save);
+      row.appendChild(sevLabel); row.appendChild(sev); row.appendChild(save);
       body.appendChild(row);
 
       function commit() {
@@ -4892,6 +4897,16 @@
     // ready - the shell still works, it just cannot push state or draw lines
     setTimeout(function () { if (!frameReady) drawAnnots(); }, 120);
   });
+
+  /* The dock wraps to two rows on a narrow window, so nothing may assume its
+     height - everything sitting above it reads the measured value. */
+  var dockEl = document.querySelector('[data-dock]');
+  function measureDock() {
+    document.documentElement.style.setProperty('--dockh',
+      Math.round(dockEl.getBoundingClientRect().height) + 'px');
+  }
+  if (window.ResizeObserver) new ResizeObserver(measureDock).observe(dockEl);
+  measureDock();
 
   window.addEventListener('resize', function () {
     document.querySelectorAll('.seg').forEach(slide);

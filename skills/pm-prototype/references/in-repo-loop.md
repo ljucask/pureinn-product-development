@@ -160,6 +160,8 @@ Building three mechanisms would be duplicated work and three inconsistent surfac
 
 **A mark asks for a note.** Having said "here", the next thing wanted is usually "and this is why" - so offer it beside what was just drawn, and let the offer go away on its own. Asking outright makes every highlight a two-step chore.
 
+**Two bars cannot be positioned independently.** Once the shell has more than one bar at the bottom, anchoring each on its own means they overlap on some window nobody tested, and no amount of breakpoint guessing fixes it - they have to lay out *against each other*, in one container that wraps. Everything that floats above them then has to read the container's measured height rather than assume it.
+
 **Edit where the reader is looking.** A register that throws you back to the artifact to change a word loses the list you were working through. The same is true in reverse: a note being written beside the prototype should be able to carry on in the register without starting again.
 
 **A rail is a notepad, not a register.** It is fast to write in and useless at twelve notes across four screens. Whatever reads them back needs filtering, editing, and a way to jump to where a note lives - its screen, its state, its device - and say *which* one it is when it gets there.
