@@ -161,6 +161,8 @@ Reviewers never see each other's comments. For an async test with real users tha
 
 A **pointer is on screen for the whole run**, resting inside the artifact and travelling to each declared target before it taps, so a run reads as someone using the prototype rather than as screens changing on their own.
 
+`Present` and `Hide menu` sit together at the far right: they are **modes** - they take the whole surface over - rather than tools that change one thing on it. Present has its own glyph, not a second play triangle beside the simulation's.
+
 **Mockup is orthogonal to both.** The same button that frames the single view frames these, and they use the *same* markup and CSS as the single view, scaled - so there is one iPhone in this tool, not three that drift apart. Each frame still renders at its real width before scaling, so the artifact's own media queries fire.
 
 **Grid and Add note are off in both multi views.** A pin belongs to one frame, and a grid measures one viewport at full size - at 43% an 8px rule on screen is not 8px in the artifact, so it would quietly lie. Opening a document screen leaves the multi view too: three scaled copies of one page is nonsense.
@@ -231,6 +233,8 @@ The second round added: per-screen time appearing, disappearing and keeping each
 
 The third: the screen panel with its descriptions and keyboard navigation, and the viewport transition - sampled mid-flight at 427px between a 1106px desktop and a 390px phone, with the annotations re-anchoring correctly once it settled.
 
+The sixteenth: Present moved beside Hide menu with its own icon, and the note rail anchored to the window - no horizontal scrollbar behind it and the curves still landing after a device change.
+
 The fifteenth: the simulation panel opening from its chip, play running the axis from 0 to 25 min and pausing, reset returning it, and the latency setting arriving in the artifact.
 
 The fourteenth: the multi-device row staying inside the stage at 1440 and at 900 with the mockup on, the time axis changing from minutes to days between two screens, and the mockup no longer drawn around a document screen.
@@ -266,6 +270,7 @@ Bugs found that way, none of which a reading of the code would have caught:
 - a draft comment survived a reload and held the whole annotation layer in writing mode for ever
 - the side-by-side container and the body-state class were both called `compare`, so `.compare { display: none }` matched `<body>` and blanked the entire document - and the promo view repeated the mistake a week later
 - the promo frames put their iframes at `top: 0`, which measures from the padding box, so each artifact covered the bezel it was supposed to sit inside
+- the note rail positioned itself from the frame's measured width, caught a mid-transition number, and drifted off the right edge - with a horizontal scrollbar behind it, because an absolutely positioned child in the reserved padding counts as overflow. It is anchored to the window now
 - `body.compare .wrap { display: none }` hid the scaled copies too, because they are `.wrap` as well - the third time in this file that a rule meant for one element caught everything sharing its name
 - and the fourth: the body's mockup state class was `mock`, the same as the frame element's, so `document.querySelector('.mock')` returned `<body>`. **No state class on `<body>` may share a name with an element class** - they are `is-mock`, `compare`, `promo` now, and the containers are `.mock`, `.cmpset`, `.proset`
 - the multi-device row sized itself from the viewports alone and then drew a bezel around each, pushing the row past the stage - and a centred flex row that overflows loses its left end where no scrollbar can reach it (`justify-content: safe center`)

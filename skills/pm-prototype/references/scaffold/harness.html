@@ -99,8 +99,15 @@
     position: absolute; inset: 0;
     display: flex; align-items: center; justify-content: safe center;
     padding: 86px 26px 134px;   /* the bottom island is a labelled tool bar, not a strip */
-    overflow: auto;
+    /* The note rail is absolutely positioned into the reserved right padding,
+       which counts as scrollable overflow - so the stage grew a horizontal
+       scrollbar, and once it was scrolled the artifact shifted left and the
+       rail sailed off the edge. Only the multi views legitimately scroll
+       sideways. */
+    overflow-y: auto; overflow-x: hidden;
   }
+  body.compare .stage, body.promo .stage { overflow-x: auto; }
+  body.compare .rail, body.promo .rail { display: none; }
   body.has-notes .stage { padding-right: calc(26px + var(--rail)); }
 
   .wrap {
@@ -247,9 +254,10 @@
 
   /* Two fixed islands grow towards each other; below these widths the left one
      sheds what it can spare rather than sliding under the right one. */
-  @media (max-width: 1340px) { .isle--tl .title { display: none; } }
-  @media (max-width: 1180px) { .isle--tl .cur__k { display: none; } }
-  @media (max-width: 1080px) { .isle--tl .badge { display: none; } }
+  @media (max-width: 1420px) { .isle--tl .title { display: none; } }
+  @media (max-width: 1260px) { .isle--tl .badge__t { display: none; } .isle--tl .badge { padding: 7px; } }
+  @media (max-width: 1160px) { .isle--tl .cur__k { display: none; } }
+  @media (max-width: 1060px) { .isle--tl .badge { display: none; } }
 
   /* ══ disclosure - its own island, never mixed with controls ══ */
   .badge {
@@ -471,8 +479,12 @@
   /* The cards sit in a column that scrolls on its own. Absolutely positioned
      they ran off the bottom of the window as soon as a few notes existed, and
      the one being written was the first to go. */
+  /* Anchored to the window, not to the artifact's box. Positioning it from the
+     frame's measured width meant reading a mid-transition number, and the rail
+     drifted off the edge with a horizontal scrollbar behind it. The reserved
+     padding is fixed, so the rail's home is fixed too. */
   .rail {
-    position: absolute; top: 0; bottom: 0;
+    position: fixed; top: 86px; bottom: 134px; right: 26px; z-index: 4;
     width: calc(var(--rail) - 50px);
     display: flex; flex-direction: column; gap: 10px;
     padding: 4px 7px 10px; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain;
@@ -993,7 +1005,7 @@
   .pro__l { font: 700 8.5px/1 var(--mono); letter-spacing: .13em; text-transform: uppercase; color: var(--ink-3); }
 
   /* ══ presentation - the artifact, and only what is needed to move ══ */
-  body.present .isle, body.present .annots, body.present .nav, body.present .sheet { opacity: 0; pointer-events: none; }
+  body.present .isle, body.present .annots, body.present .rail, body.present .nav, body.present .sheet { opacity: 0; pointer-events: none; }
   body.present .stage { padding: 26px 26px 92px; }
   body.present.nav-open .stage { padding-left: 26px; }
   .show {
@@ -1068,7 +1080,7 @@
   .toast.is-on { opacity: 1; transform: translate(-50%, 0); }
 
   /* ══ chrome hidden - the artifact exactly as a user would see it ══ */
-  body.bare .isle, body.bare .annots { opacity: 0; pointer-events: none; transform: translateY(8px); }
+  body.bare .isle, body.bare .annots, body.bare .rail { opacity: 0; pointer-events: none; transform: translateY(8px); }
   body.bare .isle--b { transform: translateX(-50%) translateY(8px); }
   body.bare .mock {
     padding: 0 !important; background: none !important;
@@ -1110,7 +1122,7 @@
   }
 
   /* capture mode: chrome and notes out of the way, mockup kept */
-  body.shot .isle, body.shot .annots { opacity: 0; pointer-events: none; }
+  body.shot .isle, body.shot .annots, body.shot .rail { opacity: 0; pointer-events: none; }
   body.shot .toast { opacity: 1; transform: translate(-50%, 0); }
 
   .restore {
@@ -1155,6 +1167,7 @@
   <symbol id="i-gallery" viewBox="0 0 16 16"><rect x="1.6" y="4" width="3.6" height="8" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.4"/><rect x="6.2" y="2.4" width="3.6" height="11.2" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.4"/><rect x="10.8" y="4" width="3.6" height="8" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.4"/></symbol>
   <symbol id="i-columns" viewBox="0 0 16 16"><rect x="1.6" y="3" width="4" height="10" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.4"/><rect x="7" y="3" width="3.2" height="10" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.4"/><rect x="11.6" y="3" width="2.8" height="10" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.4"/></symbol>
   <symbol id="i-grid" viewBox="0 0 16 16"><path d="M2 6h12M2 10h12M6 2v12M10 2v12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><rect x="2" y="2" width="12" height="12" rx="1.8" fill="none" stroke="currentColor" stroke-width="1.4"/></symbol>
+  <symbol id="i-present" viewBox="0 0 16 16"><rect x="1.6" y="2.6" width="12.8" height="9" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M6.6 5.6l3.4 2.1-3.4 2.1z" fill="currentColor"/><path d="M5.6 14h4.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></symbol>
   <symbol id="i-sim" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.9" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M8 4.6V8l2.4 1.6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-reset" viewBox="0 0 16 16"><path d="M3.2 8a4.8 4.8 0 1 0 1.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M2.4 2.8v2.9h2.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-play" viewBox="0 0 16 16"><path d="M5 3.4l7 4.6-7 4.6z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></symbol>
@@ -1184,7 +1197,7 @@
       <iframe class="screen" id="frame" title="prototype"></iframe>
       <div class="grid" data-grid></div>
     </div>
-    <div class="annots" data-annots><svg class="lines" data-lines></svg><div class="rail" data-rail></div></div>
+    <div class="annots" data-annots><svg class="lines" data-lines></svg></div>
   </div>
 
   <div class="proset" data-promo></div>
@@ -1226,10 +1239,12 @@
   <span class="sep"></span>
   <!-- bound to nothing in particular -->
   <button class="ib" type="button" data-grid-btn aria-pressed="false" title="Alignment grid - 8px, then 64px"><svg><use href="#i-grid"/></svg><span data-grid-label>Grid</span></button>
-  <button class="ib ib--icon" type="button" data-present title="Presentation mode"><svg><use href="#i-play"/></svg></button>
   <span class="sep"></span>
   <button class="ib" type="button" data-toggle-labels aria-pressed="true" title="The author's disclosure and prototype notes"><svg><use href="#i-tag"/></svg>Labels</button>
   <button class="ib" type="button" data-toggle-comments aria-pressed="true" title="Comments left in this browser"><svg><use href="#i-note"/></svg>Comments<span class="count" data-comment-count>0</span></button>
+  <span class="sep"></span>
+  <!-- modes: they take the whole surface over, rather than changing one thing on it -->
+  <button class="ib" type="button" data-present title="Full screen, screens playing through on their own"><svg><use href="#i-present"/></svg>Present</button>
   <button class="ib" type="button" data-bare title="Hide every control and see the artifact exactly as a user would"><svg><use href="#i-eye-off"/></svg>Hide menu <kbd>H</kbd></button>
 </div>
 
@@ -1360,6 +1375,8 @@
     <button class="cta brief__go" type="button" data-brief-go>Start</button>
   </div>
 </div>
+
+<div class="rail" data-rail></div>
 
 <div class="ghost" data-ghost>
   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 2.5l13.2 7.6-5.7 1.3-2.2 5.6z" fill="#fff" stroke="#14161b" stroke-width="1.5" stroke-linejoin="round"/></svg>
@@ -2248,8 +2265,6 @@
 
     var frameBox = frame.getBoundingClientRect();
     var wrapBox = wrap.getBoundingClientRect();
-    var railX = wrapBox.width + 20;
-    railEl.style.left = railX + 'px';
     var num = 0;
     var seen = {};
 
@@ -3557,6 +3572,7 @@
   function setCompare(on) {
     if (compareOn === on) return;
     compareOn = on;
+    if (!on) stage.scrollLeft = 0;
     document.body.classList.toggle('compare', on);
     if (on) {
       setPromo(false);
@@ -3655,6 +3671,7 @@
   function setPromo(on) {
     if (promoOn === on) return;
     promoOn = on;
+    if (!on) stage.scrollLeft = 0;
     promoBtn.setAttribute('aria-pressed', String(on));
     document.body.classList.toggle('promo', on);
     if (on) {
