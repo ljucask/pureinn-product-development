@@ -99,6 +99,7 @@
     e.stopPropagation();
     var sel = selectorFor(e.target);
     var r = e.target.getBoundingClientRect();
+    var de = document.documentElement;
     /* Where INSIDE the element the click landed, as a fraction of its box. A
        pin parked at the element's edge points at the right thing and the wrong
        place; a reviewer aims at a word, not at a bounding box. The fraction
@@ -108,7 +109,11 @@
       selector: sel,
       rx: r.width ? (e.clientX - r.left) / r.width : 0.5,
       ry: r.height ? (e.clientY - r.top) / r.height : 0.5,
-      vx: e.clientX, vy: e.clientY,
+      /* and the point in the document itself, for a click that hit nothing
+         selectable - the background, the gap between two cards. Without it a
+         note placed there would have no place to point at. */
+      fx: de.scrollWidth ? (e.clientX + (global.scrollX || 0)) / de.scrollWidth : 0.5,
+      fy: de.scrollHeight ? (e.clientY + (global.scrollY || 0)) / de.scrollHeight : 0.5,
       label: (e.target.textContent || '').trim().slice(0, 60)
     }, '*');
   }

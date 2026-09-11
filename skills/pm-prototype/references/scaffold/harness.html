@@ -225,7 +225,7 @@
   .isle {
     position: fixed; z-index: 6;
     display: flex; align-items: center; gap: 8px;
-    padding: 7px;
+    padding: 7px 9px;
     background: var(--glass);
     backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
     border-radius: var(--r-xl);
@@ -236,9 +236,15 @@
       0 2px 6px -2px rgba(22,24,29,.1);
     transition: opacity var(--med) var(--ease), transform var(--med) var(--ease);
   }
-  .isle--tl { top: 16px; left: 18px; }
+  .isle--tl { top: 16px; left: 18px; padding-right: 15px; }
   .isle--tr { top: 16px; right: 18px; }
   .isle--b  { bottom: 18px; left: 50%; transform: translateX(-50%); }
+
+  /* Two fixed islands grow towards each other; below these widths the left one
+     sheds what it can spare rather than sliding under the right one. */
+  @media (max-width: 1340px) { .isle--tl .title { display: none; } }
+  @media (max-width: 1180px) { .isle--tl .cur__k { display: none; } }
+  @media (max-width: 1080px) { .isle--tl .badge { display: none; } }
 
   /* ══ disclosure - its own island, never mixed with controls ══ */
   .badge {
@@ -255,7 +261,7 @@
   @keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: .4 } }
   .badge__t { font: 700 10px/1 var(--mono); letter-spacing: .11em; text-transform: uppercase; }
   .title {
-    color: var(--ink); font-size: 13px; font-weight: 650; letter-spacing: -.01em;
+    color: var(--co); font-size: 13px; font-weight: 680; letter-spacing: -.01em;
     max-width: 26ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
   .title + .disclose__text::before { content: "·"; padding-right: 7px; color: rgba(22,24,29,.25); }
@@ -439,6 +445,13 @@
   }
   .rail::-webkit-scrollbar { width: 6px; }
   .rail::-webkit-scrollbar-thumb { background: rgba(22,24,29,.18); border-radius: 3px; }
+  .rail__back {
+    flex: 0 0 auto; padding: 8px 11px; border: 0; border-radius: 10px;
+    background: rgba(22,24,29,.05); color: var(--ink-3);
+    font: 600 11px/1 var(--font); text-align: left; cursor: pointer;
+    transition: background var(--fast) var(--ease), color var(--fast) var(--ease);
+  }
+  .rail__back:hover { background: rgba(22,24,29,.09); color: var(--ink-2); }
   .annots svg.lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
   .annots path {
     fill: none; stroke: var(--co); stroke-width: 1.5; stroke-linecap: round; opacity: .55;
@@ -527,9 +540,9 @@
   .note--loose { background: rgba(255,255,255,.78); }
 
   /* ══ severity - a dot, because a reviewer marks urgency in passing ══ */
-  .sev { display: inline-flex; align-items: center; gap: 4px; }
+  .sev { display: inline-flex; align-items: center; gap: 3px; flex: 0 0 auto; }
   .sev button {
-    width: 18px; height: 18px; padding: 0; display: grid; place-items: center;
+    width: 16px; height: 16px; padding: 0; display: grid; place-items: center;
     background: none; border: 0; border-radius: 50%; cursor: pointer;
     transition: transform var(--fast) var(--spring);
   }
@@ -552,16 +565,16 @@
     font: 600 10.5px/1 var(--font); cursor: pointer;
   }
   .note__act:hover { background: rgba(22,24,29,.1); color: var(--ink); }
-  .note__add { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; margin-top: 11px; }
+  .note__add { display: flex; align-items: center; gap: 6px; margin-top: 11px; }
   .note__save { margin-left: auto; }
   .note__save {
-    padding: 6px 12px; border: 0; border-radius: 8px; white-space: nowrap;
+    padding: 6px 11px; border: 0; border-radius: 8px; white-space: nowrap;
     background: var(--grad-45); color: #fff;
     font: 650 11px/1 var(--font); cursor: pointer;
     box-shadow: 0 2px 9px -3px rgba(237,109,87,.7);
   }
   .note__save[disabled] { background: rgba(22,24,29,.08); color: var(--ink-3); box-shadow: none; cursor: default; }
-  .note__kbd { font: 600 9.5px/1 var(--mono); color: var(--ink-3); }
+  .note__kbd { font: 700 8.5px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); flex: 0 0 auto; }
   .note.is-saved { animation: saved 1.1s var(--ease); }
   @keyframes saved {
     0%   { box-shadow: inset 0 1px 0 var(--glass-edge), 0 0 0 2px #17a76b, 0 14px 30px -14px rgba(22,24,29,.3); }
@@ -752,7 +765,10 @@
   }
   /* in a desktop mockup the browser bar sits above the artifact, so the grid
      starts below it or every measurement is off by its height */
-  body.mock .wrap[data-device="desktop"] .grid { top: 26px; }
+  /* Inside a mockup the grid must stop at the screen rather than bleed over the
+     bezel and out through the rounded corners. Its box is measured from the
+     iframe itself in JS - every per-device CSS guess was off by the browser
+     bar, the bezel, or both. */
 
   /* ══ side by side - the same screen at three widths ══ */
   /* NB the container class and the body-state class must not be the same word:
@@ -945,6 +961,8 @@
   <symbol id="i-pause" viewBox="0 0 16 16"><path d="M6 3.5v9M10 3.5v9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
   <symbol id="i-prev" viewBox="0 0 16 16"><path d="M10 3.5L5.5 8l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-next" viewBox="0 0 16 16"><path d="M6 3.5L10.5 8 6 12.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-minus" viewBox="0 0 12 12"><path d="M2.5 6h7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+  <symbol id="i-user" viewBox="0 0 16 16"><circle cx="8" cy="5.4" r="2.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M3.2 13.4a4.8 4.8 0 0 1 9.6 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></symbol>
   <symbol id="i-tag" viewBox="0 0 16 16"><path d="M2.5 7.4V3a.5.5 0 0 1 .5-.5h4.4a1 1 0 0 1 .7.3l5.2 5.2a1 1 0 0 1 0 1.4l-4.4 4.4a1 1 0 0 1-1.4 0L2.8 8.6a1 1 0 0 1-.3-.7z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><circle cx="5.6" cy="5.6" r="1.1" fill="currentColor"/></symbol>
   <symbol id="i-screen" viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="9" rx="1.8" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M6 14h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></symbol>
   <symbol id="i-cube" viewBox="0 0 16 16"><path d="M8 1.8l5.5 3v6.4L8 14.2 2.5 11.2V4.8z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M2.5 4.8L8 7.8l5.5-3M8 7.8v6.4" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".6"/></symbol>
@@ -1041,6 +1059,7 @@
     <div class="grp__row">
       <button class="ib ib--icon" type="button" data-shot title="Save this screen as a PNG"><svg><use href="#i-image"/></svg></button>
       <button class="ib ib--icon" type="button" data-share title="Copy a link that opens this exact screen and state"><svg><use href="#i-share"/></svg></button>
+      <button class="ib ib--icon" type="button" data-invite title="Copy a reviewer's link - opens with the task, asks their name, and prompts them to send"><svg><use href="#i-user"/></svg></button>
       <button class="ib" type="button" data-export title="Download the local event log"><svg><use href="#i-down"/></svg><span class="count" data-event-count>0</span></button>
     </div>
   </div>
@@ -1403,7 +1422,7 @@
     record('harness:device', name);
     requestAnimationFrame(function () { slide(deviceSeg); });
   });
-  wrap.addEventListener('transitionend', function (e) { if (e.target === wrap) drawAnnots(); });
+  wrap.addEventListener('transitionend', function (e) { if (e.target === wrap) { fitGrid(); drawAnnots(); } });
   paintDevice();
   requestAnimationFrame(function () { slide(deviceSeg); });
 
@@ -1418,6 +1437,7 @@
   mockBtn.addEventListener('click', function () {
     current.mockup = !current.mockup;
     paintMock();
+    fitGrid();
     record('harness:mockup', current.mockup);
   });
   paintMock();
@@ -1476,6 +1496,27 @@
     } else {
       prompt('Copy this link:', url);
     }
+  });
+
+  /* ---------- the reviewer's link ----------
+     Review mode is a different job from sharing a state: it opens with the
+     task, asks who is looking, and keeps Return notes in front of them. The
+     author needs a way to produce that link without knowing the query string. */
+  document.querySelector('[data-invite]').addEventListener('click', function () {
+    var btn = this;
+    var p = new URLSearchParams();
+    p.set('screen', screens[0].src);
+    p.set('review', '1');
+    var url = location.origin + location.pathname + '?' + p.toString();
+    function done() {
+      btn.classList.add('is-ok');
+      setTimeout(function () { btn.classList.remove('is-ok'); }, 1400);
+      toast('Reviewer link copied. It opens with the task, asks their name, and will not let them leave without offering to send.', 6000);
+      record('harness:invite', url);
+    }
+    if (navigator.clipboard && location.protocol !== 'file:') {
+      navigator.clipboard.writeText(url).then(done, function () { prompt('Copy this link:', url); });
+    } else { prompt('Copy this link:', url); }
   });
 
   /* ---------- export the current screen as PNG ----------
@@ -1664,7 +1705,9 @@
         if (cm.screen !== src) return;
         out.push({
           a: { kind: 'comment', selector: cm.selector, text: cm.text, at: cm.at },
-          id: cm.id, comment: cm, scope: cm.selector ? 'element' : 'screen'
+          id: cm.id, comment: cm,
+          // a point on the screen is still a place, so it keeps a pin
+          scope: (cm.selector || typeof cm.fx === 'number') ? 'element' : 'screen'
         });
       });
     }
@@ -1716,7 +1759,10 @@
   }
 
   function drawAnnots() {
-    if (document.body.classList.contains('bare')) return;
+    /* No early return while the chrome is hidden. The layer is only made
+       transparent there, never unmounted, so measuring is still valid - and
+       skipping the redraw silently dropped every change made in the meantime,
+       which is why notes could come back missing after Hide. */
     annotEl.querySelectorAll('.pin').forEach(function (n) { n.remove(); });
     railEl.innerHTML = '';
     pairs = [];
@@ -1746,6 +1792,7 @@
     if (open.length && !had) { requestAnimationFrame(drawAnnots); return; }
 
     annotEl.classList.toggle('is-focus', editing());
+    var hidden = [];
 
     var frameBox = frame.getBoundingClientRect();
     var wrapBox = wrap.getBoundingClientRect();
@@ -1784,12 +1831,22 @@
 
       var target = null;
       if (entry.scope === 'element') {
-        try { target = doc.querySelector(a.selector); } catch (e) { /* bad selector */ }
+        if (a.selector) { try { target = doc.querySelector(a.selector); } catch (e) { /* bad selector */ } }
         num++;
       }
 
       var px, py;
-      if (target) {
+      if (!target && cm && typeof cm.fx === 'number') {
+        /* clicked on nothing selectable - the background, a gap between cards.
+           The point is kept as a fraction of the artifact's own document, so it
+           still lands in the right place after a scroll or a re-layout. */
+        var de = doc.documentElement;
+        px = cm.fx * de.scrollWidth - (doc.scrollingElement ? doc.scrollingElement.scrollLeft : 0);
+        py = cm.fy * de.scrollHeight - (doc.scrollingElement ? doc.scrollingElement.scrollTop : 0);
+        px = Math.max(14, Math.min(px + (frameBox.left - wrapBox.left), frameBox.width - 14));
+        py = Math.max(14, Math.min(py + (frameBox.top - wrapBox.top), frameBox.height - 14));
+        target = true;   // it has a place, so it gets a pin and a line
+      } else if (target) {
         var t = target.getBoundingClientRect();
         /* A comment carries the fraction of the element the reviewer actually
            clicked, so the pin sits on the word they meant. A declared note has
@@ -1803,7 +1860,7 @@
 
       /* collapsed: the pin stays, the card is gone until the pin is clicked */
       if (collapsed[id]) {
-        if (!target) return;
+        if (!target) { hidden.push({ id: id, kind: kind, scope: entry.scope }); return; }
         var cp = document.createElement('div');
         cp.className = 'pin pin--collapsed' + (kind.cls ? ' pin--' + kind.cls : '');
         cp.textContent = num;
@@ -1853,9 +1910,13 @@
 
       var x = document.createElement('button');
       x.className = 'note__x'; x.type = 'button';
-      x.setAttribute('aria-label', cm ? 'Delete this comment' : 'Collapse this note to its pin');
-      x.title = cm ? 'Delete' : (target ? 'Collapse to its pin' : 'Hide');
-      x.innerHTML = icon('i-x');
+      /* An author's note can only be minimised - it is not the reviewer's to
+         throw away, and a disclosure that could be deleted is a label that can
+         be made to disappear. Only a comment, which the reviewer wrote, gets a
+         real delete. */
+      x.setAttribute('aria-label', cm ? 'Delete this comment' : 'Minimise this note');
+      x.title = cm ? 'Delete' : (target ? 'Minimise to its pin' : 'Minimise');
+      x.innerHTML = icon(cm ? 'i-x' : 'i-minus');
       x.addEventListener('click', function () {
         note.classList.add('is-out');
         setTimeout(function () {
@@ -1905,6 +1966,18 @@
       pin.addEventListener('mouseenter', function () { lit(true); });
       pin.addEventListener('mouseleave', function () { lit(false); });
     });
+
+    if (hidden.length) {
+      var back = document.createElement('button');
+      back.type = 'button'; back.className = 'rail__back';
+      back.textContent = 'Show ' + hidden.length + ' minimised note' + (hidden.length === 1 ? '' : 's');
+      back.addEventListener('click', function () {
+        hidden.forEach(function (h) { delete collapsed[h.id]; });
+        writeStore('collapsed', collapsed);
+        drawAnnots();
+      });
+      railEl.appendChild(back);
+    }
 
     requestAnimationFrame(drawLines);
   }
@@ -2059,6 +2132,8 @@
       selector: d.selector || null,
       rx: typeof d.rx === 'number' ? d.rx : undefined,
       ry: typeof d.ry === 'number' ? d.ry : undefined,
+      fx: typeof d.fx === 'number' ? d.fx : undefined,
+      fy: typeof d.fy === 'number' ? d.fy : undefined,
       anchor: d.label || '',
       who: reviewerName,
       severity: 'normal',
@@ -2244,8 +2319,8 @@
     function collect(src, label) {
       (annots[src] || []).forEach(function (a) {
         if (a.kind === 'convention') return;
-        rows.push('<tr><td class="s">' + esc(label) + '</td><td class="k">' + esc(kindOf(a).label) +
-                  '</td><td>' + esc(a.text) + '</td><td class="r">' + esc(a.real || '-') + '</td></tr>');
+        rows.push('<tr><td class="s" data-l="Screen">' + esc(label) + '</td><td class="k" data-l="Kind">' + esc(kindOf(a).label) +
+                  '</td><td data-l="In this prototype">' + esc(a.text) + '</td><td class="r" data-l="In production">' + esc(a.real || '-') + '</td></tr>');
       });
     }
     screens.forEach(function (s) { collect(s.src, s.label); });
@@ -2262,19 +2337,32 @@
 
     return '<!doctype html><html lang="en"><head><meta charset="utf-8">' +
       '<style>' +
-      'body{margin:0;padding:44px 40px;font:14px/1.65 ui-sans-serif,-apple-system,"Segoe UI",system-ui,sans-serif;color:#14161b;background:#fff}' +
-      'h1{margin:0;font-size:23px;letter-spacing:-.02em}' +
-      'h2{margin:34px 0 12px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#7c838f}' +
-      '.pair{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}' +
-      '.pair div{padding:16px 18px;border-radius:14px;background:#f6f7f9}' +
+      '*{box-sizing:border-box}' +
+      'body{margin:0;padding:clamp(20px,4vw,44px) clamp(16px,4vw,40px);font:14px/1.65 ui-sans-serif,-apple-system,"Segoe UI",system-ui,sans-serif;color:#14161b;background:#fff;-webkit-text-size-adjust:100%}' +
+      'h1{margin:0;font-size:clamp(18px,4.4vw,23px);letter-spacing:-.02em;line-height:1.25}' +
+      'h2{margin:30px 0 12px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#7c838f}' +
+      '.pair{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:20px}' +
+      '.pair div{padding:15px 17px;border-radius:14px;background:#f6f7f9}' +
       '.pair b{display:block;margin-bottom:6px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#7c838f}' +
       '.pair .yes b{color:#ed6d57}' +
-      'table{width:100%;border-collapse:collapse;font-size:13px}' +
+      /* wide content scrolls inside its own box; the page itself never does */
+      '.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}' +
+      'table{width:100%;min-width:520px;border-collapse:collapse;font-size:13px}' +
       'th{text-align:left;padding:0 12px 9px 0;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:#7c838f;font-weight:600}' +
       'td{padding:11px 12px 11px 0;border-top:1px solid #eceef1;vertical-align:top}' +
       '.k{white-space:nowrap;color:#ed6d57;font-weight:600}.s{white-space:nowrap;color:#7c838f}.r{color:#474d57}' +
       'ul{padding-left:18px;color:#474d57}li{margin:6px 0}' +
       'p.n{color:#7c838f;font-size:12.5px}' +
+      /* narrow: the table stops being a table and becomes one block per element */
+      '@media (max-width:640px){' +
+        '.tw{overflow:visible}' +
+        'table,tbody,tr,td{display:block;width:auto;min-width:0}' +
+        'thead{display:none}' +
+        'tr{padding:13px 0;border-top:1px solid #eceef1}' +
+        'td{padding:2px 0;border:0}' +
+        'td:before{content:attr(data-l);display:block;margin-bottom:2px;font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:#a2a9b4}' +
+        '.s{font-weight:600;color:#14161b}' +
+      '}' +
       '</style></head><body>' +
       '<h1>' + esc(cfg.title || cfg.name || 'Prototype') + ' - what is real</h1>' +
       (cfg.boundary ? '<p class="n">' + esc(cfg.boundary) + '</p>' : '') +
@@ -2284,7 +2372,7 @@
         ' - what it binds is described in the accompanying document, not here.</p>' : '') +
       '<h2>Element by element</h2>' +
       (rows.length
-        ? '<table><tr><th>Screen</th><th>Kind</th><th>In this prototype</th><th>In production</th></tr>' + rows.join('') + '</table>'
+        ? '<div class="tw"><table><thead><tr><th>Screen</th><th>Kind</th><th>In this prototype</th><th>In production</th></tr></thead><tbody>' + rows.join('') + '</tbody></table></div>'
         : '<p class="n">No simulated elements have been declared. If that is genuinely true, say so out loud when showing it - a prototype with nothing faked is unusual.</p>') +
       (conventions.length ? '<h2>Prototype conventions</h2><ul>' + conventions.join('') + '</ul>' : '') +
       '<p class="n">Generated from the harness annotations, so this page cannot drift from the notes on the screens.</p>' +
@@ -2300,10 +2388,33 @@
   var gridLabel = document.querySelector('[data-grid-label]');
   var GRIDS = [null, '8', '64'];
   var gridAt = 0;
+
+  function fitGrid() {
+    // measured after the browser has settled the layout: the mockup's browser
+    // bar takes a frame to appear, and measuring first left the grid 4px high
+    if (!GRIDS[gridAt]) return;
+    requestAnimationFrame(measureGrid);
+    // and again once anything that animates has stopped moving
+    clearTimeout(fitGrid._t);
+    fitGrid._t = setTimeout(measureGrid, 460);
+  }
+
+  function measureGrid() {
+    if (!GRIDS[gridAt]) return;
+    var fb = frame.getBoundingClientRect();
+    var wb = wrap.getBoundingClientRect();
+    gridEl.style.left   = (fb.left - wb.left) + 'px';
+    gridEl.style.top    = (fb.top - wb.top) + 'px';
+    gridEl.style.width  = fb.width + 'px';
+    gridEl.style.height = fb.height + 'px';
+    gridEl.style.right = gridEl.style.bottom = 'auto';
+    gridEl.style.borderRadius = getComputedStyle(frame).borderTopLeftRadius;
+  }
+
   gridBtn.addEventListener('click', function () {
     gridAt = (gridAt + 1) % GRIDS.length;
     var g = GRIDS[gridAt];
-    if (g) gridEl.setAttribute('data-g', g); else gridEl.removeAttribute('data-g');
+    if (g) { gridEl.setAttribute('data-g', g); fitGrid(); } else gridEl.removeAttribute('data-g');
     gridBtn.setAttribute('aria-pressed', String(!!g));
     gridLabel.textContent = g ? g + 'px' : 'Grid';
     record('harness:grid', g);
@@ -2429,7 +2540,7 @@
       pendingClick = st.click;
       setTimeout(function () { send('aim', st.click); }, Math.min(700, hold / 5));
     } else {
-      ghost.classList.remove('is-on');
+      parkGhost();
     }
 
     clearTimeout(stepTimer);
@@ -2438,6 +2549,14 @@
 
   var ghost = document.querySelector('[data-ghost]');
   var pendingClick = null;
+
+  function parkGhost() {
+    // it rests just inside the artifact rather than vanishing: a pointer that
+    // appears only to click looks like a cut, not like someone using this
+    var box = frame.getBoundingClientRect();
+    ghost.classList.add('is-on');
+    ghost.style.transform = 'translate(' + (box.left + box.width * 0.42) + 'px,' + (box.top + box.height * 0.62) + 'px)';
+  }
 
   function aimed(d) {
     if (!presenting || !d.found || d.selector !== pendingClick) { pendingClick = null; return; }
@@ -2470,6 +2589,7 @@
       if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(function () {});
       closeNav();
       stepAt = 0;
+      requestAnimationFrame(parkGhost);
       setPlaying(true);
       record('harness:present', tour ? 'tour' : 'screens');
     } else {
@@ -2590,6 +2710,7 @@
   window.addEventListener('resize', function () {
     document.querySelectorAll('.seg').forEach(slide);
     fitCompare();
+    fitGrid();
     drawAnnots();
   });
   stage.addEventListener('scroll', drawAnnots);

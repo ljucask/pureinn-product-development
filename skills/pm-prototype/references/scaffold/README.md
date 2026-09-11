@@ -78,15 +78,19 @@ All three share one geometry - a numbered pin on the element, a card on the rail
 
 The four disclosure kinds are the four categories that pass the test *"could someone act on this, with no way to verify it?"*. Invented names, avatars, titles and a scripted navigation path do **not** pass it and must not be annotated - over-labelling changes behaviour and buys nothing.
 
-Every disclosure note carries `real:`, what the element would be in production. **The "What is real" screen is generated from those notes**, so the list is never maintained twice and cannot drift from the screens. Declare it as a screen entry with `disclosure: true` and no `src`.
+Every disclosure note carries `real:`, what the element would be in production. **The "What is real" screen is generated from those notes** - and it is responsive, because it is read on whatever device the prototype is being shown on: the table becomes one labelled block per element on a narrow screen, so the list is never maintained twice and cannot drift from the screens. Declare it as a screen entry with `disclosure: true` and no `src`.
 
-**A note lands where you clicked**, not at the element's edge - the position is kept as a fraction of the element so it survives re-layout. Notes without an anchor are grouped at the **top** of the rail under `About this screen` and `About this prototype`, each collapsible: put them last and every comment added shoves them further down, so they never sit still long enough to read as headers.
+**A note lands where you clicked**, not at the element's edge - the position is kept as a fraction of the element so it survives re-layout. A click that hits nothing selectable still gets a pin, anchored to a fraction of the document: *"there is nothing here"* is a finding, and a layer that only accepts notes on existing elements cannot receive it.
+
+**An author's label can only be minimised; only your own comments can be deleted.** A disclosure the reader can make disappear is not a disclosure. Minimised anchorless notes come back from a button at the foot of the rail. Notes without an anchor are grouped at the **top** of the rail under `About this screen` and `About this prototype`, each collapsible: put them last and every comment added shoves them further down, so they never sit still long enough to read as headers.
 
 **Closing a card collapses it to its pin; it does not delete it.** Clicking the pin brings it back. Only the `Notes` toggle removes the layer, and that state is not carried in a shared link - so no link can hand on a screen where an invented number has lost its label.
 
 A selector that matches nothing renders as an orphan card with a warning instead of vanishing, so a renamed class is visible rather than silent.
 
 ## Getting feedback back
+
+`Review link` (the person icon, beside Share) copies the link to send a reviewer: it opens with the task, asks who they are, and keeps Return notes in front of them. Share copies this exact screen and state instead - a different job.
 
 The reviewer's name is asked in the review brief, and - because most notes get written in an ordinary session where that card never appears - once more on the first note, inline. Severity is a labelled row of three dots: blue, orange, red.
 
@@ -102,11 +106,11 @@ Reviewers never see each other's comments. For an async test with real users tha
 
 | | |
 |---|---|
-| **Grid** | cycles off → 8px → 64px. 8 asks whether an element sits on the rhythm, 64 whether the layout does. Drawn in the shell over the frame; the document under review is never touched |
+| **Grid** | cycles off → 8px → 64px. 8 asks whether an element sits on the rhythm, 64 whether the layout does. Drawn in the shell over the frame - measured from the iframe itself, so inside a device mockup it stops at the screen and takes its corner radius rather than bleeding over the bezel |
 | **Side by side** | the same screen at 1280 / 834 / 390 at once, each rendered at its **real width** and then scaled to fit, so the artifact's own media queries fire. Annotations are anchored to the single frame, so they step aside here and say why |
 | **Present** | full screen, chrome down to prev / pause / next, each slot sweeping that screen's time across its range and scrolling the page through its own height |
 
-A **pointer travels to each declared target and taps it**, so a run reads as someone using the prototype rather than as screens changing on their own.
+A **pointer is on screen for the whole run**, resting inside the artifact and travelling to each declared target before it taps, so a run reads as someone using the prototype rather than as screens changing on their own.
 
 **A presentation may drive the artifact; it must not invent input.** With no `tour` it walks the screens in order at `present.hold` ms each. Declare a `tour` when the demo has a story, and each step says exactly what is shown - `screen`, `state`, `variant`, `time`, `scroll`, `click`, `say`, `hold`. `click` is the only thing that touches the artifact, it is declared rather than guessed, and the element is ringed before it fires. Arrow keys step, space pauses, Escape exits.
 
@@ -155,6 +159,8 @@ The second round added: per-screen time appearing, disappearing and keeping each
 
 The third: the screen panel with its descriptions and keyboard navigation, and the viewport transition - sampled mid-flight at 427px between a 1106px desktop and a 390px phone, with the annotations re-anchoring correctly once it settled.
 
+The sixth: a note placed on the background with nothing selectable under it, the grid measured against the frame in all three devices with and without a mockup, the disclosure screen at 390px with no horizontal overflow, and the presented pointer staying on screen for a whole four-step run.
+
 The fifth: a note landing on the exact spot clicked rather than the element's edge, the name asked inline on the first note, the rail scrolling with its curves redrawn, and the presented pointer travelling to a target and tapping it.
 
 The fourth: note scopes and their rail headers, a comment written and committed with a name and a severity, the return sheet, the grid's three steps, side by side at 53% with all three widths measured, and a four-step tour played to the end - states switching, captions changing, time sweeping and the progress bar filling.
@@ -170,5 +176,6 @@ Bugs found that way, none of which a reading of the code would have caught:
 - a draft comment survived a reload and held the whole annotation layer in writing mode for ever
 - the side-by-side container and the body-state class were both called `compare`, so `.compare { display: none }` matched `<body>` and blanked the entire document
 - the rail positioned its cards absolutely, so once a few notes existed the newest ran off the bottom of the window - and the one being written was the first to go
+- the annotation layer skipped its redraw while the chrome was hidden, silently dropping every change made in the meantime: toggles flipped there did nothing, and notes could come back missing after Hide
 - a cross-origin artifact reserved the annotation rail and then drew nothing into it, because the document was read only after the rail was measured
 - `.seg` and `.grp` set their own `display`, which beats the browser's rule for `[hidden]` - hiding the variant group did nothing at all

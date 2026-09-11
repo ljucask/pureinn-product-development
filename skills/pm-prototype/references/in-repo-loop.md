@@ -103,6 +103,10 @@ Building three mechanisms would be duplicated work and three inconsistent surfac
 
 **A disclosure note carries what the element would be in production**, not only what it is here. That pair is the contract - and it is what the disclosure screen is assembled from, so the same list is never written twice.
 
+**A reviewer can place a note anywhere**, not only on something the harness can name. A click that lands on the background still has a place - keep it as a fraction of the document - because "there is nothing here" is a finding, and a layer that only accepts notes on existing elements cannot receive it.
+
+**An author's label is minimised, never dismissed; only the reviewer's own comment can be deleted.** A disclosure that the reader can make disappear is not a disclosure, and an × on it says the opposite of what the control does.
+
 **Closing a note collapses it to its pin. It never deletes it.** If an admission could be dismissed for good, and that state travelled in a shared link, someone could hand on a screen where an invented number carries no label - the one failure this layer exists to prevent. The whole layer still switches off in one action, because a reviewer must be able to see the artifact exactly as a user would; that is a visible toggle, and it is not carried in a shared link.
 
 **What earns an annotation** - the test is not "is it fake?" but **"could someone act on this, with no way to verify it?"**
