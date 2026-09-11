@@ -150,6 +150,14 @@ Building three mechanisms would be duplicated work and three inconsistent surfac
 
 **Label the control, not the demo.** A time scrubber is *Time* on every prototype; what this screen's axis measures belongs beside it as content. A toolbar heading that reads "Minutes since order" describes one prototype and makes the tool look like it was built for it.
 
+**A note explains; a mark POINTS.** They are different jobs, and the second one has nothing to work with if the only anchor is an element: "this region", "these three words", "the gap here" cannot be said with a pin. A marker pen and a box, kept as fractions of the frame so they survive every resize, belonging to a screen + state + device exactly as a comment does - a box around a narrow layout means nothing on a wide one.
+
+**A spotlight is the live version of the same instinct** - *look here*, while someone is watching - and it is deliberately not saved. It is a gesture, not a record, and storing gestures is how a tool fills up with things nobody meant to keep.
+
+**A note has to be writable, and a picture is often the note.** Emphasis and one attached image: *"make it look like this"* with a reference is worth ten sentences, and nothing else in the loop carries it. Strip pasted markup to the few tags you actually render, and scale the image down before keeping it, or the second note fills the browser's storage.
+
+**A rail is a notepad, not a register.** It is fast to write in and useless at twelve notes across four screens. Whatever reads them back needs filtering, editing, and a way to jump to where a note lives - its screen, its state, its device - and say *which* one it is when it gets there.
+
 **Comments have to get back, and without a backend nothing is automatic.** They live in that reviewer's own browser and reach the author only when the reviewer sends them, which makes the prompt to do so part of the instrument rather than a button they might find: the task stated before they start, a send control that is always visible and counts what is waiting, and one nudge after the first comment. Where a run cannot depend on that - several reviewers, one pass - an endpoint removes the dependency, and that is the only reason to introduce one.
 
 **The last step must not repeat the rail.** A sheet that lists every note again is a wall to scroll past at the moment the reviewer wants to finish. What belongs there is the covering note - written then, if it is still missing - and one control to look the rest over before they go.

@@ -119,9 +119,26 @@ Every disclosure note carries `real:`, what the element would be in production. 
 
 **Minimising rolls a card up to its title, in place.** It keeps its number, its pin and its line, and one click opens it again - it never leaves the rail, because a note pushed out of the way must not vanish with nothing on screen saying it was ever there. Notes without an anchor are grouped at the **top** of the rail under `About this screen` and `About this prototype`, each collapsible: put them last and every comment added shoves them further down, so they never sit still long enough to read as headers.
 
+**Comments take emphasis and one picture** - bold, italic, underline, and an attached reference image, because *"make it look like this"* with a screenshot is worth ten sentences. Pasted markup is stripped to `b/i/u/br/img` and an image is scaled to 1100px before it is kept, or the second note fills the browser's quota.
+
+**`View all notes`** at the foot of the rail opens the note editor on the right: every note in one place, filtered by kind, severity and text, editable and deletable. Clicking a row goes to where that note lives - its screen, its state, its device - and flashes its pin. The rail is a notepad; this is the register. While it is open the rail steps aside. Each card also carries an icon that opens the panel on that one note.
+
 **Closing a card rolls it up; it does not delete it.** Clicking the strip or its pin brings it back. Only the `Notes` toggle removes the layer, and that state is not carried in a shared link - so no link can hand on a screen where an invented number has lost its label.
 
 A selector that matches nothing renders as an orphan card with a warning instead of vanishing, so a renamed class is visible rather than silent.
+
+## Marks and the spotlight
+
+A note explains; a **mark points**. Some things cannot be said with a pin - *this region*, *these three words*, *the gap here* - so there are two marking tools beside `Add note`:
+
+| | |
+|---|---|
+| **Box** | drag a rectangle around something |
+| **Marker** | drag across it, like a highlighter |
+
+Both are kept as **fractions of the frame**, so they survive a resize or a device change, and both belong to a screen + state + device exactly as a comment does - a box around a narrow layout means nothing on a wide one. Hover a mark to remove it.
+
+**Spotlight** is the live version of the same instinct - *look here*, while someone is watching. Everything but the pointer steps back. It is deliberately **not saved**: a gesture, not a record.
 
 ## Getting feedback back
 
@@ -232,6 +249,8 @@ Driven end to end in a real browser before shipping, per the contract's own "tes
 The second round added: per-screen time appearing, disappearing and keeping each screen's own value across a switch; a comment placed by clicking inside the artifact, with a real selector computed for it; collapse to a pin and reopen; an orphan anchor; the generated disclosure screen; and the review brief.
 
 The third: the screen panel with its descriptions and keyboard navigation, and the viewport transition - sampled mid-flight at 427px between a 1106px desktop and a 390px phone, with the annotations re-anchoring correctly once it settled.
+
+The seventeenth: a comment written with bold and saved as HTML, the note panel filtering 5 notes down to 1 by text and by kind, a box and a marker stroke drawn, stored and disappearing on another state, and the spotlight following the pointer.
 
 The sixteenth: Present moved beside Hide menu with its own icon, and the note rail anchored to the window - no horizontal scrollbar behind it and the curves still landing after a device change.
 

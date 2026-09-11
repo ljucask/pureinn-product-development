@@ -203,6 +203,21 @@
 
   document.addEventListener('click', onPickClick, true);
 
+  /* The spotlight lives in the shell, but the pointer spends its time in here -
+     so the artifact relays where it is. Throttled to one frame; it costs
+     nothing when nobody is spotlighting because the shell simply ignores it. */
+  var moveQueued = false, lastMove = null;
+  document.addEventListener('pointermove', function (e) {
+    if (!embedded) return;
+    lastMove = { x: e.clientX, y: e.clientY };
+    if (moveQueued) return;
+    moveQueued = true;
+    requestAnimationFrame(function () {
+      moveQueued = false;
+      global.parent.postMessage({ __harness: true, type: 'move', x: lastMove.x, y: lastMove.y }, '*');
+    });
+  }, true);
+
   /* Announce readiness so the shell can push the current selection. */
   if (embedded) global.parent.postMessage({ __harness: true, type: 'ready' }, '*');
 
