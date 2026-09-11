@@ -632,6 +632,17 @@
   .sheet__acts .cta { justify-content: center; }
   .sheet__acts .ib { justify-content: center; background: rgba(22,24,29,.05); }
   .sheet__acts .wide { grid-column: 1 / -1; }
+  .sheet__links {
+    grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 4px 16px;
+    padding-top: 3px; justify-content: center;
+  }
+  .lnk {
+    padding: 4px 2px; background: none; border: 0; cursor: pointer;
+    color: var(--ink-3); font-size: 11.5px; text-decoration: underline;
+    text-underline-offset: 3px; text-decoration-color: rgba(22,24,29,.22);
+    transition: color var(--fast) var(--ease);
+  }
+  .lnk:hover { color: var(--ink); text-decoration-color: var(--co); }
   .sheet--invite { bottom: 118px; }
   .sheet__ta {
     width: 100%; margin-top: 13px; padding: 11px 13px; resize: vertical;
@@ -763,6 +774,12 @@
     background: rgba(255,255,255,.26); font: 700 10px/18px var(--mono); text-align: center;
   }
   .cta[data-idle="1"] .cta__n { background: rgba(22,24,29,.08); }
+
+  /* Review mode is not the same tool with a card on top. A reviewer has no use
+     for the alignment grid, side-by-side widths, presentation, screenshot
+     export, the event log or the sharing links - and every one of them left in
+     is an invitation to wander off the thing being asked. */
+  body.review .maker { display: none !important; }
 
   /* ══ review mode - the task first, and what to do at the end ══ */
   .brief {
@@ -1081,12 +1098,12 @@
     <button type="button" data-device-btn="tablet" aria-pressed="false" title="Tablet"><svg><use href="#i-tablet"/></svg></button>
     <button type="button" data-device-btn="mobile" aria-pressed="false" title="Mobile"><svg><use href="#i-mobile"/></svg></button>
   </div>
-  <button class="ib ib--icon" type="button" data-mockup aria-pressed="false" title="Device mockup"><svg><use href="#i-frame"/></svg></button>
-  <button class="ib ib--icon" type="button" data-compare-btn aria-pressed="false" title="All three widths side by side"><svg><use href="#i-columns"/></svg></button>
-  <button class="ib" type="button" data-grid-btn aria-pressed="false" title="Alignment grid - 8px, then 64px"><svg><use href="#i-grid"/></svg><span data-grid-label>Grid</span></button>
-  <span class="sep"></span>
-  <button class="ib ib--icon" type="button" data-present title="Presentation mode"><svg><use href="#i-play"/></svg></button>
-  <span class="sep"></span>
+  <button class="ib ib--icon maker" type="button" data-mockup aria-pressed="false" title="Device mockup"><svg><use href="#i-frame"/></svg></button>
+  <button class="ib ib--icon maker" type="button" data-compare-btn aria-pressed="false" title="All three widths side by side"><svg><use href="#i-columns"/></svg></button>
+  <button class="ib maker" type="button" data-grid-btn aria-pressed="false" title="Alignment grid - 8px, then 64px"><svg><use href="#i-grid"/></svg><span data-grid-label>Grid</span></button>
+  <span class="sep maker"></span>
+  <button class="ib ib--icon maker" type="button" data-present title="Presentation mode"><svg><use href="#i-play"/></svg></button>
+  <span class="sep maker"></span>
   <button class="ib" type="button" data-toggle-labels aria-pressed="true" title="The author's disclosure and prototype notes"><svg><use href="#i-tag"/></svg>Labels</button>
   <button class="ib" type="button" data-toggle-comments aria-pressed="true" title="Comments left in this browser"><svg><use href="#i-note"/></svg>Comments<span class="count" data-comment-count>0</span></button>
   <button class="ib" type="button" data-bare><svg><use href="#i-eye-off"/></svg>Hide <kbd>H</kbd></button>
@@ -1114,8 +1131,8 @@
     </div>
   </div>
 
-  <span class="sep"></span>
-  <div class="grp">
+  <span class="sep maker"></span>
+  <div class="grp maker">
     <span class="grp__l">Capture</span>
     <div class="grp__row">
       <button class="ib ib--icon" type="button" data-shot title="Save this screen as a PNG"><svg><use href="#i-image"/></svg></button>
@@ -1123,12 +1140,12 @@
     </div>
   </div>
 
-  <span class="sep"></span>
-  <div class="grp">
+  <span class="sep maker"></span>
+  <div class="grp maker">
     <span class="grp__l">Send it on</span>
     <div class="grp__row">
-      <button class="ib" type="button" data-share title="A link that opens this exact screen, state, time and device - for someone who should look at what you are looking at"><svg><use href="#i-share"/></svg>This view</button>
-      <button class="ib" type="button" data-invite title="A link that opens in review mode - with the task, their name, and a prompt to send their notes back"><svg><use href="#i-user"/></svg>For review</button>
+      <button class="ib" type="button" data-share title="Opens the full tool at this exact screen, state, time and device - for someone working on it with you"><svg><use href="#i-share"/></svg>This view</button>
+      <button class="ib" type="button" data-invite title="Opens the stripped-down reviewer's view - the task, their notes, and a prompt to send them back"><svg><use href="#i-user"/></svg>For review</button>
     </div>
   </div>
 
@@ -1155,7 +1172,8 @@
     <h2 class="sheet__h" id="invite-h">Send it to someone</h2>
     <button class="nav__x" type="button" data-invite-close aria-label="Close"><svg><use href="#i-x"/></svg></button>
   </div>
-  <p class="sheet__p">They will open with the task, be asked who they are, and be prompted to send their notes back. Add a line if there is something specific you want them to look at.</p>
+  <p class="sheet__p">A reviewer's link is not this tool with a card on top: the grid, side-by-side, presentation, screenshot export, the event log and these sharing controls are all absent. What is left is the prototype, the states, the widths, and their own notes.</p>
+  <p class="sheet__p">Add a line if there is something specific you want <em>this</em> person to look at.</p>
   <textarea class="sheet__ta" data-invite-msg rows="3" placeholder="e.g. Ignore the styling - tell me whether the assignment step makes sense."></textarea>
   <div class="sheet__acts">
     <button class="cta wide" type="button" data-invite-copy><svg><use href="#i-copy"/></svg><span>Copy the link</span></button>
@@ -2493,14 +2511,40 @@
       sheetList.appendChild(peek);
     }
 
+    /* Four buttons of equal weight is not a choice, it is a menu - and it mixed
+       sending with saving. One thing to press, one alternative beside it, and
+       the rest as quiet links: what a reviewer wants is to send, what an author
+       wants is the report, so the primary follows whose hands this is in. */
     if (total()) {
-      if (review.submitTo) {
-        sheetActs.appendChild(actionBtn('cta', 'i-send', 'Send to the author', submitEndpoint, true));
+      var acts = [
+        { k: 'send', ico: 'i-send', label: 'Send to the author', fn: submitEndpoint, on: !!review.submitTo },
+        { k: 'copy', ico: 'i-copy', label: 'Copy',               fn: copyOut,        on: true },
+        { k: 'mail', ico: 'i-mail', label: 'Email',              fn: mailOut,        on: !!review.to },
+        { k: 'pdf',  ico: 'i-doc',  label: 'PDF report',         fn: buildReport,    on: true },
+        { k: 'file', ico: 'i-down', label: 'Download as text',   fn: fileOut,        on: true }
+      ].filter(function (a) { return a.on; });
+
+      var order = review.submitTo ? ['send', reviewMode ? 'copy' : 'pdf']
+                                  : (reviewMode ? ['copy', review.to ? 'mail' : 'pdf'] : ['pdf', 'copy']);
+      var primary = order[0], second = order[1];
+
+      acts.forEach(function (a) {
+        if (a.k === primary) sheetActs.appendChild(actionBtn('cta', a.ico, a.label, a.fn, !second));
+        else if (a.k === second) sheetActs.appendChild(actionBtn('ib', a.ico, a.label, a.fn));
+      });
+
+      var rest = acts.filter(function (a) { return a.k !== primary && a.k !== second; });
+      if (rest.length) {
+        var row = document.createElement('div');
+        row.className = 'sheet__links';
+        rest.forEach(function (a) {
+          var l = document.createElement('button');
+          l.type = 'button'; l.className = 'lnk'; l.textContent = a.label;
+          l.addEventListener('click', a.fn);
+          row.appendChild(l);
+        });
+        sheetActs.appendChild(row);
       }
-      sheetActs.appendChild(actionBtn('cta', 'i-copy', 'Copy', copyOut, !review.to));
-      if (review.to) sheetActs.appendChild(actionBtn('ib', 'i-mail', 'Email', mailOut));
-      sheetActs.appendChild(actionBtn('ib', 'i-doc', 'PDF report', buildReport, !review.to));
-      sheetActs.appendChild(actionBtn('ib', 'i-down', 'Plain text file', fileOut, !!review.to));
     }
     sheet.hidden = false;
   }
@@ -2687,8 +2731,28 @@
 
   function openReport(shots) {
     var SEVC = { low: '#3d7dd8', normal: '#f0913a', high: '#e0483d' };
-    var counts = { low: 0, normal: 0, high: 0 };
-    written().forEach(function (cm) { counts[cm.severity || 'normal']++; });
+    /* Split by device first, severity inside: three high on a phone and three
+       high on a desktop are not the same finding, and a single row of totals
+       hides exactly the thing the device tag was added to expose. */
+    var byDev = {}, devOrder = [];
+    written().forEach(function (cm) {
+      var dv = cm.device || 'desktop';
+      if (!byDev[dv]) { byDev[dv] = { low: 0, normal: 0, high: 0, n: 0 }; devOrder.push(dv); }
+      byDev[dv][cm.severity || 'normal']++;
+      byDev[dv].n++;
+    });
+    devOrder.sort(function (a, b) {
+      var rank = { desktop: 0, tablet: 1, mobile: 2 };
+      return (rank[a] === undefined ? 9 : rank[a]) - (rank[b] === undefined ? 9 : rank[b]);
+    });
+    var tally = devOrder.map(function (dv) {
+      var t = byDev[dv];
+      return '<div class="tgroup"><span class="tgroup__d">' + esc(dv) + '<b>' + t.n + '</b></span>' +
+        ['high', 'normal', 'low'].map(function (s) {
+          return '<span class="pill' + (t[s] ? '' : ' is-nil') + '">' +
+                 '<i class="dot" style="background:' + SEVC[s] + '"></i>' + t[s] + ' ' + s + '</span>';
+        }).join('') + '</div>';
+    }).join('');
 
     var d = cfg.disclosure || {};
     var rows = [];
@@ -2748,9 +2812,17 @@
         'box-shadow:0 4px 14px -4px rgba(237,109,87,.8)}' +
       'h1{margin:2px 0 3px;font-size:20px;letter-spacing:-.02em;line-height:1.2}' +
       '.sub{color:var(--ink3);font-size:12px}' +
-      '.tally{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap;justify-content:flex-end}' +
-      '.pill{display:flex;align-items:center;gap:6px;padding:6px 11px;border-radius:999px;' +
-        'background:var(--soft);font:600 11px/1 var(--font);color:var(--ink2);white-space:nowrap}' +
+      '.tally{display:flex;gap:10px;margin-left:auto;flex-wrap:wrap;justify-content:flex-end}' +
+      '.tgroup{display:flex;flex-direction:column;gap:6px;align-items:flex-end;padding:9px 11px;' +
+        'border-radius:12px;background:var(--soft)}' +
+      '.tgroup__d{display:flex;align-items:center;gap:7px;font:700 8.5px/1 var(--mono);' +
+        'letter-spacing:.12em;text-transform:uppercase;color:#b4553f}' +
+      '.tgroup__d b{font:700 11px/1 var(--font);letter-spacing:0;color:var(--ink)}' +
+      '.tgroup .pill{background:#fff}' +
+      '.pill{display:flex;align-items:center;gap:6px;padding:5px 9px;border-radius:999px;' +
+        'background:var(--soft);font:600 10.5px/1 var(--font);color:var(--ink2);white-space:nowrap}' +
+      '.tgroup{flex-direction:row;align-items:center;flex-wrap:wrap}' +
+      '.pill.is-nil{opacity:.45}' +
       '.dot{width:8px;height:8px;border-radius:50%;flex:0 0 auto}' +
       '.blocks{display:grid;gap:12px;margin-top:20px}' +
       '.block{padding:15px 17px;border-radius:14px;background:var(--soft)}' +
@@ -2805,11 +2877,7 @@
         '<h1>' + esc(cfg.title || cfg.name || 'Prototype') + '</h1>' +
         '<p class="sub">' + (reviewerName ? esc(reviewerName) + ' · ' : '') + new Date().toLocaleString() +
         ' · ' + total() + ' note' + (total() === 1 ? '' : 's') + '</p></div>' +
-        '<div class="tally">' +
-          '<span class="pill"><i class="dot" style="background:' + SEVC.high + '"></i>' + counts.high + ' high</span>' +
-          '<span class="pill"><i class="dot" style="background:' + SEVC.normal + '"></i>' + counts.normal + ' normal</span>' +
-          '<span class="pill"><i class="dot" style="background:' + SEVC.low + '"></i>' + counts.low + ' low</span>' +
-        '</div></div>' +
+        '<div class="tally">' + tally + '</div></div>' +
       ((askedFor || overall()) ? '<div class="blocks">' +
         (askedFor ? '<div class="block ask"><span class="lab">What was asked</span>' + esc(askedFor) + '</div>' : '') +
         (overall() ? '<div class="block sum"><span class="lab">Overall</span>' + esc(overall().text.trim()) + '</div>' : '') +
@@ -2840,6 +2908,7 @@
 
   /* ---------- review mode ---------- */
   if (reviewMode) {
+    document.body.classList.add('review');
     var brief = document.querySelector('[data-brief]');
     var nameField = document.querySelector('[data-brief-name]');
     brief.hidden = false;

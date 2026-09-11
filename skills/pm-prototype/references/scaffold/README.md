@@ -96,7 +96,14 @@ A selector that matches nothing renders as an orphan card with a warning instead
 
 **Overall** (beside Add note) writes one covering note about the whole prototype - no pin, no severity. It leads the rail, leads the sheet, and leads the report. Six remarks about six elements are not the same as what someone thinks of the thing.
 
-**`This view` and `For review`** sit together under *Send it on*, both labelled, because they are two different jobs: the first opens exactly what you are looking at - screen, state, time, device - for someone who should see that; the second opens in review mode with the task and the prompt to send notes back.
+**`This view` and `For review`** sit together under *Send it on*, and they open genuinely different things:
+
+| | |
+|---|---|
+| **This view** | the **full tool** at this exact screen, state, time and device - for someone working on it with you |
+| **For review** | the **reviewer's view**: no grid, no side-by-side, no presentation, no screenshot export, no event log, no sharing controls. The prototype, the states, the widths, and their own notes |
+
+That second line is the point. A reviewer handed the maker's toolbar wanders off the thing being asked, and the two links stop meaning anything different.
 
 `For review` opens a small composer: add a line saying what you want *this* person to look at, then copy the link. That line travels in the URL, is shown to them before they start, and is carried into what comes back - so the reader can tell which remarks answer the question.
 
@@ -124,13 +131,15 @@ A **pointer is on screen for the whole run**, resting inside the artifact and tr
 
 ## The report
 
+The sheet offers **one primary action and one beside it**, with the rest as quiet links - and which is primary follows whose hands it is in: a reviewer wants to send (Copy, then Email), a maker wants the report. Four buttons of equal weight is a menu, not a choice.
+
 The sheet behind `Return notes` does not list the notes again - the rail already shows them. It carries the covering note (or a field to write one, if it is still missing) and a single control to look the rest over before they go.
 
 `Return notes` → **PDF report** assembles everything into one page and hands it to the browser's print dialogue, which is where a PDF comes from without a library:
 
 It is styled in the tool's own language - the coral-to-gold accent, the mono labels, the same cards - so what lands in someone's inbox is recognisably the thing they were looking at.
 
-- the header - who, when, how many, and a tally by severity
+- the header - who, when, how many, and a tally **grouped by device**, severity inside: three high on a phone and three high on a desktop are not the same finding
 - **what was asked** and the reviewer's **overall note**
 - one section per screen, **state and device**, showing that screen as it was when it was commented on, with the pins drawn back on and the notes numbered against them. A phone capture is never shown above 1:1
 - **what was simulated**, from the disclosure notes, so the remarks are read against a prototype rather than against a finished product
@@ -181,6 +190,8 @@ Driven end to end in a real browser before shipping, per the contract's own "tes
 The second round added: per-screen time appearing, disappearing and keeping each screen's own value across a switch; a comment placed by clicking inside the artifact, with a real selector computed for it; collapse to a pin and reopen; an orphan anchor; the generated disclosure screen; and the review brief.
 
 The third: the screen panel with its descriptions and keyboard navigation, and the viewport transition - sampled mid-flight at 427px between a 1106px desktop and a 390px phone, with the annotations re-anchoring correctly once it settled.
+
+The tenth: a reviewer's link opening with the maker's tools absent and the reviewer's own intact, the sheet reduced to Copy plus Email with two links under it, and the report's tally split into a desktop and a mobile group.
 
 The ninth: a note written on mobile hidden on desktop with the rail offering to switch, the report grouped by screen/state/device with a phone shot held at 390px, and the sheet's roll-out opening below its control rather than beside it.
 
