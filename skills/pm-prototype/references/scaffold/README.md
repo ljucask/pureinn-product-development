@@ -236,7 +236,7 @@ Three conveniences the contract does not require, but that a reviewer expects fr
 |---|---|
 | **Mockup** | A device frame around the artifact, modelled on the real hardware rather than a generic rounded rectangle: iPhone with its Dynamic Island and side buttons, iPad with an even bezel and camera, MacBook with a camera notch, browser chrome and the base under the lid. Off by default: it is presentation, and a usability test does not want it |
 | **Share** | Copies a link carrying the whole state - screen, state, variant, time, device, mockup. The recipient opens *exactly* what you were looking at, and can keep clicking. For a prototype that beats sending a static image |
-| **Export PNG** | Saves the current screen, with the mockup if it is on - **the same frame, cut-outs included**, because a mockup that loses its notch on export is a different mockup - and **never** with the annotation layer, since annotations are chrome, not product |
+| **Export PNG** | Saves the current screen, with the mockup if it is on - **the same frame, cut-outs included**, because a mockup that loses its notch on export is a different mockup - and with any **marks** drawn on it, but **never** the notes. The split is what each one is for: a note explains and travels as text, so the report and the CSV carry all of it; a mark only says "this bit", and a mark left out of the picture says nothing at all |
 
 **The honest limit on export.** No browser API rasterises another document, so the artifact's DOM is cloned into an SVG foreignObject with its stylesheets inlined. That works, and it is fragile: cross-origin images, webfonts and canvas content will not come through. Every failure drops into capture mode - chrome and notes hidden, a message telling you to take a system screenshot - rather than saving something silently wrong.
 
@@ -267,13 +267,15 @@ The bottom bar is a labelled tool bar rather than a strip of icons: every group 
 
 ## Verified
 
-Driven end to end in a real browser before shipping, per the contract's own "test outside the generating agent" rule: all four states reaching the artifact, variants, device presets firing the artifact's own media queries, artifact events arriving in the shell log, chrome hiding and restoring, annotation anchoring, the rail releasing when no note is visible, the screen menu with keyboard navigation, the mockup frame, a real PNG written to disk with no annotation layer in it, and a shared link restoring screen + state + variant + time + device + mockup in one go.
+Driven end to end in a real browser before shipping, per the contract's own "test outside the generating agent" rule: all four states reaching the artifact, variants, device presets firing the artifact's own media queries, artifact events arriving in the shell log, chrome hiding and restoring, annotation anchoring, the rail releasing when no note is visible, the screen menu with keyboard navigation, the mockup frame, a real PNG written to disk with no notes in it, and a shared link restoring screen + state + variant + time + device + mockup in one go.
 
 The second round added: per-screen time appearing, disappearing and keeping each screen's own value across a switch; a comment placed by clicking inside the artifact, with a real selector computed for it; collapse to a pin and reopen; an orphan anchor; the generated disclosure screen; and the review brief.
 
 The third: the screen panel with its descriptions and keyboard navigation, and the viewport transition - sampled mid-flight at 427px between a 1106px desktop and a 390px phone, with the annotations re-anchoring correctly once it settled.
 
 The twenty-first was a full code and security review of the three files rather than a feature round, run through the framework's own JIT review flow and then re-verified in the browser: the sanitiser rejecting every nested payload that used to pass, a note carrying a remote image scrubbed out of storage on load, a screenshot-only note counted and exported instead of silently deleted, the side-by-side columns measured at exactly the 1280 / 834 / 390 they advertise, Hide menu going white on desktop, the mockup staying off a document screen, a malformed `?m=` leaving a working harness, and an editor surviving a stage scroll with its caret and focus intact.
+
+Three things the review raised were decisions rather than defects, and were settled rather than patched: Send now says, beside the button, that it also carries a record of the session, because the sheet promised notes and the POST sent the browsing log too; the share URL still carries the author's message (without a backend there is nowhere else for it) but the event log records only that a link was made, so the message is not amplified into the POST; and marks now appear in the PNG and the report, verified by reading the exported file's pixels back - a coral box and an amber stroke, the stroke still multiplying over the text under it.
 
 The twentieth: the three note scopes reached from one menu and a screen note written through it, the Share menu carrying all four exports, and the mark menu relabelling its button to "Drag a box" while armed.
 

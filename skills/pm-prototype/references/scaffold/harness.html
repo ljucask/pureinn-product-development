@@ -740,6 +740,12 @@
   .sheet__list { margin: 14px 0 0; padding: 0 4px 0 0; list-style: none; overflow-y: auto; display: grid; gap: 8px; }
   .sheet__list li { display: flex; gap: 8px; align-items: flex-start; font-size: 12px; line-height: 1.5; color: var(--ink-2); }
   .sheet__where { display: block; font-size: 10.5px; color: var(--ink-3); }
+  /* the one place in the sheet that tells the reviewer something rather than
+     asking them for something - quiet, but not hidden */
+  .sheet__fine {
+    display: block; margin-top: 7px; font-size: 10.5px; line-height: 1.45;
+    color: var(--ink-3); max-width: 46ch;
+  }
   .sheet__acts { display: grid; gap: 14px; margin-top: 16px; }
   .sheet__grp { display: grid; gap: 7px; }
   .sheet__row { display: grid; gap: 8px; }
@@ -2260,7 +2266,9 @@
       btn.classList.add('is-ok');
       setTimeout(function () { btn.classList.remove('is-ok'); }, 1400);
       toast('Link copied - it opens this screen in this exact state.');
-      record('harness:share', url);
+      /* the URL carries the author's own message in ?m=, and the event log is
+         posted to submitTo - so log that a link was made, not what was in it */
+      record('harness:share', 'link');
     }
     if (navigator.clipboard && location.protocol !== 'file:') {
       navigator.clipboard.writeText(url).then(done, function () { prompt('Copy this link:', url); });
@@ -2329,7 +2337,11 @@
      inlined. That is genuinely fragile - cross-origin images, webfonts and
      canvas content will not come through - so every failure falls back to
      capture mode rather than pretending it worked.
-     The annotation layer is never included: it is chrome, not the product. */
+     Notes are never included and marks always are, and the line between them
+     is what each one is for. A note explains, and it travels perfectly well as
+     text - the report prints it, the CSV files it, the reader gets all of it
+     without the picture. A mark only ever says "this bit", so a mark left out
+     of the picture says nothing at all. */
   document.querySelector('[data-shot]').addEventListener('click', function () { exportPng(); });
 
   function captureMode(msg) {
@@ -2441,6 +2453,7 @@
       ctx.fillStyle = '#fff';
       ctx.fillRect(pad, pad + barH, w, h);
       ctx.drawImage(img, pad, pad + barH, w, h);
+      paintMarks(ctx, pad, pad + barH, w, h);
       ctx.restore();
 
       if (current.mockup) {
@@ -2474,6 +2487,43 @@
     } catch (e) {
       captureMode('Could not rasterise this screen (' + (e && e.message ? e.message : 'unknown') + '). Chrome is hidden - take a system screenshot.');
     }
+  }
+
+  /* Marks go into both exports, and notes do not. A note explains and travels
+     as text - the report prints it, the CSV files it. A mark only ever says
+     "this bit", and a mark that is not in the picture says nothing at all: the
+     reader of a PDF cannot hover it back into existence. So the box and the
+     pen are painted onto the same canvas as the artifact, at the same scale,
+     in the same colours the screen uses. The note rail stays out of both. */
+  function paintMarks(ctx, x0, y0, w, h) {
+    var here = mineHere();
+    if (!here.length) return;
+    ctx.save();
+    ctx.beginPath(); ctx.rect(x0, y0, w, h); ctx.clip();
+    here.forEach(function (m) {
+      if (m.kind === 'box') {
+        var x = x0 + m.x * w, y = y0 + m.y * h, bw = m.w * w, bh = m.h * h;
+        ctx.fillStyle = 'rgba(237,109,87,.06)';
+        ctx.strokeStyle = '#ed6d57';
+        ctx.lineWidth = 2;
+        roundRect(ctx, x, y, bw, bh, 6);
+        ctx.fill(); ctx.stroke();
+      } else if (m.pts && m.pts.length) {
+        /* multiply, as on screen: a marker pen that paints over the text it is
+           marking has hidden the thing it was pointing at */
+        ctx.globalCompositeOperation = 'multiply';
+        ctx.strokeStyle = 'rgba(255,201,79,.55)';
+        ctx.lineWidth = 16; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+        ctx.beginPath();
+        m.pts.forEach(function (pt, i) {
+          var px = x0 + pt[0] * w, py = y0 + pt[1] * h;
+          if (i) ctx.lineTo(px, py); else ctx.moveTo(px, py);
+        });
+        ctx.stroke();
+        ctx.globalCompositeOperation = 'source-over';
+      }
+    });
+    ctx.restore();
   }
 
   function roundRect(ctx, x, y, w, h, r) {
@@ -3191,7 +3241,7 @@
       { ico: 'i-user',  t: 'Invite to review', d: 'Opens with the task and a prompt to send notes back', fn: function () { press('[data-invite]'); }, maker: true },
       { sep: true },
       { h: 'Take a copy' },
-      { ico: 'i-image', t: 'Screenshot',    d: 'This screen as a PNG, without the annotation layer', fn: function () { press('[data-shot]'); } },
+      { ico: 'i-image', t: 'Screenshot',    d: 'This screen as a PNG, with any marks on it. Notes stay out', fn: function () { press('[data-shot]'); } },
       { ico: 'i-down',  t: 'Event log',     d: 'What was clicked, in order. Local only, never analytics', fn: function () { press('[data-export]'); }, maker: true }
     ]; },
     notes: function () { return [
@@ -4010,9 +4060,20 @@
 
       var primary = review.submitTo ? 'send' : (reviewMode ? 'copy' : null);
 
-      sheetActs.appendChild(group('Send it back', send.map(function (a) {
+      var sendGrp = group('Send it back', send.map(function (a) {
         return actionBtn(a.k === primary ? 'cta' : 'ib', a.ico, a.label, a.fn);
-      }), send.length));
+      }), send.length);
+      /* "Send to the author" posts the notes AND the event log - which screens
+         were opened, which states were switched, in what order and when. That
+         is useful to the author and it is nobody's business to discover after
+         the fact, so it is said here, next to the button that does it. */
+      if (review.submitTo) {
+        var disc = document.createElement('span');
+        disc.className = 'sheet__fine';
+        disc.textContent = 'Send also includes a record of this session: which screens and states you opened, and when. Copy and Email send the notes only.';
+        sendGrp.appendChild(disc);
+      }
+      sheetActs.appendChild(sendGrp);
 
       sheetActs.appendChild(group('Or keep a copy', keep.map(function (a) {
         var b = actionBtn(a.k === 'pdf' && !primary ? 'cta' : 'ib', a.ico, a.label, a.fn);
@@ -4189,6 +4250,13 @@
       var pp = pointFor(cm, doc);
       if (pp && pp.y + 28 > content) content = pp.y + 28;
     });
+    // nor cut a mark in half
+    mineHere().forEach(function (m) {
+      var bottom = m.kind === 'box'
+        ? (m.y + m.h) * full
+        : m.pts.reduce(function (lo, pt) { return Math.max(lo, pt[1]); }, 0) * full + 12;
+      if (bottom + 16 > content) content = bottom + 16;
+    });
     var h = Math.max(220, Math.min(full, Math.round(content + 24)));
 
     var img;
@@ -4200,6 +4268,9 @@
     ctx.scale(scale, scale);
     ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h);
     ctx.drawImage(img, 0, 0, w, h);
+    // under the pins, never over them - and measured against the FULL frame,
+    // because that is what a mark's fractions are relative to
+    paintMarks(ctx, 0, 0, w, full);
 
     var COL = { low: '#3d7dd8', normal: '#f0913a', high: '#e0483d' };
     list.forEach(function (cm, i) {
