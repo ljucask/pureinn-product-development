@@ -644,6 +644,17 @@
   }
   .lnk:hover { color: var(--ink); text-decoration-color: var(--co); }
   .sheet--invite { bottom: 118px; }
+  .picks { margin-top: 14px; display: grid; gap: 7px; }
+  .picks > .sheet__where { margin-bottom: 1px; }
+  .pick {
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 10px 12px; border-radius: 11px; background: rgba(22,24,29,.045);
+    cursor: pointer; transition: background var(--fast) var(--ease);
+  }
+  .pick:hover { background: rgba(22,24,29,.075); }
+  .pick input { margin: 2px 0 0; accent-color: var(--co); width: 15px; height: 15px; flex: 0 0 auto; }
+  .pick b { display: block; font-size: 12.5px; font-weight: 650; color: var(--ink); }
+  .pick span { font-size: 11.5px; line-height: 1.45; color: var(--ink-3); }
   .sheet__ta {
     width: 100%; margin-top: 13px; padding: 11px 13px; resize: vertical;
     background: #fff; border: 0; border-radius: var(--r-md);
@@ -786,6 +797,7 @@
      log, which is the maker's own instrumentation, and the controls that mint
      links, which are not a reviewer's to hand out. */
   body.review .maker { display: none !important; }
+  body.fixed-width [data-device-seg], body.fixed-width [data-mockup] { opacity: .35; pointer-events: none; }
 
   /* ══ review mode - the task first, and what to do at the end ══ */
   .brief {
@@ -877,6 +889,35 @@
     transform-origin: top left;
   }
   .cmp__z { font-weight: 500; letter-spacing: .04em; color: var(--co); }
+
+  /* ══ promo - the whole flow in one picture ══
+     Not an inspection view: the screens are small, framed and laid out to be
+     looked at together, which is what goes in a deck or at the top of a note.
+     Nothing is interactive here; it is a picture of the prototype, and it says
+     so by not pretending otherwise. */
+  /* Same trap as the side-by-side container: body carries the state class, so
+     the container must not share its name or `.promo { display: none }` matches
+     <body> and blanks the page. It caught me once already. */
+  .proset { display: none; gap: 30px; flex-wrap: wrap; align-items: flex-end; justify-content: center; padding: 10px 0 6px; }
+  body.promo .proset { display: flex; }
+  body.promo .wrap, body.promo .cmpset { display: none; }
+  body.promo .stage { align-items: center; }
+  .pro { display: flex; flex-direction: column; gap: 11px; align-items: center; }
+  /* Everything here is sized from the scale in JS - a bezel, a corner radius and
+     a Dynamic Island are all physical sizes, and at a quarter scale a fixed one
+     stops being a bezel and starts being a border. An absolutely positioned
+     child measures from the PADDING box, so the iframe is inset explicitly or
+     it covers the frame it is supposed to sit inside. */
+  .pro__f { position: relative; overflow: hidden; background: #fff;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.14), 0 26px 50px -22px rgba(22,24,29,.55); }
+  .pro__f iframe { position: absolute; border: 0; background: #fff; transform-origin: top left; pointer-events: none; }
+  .pro__f::after {
+    content: ""; position: absolute; z-index: 2; left: 50%; transform: translateX(-50%);
+    top: var(--it, 0); width: var(--iw, 0); height: var(--ih, 0); border-radius: var(--ir, 0);
+    background: #000;
+  }
+  .pro--tablet .pro__f::after, .pro--desktop .pro__f::after { display: none; }
+  .pro__l { font: 700 8.5px/1 var(--mono); letter-spacing: .13em; text-transform: uppercase; color: var(--ink-3); }
 
   /* ══ presentation - the artifact, and only what is needed to move ══ */
   body.present .isle, body.present .annots, body.present .nav, body.present .sheet { opacity: 0; pointer-events: none; }
@@ -1038,6 +1079,7 @@
   <symbol id="s-map" viewBox="0 0 16 16"><path d="M8 14s4.4-4.1 4.4-7.3A4.4 4.4 0 0 0 3.6 6.7C3.6 9.9 8 14 8 14z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><circle cx="8" cy="6.6" r="1.5" fill="none" stroke="currentColor" stroke-width="1.3"/></symbol>
   <symbol id="s-info" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.8" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M8 7.2v4M8 4.9v.1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
   <symbol id="i-layers" viewBox="0 0 16 16"><path d="M8 1.8L14 5l-6 3.2L2 5zM2 8.4l6 3.2 6-3.2M2 11.6l6 3.2 6-3.2" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></symbol>
+  <symbol id="i-gallery" viewBox="0 0 16 16"><rect x="1.6" y="4" width="3.6" height="8" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.4"/><rect x="6.2" y="2.4" width="3.6" height="11.2" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.4"/><rect x="10.8" y="4" width="3.6" height="8" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.4"/></symbol>
   <symbol id="i-columns" viewBox="0 0 16 16"><rect x="1.6" y="3" width="4" height="10" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.4"/><rect x="7" y="3" width="3.2" height="10" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.4"/><rect x="11.6" y="3" width="2.8" height="10" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.4"/></symbol>
   <symbol id="i-grid" viewBox="0 0 16 16"><path d="M2 6h12M2 10h12M6 2v12M10 2v12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><rect x="2" y="2" width="12" height="12" rx="1.8" fill="none" stroke="currentColor" stroke-width="1.4"/></symbol>
   <symbol id="i-play" viewBox="0 0 16 16"><path d="M5 3.4l7 4.6-7 4.6z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></symbol>
@@ -1069,6 +1111,8 @@
     </div>
     <div class="annots" data-annots><svg class="lines" data-lines></svg><div class="rail" data-rail></div></div>
   </div>
+
+  <div class="proset" data-promo></div>
 
   <div class="cmpset" data-compare>
     <div class="cmp"><span class="cmp__h">Desktop <span class="cmp__px">1280</span><span class="cmp__z" data-cmp-z></span></span><div class="cmp__vp"><iframe title="desktop" data-cmp="desktop" data-w="1280"></iframe></div></div>
@@ -1105,7 +1149,8 @@
     <button type="button" data-device-btn="mobile" aria-pressed="false" title="Mobile"><svg><use href="#i-mobile"/></svg></button>
   </div>
   <button class="ib ib--icon" type="button" data-mockup aria-pressed="false" title="Device mockup"><svg><use href="#i-frame"/></svg></button>
-  <button class="ib ib--icon" type="button" data-compare-btn aria-pressed="false" title="All three widths side by side"><svg><use href="#i-columns"/></svg></button>
+  <button class="ib ib--icon" type="button" data-compare-btn aria-pressed="false" title="This screen at all three widths, side by side"><svg><use href="#i-columns"/></svg></button>
+  <button class="ib ib--icon" type="button" data-promo-btn aria-pressed="false" title="Every screen at once, each in a device frame - the whole flow in one picture"><svg><use href="#i-gallery"/></svg></button>
   <button class="ib" type="button" data-grid-btn aria-pressed="false" title="Alignment grid - 8px, then 64px"><svg><use href="#i-grid"/></svg><span data-grid-label>Grid</span></button>
   <span class="sep"></span>
   <button class="ib ib--icon" type="button" data-present title="Presentation mode"><svg><use href="#i-play"/></svg></button>
@@ -1181,6 +1226,11 @@
   <p class="sheet__p">They get the same instruments you have - the widths, the mockup, the grid, side by side, the presentation, a screenshot - plus the task, their name on every note, and a Send control that will not let them leave without offering. What they do not get is your event log or the ability to hand out links.</p>
   <p class="sheet__p">Add a line if there is something specific you want <em>this</em> person to look at.</p>
   <textarea class="sheet__ta" data-invite-msg rows="3" placeholder="e.g. Ignore the styling - tell me whether the assignment step makes sense."></textarea>
+  <div class="picks" data-invite-picks hidden>
+    <span class="sheet__where">What they get with it</span>
+    <label class="pick"><input type="checkbox" data-pick="overview" checked><span><b>Overview</b>What this is, who it is for, what it should move</span></label>
+    <label class="pick"><input type="checkbox" data-pick="instructions" checked><span><b>How to test it</b>The steps to try and how to leave a note</span></label>
+  </div>
   <div class="sheet__acts">
     <button class="cta wide" type="button" data-invite-copy><svg><use href="#i-copy"/></svg><span>Copy the link</span></button>
   </div>
@@ -1246,8 +1296,21 @@
   var annots   = cfg.annotations || {};
   var review   = cfg.review || {};
 
+  /* A generated screen exists only if the block it renders exists, and a shared
+     link can leave one out - so the person you send it to sees the overview
+     without the test steps, or the other way round. */
+  var dropped = (new URLSearchParams(location.search).get('x') || '').split(',');
+  screens = screens.filter(function (s) {
+    if (s.overview)     return !!cfg.overview     && dropped.indexOf('overview') < 0;
+    if (s.instructions) return !!cfg.instructions && dropped.indexOf('instructions') < 0;
+    return true;
+  });
+  if (!screens.length) screens = [{ label: 'Prototype', src: 'index.html' }];
   // a generated screen has no file of its own; the shell renders it
-  screens.forEach(function (s, i) { if (!s.src) s.src = '__' + (s.disclosure ? 'disclosure' : 'screen' + i); });
+  screens.forEach(function (s, i) {
+    if (!s.src) s.src = '__' + (s.disclosure ? 'disclosure' : s.overview ? 'overview' : s.instructions ? 'instructions' : 'screen' + i);
+  });
+  function generated(s) { return !!(s.disclosure || s.overview || s.instructions); }
 
   function screenTime() {
     var s = screens[screenIndex(current.screen)];
@@ -1531,6 +1594,7 @@
     if (name === current.device) return;
     current.device = name;
     paintDevice();
+    if (promoOn) buildPromo();
     record('harness:device', name);
     requestAnimationFrame(function () { slide(deviceSeg); });
   });
@@ -1595,6 +1659,7 @@
     p.set('device', current.device);
     if (current.mockup) p.set('mockup', '1');
     if (reviewMode) p.set('review', '1');
+    if (dropped.length && dropped[0]) p.set('x', dropped.join(','));
     var url = location.origin + location.pathname + '?' + p.toString();
 
     function done() {
@@ -1618,9 +1683,22 @@
   var inviteMsg = document.querySelector('[data-invite-msg]');
   var inviteBtn = document.querySelector('[data-invite]');
 
+  var picksWrap = document.querySelector('[data-invite-picks]');
+  function pickRow(k) { return picksWrap.querySelector('[data-pick="' + k + '"]'); }
+
   inviteBtn.addEventListener('click', function () {
     inviteSheet.hidden = !inviteSheet.hidden;
-    if (!inviteSheet.hidden) { inviteMsg.value = readStore('lastAsk', ''); inviteMsg.focus(); }
+    if (inviteSheet.hidden) return;
+    // only offer what this prototype actually has
+    var any = false;
+    ['overview', 'instructions'].forEach(function (k) {
+      var has = !!cfg[k];
+      pickRow(k).closest('.pick').hidden = !has;
+      if (has) any = true;
+    });
+    picksWrap.hidden = !any;
+    inviteMsg.value = readStore('lastAsk', '');
+    inviteMsg.focus();
   });
   document.querySelector('[data-invite-close]').addEventListener('click', function () { inviteSheet.hidden = true; });
 
@@ -1632,6 +1710,10 @@
     p.set('review', '1');
     // the message travels in the link itself - there is no backend to keep it in
     if (msg) p.set('m', encodeURIComponent(msg));
+    var out = ['overview', 'instructions'].filter(function (k) {
+      return cfg[k] && !pickRow(k).checked;
+    });
+    if (out.length) p.set('x', out.join(','));
     var url = location.origin + location.pathname + '?' + p.toString();
     if (url.length > 1900) { toast('That message is too long to travel in a link. Shorten it, or send it in the same message as the link.', 6000); return; }
     function done() {
@@ -2942,6 +3024,118 @@
     return String(s === undefined || s === null ? '' : s)
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
+  /* Shared chrome for every generated page, in the tool's own language. */
+  function docShell(title, inner, wide) {
+    return '<!doctype html><html lang="en"><head><meta charset="utf-8">' +
+      '<meta name="viewport" content="width=device-width,initial-scale=1"><style>' +
+      ':root{--co:#ed6d57;--grad:linear-gradient(135deg,#ed6d57,#ff9d5c);--ink:#14161b;--ink2:#474d57;' +
+        '--ink3:#7c838f;--line:#eceef1;--soft:#f6f7f9;' +
+        '--font:"Inter",ui-sans-serif,-apple-system,"Segoe UI",system-ui,sans-serif;' +
+        '--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace}' +
+      '*{box-sizing:border-box}' +
+      'body{margin:0;padding:clamp(22px,4vw,46px) clamp(18px,4vw,44px);background:#fff;color:var(--ink);' +
+        'font:14px/1.65 var(--font);-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%}' +
+      '.w{max-width:' + (wide || 940) + 'px;margin:0 auto}' +
+      '.lab{font:700 9px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink3)}' +
+      'h1{margin:9px 0 0;font-size:clamp(19px,3.6vw,25px);letter-spacing:-.025em;line-height:1.22}' +
+      'h2{margin:0;font-size:13px;font-weight:680;letter-spacing:-.01em}' +
+      '.lead{margin:10px 0 0;font-size:15px;line-height:1.6;color:var(--ink2);max-width:62ch}' +
+      '.grid{display:grid;gap:14px;margin-top:26px}' +
+      '.two{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}' +
+      '.card{padding:17px 19px;border-radius:15px;background:var(--soft)}' +
+      '.card .lab{display:block;margin-bottom:7px}' +
+      '.card p{margin:0;color:var(--ink2)}' +
+      '.sec{margin-top:32px}' +
+      '.sec > .lab{display:block;margin-bottom:12px}' +
+      'ul{margin:0;padding-left:19px;color:var(--ink2)}li{margin:7px 0}' +
+      'ol.steps{margin:0;padding:0;list-style:none;counter-reset:s;display:grid;gap:10px}' +
+      'ol.steps li{counter-increment:s;display:flex;gap:12px;align-items:flex-start;' +
+        'padding:13px 15px;border-radius:13px;background:var(--soft);color:var(--ink2)}' +
+      'ol.steps li:before{content:counter(s);flex:0 0 auto;width:21px;height:21px;border-radius:50%;' +
+        'background:var(--grad);color:#fff;font:700 11px/21px var(--font);text-align:center}' +
+      '.foot{margin-top:26px;padding-top:16px;border-top:1px solid var(--line);color:var(--ink3);font-size:12px}' +
+      '</style></head><body><div class="w">' + inner + '</div></body></html>';
+  }
+
+  /* ---------- the overview ----------
+     For whoever decides, not for whoever tests. Every number carries the class
+     of evidence it rests on, because a projection in front of a committee is
+     the most actionable unverifiable number a prototype can contain. */
+  var PROV = {
+    observed:   { t: 'Observed',   c: '#17a76b' },
+    calculated: { t: 'Calculated', c: '#3d7dd8' },
+    projected:  { t: 'Projected',  c: '#f0913a' },
+    target:     { t: 'Target',     c: '#6c5ce0' },
+    sample:     { t: 'Sample',     c: '#7c838f' }
+  };
+
+  function overviewDoc() {
+    var o = cfg.overview || {};
+    var metrics = (o.metrics || []).map(function (m) {
+      var pv = PROV[m.kind] || PROV.sample;
+      return '<div class="met"><span class="met__v">' + esc(m.value) + '</span>' +
+        '<span class="met__l">' + esc(m.label) + '</span>' +
+        '<span class="prov" style="color:' + pv.c + '"><i></i>' + pv.t + '</span>' +
+        (m.note ? '<span class="met__n">' + esc(m.note) + '</span>' : '') + '</div>';
+    }).join('');
+
+    var flow = screens.filter(function (s) { return !generated(s); }).map(function (s, i) {
+      return '<li><b>' + esc(s.label) + '</b>' + (s.desc ? '<span>' + esc(s.desc) + '</span>' : '') + '</li>';
+    }).join('');
+
+    var inner =
+      '<span class="lab">' + esc(cfg.title || cfg.name || 'Prototype') + ' · overview</span>' +
+      '<h1>' + esc(o.is || 'What this prototype is here to answer') + '</h1>' +
+      '<div class="grid two">' +
+        '<div class="card"><span class="lab">Who it is for</span><p>' + esc(o.who || '-') + '</p></div>' +
+        '<div class="card"><span class="lab">The job it does for them</span><p>' + esc(o.job || '-') + '</p></div>' +
+      '</div>' +
+      (metrics ? '<div class="sec"><span class="lab">What it should move</span><div class="mets">' + metrics + '</div>' +
+        '<p class="foot" style="margin-top:14px;padding:0;border:0">Every figure carries the evidence it rests on. ' +
+        'A target is what we want, not what we measured; a projection rests on assumptions, not on users.</p></div>' : '') +
+      (flow ? '<div class="sec"><span class="lab">What you are about to see</span><ol class="steps">' + flow + '</ol></div>' : '') +
+      (o.notIn ? '<div class="sec"><span class="lab">What is not in it</span><p class="lead" style="font-size:14px">' + esc(o.notIn) + '</p></div>' : '') +
+      '<p class="foot">This is a prototype. What in it is simulated, and what it would be in production, is listed on the <b>What is real</b> screen.</p>';
+
+    return docShell('overview',
+      inner +
+      '<style>' +
+      '.mets{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}' +
+      '.met{display:flex;flex-direction:column;gap:3px;padding:16px 18px;border-radius:15px;' +
+        'background:var(--soft);border-left:3px solid rgba(237,109,87,.5)}' +
+      '.met__v{font-size:22px;font-weight:700;letter-spacing:-.02em}' +
+      '.met__l{font-size:12.5px;color:var(--ink2)}' +
+      '.prov{display:inline-flex;align-items:center;gap:5px;margin-top:6px;' +
+        'font:700 8.5px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase}' +
+      '.prov i{width:7px;height:7px;border-radius:50%;background:currentColor}' +
+      '.met__n{margin-top:5px;font-size:11px;color:var(--ink3)}' +
+      'ol.steps li b{font-weight:650;color:var(--ink)}' +
+      'ol.steps li span{display:block;margin-top:2px;font-size:12.5px;color:var(--ink3)}' +
+      'ol.steps li{flex-direction:row}ol.steps li > div{flex:1 1 auto}' +
+      '</style>');
+  }
+
+  /* ---------- how to test it ---------- */
+  function instructionsDoc() {
+    var t = cfg.instructions || {};
+    var steps = (t.steps || []).map(function (s) { return '<li><span>' + esc(s) + '</span></li>'; }).join('');
+    var inner =
+      '<span class="lab">' + esc(cfg.title || cfg.name || 'Prototype') + ' · how to test it</span>' +
+      '<h1>' + esc(review.task || 'Use it the way you normally would.') + '</h1>' +
+      (steps ? '<div class="sec"><span class="lab">Try this, in order</span><ol class="steps">' + steps + '</ol></div>' : '') +
+      '<div class="grid two">' +
+        (t.ignore ? '<div class="card"><span class="lab">Ignore</span><p>' + esc(t.ignore) + '</p></div>' : '') +
+        (t.ask ? '<div class="card"><span class="lab">What helps us most</span><p>' + esc(t.ask) + '</p></div>' : '') +
+      '</div>' +
+      '<div class="sec"><span class="lab">Leaving a note</span><ol class="steps">' +
+        '<li><span>Press <b>Add note</b> at the bottom, then click the thing you mean. Type, pick how serious it is, press <b>Add note</b>.</span></li>' +
+        '<li><span><b>Overall</b> is for anything about the whole thing rather than one element.</span></li>' +
+        '<li><span>When you are done press <b>Return notes</b>. Nothing reaches us until you do.</span></li>' +
+      '</ol></div>' +
+      '<p class="foot">Some of what you see is simulated - the coral labels say which, and the <b>What is real</b> screen lists all of it.</p>';
+    return docShell('instructions', inner, 780);
+  }
+
   function disclosureDoc() {
     var d = cfg.disclosure || {};
     var rows = [];
@@ -3059,7 +3253,7 @@
   function loadCompare() {
     var s = screens[screenIndex(current.screen)];
     cmpFrames.forEach(function (f) {
-      if (s.disclosure) { f.removeAttribute('src'); f.srcdoc = disclosureDoc(); }
+      if (generated(s)) { f.removeAttribute('src'); f.srcdoc = s.disclosure ? disclosureDoc() : s.overview ? overviewDoc() : instructionsDoc(); }
       else { f.removeAttribute('srcdoc'); f.src = current.screen; }
     });
     fitCompare();
@@ -3097,6 +3291,89 @@
     record('harness:compare', compareOn);
   });
 
+  /* ---------- promo ----------
+     Every screen at once, each rendered at its real width and scaled down into
+     a device frame. Real width again, for the same reason as side by side: a
+     shrunk iframe is the same layout smaller, not the layout at that size. */
+  var promoOn = false;
+  var promoBtn = document.querySelector('[data-promo-btn]');
+  var promoEl = document.querySelector('[data-promo]');
+  var PROMO_W = { desktop: 1280, tablet: 834, mobile: 390 };
+  var PROMO_H = { desktop: 800, tablet: 1112, mobile: 844 };
+
+  function buildPromo() {
+    promoEl.innerHTML = '';
+    var list = screens.filter(function (s) { return !generated(s); });
+    if (!list.length) return;
+    var dev = current.device;
+    var w = PROMO_W[dev], h = PROMO_H[dev];
+    var box = stage.getBoundingClientRect();
+    // fit them all, but never so small that the screen is unreadable
+    /* fit the row, fit the height, and do not shrink further than that - two
+       screens should not be postage stamps just because ten would have to be */
+    var perRow = Math.max(1, Math.min(list.length, Math.floor((box.width - 60) / (w * 0.2 + 30))));
+    var rows = Math.ceil(list.length / perRow);
+    var byWidth  = (box.width - 60 - 30 * (perRow - 1)) / (perRow * w);
+    var byHeight = (box.height - 80 - 40 * (rows - 1)) / (rows * h);
+    var scale = Math.max(0.12, Math.min(0.72, byWidth, byHeight));
+
+    // the same hardware the mockup draws, in proportion
+    var HW = {
+      mobile:  { bez: 11, outer: 56, inner: 45, bg: '#1c1c1e', island: [112, 33, 9] },
+      tablet:  { bez: 17, outer: 36, inner: 20, bg: '#2b2b2e' },
+      desktop: { bez: 10, outer: 16, inner: 5,  bg: '#26272b' }
+    }[dev];
+    var bez = Math.max(3, Math.round(HW.bez * scale));
+
+    list.forEach(function (s) {
+      var cell = document.createElement('div');
+      cell.className = 'pro pro--' + dev;
+      var f = document.createElement('div');
+      f.className = 'pro__f';
+      f.style.width = Math.round(w * scale + bez * 2) + 'px';
+      f.style.height = Math.round(h * scale + bez * 2) + 'px';
+      f.style.background = HW.bg;
+      f.style.borderRadius = Math.round(HW.outer * scale + bez) + 'px';
+      if (HW.island) {
+        f.style.setProperty('--iw', Math.round(HW.island[0] * scale) + 'px');
+        f.style.setProperty('--ih', Math.round(HW.island[1] * scale) + 'px');
+        f.style.setProperty('--ir', Math.round(HW.island[2] * scale) + 'px');
+        f.style.setProperty('--it', (bez + Math.round(9 * scale)) + 'px');
+      }
+      var fr = document.createElement('iframe');
+      fr.title = s.label;
+      fr.setAttribute('scrolling', 'no');
+      fr.style.top = bez + 'px';
+      fr.style.left = bez + 'px';
+      fr.style.width = w + 'px';
+      fr.style.height = h + 'px';
+      fr.style.borderRadius = Math.round(HW.inner / scale) + 'px';
+      fr.style.transform = 'scale(' + scale + ')';
+      fr.src = s.src;
+      f.appendChild(fr);
+      var l = document.createElement('span');
+      l.className = 'pro__l'; l.textContent = s.label;
+      cell.appendChild(f); cell.appendChild(l);
+      promoEl.appendChild(cell);
+    });
+  }
+
+  promoBtn.addEventListener('click', function () {
+    promoOn = !promoOn;
+    promoBtn.setAttribute('aria-pressed', String(promoOn));
+    document.body.classList.toggle('promo', promoOn);
+    if (promoOn) {
+      if (compareOn) document.querySelector('[data-compare-btn]').click();
+      document.body.classList.remove('has-notes');
+      buildPromo();
+      toast('Every screen at once, in a ' + current.device + ' frame. Switch the device to reframe them.', 4600);
+    } else {
+      promoEl.innerHTML = '';
+      requestAnimationFrame(drawAnnots);
+    }
+    record('harness:promo', promoOn ? current.device : false);
+  });
+
   /* ---------- presentation ----------
      Either a declared tour, or - with none - each screen in turn, its time swept
      across its own range and the page scrolled through its own height. Clicks
@@ -3114,7 +3391,7 @@
 
   function steps() {
     if (tour && tour.length) return tour;
-    return screens.filter(function (s) { return !s.disclosure; })
+    return screens.filter(function (s) { return !generated(s); })
       .map(function (s) { return { screen: s.src, scroll: 1 }; });
   }
 
@@ -3316,9 +3593,13 @@
     svg.innerHTML = '';
     annotEl.querySelectorAll('.note, .pin').forEach(function (n) { n.remove(); });
     var s = screens[screenIndex(current.screen)];
-    if (s.disclosure) {
+    /* The overview is read by someone at a desk and is not part of the product
+       surface, so it does not follow the device switcher. */
+    document.body.classList.toggle('fixed-width', !!s.overview);
+    if (s.overview && current.device !== 'desktop') { current.device = 'desktop'; paintDevice(); }
+    if (generated(s)) {
       frame.removeAttribute('src');
-      frame.srcdoc = disclosureDoc();
+      frame.srcdoc = s.disclosure ? disclosureDoc() : s.overview ? overviewDoc() : instructionsDoc();
     } else {
       frame.removeAttribute('srcdoc');
       frame.src = current.screen;
@@ -3326,7 +3607,7 @@
     mountTime();
     if (compareOn) loadCompare();
     document.querySelector('[data-mock-url]').textContent =
-      location.origin + '/' + (s.disclosure ? '' : current.screen);
+      location.origin + '/' + (generated(s) ? '' : current.screen);
     record('harness:screen', current.screen);
   }
 
@@ -3339,6 +3620,7 @@
   window.addEventListener('resize', function () {
     document.querySelectorAll('.seg').forEach(slide);
     fitCompare();
+    if (promoOn) buildPromo();
     fitGrid();
     drawAnnots();
   });

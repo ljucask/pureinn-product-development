@@ -22,6 +22,19 @@ cd <prototype>/build && python3 -m http.server 8000
 # open http://localhost:8000/harness.html
 ```
 
+**Serve it with caching off.** `python3 -m http.server` sends no `Cache-Control`, so browsers cache your config heuristically - you edit `harness.config.js`, reload, and see nothing changed. Use this instead:
+
+```python
+# serve.py
+import http.server, socketserver
+class H(http.server.SimpleHTTPRequestHandler):
+    def end_headers(self):
+        self.send_header('Cache-Control', 'no-store, must-revalidate')
+        super().end_headers()
+socketserver.TCPServer.allow_reuse_address = True
+socketserver.TCPServer(("", 8000), H).serve_forever()
+```
+
 **It must be served, not opened as `file://`.** The artifact runs in an iframe so the device switcher triggers its real media queries - inside a plain container they respond to the window, not the container, and "mobile" would change nothing while appearing to work. Browsers block cross-document access for `file://` frames, so a local server is the price of that honesty.
 
 Then in every prototype page:
@@ -57,6 +70,21 @@ The artifact never depends on the harness. Open a page directly and it still run
 **The viewport does not change.** Only a desktop view goes full-bleed - there the window *is* the viewport, so white to the edges is honest. A phone or tablet keeps its own size, because otherwise "hide chrome" would silently swap the viewport under review for a different one.
 
 It also stays **visibly bounded**: the canvas remains behind it, the artifact keeps an outline and a shadow, and its pixel size is captioned underneath. A white artifact on a white page reads as something that failed to load, not as a phone.
+
+## Two front screens, both optional
+
+A prototype meets two kinds of people, and they need opposite things first. A **tester** needs the task and nothing else - framing contaminates them. **Whoever decides** needs the framing; that is the whole reason they are in the room.
+
+| Screen | For | From |
+|---|---|---|
+| **Overview** | investor, sponsor, team, steering committee | `overview:` - six blocks: what this is, who for, the job it does, what it should move, what you will see, what is not in it |
+| **How to test it** | the tester | `instructions:` - the steps, what to ignore, how to leave a note |
+
+Both exist only if their block is filled in, and **`For review` lets you tick which of them travels with the link** - the overview to the sponsor, the instructions to the tester, neither to someone who has already seen it.
+
+**Every figure on the Overview carries its class** - `observed` · `calculated` · `projected` · `target` · `sample` - printed beside the number. A projection in front of a committee is the most actionable unverifiable number a prototype can contain, and a footnote does not travel with a screenshot.
+
+The Overview is shown at desktop width whatever the device switcher says. It is read by someone at a desk and is not part of the product surface.
 
 ## The screen panel
 
@@ -123,6 +151,7 @@ Reviewers never see each other's comments. For an async test with real users tha
 |---|---|
 | **Grid** | cycles off → 8px → 64px. 8 asks whether an element sits on the rhythm, 64 whether the layout does. Drawn in the shell over the frame - measured from the iframe itself, so inside a device mockup it stops at the screen and takes its corner radius rather than bleeding over the bezel |
 | **Side by side** | the same screen at 1280 / 834 / 390 at once, each rendered at its **real width** and then scaled to fit, so the artifact's own media queries fire. Annotations are anchored to the single frame, so they step aside here and say why |
+| **Promo** | every screen at once, each rendered at its real width and scaled into a device frame - bezel, corner radius and Dynamic Island all in proportion. The whole flow in one picture, for a deck or the top of a note. Switch the device to reframe them |
 | **Present** | full screen, chrome down to prev / pause / next, each slot sweeping that screen's time across its range and scrolling the page through its own height |
 
 A **pointer is on screen for the whole run**, resting inside the artifact and travelling to each declared target before it taps, so a run reads as someone using the prototype rather than as screens changing on their own.
@@ -191,6 +220,8 @@ The second round added: per-screen time appearing, disappearing and keeping each
 
 The third: the screen panel with its descriptions and keyboard navigation, and the viewport transition - sampled mid-flight at 427px between a 1106px desktop and a 390px phone, with the annotations re-anchoring correctly once it settled.
 
+The eleventh: the Overview rendering its six blocks with three provenance classes and the device switcher locked to desktop, the instructions screen, both screens dropping out of a link when unticked, and the promo view framing every screen at a proportional bezel.
+
 The tenth: a reviewer's link keeping every looking instrument while the event log and the sharing controls stay behind, the sheet reduced to Copy plus Email with two links under it, and the report's tally split into a desktop and a mobile group.
 
 The ninth: a note written on mobile hidden on desktop with the rail offering to switch, the report grouped by screen/state/device with a phone shot held at 390px, and the sheet's roll-out opening below its control rather than beside it.
@@ -214,7 +245,8 @@ Bugs found that way, none of which a reading of the code would have caught:
 - the disclosure tag was a `<span>`, so a lower-specificity rule lost to the generic one and it rendered brown-on-coral at 1.9:1
 - the dropdown's tick was an inline `<svg>` with no width, so it rendered at its intrinsic size and spilled across the menu
 - a draft comment survived a reload and held the whole annotation layer in writing mode for ever
-- the side-by-side container and the body-state class were both called `compare`, so `.compare { display: none }` matched `<body>` and blanked the entire document
+- the side-by-side container and the body-state class were both called `compare`, so `.compare { display: none }` matched `<body>` and blanked the entire document - and the promo view repeated the mistake a week later
+- the promo frames put their iframes at `top: 0`, which measures from the padding box, so each artifact covered the bezel it was supposed to sit inside
 - the rail positioned its cards absolutely, so once a few notes existed the newest ran off the bottom of the window - and the one being written was the first to go
 - the annotation layer skipped its redraw while the chrome was hidden, silently dropping every change made in the meantime: toggles flipped there did nothing, and notes could come back missing after Hide
 - a cross-origin artifact reserved the annotation rail and then drew nothing into it, because the document was read only after the rail was measured

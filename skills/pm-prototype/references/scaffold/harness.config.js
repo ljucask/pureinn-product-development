@@ -64,8 +64,21 @@ window.HARNESS_CONFIG = {
       desc: 'One job opened - where the assignment is actually confirmed.'
     },
 
-    /* The disclosure screen is generated from the annotations below, so the
-       same list is never maintained twice. Give it no `src`. */
+    /* Three generated screens. Each exists only if its block above is filled in,
+       each is a view of something already written down, and each can be left
+       out of a shared link at the moment you send it. Give them no `src`. */
+    {
+      label: 'Overview',
+      overview: true,
+      icon: 'chart',
+      desc: 'What this is, who it is for, and what it should move. For whoever decides.'
+    },
+    {
+      label: 'How to test it',
+      instructions: true,
+      icon: 'user',
+      desc: 'The steps to try, what to ignore, and how to leave a note.'
+    },
     {
       label: 'What is real',
       disclosure: true,
@@ -73,6 +86,65 @@ window.HARNESS_CONFIG = {
       desc: 'Generated from the notes: every simulated element, and what it would be in production.'
     }
   ],
+
+  /* ─────────────────────────────────────────────────────────────────────
+     The Overview screen - OPTIONAL, and for a different audience.
+
+     Not for a tester. For whoever decides: an investor, a sponsor, a team, a
+     steering committee. They are not here to click around; they are here to
+     see what this is, who it is for, and what it should move - and the
+     prototype on its own does not say any of that.
+
+     A coding agent assembles it from the prototype folder's meta.md,
+     hypotheses.md and context/ - it is a VIEW of those, not a second copy.
+     Leave it out and the screen simply does not exist.
+
+     THE NUMBERS HERE ARE THE MOST DANGEROUS IN THE WHOLE PROTOTYPE. A
+     projection in front of a committee is the textbook case of "could someone
+     act on this with no way to verify it?", so every metric carries its class:
+       observed    measured, with a named source and period
+       calculated  derived from observed inputs
+       projected   estimated from stated assumptions
+       target      desired, and therefore not evidence
+       sample      fictional, to show the shape
+     The class is printed beside the number, and the metric is listed on the
+     disclosure screen with everything else that is simulated.
+
+     It is shown at desktop width whatever the device switcher says: it is read
+     by someone at a desk, and it is not part of the product surface.
+     ───────────────────────────────────────────────────────────────────── */
+  overview: null,
+  /* overview: {
+       is:  'Whether a dispatcher can assign a job first time, without being told how.',
+       who: 'Dispatchers running 8-15 jobs a day, mostly on a laptop, often mid-call.',
+       job: 'Clear the morning queue in ten minutes instead of forty.',
+       metrics: [
+         { label: 'Time to assign one job', value: '40s → 12s', kind: 'projected',
+           note: 'From the walkthrough, not measured with users' },
+         { label: 'Wrong assignments a week', value: 'under 2', kind: 'target' },
+         { label: 'Jobs per dispatcher per day', value: '11', kind: 'observed',
+           note: 'Ops export, Jan-Mar' }
+       ],
+       notIn: 'Pricing, billing, the courier app, and anything after the job is assigned.'
+     }, */
+
+  /* ─────────────────────────────────────────────────────────────────────
+     The Instructions screen - OPTIONAL, and for the other audience.
+
+     What a tester should try, in order. `review.task` is the one-line version
+     shown in the opening card; this is the longer form for a session that has
+     several steps. Leave it out for "just use it and tell me where it breaks".
+     ───────────────────────────────────────────────────────────────────── */
+  instructions: null,
+  /* instructions: {
+       steps: [
+         'Start on the morning queue and find the 08:30 job.',
+         'Assign it to a courier.',
+         'Come back to the queue and check it is gone.'
+       ],
+       ignore: 'Styling, wording and anything outside the assignment flow.',
+       ask: 'Say out loud whatever you are looking for. Where you hesitate is the finding.'
+     }, */
 
   /* Four states are the contract. Drop one only when it genuinely cannot exist
      for this artifact - and say so on the disclosure screen, because a missing

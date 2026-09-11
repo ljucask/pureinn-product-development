@@ -139,6 +139,21 @@ That comments are per viewer is not a limitation to work around. An async test w
 
 Whatever picks between screens must carry **a sentence per screen**, not only a name. A reviewer who has to work out what "02 Detail" means navigates by trial, and the first casualty is the order the showing was meant to follow - which `showing.md` treats as the thing that decides how the session goes.
 
+### 6c. Two audiences, two front screens
+
+A prototype is shown to two kinds of people and they need opposite things first.
+
+| | |
+|---|---|
+| **A tester** needs the task and nothing else. Framing contaminates them: tell someone what you are hoping to prove and they will hand it to you |
+| **Whoever decides** - investor, sponsor, steering committee - needs exactly that framing. `audience-depth.md` already says so: narrative, key screens, numbers that survive questions |
+
+So: two optional front screens, each **assembled from the prototype folder** rather than written twice, and each **left out of a shared link at the moment you send it** - the overview to the sponsor, the instructions to the tester.
+
+**The numbers on the decision screen are the most dangerous in the whole prototype.** A projection in front of a committee is the textbook *"could someone act on this with no way to verify it?"*, so every figure carries its class - observed · calculated · projected · target · sample - beside the number rather than in a footnote, and appears on the disclosure screen with everything else that is simulated.
+
+The decision screen is read at desktop width whatever the device switcher says. It is not part of the product surface.
+
 ### 7. Event log
 
 Local, exportable, no telemetry. Records what was clicked, in what order, where the session stalled, what was never reached.
