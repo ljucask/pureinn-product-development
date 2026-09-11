@@ -65,7 +65,7 @@ The artifact never depends on the harness. Open a page directly and it still run
 
 ## Keys
 
-`h` hides and restores all chrome. Arrow keys, Enter and Escape drive the screen panel while it is open. In hidden mode the artifact is shown exactly as a user would see it - no islands, no notes, no device frame, no notch.
+`h` hides and restores the menus. Arrow keys, Enter and Escape drive the screen panel while it is open. In hidden mode the artifact is shown exactly as a user would see it - no islands, no notes, no device frame, no notch.
 
 **The viewport does not change.** Only a desktop view goes full-bleed - there the window *is* the viewport, so white to the edges is honest. A phone or tablet keeps its own size, because otherwise "hide chrome" would silently swap the viewport under review for a different one.
 
@@ -229,6 +229,8 @@ The second round added: per-screen time appearing, disappearing and keeping each
 
 The third: the screen panel with its descriptions and keyboard navigation, and the viewport transition - sampled mid-flight at 427px between a 1106px desktop and a 390px phone, with the annotations re-anchoring correctly once it settled.
 
+The fourteenth: the multi-device row staying inside the stage at 1440 and at 900 with the mockup on, the time axis changing from minutes to days between two screens, and the mockup no longer drawn around a document screen.
+
 The thirteenth: All three selected from the device switcher and showing a laptop, a tablet and a phone at true relative size on one baseline, Grid and Add note disabled there, a document screen dropping out of it, and the documents section collapsing and staying collapsed.
 
 The twelfth: both multi views composing the single view's own frames at 44%, the mockup toggle reframing either, states reaching all three copies, `Add note` disabled in both, and the panel listing three documents below a divider while the count says two screens.
@@ -261,6 +263,8 @@ Bugs found that way, none of which a reading of the code would have caught:
 - the side-by-side container and the body-state class were both called `compare`, so `.compare { display: none }` matched `<body>` and blanked the entire document - and the promo view repeated the mistake a week later
 - the promo frames put their iframes at `top: 0`, which measures from the padding box, so each artifact covered the bezel it was supposed to sit inside
 - `body.compare .wrap { display: none }` hid the scaled copies too, because they are `.wrap` as well - the third time in this file that a rule meant for one element caught everything sharing its name
+- and the fourth: the body's mockup state class was `mock`, the same as the frame element's, so `document.querySelector('.mock')` returned `<body>`. **No state class on `<body>` may share a name with an element class** - they are `is-mock`, `compare`, `promo` now, and the containers are `.mock`, `.cmpset`, `.proset`
+- the multi-device row sized itself from the viewports alone and then drew a bezel around each, pushing the row past the stage - and a centred flex row that overflows loses its left end where no scrollbar can reach it (`justify-content: safe center`)
 - the rail positioned its cards absolutely, so once a few notes existed the newest ran off the bottom of the window - and the one being written was the first to go
 - the annotation layer skipped its redraw while the chrome was hidden, silently dropping every change made in the meantime: toggles flipped there did nothing, and notes could come back missing after Hide
 - a cross-origin artifact reserved the annotation rail and then drew nothing into it, because the document was read only after the rail was measured

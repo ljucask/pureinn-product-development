@@ -97,7 +97,7 @@
   /* ══ stage: fills the window, chrome floats above it ══ */
   .stage {
     position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
+    display: flex; align-items: center; justify-content: safe center;
     padding: 86px 26px 134px;   /* the bottom island is a labelled tool bar, not a strip */
     overflow: auto;
   }
@@ -128,15 +128,20 @@
   .wrap[data-device="mobile"]  { width: calc(390px + var(--bez) * 2); height: 100%; max-height: calc(844px + var(--bez) * 2); }
 
   /* ══ mockup: device frames modelled on the real hardware ══
+     The body's state class is `is-mock`, not `mock`: `.mock` is the frame
+     element, and a shared name means `document.querySelector('.mock')` hands
+     back <body>. That trap has been sprung four times in this file - see the
+     `compare` and `promo` containers - so no state class may share a name with
+     an element class again.
      Each device sets its own bezel, corner radius and cut-out. The numbers are
      proportional to the real thing rather than a generic rounded rectangle,
      which is what made the first attempt look like a toy. */
-  body.mock .mock { position: relative; }
-  body.mock .screen { box-shadow: none; }
+  body.is-mock:not(.fixed-width) .mock { position: relative; }
+  body.is-mock:not(.fixed-width) .screen { box-shadow: none; }
 
   /* iPhone: thin uniform bezel, deep corner radius, Dynamic Island */
-  body.mock .wrap[data-device="mobile"] { --bez: 11px; }
-  body.mock .wrap[data-device="mobile"] .mock {
+  body.is-mock:not(.fixed-width) .wrap[data-device="mobile"] { --bez: 11px; }
+  body.is-mock:not(.fixed-width) .wrap[data-device="mobile"] .mock {
     padding: var(--bez);
     background: #1c1c1e;
     border-radius: 56px;
@@ -146,14 +151,14 @@
       0 0 0 1px rgba(0,0,0,.5),
       0 40px 80px -30px rgba(22,24,29,.55);
   }
-  body.mock .wrap[data-device="mobile"] .screen { border-radius: 45px; }
-  body.mock .wrap[data-device="mobile"] .mock::before {
+  body.is-mock:not(.fixed-width) .wrap[data-device="mobile"] .screen { border-radius: 45px; }
+  body.is-mock:not(.fixed-width) .wrap[data-device="mobile"] .mock::before {
     content: ""; position: absolute; z-index: 2;
     top: calc(var(--bez) + 9px); left: 50%; transform: translateX(-50%);
     width: 112px; height: 33px; border-radius: 999px; background: #000;
   }
   /* left side: silent switch, then the volume pair */
-  body.mock .wrap[data-device="mobile"] .mock::after {
+  body.is-mock:not(.fixed-width) .wrap[data-device="mobile"] .mock::after {
     content: ""; position: absolute; z-index: 1; left: -2.5px; top: 118px;
     width: 3px; height: 26px; border-radius: 2px;
     background: #2a2a2e;
@@ -161,8 +166,8 @@
   }
 
   /* iPad: even bezel all round, softer radius, a single camera dot */
-  body.mock .wrap[data-device="tablet"] { --bez: 17px; }
-  body.mock .wrap[data-device="tablet"] .mock {
+  body.is-mock:not(.fixed-width) .wrap[data-device="tablet"] { --bez: 17px; }
+  body.is-mock:not(.fixed-width) .wrap[data-device="tablet"] .mock {
     padding: var(--bez);
     background: #2b2b2e;
     border-radius: 36px;
@@ -172,8 +177,8 @@
       0 0 0 1px rgba(0,0,0,.45),
       0 40px 80px -30px rgba(22,24,29,.5);
   }
-  body.mock .wrap[data-device="tablet"] .screen { border-radius: 20px; }
-  body.mock .wrap[data-device="tablet"] .mock::before {
+  body.is-mock:not(.fixed-width) .wrap[data-device="tablet"] .screen { border-radius: 20px; }
+  body.is-mock:not(.fixed-width) .wrap[data-device="tablet"] .mock::before {
     content: ""; position: absolute; z-index: 2;
     top: 7px; left: 50%; transform: translateX(-50%);
     width: 7px; height: 7px; border-radius: 50%;
@@ -183,8 +188,8 @@
   /* MacBook: thin screen bezel and camera notch. No base under the lid - it is
      drawn hardware nobody is reviewing, and it eats vertical space the artifact
      could have had. */
-  body.mock .wrap[data-device="desktop"] { --bez: 10px; }
-  body.mock .wrap[data-device="desktop"] .mock {
+  body.is-mock:not(.fixed-width) .wrap[data-device="desktop"] { --bez: 10px; }
+  body.is-mock:not(.fixed-width) .wrap[data-device="desktop"] .mock {
     padding: var(--bez);
     background: #26272b;
     border-radius: 16px;
@@ -194,19 +199,19 @@
       0 0 0 1px rgba(0,0,0,.45),
       0 44px 80px -34px rgba(22,24,29,.5);
   }
-  body.mock .wrap[data-device="desktop"] .screen { border-radius: 5px; }
+  body.is-mock:not(.fixed-width) .wrap[data-device="desktop"] .screen { border-radius: 5px; }
   /* the camera notch lives in the bezel, so it must not reach far enough down
      to collide with the browser bar inside the screen */
-  body.mock .wrap[data-device="desktop"] .mock::before {
+  body.is-mock:not(.fixed-width) .wrap[data-device="desktop"] .mock::before {
     content: ""; position: absolute; z-index: 3;
     top: 0; left: 50%; transform: translateX(-50%);
     width: 142px; height: 13px;
     background: #26272b;
     border-radius: 0 0 8px 8px;
   }
-  body.mock .wrap[data-device="desktop"] .mock__bar { margin-top: 4px; }
+  body.is-mock:not(.fixed-width) .wrap[data-device="desktop"] .mock__bar { margin-top: 4px; }
 
-  body.mock .wrap[data-device="desktop"] .mock__bar { display: flex; }
+  body.is-mock:not(.fixed-width) .wrap[data-device="desktop"] .mock__bar { display: flex; }
   .mock__bar {
     align-items: center; gap: 7px;
     height: 26px; padding: 0 4px 8px;
@@ -830,7 +835,10 @@
      log, which is the maker's own instrumentation, and the controls that mint
      links, which are not a reviewer's to hand out. */
   body.review .maker { display: none !important; }
-  body.fixed-width [data-device-seg], body.fixed-width [data-mockup] { opacity: .35; pointer-events: none; }
+  /* A document is not shown in a phone. The switcher and the mockup are dimmed
+     here, and the frame is not drawn even if the toggle was left on. */
+  body.fixed-width [data-device-seg], body.fixed-width [data-mockup],
+  body.fixed-width [data-promo-btn] { opacity: .35; pointer-events: none; }
 
   /* ══ review mode - the task first, and what to do at the end ══ */
   .brief {
@@ -919,7 +927,10 @@
   .mini .screen { pointer-events: none; }
 
   /* bottom-aligned, natural heights: a product shot, not three columns */
-  .cmpset { display: none; gap: 30px; align-items: flex-end; justify-content: center; }
+  /* `safe center` keeps a row that outgrows the stage reachable: plain centring
+     pushes the overflow off BOTH edges and the left one can never be scrolled
+     back into view. */
+  .cmpset { display: none; gap: 30px; align-items: flex-end; justify-content: safe center; }
   body.compare .cmpset { display: flex; }
   body.compare .stage > .wrap { display: none; }
   body.compare .stage { align-items: flex-end; }
@@ -942,7 +953,7 @@
   /* Same trap as the side-by-side container: body carries the state class, so
      the container must not share its name or `.promo { display: none }` matches
      <body> and blanks the page. It caught me once already. */
-  .proset { display: none; gap: 30px; flex-wrap: wrap; align-items: flex-end; justify-content: center; padding: 10px 0 6px; }
+  .proset { display: none; gap: 30px; flex-wrap: wrap; align-items: flex-end; justify-content: safe center; padding: 10px 0 6px; }
   body.promo .proset { display: flex; }
   body.promo .stage > .wrap, body.promo .cmpset { display: none; }
   body.promo .stage { align-items: center; }
@@ -1185,7 +1196,7 @@
   <span class="sep"></span>
   <button class="ib" type="button" data-toggle-labels aria-pressed="true" title="The author's disclosure and prototype notes"><svg><use href="#i-tag"/></svg>Labels</button>
   <button class="ib" type="button" data-toggle-comments aria-pressed="true" title="Comments left in this browser"><svg><use href="#i-note"/></svg>Comments<span class="count" data-comment-count>0</span></button>
-  <button class="ib" type="button" data-bare><svg><use href="#i-eye-off"/></svg>Hide <kbd>H</kbd></button>
+  <button class="ib" type="button" data-bare title="Hide every control and see the artifact exactly as a user would"><svg><use href="#i-eye-off"/></svg>Hide menu <kbd>H</kbd></button>
 </div>
 
 <div class="isle isle--b">
@@ -1309,7 +1320,7 @@
   <button type="button" data-show-exit><svg><use href="#i-x"/></svg>Exit <kbd>Esc</kbd></button>
 </div>
 
-<button class="restore" type="button" data-bare-off>Show chrome <kbd>H</kbd></button>
+<button class="restore" type="button" data-bare-off>Show menu <kbd>H</kbd></button>
 <div class="toast" data-toast></div>
 
 <script src="harness.config.js"></script>
@@ -1685,7 +1696,7 @@
   /* ---------- mockup ---------- */
   var mockBtn = document.querySelector('[data-mockup]');
   function paintMock() {
-    document.body.classList.toggle('mock', current.mockup);
+    document.body.classList.toggle('is-mock', current.mockup);
     mockBtn.setAttribute('aria-pressed', String(current.mockup));
     document.querySelector('[data-mock-url]').textContent = location.origin + '/' + current.screen;
     requestAnimationFrame(drawAnnots);
@@ -3178,23 +3189,43 @@
       return '<li><b>' + esc(s.label) + '</b>' + (s.desc ? '<span>' + esc(s.desc) + '</span>' : '') + '</li>';
     }).join('');
 
+    /* Six unlabelled grey blocks is a form. A small mark on each section is what
+       makes a page someone reads in a meeting scannable at a glance. */
+    function G(id) {
+      return '<svg class="gi" viewBox="0 0 16 16" aria-hidden="true">' + {
+        who:   '<circle cx="8" cy="5.4" r="2.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M3.2 13.4a4.8 4.8 0 0 1 9.6 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>',
+        job:   '<path d="M2.5 5.5h11v8h-11z" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M6 5.5V4a1.5 1.5 0 0 1 1.5-1.5h1A1.5 1.5 0 0 1 10 4v1.5" fill="none" stroke="currentColor" stroke-width="1.4"/>',
+        move:  '<path d="M2.5 12.5L6 8l3 2.5L13.5 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.5 4h3v3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>',
+        see:   '<path d="M1.6 8S4 3.5 8 3.5 14.4 8 14.4 8 12 12.5 8 12.5 1.6 8 1.6 8z" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="8" cy="8" r="1.9" fill="none" stroke="currentColor" stroke-width="1.4"/>',
+        notin: '<circle cx="8" cy="8" r="5.8" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M4.3 11.7l7.4-7.4" stroke="currentColor" stroke-width="1.4"/>'
+      }[id] + '</svg>';
+    }
+
     var inner =
-      '<span class="lab">' + esc(cfg.title || cfg.name || 'Prototype') + ' · overview</span>' +
+      '<span class="lab lab--top"><i class="spark"></i>' + esc(cfg.title || cfg.name || 'Prototype') + ' · overview</span>' +
       '<h1>' + esc(o.is || 'What this prototype is here to answer') + '</h1>' +
       '<div class="grid two">' +
-        '<div class="card"><span class="lab">Who it is for</span><p>' + esc(o.who || '-') + '</p></div>' +
-        '<div class="card"><span class="lab">The job it does for them</span><p>' + esc(o.job || '-') + '</p></div>' +
+        '<div class="card"><span class="lab">' + G('who') + 'Who it is for</span><p>' + esc(o.who || '-') + '</p></div>' +
+        '<div class="card"><span class="lab">' + G('job') + 'The job it does for them</span><p>' + esc(o.job || '-') + '</p></div>' +
       '</div>' +
-      (metrics ? '<div class="sec"><span class="lab">What it should move</span><div class="mets">' + metrics + '</div>' +
+      (metrics ? '<div class="sec"><span class="lab">' + G('move') + 'What it should move</span><div class="mets">' + metrics + '</div>' +
         '<p class="foot" style="margin-top:14px;padding:0;border:0">Every figure carries the evidence it rests on. ' +
         'A target is what we want, not what we measured; a projection rests on assumptions, not on users.</p></div>' : '') +
-      (flow ? '<div class="sec"><span class="lab">What you are about to see</span><ol class="steps">' + flow + '</ol></div>' : '') +
-      (o.notIn ? '<div class="sec"><span class="lab">What is not in it</span><p class="lead" style="font-size:14px">' + esc(o.notIn) + '</p></div>' : '') +
+      (flow ? '<div class="sec"><span class="lab">' + G('see') + 'What you are about to see</span><ol class="steps">' + flow + '</ol></div>' : '') +
+      (o.notIn ? '<div class="sec"><span class="lab">' + G('notin') + 'What is not in it</span><p class="lead" style="font-size:14px">' + esc(o.notIn) + '</p></div>' : '') +
       '<p class="foot">This is a prototype. What in it is simulated, and what it would be in production, is listed on the <b>What is real</b> screen.</p>';
 
     return docShell('overview',
       inner +
       '<style>' +
+      '.lab{display:flex;align-items:center;gap:8px}' +
+      '.gi{width:14px;height:14px;color:var(--co);flex:0 0 auto}' +
+      '.sec > .lab .gi, .card .lab .gi{opacity:.9}' +
+      '.lab--top .spark{width:9px;height:9px;border-radius:50%;background:var(--grad);flex:0 0 auto;' +
+        'box-shadow:0 0 0 4px rgba(237,109,87,.14)}' +
+      '.card{position:relative;overflow:hidden}' +
+      '.card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--grad);opacity:.55}' +
+      '.sec > .lab{color:#b4553f}' +
       '.mets{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}' +
       '.met{display:flex;flex-direction:column;gap:3px;padding:16px 18px;border-radius:15px;' +
         'background:var(--soft);border-left:3px solid rgba(237,109,87,.5)}' +
@@ -3356,10 +3387,16 @@
        makes a laptop next to a tablet next to a phone read as three devices
        rather than three columns. Stretching them to a common height throws the
        relative sizes away and the picture stops meaning anything. */
-    var total = devs.reduce(function (n, d) { return n + DEVW[d]; }, 0);
-    var tallest = Math.max.apply(null, devs.map(function (d) { return DEVH[d]; }));
-    var byWidth = (box.width - 52 - 30 * (devs.length - 1)) / total;
-    var byHeight = (box.height - 80) / tallest;
+    /* The frame is wider and taller than the screen inside it. Sizing from the
+       viewport alone and then drawing a bezel around it pushed the whole row
+       past the stage - and a centred flex row that overflows loses its left
+       end off the edge, where no scrollbar can reach it. */
+    var HWBOX = { desktop: [20, 46], tablet: [34, 34], mobile: [22, 22] };  // extra w, h per device
+    var mock = current.mockup;
+    var total = devs.reduce(function (n, d) { return n + DEVW[d] + (mock ? HWBOX[d][0] : 0); }, 0);
+    var tallest = Math.max.apply(null, devs.map(function (d) { return DEVH[d] + (mock ? HWBOX[d][1] : 0); }));
+    var byWidth = (box.width - 60 - 30 * (devs.length - 1)) / total;
+    var byHeight = (box.height - 86) / tallest;
     var scale = Math.min(1, byWidth, byHeight);
 
     cmpEl.innerHTML = '';
@@ -3458,10 +3495,13 @@
     // fit them all, but never so small that the screen is unreadable
     /* fit the row, fit the height, and do not shrink further than that - two
        screens should not be postage stamps just because ten would have to be */
-    var perRow = Math.max(1, Math.min(list.length, Math.floor((box.width - 60) / (w * 0.2 + 30))));
+    var HWBOX = { desktop: [20, 46], tablet: [34, 34], mobile: [22, 22] };
+    var ew = current.mockup ? HWBOX[dev][0] : 0;
+    var eh = current.mockup ? HWBOX[dev][1] : 0;
+    var perRow = Math.max(1, Math.min(list.length, Math.floor((box.width - 60) / ((w + ew) * 0.2 + 30))));
     var rows = Math.ceil(list.length / perRow);
-    var byWidth  = (box.width - 60 - 30 * (perRow - 1)) / (perRow * w);
-    var byHeight = (box.height - 80 - 40 * (rows - 1)) / (rows * h);
+    var byWidth  = (box.width - 60 - 30 * (perRow - 1)) / (perRow * (w + ew));
+    var byHeight = (box.height - 86 - 40 * (rows - 1)) / (rows * (h + eh));
     var scale = Math.max(0.12, Math.min(0.72, byWidth, byHeight));
 
     list.forEach(function (s) {
