@@ -92,7 +92,9 @@ A selector that matches nothing renders as an orphan card with a warning instead
 
 ## Getting feedback back
 
-`Review link` (the person icon, beside Share) copies the link to send a reviewer: it opens with the task, asks who they are, and keeps Return notes in front of them. Share copies this exact screen and state instead - a different job.
+**Overall** (beside Add note) writes one covering note about the whole prototype - no pin, no severity. It leads the rail, leads the sheet, and leads the report. Six remarks about six elements are not the same as what someone thinks of the thing.
+
+`Review link` (the person icon, beside Share) opens a small composer: add a line saying what you want *this* person to look at, then copy the link. That line travels in the URL, is shown to them before they start, and is carried into what comes back - so the reader can tell which remarks answer the question. It copies the link to send a reviewer: it opens with the task, asks who they are, and keeps Return notes in front of them. Share copies this exact screen and state instead - a different job.
 
 The reviewer's name is asked in the review brief, and - because most notes get written in an ordinary session where that card never appears - once more on the first note, inline. Severity is a labelled row of three dots: blue, orange, red.
 
@@ -115,6 +117,17 @@ Reviewers never see each other's comments. For an async test with real users tha
 A **pointer is on screen for the whole run**, resting inside the artifact and travelling to each declared target before it taps, so a run reads as someone using the prototype rather than as screens changing on their own.
 
 **A presentation may drive the artifact; it must not invent input.** With no `tour` it walks the screens in order at `present.hold` ms each. Declare a `tour` when the demo has a story, and each step says exactly what is shown - `screen`, `state`, `variant`, `time`, `scroll`, `click`, `say`, `hold`. `click` is the only thing that touches the artifact, it is declared rather than guessed, and the element is ringed before it fires. Arrow keys step, space pauses, Escape exits.
+
+## The report
+
+`Return notes` → **PDF report** assembles everything into one page and hands it to the browser's print dialogue, which is where a PDF comes from without a library:
+
+- the header - who, when, how many, and a tally by severity
+- **what was asked** and the reviewer's **overall note**
+- one section per screen **and state**, showing that screen as it was when it was commented on, with the pins drawn back on and the notes numbered against them
+- **what was simulated**, from the disclosure notes, so the remarks are read against a prototype rather than against a finished product
+
+Two things to know. It **visits** each screen and state to photograph it, so the view moves while it works; the original state is restored at the end. And the capture has the same limits as the PNG export - a screen it cannot reproduce gets a stated gap in the report rather than a silently wrong picture.
 
 ## Beyond the contract
 
@@ -160,6 +173,8 @@ Driven end to end in a real browser before shipping, per the contract's own "tes
 The second round added: per-screen time appearing, disappearing and keeping each screen's own value across a switch; a comment placed by clicking inside the artifact, with a real selector computed for it; collapse to a pin and reopen; an orphan anchor; the generated disclosure screen; and the review brief.
 
 The third: the screen panel with its descriptions and keyboard navigation, and the viewport transition - sampled mid-flight at 427px between a 1106px desktop and a 390px phone, with the annotations re-anchoring correctly once it settled.
+
+The eighth: the covering note leading the rail and the sheet, the author's line travelling in the link and reaching the brief, and a report built from two screen/state groups - five numbered pins matching five numbered rows, the shot cropped from a 1059px frame to the 392px the artifact actually draws, and the harness restored to where it started.
 
 The seventh: a card rolled up keeping its number, pin and line while staying in the rail, and opening again on a click.
 

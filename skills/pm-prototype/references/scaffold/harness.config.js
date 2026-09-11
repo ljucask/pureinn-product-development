@@ -209,5 +209,10 @@ window.HARNESS_CONFIG = {
     name: '',        // pre-fills the reviewer's name; they can change it
     to: '',          // your address, for the prefilled mail
     submitTo: ''     // optional endpoint. Empty = manual return
+
+    /* What you want ONE particular person to look at is not written here - it
+       is typed into the Review link composer at the time you send it, travels
+       in the URL, and is shown to them before they start. A per-person ask does
+       not belong in a file shared by every run. */
   }
 };

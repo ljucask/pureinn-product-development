@@ -115,7 +115,13 @@ Building three mechanisms would be duplicated work and three inconsistent surfac
 |---|---|
 | An unverifiable claim someone would act on: a number, a generated or AI output, a result attributed to a system (score, match, recommendation), a connection claim | Fakeness that is obvious or inconsequential: invented names, avatars, titles, a scripted navigation path |
 
+**A covering note is not the same as six remarks.** A reviewer who wants to say something about the whole thing has nowhere honest to put it if every note must be pinned to an element, so the layer needs one unpinned note that leads the rail and leads whatever gets sent.
+
+**The author gets a line too.** What they asked this particular person to look at travels with the link, is shown before the reviewer starts, and is carried into whatever comes back - otherwise the reader of the result cannot tell which remarks answer the question and which are volunteered.
+
 **Comments have to get back, and without a backend nothing is automatic.** They live in that reviewer's own browser and reach the author only when the reviewer sends them, which makes the prompt to do so part of the instrument rather than a button they might find: the task stated before they start, a send control that is always visible and counts what is waiting, and one nudge after the first comment. Where a run cannot depend on that - several reviewers, one pass - an endpoint removes the dependency, and that is the only reason to introduce one.
+
+**Returning them is not the same as reporting them.** Plain text is enough to paste into a chat; it is not enough to file, and nobody reading it can tell what a remark was about. A report puts each screen as it was when it was commented on, with the pins drawn back on and the notes numbered against them - and ends with what was simulated, so the remarks are read against a prototype rather than against a finished product.
 
 That comments are per viewer is not a limitation to work around. An async test with real users **requires** commenters who cannot see each other; the sample is contaminated the moment the second person reads the first.
 

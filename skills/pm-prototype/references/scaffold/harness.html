@@ -617,6 +617,23 @@
   .sheet__acts .cta { justify-content: center; }
   .sheet__acts .ib { justify-content: center; background: rgba(22,24,29,.05); }
   .sheet__acts .wide { grid-column: 1 / -1; }
+  .sheet--invite { bottom: 118px; }
+  .sheet__ta {
+    width: 100%; margin-top: 13px; padding: 11px 13px; resize: vertical;
+    background: #fff; border: 0; border-radius: var(--r-md);
+    box-shadow: 0 0 0 1px var(--glass-ring);
+    font: 13px/1.55 var(--font); color: var(--ink);
+  }
+  .sheet__ta:focus { outline: 0; box-shadow: 0 0 0 1.5px var(--co); }
+
+  /* what the author asked for, shown to the reviewer and carried into the report */
+  .brief__ask {
+    margin: 14px 0 0; padding: 12px 14px; border-radius: 12px;
+    background: rgba(237,109,87,.1);
+    font-size: 12.5px; line-height: 1.55; color: var(--ink-2);
+  }
+  .brief__ask b { display: block; margin-bottom: 4px; font: 700 8.5px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--co); }
+  .brief__ask[hidden] { display: none; }
 
   .note--orphan { box-shadow: inset 0 1px 0 var(--glass-edge), 0 0 0 1.5px #f0b429, 0 14px 30px -14px rgba(22,24,29,.3); }
   .note--orphan .note__n { background: linear-gradient(135deg,#f0b429,#ffc94f); }
@@ -638,6 +655,11 @@
   .note--convention .note__n { background: rgba(22,24,29,.34); box-shadow: none; }
   .note--convention .note__kind { color: var(--ink-3); }
   .pin--convention { background: rgba(22,24,29,.5); box-shadow: 0 0 0 3px rgba(242,243,246,.9), 0 4px 12px -2px rgba(22,24,29,.4); }
+
+  .note--sum { box-shadow: inset 0 1px 0 var(--glass-edge), 0 0 0 1.5px #6c5ce0, 0 14px 30px -14px rgba(22,24,29,.3); }
+  .note--sum .note__kind { color: #5a4bc4; }
+  .note--sum .note__s { background: rgba(108,92,224,.14); color: #5a4bc4; }
+  .sheet__sum { padding-bottom: 10px; border-bottom: 1px solid var(--glass-ring); font-weight: 500; color: var(--ink); }
 
   .note--comment { box-shadow: inset 0 1px 0 var(--glass-edge), 0 0 0 1.5px #3d7dd8, 0 14px 30px -14px rgba(22,24,29,.3); }
   .note--comment .note__n { background: linear-gradient(135deg,#3d7dd8,#5aa2f0); box-shadow: 0 2px 6px -1px rgba(61,125,216,.5); }
@@ -964,6 +986,7 @@
   <symbol id="i-pause" viewBox="0 0 16 16"><path d="M6 3.5v9M10 3.5v9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
   <symbol id="i-prev" viewBox="0 0 16 16"><path d="M10 3.5L5.5 8l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-next" viewBox="0 0 16 16"><path d="M6 3.5L10.5 8 6 12.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 16 16"><path d="M9 1.8H4.6A1.6 1.6 0 0 0 3 3.4v9.2a1.6 1.6 0 0 0 1.6 1.6h6.8a1.6 1.6 0 0 0 1.6-1.6V5.6z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M9 1.8v3.8h4M5.6 9h4.8M5.6 11.4h3.2" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></symbol>
   <symbol id="i-minus" viewBox="0 0 12 12"><path d="M2.5 6h7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
   <symbol id="i-user" viewBox="0 0 16 16"><circle cx="8" cy="5.4" r="2.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M3.2 13.4a4.8 4.8 0 0 1 9.6 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></symbol>
   <symbol id="i-tag" viewBox="0 0 16 16"><path d="M2.5 7.4V3a.5.5 0 0 1 .5-.5h4.4a1 1 0 0 1 .7.3l5.2 5.2a1 1 0 0 1 0 1.4l-4.4 4.4a1 1 0 0 1-1.4 0L2.8 8.6a1 1 0 0 1-.3-.7z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><circle cx="5.6" cy="5.6" r="1.1" fill="currentColor"/></symbol>
@@ -1072,6 +1095,7 @@
     <span class="grp__l">Your notes</span>
     <div class="grp__row">
       <button class="ib" type="button" data-comment aria-pressed="false" title="Click an element in the prototype to attach a note"><svg><use href="#i-pin"/></svg>Add note</button>
+      <button class="ib" type="button" data-summary title="One covering note about the whole prototype"><svg><use href="#i-note"/></svg>Overall</button>
     </div>
   </div>
 
@@ -1081,6 +1105,18 @@
     <div class="grp__row">
       <button class="cta" type="button" data-send data-idle="1" title="Review your notes and choose how to return them"><svg><use href="#i-send"/></svg>Return notes<span class="cta__n" data-send-n>0</span></button>
     </div>
+  </div>
+</div>
+
+<div class="sheet sheet--invite" data-invite-sheet hidden role="dialog" aria-labelledby="invite-h">
+  <div class="sheet__top">
+    <h2 class="sheet__h" id="invite-h">Send it to someone</h2>
+    <button class="nav__x" type="button" data-invite-close aria-label="Close"><svg><use href="#i-x"/></svg></button>
+  </div>
+  <p class="sheet__p">They will open with the task, be asked who they are, and be prompted to send their notes back. Add a line if there is something specific you want them to look at.</p>
+  <textarea class="sheet__ta" data-invite-msg rows="3" placeholder="e.g. Ignore the styling - tell me whether the assignment step makes sense."></textarea>
+  <div class="sheet__acts">
+    <button class="cta wide" type="button" data-invite-copy><svg><use href="#i-copy"/></svg><span>Copy the link</span></button>
   </div>
 </div>
 
@@ -1099,6 +1135,7 @@
     <span class="brief__k">Prototype review</span>
     <h1 class="brief__h" id="brief-h" data-brief-h>What we would like you to try</h1>
     <p class="brief__p" data-brief-task></p>
+    <p class="brief__ask" data-brief-ask hidden><b>From the author</b><span data-brief-ask-t></span></p>
     <ul class="brief__steps">
       <li><span class="brief__i">1</span><span>Use it the way you normally would. Some data is simulated - the coral notes say which.</span></li>
       <li><span class="brief__i">2</span><span><strong>Add note</strong> at the bottom, then click anything on screen, to leave a remark where it happened.</span></li>
@@ -1207,6 +1244,12 @@
   }
   var collapsed = readStore('collapsed', {});
   var folded    = readStore('folded', {});
+  /* The covering note: what the reviewer wants to say about the whole thing,
+     which is not the same as six remarks about six elements and does not
+     belong pinned to one of them. */
+  var summary   = readStore('summary', null);
+  var askedFor  = q.get('m') ? decodeURIComponent(q.get('m')) : readStore('asked', '');
+  if (q.get('m')) writeStore('asked', askedFor);
 
   /* A draft that survived a reload would hold the whole layer in writing mode
      for ever, and an empty one is not a comment at all. So: empty drafts are
@@ -1505,21 +1548,36 @@
      Review mode is a different job from sharing a state: it opens with the
      task, asks who is looking, and keeps Return notes in front of them. The
      author needs a way to produce that link without knowing the query string. */
-  document.querySelector('[data-invite]').addEventListener('click', function () {
-    var btn = this;
+  var inviteSheet = document.querySelector('[data-invite-sheet]');
+  var inviteMsg = document.querySelector('[data-invite-msg]');
+  var inviteBtn = document.querySelector('[data-invite]');
+
+  inviteBtn.addEventListener('click', function () {
+    inviteSheet.hidden = !inviteSheet.hidden;
+    if (!inviteSheet.hidden) { inviteMsg.value = readStore('lastAsk', ''); inviteMsg.focus(); }
+  });
+  document.querySelector('[data-invite-close]').addEventListener('click', function () { inviteSheet.hidden = true; });
+
+  document.querySelector('[data-invite-copy]').addEventListener('click', function () {
+    var msg = inviteMsg.value.trim();
+    writeStore('lastAsk', msg);
     var p = new URLSearchParams();
     p.set('screen', screens[0].src);
     p.set('review', '1');
+    // the message travels in the link itself - there is no backend to keep it in
+    if (msg) p.set('m', encodeURIComponent(msg));
     var url = location.origin + location.pathname + '?' + p.toString();
+    if (url.length > 1900) { toast('That message is too long to travel in a link. Shorten it, or send it in the same message as the link.', 6000); return; }
     function done() {
-      btn.classList.add('is-ok');
-      setTimeout(function () { btn.classList.remove('is-ok'); }, 1400);
-      toast('Reviewer link copied. It opens with the task, asks their name, and will not let them leave without offering to send.', 6000);
-      record('harness:invite', url);
+      inviteSheet.hidden = true;
+      inviteBtn.classList.add('is-ok');
+      setTimeout(function () { inviteBtn.classList.remove('is-ok'); }, 1400);
+      toast('Reviewer link copied' + (msg ? ' - with your note attached.' : '.'), 5000);
+      record('harness:invite', msg ? 'with message' : 'plain');
     }
     if (navigator.clipboard && location.protocol !== 'file:') {
       navigator.clipboard.writeText(url).then(done, function () { prompt('Copy this link:', url); });
-    } else { prompt('Copy this link:', url); }
+    } else { prompt('Copy this link:', url); done(); }
   });
 
   /* ---------- export the current screen as PNG ----------
@@ -1538,57 +1596,65 @@
     setTimeout(function () { document.body.classList.remove('shot'); }, 6000);
   }
 
+  /* Rasterising the artifact is needed twice - the PNG export and the report -
+     so it lives on its own. Same honest limits either way: cross-origin images,
+     webfonts and canvas content do not come through. */
+  async function rasterise(w, h) {
+    var doc = frame.contentDocument;
+    var clone = doc.documentElement.cloneNode(true);
+    clone.querySelectorAll('script').forEach(function (s) { s.remove(); });
+
+    // inline every same-origin stylesheet
+    var css = '';
+    for (var i = 0; i < doc.styleSheets.length; i++) {
+      try {
+        var rules = doc.styleSheets[i].cssRules;
+        for (var j = 0; j < rules.length; j++) css += rules[j].cssText + '\n';
+      } catch (e) { /* cross-origin sheet - skip, it simply will not render */ }
+    }
+    var styleTag = document.createElement('style');
+    styleTag.textContent = css;
+    var head = clone.querySelector('head') || clone;
+    head.appendChild(styleTag);
+
+    // inline same-origin images so the rasteriser can see them
+    var imgs = Array.prototype.slice.call(clone.querySelectorAll('img[src]'));
+    await Promise.all(imgs.map(function (im) {
+      return fetch(im.src).then(function (r) { return r.blob(); }).then(function (b) {
+        return new Promise(function (res) {
+          var fr = new FileReader();
+          fr.onload = function () { im.setAttribute('src', fr.result); res(); };
+          fr.onerror = function () { res(); };
+          fr.readAsDataURL(b);
+        });
+      }).catch(function () { /* leave it, it will be blank */ });
+    }));
+
+    var xhtml = new XMLSerializer().serializeToString(clone);
+    var svgStr =
+      '<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '">' +
+      '<foreignObject width="100%" height="100%">' +
+      '<div xmlns="http://www.w3.org/1999/xhtml" style="width:' + w + 'px;height:' + h + 'px;overflow:hidden">' +
+      xhtml + '</div></foreignObject></svg>';
+
+    var img = new Image();
+    var loaded = new Promise(function (res, rej) { img.onload = res; img.onerror = rej; });
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgStr);
+    await loaded;
+    return img;
+  }
+
   async function exportPng() {
     if (!frameReady) { captureMode('The artifact is not ready yet.'); return; }
-    var doc, win;
-    try { doc = frame.contentDocument; win = frame.contentWindow; } catch (e) { doc = null; }
+    var doc;
+    try { doc = frame.contentDocument; } catch (e) { doc = null; }
     if (!doc) { captureMode('Cannot read the artifact - is it served from this origin?'); return; }
 
     try {
       var w = Math.round(frame.getBoundingClientRect().width);
       var h = Math.round(frame.getBoundingClientRect().height);
       var scale = Math.min(2, window.devicePixelRatio || 1);
-
-      var clone = doc.documentElement.cloneNode(true);
-      clone.querySelectorAll('script').forEach(function (s) { s.remove(); });
-
-      // inline every same-origin stylesheet
-      var css = '';
-      for (var i = 0; i < doc.styleSheets.length; i++) {
-        try {
-          var rules = doc.styleSheets[i].cssRules;
-          for (var j = 0; j < rules.length; j++) css += rules[j].cssText + '\n';
-        } catch (e) { /* cross-origin sheet - skip, it simply will not render */ }
-      }
-      var styleTag = document.createElement('style');
-      styleTag.textContent = css;
-      var head = clone.querySelector('head') || clone;
-      head.appendChild(styleTag);
-
-      // inline same-origin images so the rasteriser can see them
-      var imgs = Array.prototype.slice.call(clone.querySelectorAll('img[src]'));
-      await Promise.all(imgs.map(function (im) {
-        return fetch(im.src).then(function (r) { return r.blob(); }).then(function (b) {
-          return new Promise(function (res) {
-            var fr = new FileReader();
-            fr.onload = function () { im.setAttribute('src', fr.result); res(); };
-            fr.onerror = function () { res(); };
-            fr.readAsDataURL(b);
-          });
-        }).catch(function () { /* leave it, it will be blank */ });
-      }));
-
-      var xhtml = new XMLSerializer().serializeToString(clone);
-      var svgStr =
-        '<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '">' +
-        '<foreignObject width="100%" height="100%">' +
-        '<div xmlns="http://www.w3.org/1999/xhtml" style="width:' + w + 'px;height:' + h + 'px;overflow:hidden">' +
-        xhtml + '</div></foreignObject></svg>';
-
-      var img = new Image();
-      var loaded = new Promise(function (res, rej) { img.onload = res; img.onerror = rej; });
-      img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgStr);
-      await loaded;
+      var img = await rasterise(w, h);
 
       /* the exported frame must be the frame on screen, cut-outs included -
          a mockup that loses its notch on export is a different mockup */
@@ -1689,7 +1755,8 @@
     system:     { label: 'System result',     cls: '' },
     connection: { label: 'Connection claim',  cls: '' },
     convention: { label: 'Prototype note',    cls: 'convention' },
-    comment:    { label: 'Comment',           cls: 'comment' }
+    comment:    { label: 'Comment',           cls: 'comment' },
+    summary:    { label: 'Overall note',      cls: 'comment note--sum' }
   };
   var SEV = { low: 'Low', normal: 'Normal', high: 'High' };
   function kindOf(a) { return KINDS[a.kind] || KINDS.number; }
@@ -1698,6 +1765,9 @@
 
   function notesFor(src) {
     var out = [];
+    if (commentsOn && summary) {
+      out.push({ a: { kind: 'summary', text: summary.text }, id: '__summary', scope: 'summary', summary: true });
+    }
     if (labelsOn) {
       (annots[src] || []).forEach(function (a, i) {
         out.push({ a: a, id: src + '#' + i, scope: a.selector ? 'element' : 'screen' });
@@ -1722,7 +1792,7 @@
     /* Loose notes lead the rail and pinned ones follow. Put them last and every
        comment a reviewer adds shoves them further down the screen, so the two
        headers never sit still long enough to be read as headers. */
-    var order = { screen: 0, prototype: 1, element: 2 };
+    var order = { summary: -1, screen: 0, prototype: 1, element: 2 };
     return out.sort(function (x, y) { return order[x.scope] - order[y.scope]; });
   }
 
@@ -1732,7 +1802,8 @@
   };
 
   function editing() {
-    return comments.some(function (cm) { return cm.draft || cm.editing; });
+    return comments.some(function (cm) { return cm.draft || cm.editing; }) ||
+           !!(summary && (summary.draft || summary.editing));
   }
 
   var pairs = [];
@@ -1807,11 +1878,41 @@
       var a = entry.a;
       var id = entry.id;
       var kind = kindOf(a);
-      var cm = entry.comment;
+      var cm = entry.summary ? summary : entry.comment;
       var active = !!(cm && (cm.draft || cm.editing));
 
+      if (entry.scope === 'summary') {
+        var sn = document.createElement('div');
+        sn.className = 'note note--comment note--sum' + (active ? ' is-active' : '');
+        var sb = document.createElement('span');
+        sb.className = 'note__s'; sb.innerHTML = icon('i-note');
+        var sbody = document.createElement('div');
+        sbody.className = 'note__body';
+        var sk = document.createElement('span');
+        sk.className = 'note__kind'; sk.textContent = 'Overall note';
+        sbody.appendChild(sk);
+        renderComment(sbody, sn, summary, active, true);
+        var sx = document.createElement('button');
+        sx.className = 'note__x'; sx.type = 'button';
+        sx.title = 'Delete'; sx.setAttribute('aria-label', 'Delete the overall note');
+        sx.innerHTML = icon('i-x');
+        sx.addEventListener('click', function () {
+          summary = null; writeStore('summary', null); paintSend(); drawAnnots();
+        });
+        sn.appendChild(sb); sn.appendChild(sbody); sn.appendChild(sx);
+        railEl.appendChild(sn);
+        if (summary && summary.fresh) {
+          summary.fresh = false;
+          requestAnimationFrame(function () {
+            sn.scrollIntoView({ block: 'nearest' });
+            var f = sn.querySelector('.note__edit'); if (f) f.focus();
+          });
+        }
+        return;
+      }
+
       /* section header, once per scope */
-      if (entry.scope !== 'element' && !seen[entry.scope]) {
+      if (entry.scope !== 'element' && HEADERS[entry.scope] && !seen[entry.scope]) {
         seen[entry.scope] = true;
         var shut = !!folded[entry.scope];
         var n = list.filter(function (o) { return o.scope === entry.scope; }).length;
@@ -1994,7 +2095,7 @@
 
   /* a comment is written, then committed. Left as a live textarea it is never
      finished - there is no moment where the reviewer knows it counted. */
-  function renderComment(body, note, cm, active) {
+  function renderComment(body, note, cm, active, isSummary) {
     if (active) {
       /* Review mode asks for a name up front, but most notes get written by the
          author in an ordinary session where that card never appears. So the
@@ -2013,7 +2114,9 @@
 
       var ta = document.createElement('textarea');
       ta.className = 'note__edit'; ta.rows = 2;
-      ta.placeholder = 'What did you want to say about this?';
+      ta.placeholder = isSummary
+        ? 'Anything to say about the whole thing? This travels with your notes.'
+        : 'What did you want to say about this?';
       ta.value = cm.text || '';
       ta.addEventListener('input', function () {
         ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px';
@@ -2029,6 +2132,7 @@
 
       var sev = document.createElement('span');
       sev.className = 'sev';
+      if (isSummary) sev.hidden = true;   // a covering note has no one severity
       Object.keys(SEV).forEach(function (k) {
         var b = document.createElement('button');
         b.type = 'button'; b.className = 'sev-' + k;
@@ -2049,6 +2153,7 @@
 
       var sevLabel = document.createElement('span');
       sevLabel.className = 'note__kbd'; sevLabel.textContent = 'Severity';
+      if (isSummary) sevLabel.hidden = true;
 
       var row = document.createElement('div');
       row.className = 'note__add';
@@ -2061,18 +2166,24 @@
         cm.who = cm.who || reviewerName || '';
         if (!reviewerName && cm.who) { reviewerName = cm.who; writeStore('name', reviewerName); }
         cm.at = new Date().toISOString();
-        writeStore('comments', comments);
+        if (isSummary) writeStore('summary', summary); else writeStore('comments', comments);
         paintSend();
         drawAnnots();
         var el = annotEl.querySelector('.note--comment');
         if (el) el.classList.add('is-saved');
-        toast('Note added' + (cm.severity && cm.severity !== 'normal' ? ' (' + SEV[cm.severity] + ')' : '') + '. You can still edit it.');
-        record('harness:comment-added', cm.severity);
+        toast(isSummary ? 'Overall note saved. It goes at the top of what you send.'
+                        : 'Note added' + (cm.severity && cm.severity !== 'normal' ? ' (' + SEV[cm.severity] + ')' : '') + '. You can still edit it.');
+        record(isSummary ? 'harness:summary-added' : 'harness:comment-added', cm.severity || null);
       }
       function cancel() {
-        if (cm.draft) comments = comments.filter(function (o) { return o.id !== cm.id; });
-        else cm.editing = false;
-        writeStore('comments', comments);
+        if (isSummary) {
+          if (cm.draft) summary = null; else cm.editing = false;
+          writeStore('summary', summary);
+        } else {
+          if (cm.draft) comments = comments.filter(function (o) { return o.id !== cm.id; });
+          writeStore('comments', comments);
+          if (!cm.draft) cm.editing = false;
+        }
         paintSend(); drawAnnots();
       }
       return;
@@ -2102,6 +2213,7 @@
     edit.className = 'note__act'; edit.type = 'button'; edit.textContent = 'Edit';
     edit.addEventListener('click', function () { cm.editing = true; drawAnnots(); });
     foot.appendChild(edit);
+    if (isSummary) foot.removeChild(dot);   // no severity on a covering note
 
     body.appendChild(foot);
   }
@@ -2124,6 +2236,18 @@
     if (on) toast('Click anything in the prototype to attach a note there. Esc cancels.', 4200);
   }
   commentBtn.addEventListener('click', function () { setPicking(!picking); });
+
+  document.querySelector('[data-summary]').addEventListener('click', function () {
+    if (!commentsOn) {
+      commentsOn = true;
+      document.querySelector('[data-toggle-comments]').setAttribute('aria-pressed', 'true');
+      annotEl.hidden = false;
+    }
+    if (!summary) summary = { text: '', who: reviewerName, at: new Date().toISOString(), draft: true, fresh: true };
+    else { summary.editing = true; summary.fresh = true; }
+    writeStore('summary', summary);
+    drawAnnots();
+  });
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && picking) setPicking(false);
   });
@@ -2175,9 +2299,13 @@
   function written() {
     return comments.filter(function (cm) { return !cm.draft && (cm.text || '').trim(); });
   }
+  function overall() {
+    return summary && !summary.draft && (summary.text || '').trim() ? summary : null;
+  }
+  function total() { return written().length + (overall() ? 1 : 0); }
 
   function paintSend() {
-    var n = written().length;
+    var n = total();
     sendN.textContent = n;
     commentN.textContent = comments.length;
     sendBtn.setAttribute('data-idle', n ? '0' : '1');
@@ -2192,6 +2320,8 @@
     var lines = ['Prototype feedback - ' + (cfg.title || cfg.name || 'prototype'),
                  (reviewerName ? 'From: ' + reviewerName : ''),
                  new Date().toLocaleString(), ''];
+    if (askedFor) { lines.push('What was asked: ' + askedFor, ''); }
+    if (overall()) { lines.push('OVERALL', overall().text.trim(), ''); }
     written().forEach(function (cm, i) {
       var s = screens[screenIndex(cm.screen)];
       lines.push((i + 1) + '. [' + (SEV[cm.severity || 'normal']) + '] ' +
@@ -2217,9 +2347,21 @@
     var list = written();
     sheetList.innerHTML = '';
     sheetActs.innerHTML = '';
-    document.querySelector('[data-sheet-p]').textContent = list.length
-      ? 'Nothing has left this browser yet. Pick how to return these ' + list.length + ' note' + (list.length === 1 ? '' : 's') + '.'
-      : 'No notes yet. Press Add note, then click the thing you want to comment on.';
+    document.querySelector('[data-sheet-p]').textContent = total()
+      ? 'Nothing has left this browser yet. Pick how to return ' + (total() === 1 ? 'this note' : 'these ' + total() + ' notes') + '.'
+      : 'No notes yet. Press Add note and click something, or write one Overall note.';
+
+    if (overall()) {
+      var so = document.createElement('li');
+      so.className = 'sheet__sum';
+      var sot = document.createElement('span');
+      sot.textContent = overall().text.trim();
+      var sow = document.createElement('span');
+      sow.className = 'sheet__where'; sow.textContent = 'Overall note';
+      sot.appendChild(sow);
+      so.appendChild(sot);
+      sheetList.appendChild(so);
+    }
 
     list.forEach(function (cm) {
       var li = document.createElement('li');
@@ -2237,13 +2379,14 @@
       sheetList.appendChild(li);
     });
 
-    if (list.length) {
+    if (total()) {
       if (review.submitTo) {
         sheetActs.appendChild(actionBtn('cta', 'i-send', 'Send to the author', submitEndpoint, true));
       }
       sheetActs.appendChild(actionBtn('cta', 'i-copy', 'Copy', copyOut, !review.to));
       if (review.to) sheetActs.appendChild(actionBtn('ib', 'i-mail', 'Email', mailOut));
-      sheetActs.appendChild(actionBtn('ib', 'i-down', 'Save as a file', fileOut, true));
+      sheetActs.appendChild(actionBtn('ib', 'i-doc', 'PDF report', buildReport, !review.to));
+      sheetActs.appendChild(actionBtn('ib', 'i-down', 'Plain text file', fileOut, !!review.to));
     }
     sheet.hidden = false;
   }
@@ -2253,7 +2396,7 @@
     try {
       await fetch(review.submitTo, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prototype: cfg.name || 'prototype', from: reviewerName, comments: written(), events: events })
+        body: JSON.stringify({ prototype: cfg.name || 'prototype', from: reviewerName, asked: askedFor, overall: overall() && overall().text, comments: written(), events: events })
       });
       toast('Sent. Thank you - nothing else to do.', 4200);
       record('harness:feedback-sent', written().length);
@@ -2288,12 +2431,242 @@
     closeSheet();
   }
 
+  /* ---------- the report ----------
+     The loop's last gap: notes came back as bare text nobody could file. This
+     assembles them into one page - each screen as it was when it was commented
+     on, with the pins drawn back on - and hands it to the browser's own print
+     dialogue, which is where a PDF comes from without a library.
+
+     It has to VISIT each screen and state to photograph it, so the view moves
+     while it works; the original state is restored at the end. */
+  var reporting = false;
+
+  function groupKey(cm) { return cm.screen + '|' + cm.state + '|' + cm.variant; }
+
+  function pointFor(cm, doc) {
+    var el = null;
+    if (cm.selector) { try { el = doc.querySelector(cm.selector); } catch (e) { /* bad selector */ } }
+    if (el) {
+      var r = el.getBoundingClientRect();
+      var hasPoint = typeof cm.rx === 'number';
+      return { x: hasPoint ? r.left + r.width * cm.rx : r.right, y: hasPoint ? r.top + r.height * cm.ry : r.top + r.height / 2 };
+    }
+    if (typeof cm.fx === 'number') {
+      var de = doc.documentElement;
+      var se = doc.scrollingElement || de;
+      return { x: cm.fx * de.scrollWidth - se.scrollLeft, y: cm.fy * de.scrollHeight - se.scrollTop };
+    }
+    return null;
+  }
+
+  function waitFrame(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+
+  async function shootGroup(list, startNo) {
+    var w = Math.round(frame.getBoundingClientRect().width);
+    var full = Math.round(frame.getBoundingClientRect().height);
+    var scale = Math.min(2, window.devicePixelRatio || 1);
+    var doc;
+    try { doc = frame.contentDocument; } catch (e) { doc = null; }
+    if (!doc) return null;
+
+    /* Crop to what the screen actually draws. A short screen inside a tall frame
+       otherwise fills half a page with white and the reader scrolls past nothing
+       looking for the next note. scrollHeight is no use here - inside an iframe
+       it is at least the viewport - so measure the lowest element instead, and
+       never crop above a pin. */
+    var content = 0;
+    if (doc.body) {
+      var all = doc.body.querySelectorAll('*');
+      for (var k = 0; k < all.length; k++) {
+        var rr = all[k].getBoundingClientRect();
+        if (rr.width > 0 && rr.height > 0 && rr.bottom > content) content = rr.bottom;
+      }
+    }
+    list.forEach(function (cm) {
+      var pp = pointFor(cm, doc);
+      if (pp && pp.y + 28 > content) content = pp.y + 28;
+    });
+    var h = Math.max(220, Math.min(full, Math.round(content + 24)));
+
+    var img;
+    try { img = await rasterise(w, h); } catch (e) { return null; }
+
+    var cv = document.createElement('canvas');
+    cv.width = w * scale; cv.height = h * scale;
+    var ctx = cv.getContext('2d');
+    ctx.scale(scale, scale);
+    ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h);
+    ctx.drawImage(img, 0, 0, w, h);
+
+    var COL = { low: '#3d7dd8', normal: '#f0913a', high: '#e0483d' };
+    list.forEach(function (cm, i) {
+      var pt = pointFor(cm, doc);
+      if (!pt) return;
+      var x = Math.max(16, Math.min(pt.x, w - 16));
+      var y = Math.max(16, Math.min(pt.y, h - 16));
+      ctx.beginPath(); ctx.arc(x, y, 14, 0, Math.PI * 2);
+      ctx.fillStyle = '#fff'; ctx.fill();
+      ctx.beginPath(); ctx.arc(x, y, 12, 0, Math.PI * 2);
+      ctx.fillStyle = COL[cm.severity || 'normal']; ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.font = '700 12px ui-sans-serif, system-ui, sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(String(startNo + i), x, y + 0.5);
+    });
+    return cv.toDataURL('image/png');
+  }
+
+  async function buildReport() {
+    if (reporting) return;
+    if (!total()) { toast('Nothing to report yet.'); return; }
+    reporting = true;
+    closeSheet();
+    toast('Assembling the report - the view will move while each screen is photographed.', 6000);
+
+    var keep = { screen: current.screen, state: current.state, variant: current.variant, time: current.time };
+    var list = written();
+    var order = [];
+    var groups = {};
+    list.forEach(function (cm) {
+      var k = groupKey(cm);
+      if (!groups[k]) { groups[k] = []; order.push(k); }
+      groups[k].push(cm);
+    });
+
+    var shots = [];
+    var no = 1;
+    for (var i = 0; i < order.length; i++) {
+      var key = order[i];
+      var part = key.split('|');
+      var g = groups[key];
+
+      if (current.screen !== part[0]) pickScreen(screenIndex(part[0]));
+      current.state = part[1];
+      send('state', part[1]);
+      if (variants.length && part[2]) { current.variant = part[2]; send('variant', part[2]); }
+      await waitFrame(750);
+
+      var png = null;
+      try { png = await shootGroup(g, no); } catch (e) { png = null; }
+      var sc = screens[screenIndex(part[0])];
+      shots.push({ label: sc ? sc.label : part[0], state: part[1], variant: part[2], png: png, notes: g, from: no });
+      no += g.length;
+    }
+
+    // put the harness back where it was
+    if (current.screen !== keep.screen) pickScreen(screenIndex(keep.screen));
+    current.state = keep.state; send('state', keep.state);
+    if (variants.length) { current.variant = keep.variant; send('variant', keep.variant); }
+    var seg = document.querySelector('[data-states-group]');
+    seg.querySelectorAll('button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.textContent === keep.state)); });
+    slide(seg);
+    await waitFrame(400);
+    drawAnnots();
+    reporting = false;
+
+    openReport(shots);
+    record('harness:report', shots.length);
+  }
+
+  function openReport(shots) {
+    var SEVC = { low: '#3d7dd8', normal: '#f0913a', high: '#e0483d' };
+    var counts = { low: 0, normal: 0, high: 0 };
+    written().forEach(function (cm) { counts[cm.severity || 'normal']++; });
+
+    var d = cfg.disclosure || {};
+    var rows = [];
+    function collect(src, label) {
+      (annots[src] || []).forEach(function (a) {
+        if (a.kind === 'convention') return;
+        rows.push('<tr><td class="s">' + esc(label) + '</td><td class="k">' + esc(kindOf(a).label) +
+                  '</td><td>' + esc(a.text) + '</td><td>' + esc(a.real || '-') + '</td></tr>');
+      });
+    }
+    screens.forEach(function (s) { collect(s.src, s.label); });
+    collect('*', 'Everywhere');
+
+    var body = shots.map(function (s) {
+      return '<section class="shot">' +
+        '<h2>' + esc(s.label) + ' <span class="st">' + esc(s.state) +
+        (variants.length && s.variant ? ' · ' + esc(s.variant) : '') + '</span></h2>' +
+        (s.png ? '<img src="' + s.png + '" alt="">'
+               : '<p class="miss">This screen could not be photographed. The capture cannot reproduce cross-origin images, webfonts or canvas content - open the prototype to see it.</p>') +
+        '<ol class="notes">' +
+        s.notes.map(function (cm, i) {
+          // the number is the whole point of the pin: without it the reader
+          // cannot tell which mark on the picture this sentence belongs to
+          return '<li><span class="no" style="background:' + SEVC[cm.severity || 'normal'] + '">' + (s.from + i) + '</span>' +
+            '<div><p>' + esc(cm.text.trim()) + '</p><span class="meta">' +
+            esc(SEV[cm.severity || 'normal']) + (cm.anchor ? ' · near "' + esc(cm.anchor) + '"' : '') +
+            (cm.who ? ' · ' + esc(cm.who) : '') + '</span></div></li>';
+        }).join('') +
+        '</ol></section>';
+    }).join('');
+
+    var html = '<!doctype html><html lang="en"><head><meta charset="utf-8">' +
+      '<title>' + esc(cfg.title || cfg.name || 'Prototype') + ' - feedback</title><style>' +
+      '*{box-sizing:border-box}' +
+      'body{margin:0;padding:36px 34px 44px;font:13px/1.6 ui-sans-serif,-apple-system,"Segoe UI",system-ui,sans-serif;color:#14161b;background:#fff}' +
+      'h1{margin:0 0 4px;font-size:22px;letter-spacing:-.02em}' +
+      '.sub{color:#7c838f;font-size:12.5px}' +
+      '.tally{display:flex;gap:14px;margin:16px 0 0;padding:12px 14px;border-radius:12px;background:#f6f7f9;font-size:12px}' +
+      '.tally span{display:flex;align-items:center;gap:6px}' +
+      '.dot{display:inline-block;width:9px;height:9px;border-radius:50%;flex:0 0 auto;margin-top:5px}' +
+      '.tally .dot{margin:0}' +
+      '.block{margin-top:18px;padding:14px 16px;border-radius:12px;background:#f6f7f9}' +
+      '.block b{display:block;margin-bottom:5px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#7c838f}' +
+      '.block.ask{background:rgba(237,109,87,.1)}.block.ask b{color:#ed6d57}' +
+      '.block.sum{background:rgba(108,92,224,.1)}.block.sum b{color:#5a4bc4}' +
+      '.shot{margin-top:30px;page-break-inside:avoid;break-inside:avoid}' +
+      '.shot h2{margin:0 0 10px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:#474d57}' +
+      '.shot h2 .st{color:#a2a9b4;font-weight:500;letter-spacing:.04em}' +
+      '.shot img{display:block;width:100%;border:1px solid #e6e8ec;border-radius:10px}' +
+      '.miss{padding:22px;border:1px dashed #d7dbe0;border-radius:10px;color:#7c838f;font-size:12px}' +
+      '.notes{margin:12px 0 0;padding:0;list-style:none;counter-reset:none}' +
+      '.notes li{display:flex;gap:10px;padding:9px 0;border-top:1px solid #eceef1}' +
+      '.no{flex:0 0 auto;width:19px;height:19px;margin-top:2px;border-radius:50%;color:#fff;' +
+        'font:700 11px/19px ui-sans-serif,system-ui,sans-serif;text-align:center}' +
+      '.notes p{margin:0}' +
+      '.meta{font-size:11px;color:#7c838f}' +
+      'table{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:8px}' +
+      'th{text-align:left;padding:0 10px 7px 0;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#7c838f}' +
+      'td{padding:8px 10px 8px 0;border-top:1px solid #eceef1;vertical-align:top}' +
+      '.k{color:#ed6d57;font-weight:600;white-space:nowrap}.s{color:#7c838f;white-space:nowrap}' +
+      '@media print{body{padding:0}.noprint{display:none}}' +
+      '.noprint{position:fixed;right:18px;top:18px;padding:9px 15px;border:0;border-radius:10px;' +
+        'background:#ed6d57;color:#fff;font:600 12px system-ui;cursor:pointer;box-shadow:0 6px 18px -6px rgba(237,109,87,.8)}' +
+      '</style></head><body>' +
+      '<button class="noprint" onclick="window.print()">Save as PDF</button>' +
+      '<h1>' + esc(cfg.title || cfg.name || 'Prototype') + ' - feedback</h1>' +
+      '<p class="sub">' + (reviewerName ? esc(reviewerName) + ' · ' : '') + new Date().toLocaleString() +
+      ' · ' + total() + ' note' + (total() === 1 ? '' : 's') + '</p>' +
+      '<div class="tally">' +
+        '<span><i class="dot" style="background:' + SEVC.high + '"></i>' + counts.high + ' high</span>' +
+        '<span><i class="dot" style="background:' + SEVC.normal + '"></i>' + counts.normal + ' normal</span>' +
+        '<span><i class="dot" style="background:' + SEVC.low + '"></i>' + counts.low + ' low</span>' +
+      '</div>' +
+      (askedFor ? '<div class="block ask"><b>What was asked</b>' + esc(askedFor) + '</div>' : '') +
+      (overall() ? '<div class="block sum"><b>Overall</b>' + esc(overall().text.trim()) + '</div>' : '') +
+      body +
+      (rows.length ? '<section class="shot"><h2>What was simulated</h2>' +
+        '<table><tr><th>Screen</th><th>Kind</th><th>In this prototype</th><th>In production</th></tr>' +
+        rows.join('') + '</table>' +
+        '<p class="meta">Read the notes above against this: they were made on a prototype, not on a finished product.</p></section>' : '') +
+      '</body></html>';
+
+    var win = window.open('', '_blank');
+    if (!win) { toast('The browser blocked the report window. Allow pop-ups for this page and try again.', 6000); return; }
+    win.document.write(html);
+    win.document.close();
+    setTimeout(function () { try { win.print(); } catch (e) { /* the button is there */ } }, 700);
+  }
+
   sendBtn.addEventListener('click', function () { sheet.hidden ? openSheet() : closeSheet(); });
   document.querySelector('[data-sheet-close]').addEventListener('click', closeSheet);
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !sheet.hidden) closeSheet(); });
 
   window.addEventListener('beforeunload', function (e) {
-    if (!written().length) return;
+    if (!total()) return;
     e.preventDefault();
     e.returnValue = '';
   });
@@ -2306,6 +2679,10 @@
     nameField.value = reviewerName;
     document.querySelector('[data-brief-task]').textContent =
       review.task || 'Use the prototype the way you normally would, and tell us where it does not make sense.';
+    if (askedFor) {
+      document.querySelector('[data-brief-ask]').hidden = false;
+      document.querySelector('[data-brief-ask-t]').textContent = askedFor;
+    }
     document.querySelector('[data-brief-go]').addEventListener('click', function () {
       reviewerName = nameField.value.trim();
       writeStore('name', reviewerName);
