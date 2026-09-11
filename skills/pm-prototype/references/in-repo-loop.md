@@ -99,6 +99,8 @@ One geometry - an **anchor to an element**, a **visible connector**, a body of t
 
 Building three mechanisms would be duplicated work and three inconsistent surfaces. Letting them share a look is worse: a reviewer cannot tell an admission from a caption.
 
+**A note belongs to the width it was written at.** A remark about a narrow layout is wrong on a wide one, and a pin anchored at one width lands somewhere meaningless at another - so a note carries its device, shows only there, and says so on its face. What is hidden must still be announced: a reviewer who cannot see three of their own notes will write them again.
+
 **A note anchors where the reviewer pointed, not at the element's edge.** They aim at a word; a pin parked at the bounding box points at the right thing in the wrong place. Store the position as a fraction of the element, so it survives re-layout.
 
 **A disclosure note carries what the element would be in production**, not only what it is here. That pair is the contract - and it is what the disclosure screen is assembled from, so the same list is never written twice.
@@ -121,7 +123,9 @@ Building three mechanisms would be duplicated work and three inconsistent surfac
 
 **Comments have to get back, and without a backend nothing is automatic.** They live in that reviewer's own browser and reach the author only when the reviewer sends them, which makes the prompt to do so part of the instrument rather than a button they might find: the task stated before they start, a send control that is always visible and counts what is waiting, and one nudge after the first comment. Where a run cannot depend on that - several reviewers, one pass - an endpoint removes the dependency, and that is the only reason to introduce one.
 
-**Returning them is not the same as reporting them.** Plain text is enough to paste into a chat; it is not enough to file, and nobody reading it can tell what a remark was about. A report puts each screen as it was when it was commented on, with the pins drawn back on and the notes numbered against them - and ends with what was simulated, so the remarks are read against a prototype rather than against a finished product.
+**The last step must not repeat the rail.** A sheet that lists every note again is a wall to scroll past at the moment the reviewer wants to finish. What belongs there is the covering note - written then, if it is still missing - and one control to look the rest over before they go.
+
+**Returning them is not the same as reporting them.** Plain text is enough to paste into a chat; it is not enough to file, and nobody reading it can tell what a remark was about. A report puts each screen as it was when it was commented on, with the pins drawn back on and the notes numbered against them - and ends with what was simulated, so the remarks are read against a prototype rather than against a finished product. It should also look like the tool it came from, and never blow a phone capture up to the width of a page - an enlarged screenshot of a 390px screen is a blurry poster of itself.
 
 That comments are per viewer is not a limitation to work around. An async test with real users **requires** commenters who cannot see each other; the sample is contaminated the moment the second person reads the first.
 

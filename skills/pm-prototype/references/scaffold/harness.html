@@ -445,6 +445,21 @@
   }
   .rail::-webkit-scrollbar { width: 6px; }
   .rail::-webkit-scrollbar-thumb { background: rgba(22,24,29,.18); border-radius: 3px; }
+  .note__dev {
+    display: inline-flex; margin-left: 7px; vertical-align: -2px;
+    color: var(--ink-3); opacity: .8;
+  }
+  .note__dev svg { width: 12px; height: 12px; }
+  .rail__else {
+    flex: 0 0 auto; display: flex; align-items: center; gap: 8px;
+    padding: 9px 11px; border: 0; border-radius: 10px;
+    background: rgba(22,24,29,.05); color: var(--ink-3);
+    font: 600 11px/1 var(--font); text-align: left; cursor: pointer;
+    transition: background var(--fast) var(--ease), color var(--fast) var(--ease);
+  }
+  .rail__else:hover { background: rgba(22,24,29,.09); color: var(--ink-2); }
+  .rail__else svg { width: 13px; height: 13px; flex: 0 0 auto; }
+
   /* rolled up: the title strip, still in place, still numbered */
   .note--rolled {
     align-items: center; gap: 9px; padding: 9px 11px;
@@ -659,7 +674,27 @@
   .note--sum { box-shadow: inset 0 1px 0 var(--glass-edge), 0 0 0 1.5px #6c5ce0, 0 14px 30px -14px rgba(22,24,29,.3); }
   .note--sum .note__kind { color: #5a4bc4; }
   .note--sum .note__s { background: rgba(108,92,224,.14); color: #5a4bc4; }
-  .sheet__sum { padding-bottom: 10px; border-bottom: 1px solid var(--glass-ring); font-weight: 500; color: var(--ink); }
+  .sheet__sum { padding-bottom: 11px; border-bottom: 1px solid var(--glass-ring); font-weight: 500; color: var(--ink); }
+  /* `.sheet__list li` sets display:flex and outranks a single class, so these
+     two have to say which list they are in or they lay out sideways */
+  .sheet__list li.sheet__ask { display: block; padding-bottom: 11px; border-bottom: 1px solid var(--glass-ring); }
+  .sheet__ask .sheet__where { margin-bottom: 6px; }
+  .sheet__ask .sheet__ta { margin-top: 0; }
+  .sheet__list li.sheet__peek { display: block; }
+  .sheet__peek > .ib { width: 100%; justify-content: flex-start; background: rgba(22,24,29,.05); }
+  .sheet__peek > .ib span { flex: 1 1 auto; text-align: left; }
+  .sheet__peek > .ib svg:last-child { transition: transform var(--fast) var(--ease); }
+  .sheet__peek > .ib.is-open svg:last-child { transform: rotate(180deg); }
+  .sheet__roll { margin: 9px 0 0; padding: 0; list-style: none; display: grid; gap: 9px; }
+  .sheet__roll li { display: flex; gap: 9px; align-items: flex-start; }
+  .sheet__no {
+    flex: 0 0 auto; width: 18px; height: 18px; margin-top: 1px; border-radius: 50%;
+    background: currentColor; color: #fff;
+    font: 700 10px/18px var(--mono); text-align: center;
+  }
+  .sheet__no.sev-low    { background: #3d7dd8; }
+  .sheet__no.sev-normal { background: #f0913a; }
+  .sheet__no.sev-high   { background: #e0483d; }
 
   .note--comment { box-shadow: inset 0 1px 0 var(--glass-edge), 0 0 0 1.5px #3d7dd8, 0 14px 30px -14px rgba(22,24,29,.3); }
   .note--comment .note__n { background: linear-gradient(135deg,#3d7dd8,#5aa2f0); box-shadow: 0 2px 6px -1px rgba(61,125,216,.5); }
@@ -1084,9 +1119,16 @@
     <span class="grp__l">Capture</span>
     <div class="grp__row">
       <button class="ib ib--icon" type="button" data-shot title="Save this screen as a PNG"><svg><use href="#i-image"/></svg></button>
-      <button class="ib ib--icon" type="button" data-share title="Copy a link that opens this exact screen and state"><svg><use href="#i-share"/></svg></button>
-      <button class="ib ib--icon" type="button" data-invite title="Copy a reviewer's link - opens with the task, asks their name, and prompts them to send"><svg><use href="#i-user"/></svg></button>
       <button class="ib" type="button" data-export title="Download the local event log"><svg><use href="#i-down"/></svg><span class="count" data-event-count>0</span></button>
+    </div>
+  </div>
+
+  <span class="sep"></span>
+  <div class="grp">
+    <span class="grp__l">Send it on</span>
+    <div class="grp__row">
+      <button class="ib" type="button" data-share title="A link that opens this exact screen, state, time and device - for someone who should look at what you are looking at"><svg><use href="#i-share"/></svg>This view</button>
+      <button class="ib" type="button" data-invite title="A link that opens in review mode - with the task, their name, and a prompt to send their notes back"><svg><use href="#i-user"/></svg>For review</button>
     </div>
   </div>
 
@@ -1776,6 +1818,9 @@
     if (commentsOn) {
       comments.forEach(function (cm) {
         if (cm.screen !== src) return;
+        // a remark about a narrow layout is wrong on a wide one, and a pin
+        // anchored at one width lands somewhere meaningless at another
+        if (cm.device && cm.device !== current.device) return;
         out.push({
           a: { kind: 'comment', selector: cm.selector, text: cm.text, at: cm.at },
           id: cm.id, comment: cm,
@@ -2015,6 +2060,13 @@
       body.className = 'note__body';
       var klabel = document.createElement('span');
       klabel.className = 'note__kind'; klabel.textContent = kind.label;
+      if (cm && cm.device) {
+        var dtag = document.createElement('i');
+        dtag.className = 'note__dev';
+        dtag.title = 'Written on ' + cm.device;
+        dtag.innerHTML = icon('i-' + cm.device);
+        klabel.appendChild(dtag);
+      }
       body.appendChild(klabel);
 
       if (cm) {
@@ -2089,6 +2141,27 @@
       pin.addEventListener('mouseenter', function () { lit(true); });
       pin.addEventListener('mouseleave', function () { lit(false); });
     });
+
+    var elsewhere = comments.filter(function (cm) {
+      return cm.screen === current.screen && cm.device && cm.device !== current.device && !cm.draft && (cm.text || '').trim();
+    });
+    if (commentsOn && elsewhere.length) {
+      var byDev = {};
+      elsewhere.forEach(function (cm) { byDev[cm.device] = (byDev[cm.device] || 0) + 1; });
+      Object.keys(byDev).forEach(function (dev) {
+        var jump = document.createElement('button');
+        jump.type = 'button'; jump.className = 'rail__else';
+        jump.innerHTML = icon('i-' + dev) + '<span></span>';
+        jump.querySelector('span').textContent = byDev[dev] + ' note' + (byDev[dev] === 1 ? '' : 's') + ' written on ' + dev;
+        jump.title = 'Switch to ' + dev + ' to read them';
+        jump.addEventListener('click', function () {
+          current.device = dev;
+          paintDevice();
+          requestAnimationFrame(function () { slide(deviceSeg); drawAnnots(); });
+        });
+        railEl.appendChild(jump);
+      });
+    }
 
     requestAnimationFrame(drawLines);
   }
@@ -2263,6 +2336,7 @@
       screen: current.screen,
       state: current.state,
       variant: current.variant,
+      device: current.device,
       selector: d.selector || null,
       rx: typeof d.rx === 'number' ? d.rx : undefined,
       ry: typeof d.ry === 'number' ? d.ry : undefined,
@@ -2351,33 +2425,73 @@
       ? 'Nothing has left this browser yet. Pick how to return ' + (total() === 1 ? 'this note' : 'these ' + total() + ' notes') + '.'
       : 'No notes yet. Press Add note and click something, or write one Overall note.';
 
+    /* The rail already shows the notes in full. Repeating them here made the
+       last step a wall of cards to scroll past; what belongs at this moment is
+       the covering note - written now if it is still missing - and a way to
+       look the rest over once before they go. */
     if (overall()) {
       var so = document.createElement('li');
       so.className = 'sheet__sum';
       var sot = document.createElement('span');
       sot.textContent = overall().text.trim();
       var sow = document.createElement('span');
-      sow.className = 'sheet__where'; sow.textContent = 'Overall note';
+      sow.className = 'sheet__where'; sow.textContent = 'Overall note · edit it in the rail';
       sot.appendChild(sow);
       so.appendChild(sot);
       sheetList.appendChild(so);
+    } else {
+      var ask = document.createElement('li');
+      ask.className = 'sheet__ask';
+      var lab = document.createElement('span');
+      lab.className = 'sheet__where'; lab.textContent = 'Overall note - optional';
+      var ta = document.createElement('textarea');
+      ta.className = 'sheet__ta'; ta.rows = 2;
+      ta.placeholder = 'Anything to say about the whole thing?';
+      ta.addEventListener('change', function () {
+        var t = ta.value.trim();
+        if (!t) return;
+        summary = { text: t, who: reviewerName, at: new Date().toISOString() };
+        writeStore('summary', summary);
+        paintSend(); drawAnnots(); openSheet();
+      });
+      var box = document.createElement('div');
+      box.appendChild(lab); box.appendChild(ta);
+      ask.appendChild(box);
+      sheetList.appendChild(ask);
     }
 
-    list.forEach(function (cm) {
-      var li = document.createElement('li');
-      var d = document.createElement('i');
-      d.className = 'dot sev-' + (cm.severity || 'normal');
-      d.title = SEV[cm.severity || 'normal'];
-      var wrapS = document.createElement('span');
-      var s = screens[screenIndex(cm.screen)];
-      wrapS.textContent = cm.text.trim();
-      var where = document.createElement('span');
-      where.className = 'sheet__where';
-      where.textContent = (s ? s.label : cm.screen) + (cm.anchor ? ' - near "' + cm.anchor + '"' : '');
-      wrapS.appendChild(where);
-      li.appendChild(d); li.appendChild(wrapS);
-      sheetList.appendChild(li);
-    });
+    if (list.length) {
+      var peek = document.createElement('li');
+      peek.className = 'sheet__peek';
+      var pb = document.createElement('button');
+      pb.type = 'button'; pb.className = 'ib';
+      pb.innerHTML = icon('i-note') + '<span></span>' + icon('i-chevron');
+      pb.querySelector('span').textContent = 'Look over ' + list.length + ' note' + (list.length === 1 ? '' : 's');
+      var roll = document.createElement('ol');
+      roll.className = 'sheet__roll'; roll.hidden = true;
+      list.forEach(function (cm, i) {
+        var li = document.createElement('li');
+        var no = document.createElement('span');
+        no.className = 'sheet__no sev-' + (cm.severity || 'normal');
+        no.textContent = i + 1;
+        var s = screens[screenIndex(cm.screen)];
+        var txt = document.createElement('span');
+        txt.textContent = cm.text.trim();
+        var where = document.createElement('span');
+        where.className = 'sheet__where';
+        where.textContent = (s ? s.label : cm.screen) + ' · ' + cm.state +
+          (cm.device ? ' · ' + cm.device : '') + (cm.anchor ? ' · near "' + cm.anchor + '"' : '');
+        txt.appendChild(where);
+        li.appendChild(no); li.appendChild(txt);
+        roll.appendChild(li);
+      });
+      pb.addEventListener('click', function () {
+        roll.hidden = !roll.hidden;
+        pb.classList.toggle('is-open', !roll.hidden);
+      });
+      peek.appendChild(pb); peek.appendChild(roll);
+      sheetList.appendChild(peek);
+    }
 
     if (total()) {
       if (review.submitTo) {
@@ -2441,7 +2555,7 @@
      while it works; the original state is restored at the end. */
   var reporting = false;
 
-  function groupKey(cm) { return cm.screen + '|' + cm.state + '|' + cm.variant; }
+  function groupKey(cm) { return cm.screen + '|' + cm.state + '|' + cm.variant + '|' + (cm.device || 'desktop'); }
 
   function pointFor(cm, doc) {
     var el = null;
@@ -2513,7 +2627,7 @@
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       ctx.fillText(String(startNo + i), x, y + 0.5);
     });
-    return cv.toDataURL('image/png');
+    return { url: cv.toDataURL('image/png'), w: w, h: h };
   }
 
   async function buildReport() {
@@ -2523,7 +2637,7 @@
     closeSheet();
     toast('Assembling the report - the view will move while each screen is photographed.', 6000);
 
-    var keep = { screen: current.screen, state: current.state, variant: current.variant, time: current.time };
+    var keep = { screen: current.screen, state: current.state, variant: current.variant, device: current.device };
     var list = written();
     var order = [];
     var groups = {};
@@ -2540,20 +2654,23 @@
       var part = key.split('|');
       var g = groups[key];
 
+      if (part[3] && part[3] !== current.device) { current.device = part[3]; paintDevice(); }
       if (current.screen !== part[0]) pickScreen(screenIndex(part[0]));
       current.state = part[1];
       send('state', part[1]);
       if (variants.length && part[2]) { current.variant = part[2]; send('variant', part[2]); }
-      await waitFrame(750);
+      // the frame travels between widths, so wait for it to arrive before shooting
+      await waitFrame(part[3] !== keep.device ? 1100 : 750);
 
-      var png = null;
-      try { png = await shootGroup(g, no); } catch (e) { png = null; }
+      var shot = null;
+      try { shot = await shootGroup(g, no); } catch (e) { shot = null; }
       var sc = screens[screenIndex(part[0])];
-      shots.push({ label: sc ? sc.label : part[0], state: part[1], variant: part[2], png: png, notes: g, from: no });
+      shots.push({ label: sc ? sc.label : part[0], state: part[1], variant: part[2], device: part[3], shot: shot, notes: g, from: no });
       no += g.length;
     }
 
     // put the harness back where it was
+    if (current.device !== keep.device) { current.device = keep.device; paintDevice(); }
     if (current.screen !== keep.screen) pickScreen(screenIndex(keep.screen));
     current.state = keep.state; send('state', keep.state);
     if (variants.length) { current.variant = keep.variant; send('variant', keep.variant); }
@@ -2578,18 +2695,25 @@
     function collect(src, label) {
       (annots[src] || []).forEach(function (a) {
         if (a.kind === 'convention') return;
-        rows.push('<tr><td class="s">' + esc(label) + '</td><td class="k">' + esc(kindOf(a).label) +
-                  '</td><td>' + esc(a.text) + '</td><td>' + esc(a.real || '-') + '</td></tr>');
+        rows.push('<tr><td class="s" data-l="Screen">' + esc(label) + '</td><td class="k" data-l="Kind">' + esc(kindOf(a).label) +
+                  '</td><td data-l="In this prototype">' + esc(a.text) + '</td><td data-l="In production">' + esc(a.real || '-') + '</td></tr>');
       });
     }
     screens.forEach(function (s) { collect(s.src, s.label); });
     collect('*', 'Everywhere');
 
-    var body = shots.map(function (s) {
+    var body = shots.map(function (s, si) {
       return '<section class="shot">' +
-        '<h2>' + esc(s.label) + ' <span class="st">' + esc(s.state) +
-        (variants.length && s.variant ? ' · ' + esc(s.variant) : '') + '</span></h2>' +
-        (s.png ? '<img src="' + s.png + '" alt="">'
+        '<div class="shot__h">' +
+          '<span class="idx">' + (si + 1) + '</span>' +
+          '<h2>' + esc(s.label) + '</h2>' +
+          '<span class="chip">' + esc(s.state) + '</span>' +
+          (variants.length && s.variant ? '<span class="chip">' + esc(s.variant) + '</span>' : '') +
+          (s.device ? '<span class="chip chip--dev">' + esc(s.device) + '</span>' : '') +
+          '<span class="shot__n">' + s.notes.length + ' note' + (s.notes.length === 1 ? '' : 's') + '</span>' +
+        '</div>' +
+        '<div class="shot__body">' +
+        (s.shot ? '<div class="shot__img"><img src="' + s.shot.url + '" alt="" style="max-width:' + s.shot.w + 'px"></div>'
                : '<p class="miss">This screen could not be photographed. The capture cannot reproduce cross-origin images, webfonts or canvas content - open the prototype to see it.</p>') +
         '<ol class="notes">' +
         s.notes.map(function (cm, i) {
@@ -2597,62 +2721,105 @@
           // cannot tell which mark on the picture this sentence belongs to
           return '<li><span class="no" style="background:' + SEVC[cm.severity || 'normal'] + '">' + (s.from + i) + '</span>' +
             '<div><p>' + esc(cm.text.trim()) + '</p><span class="meta">' +
-            esc(SEV[cm.severity || 'normal']) + (cm.anchor ? ' · near "' + esc(cm.anchor) + '"' : '') +
+            '<b style="color:' + SEVC[cm.severity || 'normal'] + '">' + esc(SEV[cm.severity || 'normal']) + '</b>' +
+            (cm.anchor ? ' · near "' + esc(cm.anchor) + '"' : '') +
             (cm.who ? ' · ' + esc(cm.who) : '') + '</span></div></li>';
         }).join('') +
-        '</ol></section>';
+        '</ol></div></section>';
     }).join('');
 
+    /* The report speaks the tool's language - the same coral-to-gold accent,
+       the same cool neutral ground, the same mono labels - so what arrives in
+       someone's inbox is recognisably the thing they were looking at. Print
+       flattens the decoration but keeps the structure. */
     var html = '<!doctype html><html lang="en"><head><meta charset="utf-8">' +
       '<title>' + esc(cfg.title || cfg.name || 'Prototype') + ' - feedback</title><style>' +
+      ':root{--co:#ed6d57;--or:#ff9d5c;--go:#ffc94f;--grad:linear-gradient(135deg,#ed6d57,#ff9d5c);' +
+        '--ink:#14161b;--ink2:#474d57;--ink3:#7c838f;--line:#e9ebef;--soft:#f5f6f9;' +
+        '--font:"Inter",ui-sans-serif,-apple-system,"Segoe UI",system-ui,sans-serif;' +
+        '--mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace}' +
       '*{box-sizing:border-box}' +
-      'body{margin:0;padding:36px 34px 44px;font:13px/1.6 ui-sans-serif,-apple-system,"Segoe UI",system-ui,sans-serif;color:#14161b;background:#fff}' +
-      'h1{margin:0 0 4px;font-size:22px;letter-spacing:-.02em}' +
-      '.sub{color:#7c838f;font-size:12.5px}' +
-      '.tally{display:flex;gap:14px;margin:16px 0 0;padding:12px 14px;border-radius:12px;background:#f6f7f9;font-size:12px}' +
-      '.tally span{display:flex;align-items:center;gap:6px}' +
-      '.dot{display:inline-block;width:9px;height:9px;border-radius:50%;flex:0 0 auto;margin-top:5px}' +
-      '.tally .dot{margin:0}' +
-      '.block{margin-top:18px;padding:14px 16px;border-radius:12px;background:#f6f7f9}' +
-      '.block b{display:block;margin-bottom:5px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#7c838f}' +
-      '.block.ask{background:rgba(237,109,87,.1)}.block.ask b{color:#ed6d57}' +
-      '.block.sum{background:rgba(108,92,224,.1)}.block.sum b{color:#5a4bc4}' +
-      '.shot{margin-top:30px;page-break-inside:avoid;break-inside:avoid}' +
-      '.shot h2{margin:0 0 10px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:#474d57}' +
-      '.shot h2 .st{color:#a2a9b4;font-weight:500;letter-spacing:.04em}' +
-      '.shot img{display:block;width:100%;border:1px solid #e6e8ec;border-radius:10px}' +
-      '.miss{padding:22px;border:1px dashed #d7dbe0;border-radius:10px;color:#7c838f;font-size:12px}' +
-      '.notes{margin:12px 0 0;padding:0;list-style:none;counter-reset:none}' +
-      '.notes li{display:flex;gap:10px;padding:9px 0;border-top:1px solid #eceef1}' +
-      '.no{flex:0 0 auto;width:19px;height:19px;margin-top:2px;border-radius:50%;color:#fff;' +
-        'font:700 11px/19px ui-sans-serif,system-ui,sans-serif;text-align:center}' +
-      '.notes p{margin:0}' +
-      '.meta{font-size:11px;color:#7c838f}' +
-      'table{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:8px}' +
-      'th{text-align:left;padding:0 10px 7px 0;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#7c838f}' +
-      'td{padding:8px 10px 8px 0;border-top:1px solid #eceef1;vertical-align:top}' +
-      '.k{color:#ed6d57;font-weight:600;white-space:nowrap}.s{color:#7c838f;white-space:nowrap}' +
-      '@media print{body{padding:0}.noprint{display:none}}' +
-      '.noprint{position:fixed;right:18px;top:18px;padding:9px 15px;border:0;border-radius:10px;' +
-        'background:#ed6d57;color:#fff;font:600 12px system-ui;cursor:pointer;box-shadow:0 6px 18px -6px rgba(237,109,87,.8)}' +
-      '</style></head><body>' +
+      'body{margin:0;padding:0;background:#eef0f4;color:var(--ink);font:13px/1.6 var(--font);-webkit-font-smoothing:antialiased}' +
+      '.page{max-width:860px;margin:0 auto;padding:34px 30px 60px;background:#fff;min-height:100%;' +
+        'box-shadow:0 0 0 1px rgba(22,24,29,.06),0 30px 80px -40px rgba(22,24,29,.3)}' +
+      '.lab{font:700 9px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink3)}' +
+      '.head{display:flex;align-items:flex-start;gap:14px;padding-bottom:20px;border-bottom:1px solid var(--line)}' +
+      '.mark{width:34px;height:34px;border-radius:11px;background:var(--grad);flex:0 0 auto;' +
+        'box-shadow:0 4px 14px -4px rgba(237,109,87,.8)}' +
+      'h1{margin:2px 0 3px;font-size:20px;letter-spacing:-.02em;line-height:1.2}' +
+      '.sub{color:var(--ink3);font-size:12px}' +
+      '.tally{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap;justify-content:flex-end}' +
+      '.pill{display:flex;align-items:center;gap:6px;padding:6px 11px;border-radius:999px;' +
+        'background:var(--soft);font:600 11px/1 var(--font);color:var(--ink2);white-space:nowrap}' +
+      '.dot{width:8px;height:8px;border-radius:50%;flex:0 0 auto}' +
+      '.blocks{display:grid;gap:12px;margin-top:20px}' +
+      '.block{padding:15px 17px;border-radius:14px;background:var(--soft)}' +
+      '.block .lab{display:block;margin-bottom:6px}' +
+      '.block.ask{background:linear-gradient(135deg,rgba(237,109,87,.1),rgba(255,201,79,.12))}' +
+      '.block.ask .lab{color:#b4553f}' +
+      '.block.sum{background:rgba(108,92,224,.09)}.block.sum .lab{color:#5a4bc4}' +
+      '.shot{margin-top:26px;page-break-inside:avoid;break-inside:avoid}' +
+      '.shot__h{display:flex;align-items:center;gap:9px;margin-bottom:11px}' +
+      '.idx{width:22px;height:22px;border-radius:7px;background:var(--grad);color:#fff;flex:0 0 auto;' +
+        'font:700 11px/22px var(--font);text-align:center}' +
+      '.shot h2{margin:0;font-size:14px;font-weight:680;letter-spacing:-.01em}' +
+      '.chip{padding:4px 9px;border-radius:7px;background:var(--soft);' +
+        'font:700 8.5px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}' +
+      '.chip--dev{background:rgba(237,109,87,.12);color:#b4553f}' +
+      '.shot__n{margin-left:auto;font:600 11px/1 var(--font);color:var(--ink3)}' +
+      '.shot__body{border:1px solid var(--line);border-radius:16px;overflow:hidden}' +
+      '.shot__img{padding:14px 14px 0;background:var(--soft);text-align:center}' +
+      /* a phone capture is 390px wide - blown up to the page width it is a
+         blurry poster of itself, so nothing is ever shown above 1:1 */
+      '.shot__img img{display:inline-block;width:100%;border-radius:10px 10px 0 0;' +
+        'box-shadow:0 0 0 1px rgba(22,24,29,.07),0 -10px 30px -18px rgba(22,24,29,.4)}' +
+      '.miss{margin:0;padding:26px;background:var(--soft);color:var(--ink3);font-size:12px;text-align:center}' +
+      '.notes{margin:0;padding:4px 16px 6px;list-style:none;background:#fff}' +
+      '.notes li{display:flex;gap:11px;padding:11px 0;border-top:1px solid var(--line)}' +
+      '.notes li:first-child{border-top:0}' +
+      '.notes p{margin:0 0 2px;color:var(--ink)}' +
+      '.no{flex:0 0 auto;width:20px;height:20px;margin-top:1px;border-radius:50%;color:#fff;' +
+        'font:700 11px/20px var(--font);text-align:center}' +
+      '.meta{font-size:11px;color:var(--ink3)}.meta b{font-weight:700}' +
+      '.sim{margin-top:30px;padding-top:20px;border-top:1px solid var(--line);page-break-inside:avoid}' +
+      'table{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:10px}' +
+      'th{text-align:left;padding:0 10px 8px 0;font:700 8.5px/1 var(--mono);letter-spacing:.1em;' +
+        'text-transform:uppercase;color:var(--ink3)}' +
+      'td{padding:9px 10px 9px 0;border-top:1px solid var(--line);vertical-align:top;color:var(--ink2)}' +
+      '.k{color:var(--co);font-weight:600;white-space:nowrap}.s{color:var(--ink3);white-space:nowrap}' +
+      '.foot{margin-top:18px;color:var(--ink3);font-size:11px}' +
+      '@media (max-width:680px){.head{flex-wrap:wrap}.tally{margin-left:0}' +
+        'table,tbody,tr,td{display:block;width:auto}thead{display:none}' +
+        'tr{padding:10px 0;border-top:1px solid var(--line)}td{padding:2px 0;border:0}' +
+        'td:before{content:attr(data-l);display:block;font:700 8.5px/1 var(--mono);letter-spacing:.1em;' +
+          'text-transform:uppercase;color:#a2a9b4;margin-bottom:3px}}' +
+      '@media print{body{background:#fff}.page{max-width:none;padding:0;box-shadow:none}.noprint{display:none}' +
+        '.shot__img img{box-shadow:none}}' +
+      '.noprint{position:fixed;right:20px;top:20px;padding:10px 17px;border:0;border-radius:11px;' +
+        'background:var(--grad);color:#fff;font:650 12px var(--font);cursor:pointer;' +
+        'box-shadow:0 8px 22px -8px rgba(237,109,87,.9)}' +
+      '</style></head><body><div class="page">' +
       '<button class="noprint" onclick="window.print()">Save as PDF</button>' +
-      '<h1>' + esc(cfg.title || cfg.name || 'Prototype') + ' - feedback</h1>' +
-      '<p class="sub">' + (reviewerName ? esc(reviewerName) + ' · ' : '') + new Date().toLocaleString() +
-      ' · ' + total() + ' note' + (total() === 1 ? '' : 's') + '</p>' +
-      '<div class="tally">' +
-        '<span><i class="dot" style="background:' + SEVC.high + '"></i>' + counts.high + ' high</span>' +
-        '<span><i class="dot" style="background:' + SEVC.normal + '"></i>' + counts.normal + ' normal</span>' +
-        '<span><i class="dot" style="background:' + SEVC.low + '"></i>' + counts.low + ' low</span>' +
-      '</div>' +
-      (askedFor ? '<div class="block ask"><b>What was asked</b>' + esc(askedFor) + '</div>' : '') +
-      (overall() ? '<div class="block sum"><b>Overall</b>' + esc(overall().text.trim()) + '</div>' : '') +
+      '<div class="head"><span class="mark"></span><div>' +
+        '<span class="lab">Prototype feedback</span>' +
+        '<h1>' + esc(cfg.title || cfg.name || 'Prototype') + '</h1>' +
+        '<p class="sub">' + (reviewerName ? esc(reviewerName) + ' · ' : '') + new Date().toLocaleString() +
+        ' · ' + total() + ' note' + (total() === 1 ? '' : 's') + '</p></div>' +
+        '<div class="tally">' +
+          '<span class="pill"><i class="dot" style="background:' + SEVC.high + '"></i>' + counts.high + ' high</span>' +
+          '<span class="pill"><i class="dot" style="background:' + SEVC.normal + '"></i>' + counts.normal + ' normal</span>' +
+          '<span class="pill"><i class="dot" style="background:' + SEVC.low + '"></i>' + counts.low + ' low</span>' +
+        '</div></div>' +
+      ((askedFor || overall()) ? '<div class="blocks">' +
+        (askedFor ? '<div class="block ask"><span class="lab">What was asked</span>' + esc(askedFor) + '</div>' : '') +
+        (overall() ? '<div class="block sum"><span class="lab">Overall</span>' + esc(overall().text.trim()) + '</div>' : '') +
+        '</div>' : '') +
       body +
-      (rows.length ? '<section class="shot"><h2>What was simulated</h2>' +
-        '<table><tr><th>Screen</th><th>Kind</th><th>In this prototype</th><th>In production</th></tr>' +
-        rows.join('') + '</table>' +
-        '<p class="meta">Read the notes above against this: they were made on a prototype, not on a finished product.</p></section>' : '') +
-      '</body></html>';
+      (rows.length ? '<section class="sim"><span class="lab">What was simulated</span>' +
+        '<table><thead><tr><th>Screen</th><th>Kind</th><th>In this prototype</th><th>In production</th></tr></thead>' +
+        '<tbody>' + rows.join('') + '</tbody></table>' +
+        '<p class="foot">Read the notes above against this: they were made on a prototype, not on a finished product.</p></section>' : '') +
+      '</div></body></html>';
 
     var win = window.open('', '_blank');
     if (!win) { toast('The browser blocked the report window. Allow pop-ups for this page and try again.', 6000); return; }
