@@ -984,7 +984,10 @@
      record. */
   .marks { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
   body.is-marking .marks { pointer-events: auto; cursor: crosshair; }
-  .marks svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  /* the DRAWING surface only - not every svg that happens to be inside the
+     layer. Unscoped, this absolutely positioned the icon inside the delete
+     button and parked it in the button's top-left corner. */
+  .marks > svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
   .mk__box {
     fill: rgba(237,109,87,.06); stroke: var(--co); stroke-width: 2; rx: 6;
     filter: drop-shadow(0 2px 8px rgba(237,109,87,.35));
@@ -1005,6 +1008,7 @@
     transition: opacity var(--fast) var(--ease);
     pointer-events: auto;
   }
+  .mk__x { padding: 0; }
   .mk__x svg { width: 10px; height: 10px; }
   .mk__ask {
     position: absolute; transform: translate(-50%, -125%);
