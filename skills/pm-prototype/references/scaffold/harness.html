@@ -403,13 +403,23 @@
     background: rgba(237,109,87,.16); color: #ff9d81;
     font: 700 8.5px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase;
   }
-  .nav__div {
-    display: flex; align-items: center; gap: 9px;
-    margin: 16px 5px 9px; padding-top: 15px;
-    border-top: 1px solid rgba(255,255,255,.08);
-    font: 700 8px/1 var(--mono); letter-spacing: .15em; text-transform: uppercase; color: #5f6572;
+  /* the sections carry the panel: a faint rule between two lists is not a
+     heading, and the reader has to work out what changed */
+  .nav__sec {
+    display: flex; align-items: center; gap: 8px; width: 100%;
+    margin: 4px 0 8px; padding: 9px 11px;
+    background: rgba(255,255,255,.05); border: 0; border-radius: 10px;
+    font: 700 9px/1 var(--mono); letter-spacing: .16em; text-transform: uppercase;
+    color: #aab1bd; text-align: left;
   }
-  .nav__div::after { content: ""; flex: 1 1 auto; }
+  .nav__sec + .nav__i { margin-top: 0; }
+  .nav__sec span { flex: 1 1 auto; }
+  .nav__sec b { font: 700 10px/1 var(--mono); letter-spacing: 0; color: #6d7482; }
+  .nav__sec:not(:first-child) { margin-top: 18px; }
+  .nav__sec--btn { cursor: pointer; transition: background var(--fast) var(--ease), color var(--fast) var(--ease); }
+  .nav__sec--btn:hover { background: rgba(255,255,255,.09); color: #fff; }
+  .nav__sec svg { width: 11px; height: 11px; opacity: .7; transition: transform var(--fast) var(--ease); }
+  .nav__sec.is-shut svg { transform: rotate(-90deg); }
   /* a document, not a screen: outlined rather than filled, and never numbered */
   .nav__i--doc { padding-right: 13px; }
   .nav__i--doc .nav__ico { background: none; box-shadow: inset 0 0 0 1px rgba(255,255,255,.16); }
@@ -776,6 +786,9 @@
   .grp__row { display: flex; align-items: center; gap: 7px; }
   /* the hint sits BESIDE the scrubber, not under it: a group one row taller
      than its neighbours makes the whole bar look broken */
+  .grp__hint b { color: var(--ink-2); font-weight: 650; }
+  .grp__hint b::after { content: " · "; color: var(--ink-3); font-weight: 400; }
+  .grp__hint b:empty::after { content: none; }
   .grp__hint {
     flex: 0 0 auto; width: 26ch; padding-left: 2px;
     font-size: 10.5px; line-height: 1.32; color: var(--ink-3);
@@ -905,11 +918,12 @@
   }
   .mini .screen { pointer-events: none; }
 
-  .cmpset { display: none; gap: 26px; align-items: stretch; justify-content: center; height: 100%; }
+  /* bottom-aligned, natural heights: a product shot, not three columns */
+  .cmpset { display: none; gap: 30px; align-items: flex-end; justify-content: center; }
   body.compare .cmpset { display: flex; }
   body.compare .stage > .wrap { display: none; }
-  body.compare .stage { justify-content: flex-start; }
-  .cmp { display: flex; flex-direction: column; gap: 9px; flex: 0 0 auto; height: 100%; }
+  body.compare .stage { align-items: flex-end; }
+  .cmp { display: flex; flex-direction: column; gap: 9px; flex: 0 0 auto; }
   .cmp__h {
     display: flex; align-items: baseline; gap: 7px; padding-left: 2px;
     font: 700 8.5px/1 var(--mono); letter-spacing: .13em; text-transform: uppercase; color: var(--ink-3);
@@ -1159,12 +1173,14 @@
     <button type="button" data-device-btn="desktop" aria-pressed="true" title="Desktop"><svg><use href="#i-desktop"/></svg>Desktop</button>
     <button type="button" data-device-btn="tablet" aria-pressed="false" title="Tablet"><svg><use href="#i-tablet"/></svg></button>
     <button type="button" data-device-btn="mobile" aria-pressed="false" title="Mobile"><svg><use href="#i-mobile"/></svg></button>
+    <button type="button" data-device-btn="all" aria-pressed="false" title="All three at once - this screen on every device, side by side"><svg><use href="#i-columns"/></svg></button>
   </div>
-  <button class="ib ib--icon" type="button" data-mockup aria-pressed="false" title="Device mockup"><svg><use href="#i-frame"/></svg></button>
-  <button class="ib" type="button" data-compare-btn aria-pressed="false" title="THIS screen at all three widths at once. The device switcher steps aside - every width is on screen"><svg><use href="#i-columns"/></svg>Widths</button>
-  <button class="ib" type="button" data-promo-btn aria-pressed="false" title="ALL screens at the width the device switcher is set to. Switch device to reframe them"><svg><use href="#i-gallery"/></svg>Screens</button>
-  <button class="ib" type="button" data-grid-btn aria-pressed="false" title="Alignment grid - 8px, then 64px"><svg><use href="#i-grid"/></svg><span data-grid-label>Grid</span></button>
+  <!-- bound to whatever device is selected above -->
+  <button class="ib ib--icon" type="button" data-mockup aria-pressed="false" title="Draw the device hardware around it"><svg><use href="#i-frame"/></svg></button>
+  <button class="ib ib--icon" type="button" data-promo-btn aria-pressed="false" title="Every screen at this device's width, side by side"><svg><use href="#i-gallery"/></svg></button>
   <span class="sep"></span>
+  <!-- bound to nothing in particular -->
+  <button class="ib" type="button" data-grid-btn aria-pressed="false" title="Alignment grid - 8px, then 64px"><svg><use href="#i-grid"/></svg><span data-grid-label>Grid</span></button>
   <button class="ib ib--icon" type="button" data-present title="Presentation mode"><svg><use href="#i-play"/></svg></button>
   <span class="sep"></span>
   <button class="ib" type="button" data-toggle-labels aria-pressed="true" title="The author's disclosure and prototype notes"><svg><use href="#i-tag"/></svg>Labels</button>
@@ -1186,11 +1202,11 @@
 
   <span class="sep" data-time-sep hidden></span>
   <div class="grp" data-time-grp hidden>
-    <span class="grp__l" data-time-label>Time</span>
+    <span class="grp__l">Time</span>
     <div class="grp__row">
       <input class="scrub" type="range" data-scrub aria-label="Time on this screen">
       <span class="time" data-time></span>
-      <span class="grp__hint" data-time-hint></span>
+      <span class="grp__hint"><b data-time-label></b><span data-time-hint></span></span>
     </div>
   </div>
 
@@ -1459,21 +1475,42 @@
   document.querySelector('[data-nav-count]').textContent =
     screens.filter(function (s) { return !generated(s); }).length;
 
+  var shut = readStore('navShut', {});
+
+  function section(key, label, collapsible) {
+    var h = document.createElement(collapsible ? 'button' : 'div');
+    h.className = 'nav__sec' + (collapsible ? ' nav__sec--btn' : '') + (shut[key] ? ' is-shut' : '');
+    h.setAttribute('data-sec', key);
+    if (collapsible) {
+      h.type = 'button';
+      h.innerHTML = '<span></span><b></b>' + icon('i-chevron');
+      h.addEventListener('click', function () {
+        shut[key] = !shut[key];
+        writeStore('navShut', shut);
+        h.classList.toggle('is-shut', !!shut[key]);
+        navList.querySelectorAll('[data-in="' + key + '"]').forEach(function (o) { o.hidden = !!shut[key]; });
+      });
+    } else {
+      h.innerHTML = '<span></span><b></b>';
+    }
+    h.querySelector('span').textContent = label;
+    return h;
+  }
+
   var realCount = 0;
   screens.forEach(function (s, i) {
     /* A generated screen is about the prototype, not part of it. Sitting in the
        same list, in the same styling, it reads as one more thing to click
        through - so the list breaks, and they look like documents. */
-    if (generated(s) && !navList.querySelector('.nav__div')) {
-      var div = document.createElement('div');
-      div.className = 'nav__div';
-      div.innerHTML = '<span></span>';
-      div.querySelector('span').textContent = 'About this prototype';
-      navList.appendChild(div);
+    if (!navList.querySelector('.nav__sec')) navList.appendChild(section('screens', 'Screens', false));
+    if (generated(s) && !navList.querySelector('[data-sec="docs"]')) {
+      navList.appendChild(section('docs', 'About this prototype', true));
     }
     var b = document.createElement('button');
     b.type = 'button'; b.className = 'nav__i' + (generated(s) ? ' nav__i--doc' : '');
     b.setAttribute('aria-current', String(i === startScreen));
+    b.setAttribute('data-in', generated(s) ? 'docs' : 'screens');
+    if (generated(s) && shut.docs) b.hidden = true;
     if (!generated(s)) realCount++;
 
     var no = document.createElement('span');
@@ -1499,9 +1536,17 @@
     b.addEventListener('click', function () { pickScreen(i); closeNav(); });
     navList.appendChild(b);
   });
+  navList.querySelectorAll('.nav__sec').forEach(function (h) {
+    var key = h.getAttribute('data-sec');
+    h.querySelector('b').textContent = navList.querySelectorAll('[data-in="' + key + '"]').length;
+  });
   navCur.textContent = screens[startScreen].label;
 
   function pickScreen(i) {
+    /* A document is one page about the prototype. Three scaled copies of it, or
+       six of them in a row, is nonsense on screen - so opening one leaves the
+       multi views rather than rendering the absurd thing. */
+    if (generated(screens[i])) { setCompare(false); setPromo(false); }
     current.screen = screens[i].src;
     navCur.textContent = screens[i].label;
     navList.querySelectorAll('.nav__i').forEach(function (o, j) { o.setAttribute('aria-current', String(j === i)); });
@@ -1575,9 +1620,13 @@
     timeGrp.hidden = timeSep.hidden = !t;
     if (!t) return;
     current.time = times[current.screen];
-    timeLbl.textContent = t.label || 'Time';
+    /* The group says "Time" on every prototype; what THIS screen's axis measures
+       is the screen's own business and belongs in the line, not in the heading -
+       a bar labelled "Minutes since order" describes one demo, not the tool. */
+    timeLbl.textContent = t.label || '';
+    timeLbl.hidden = !t.label;
     timeHint.textContent = t.hint || '';
-    timeHint.title = t.hint || '';   // the clamp cuts a long one; hover still has it
+    timeHint.parentNode.title = (t.label ? t.label + ' - ' : '') + (t.hint || '');
     timeHint.hidden = !t.hint;
     scrub.min = t.min; scrub.max = t.max; scrub.step = t.step || 1;
     scrub.value = current.time;
@@ -1595,24 +1644,34 @@
   mountTime();
 
   /* ---------- device ---------- */
+  /* All three at once is a choice of DEVICE, not a separate tool: it belongs in
+     the switcher beside the three it replaces, or the two controls read as the
+     same question asked twice - and "Widths" was a name nobody could decode. */
   var deviceSeg = document.querySelector('[data-device-seg]');
+  var ICONOF  = { desktop: 'i-desktop', tablet: 'i-tablet', mobile: 'i-mobile', all: 'i-columns' };
+  var LABELOF = { desktop: 'Desktop', tablet: 'Tablet', mobile: 'Mobile', all: 'All three' };
+
   function paintDevice() {
+    var sel = compareOn ? 'all' : current.device;
     deviceSeg.querySelectorAll('[data-device-btn]').forEach(function (o) {
       var name = o.getAttribute('data-device-btn');
-      var on = name === current.device;
+      var on = name === sel;
       o.setAttribute('aria-pressed', String(on));
-      // only the active device carries its label, so the control stays compact
-      o.innerHTML = icon('i-' + name) + (on ? name.charAt(0).toUpperCase() + name.slice(1) : '');
+      // only the active one carries its label, so the control stays compact
+      o.innerHTML = icon(ICONOF[name]) + (on ? LABELOF[name] : '');
     });
     wrap.setAttribute('data-device', current.device);
     wrap.setAttribute('data-size', { desktop: '', tablet: '834 x 1112', mobile: '390 x 844' }[current.device]);
     slide(deviceSeg);
   }
+
   deviceSeg.addEventListener('click', function (e) {
     var b = e.target.closest('[data-device-btn]');
     if (!b) return;
     var name = b.getAttribute('data-device-btn');
-    if (name === current.device) return;
+    if (name === 'all') { setCompare(true); return; }
+    if (compareOn) setCompare(false);
+    if (name === current.device) { paintDevice(); return; }
     current.device = name;
     paintDevice();
     if (promoOn) buildPromo();
@@ -3283,23 +3342,29 @@
      One screen at three widths at once. Annotations are anchored to the single
      frame, so they step aside here and say why rather than pointing at nothing. */
   var compareOn = false;
-  var compareBtn = document.querySelector('[data-compare-btn]');
+  var compareBtn = deviceSeg.querySelector('[data-device-btn="all"]');
   var cmpEl = document.querySelector('[data-compare]');
   var DEVW = { desktop: 1280, tablet: 834, mobile: 390 };
+  var DEVH = { desktop: 800,  tablet: 1112, mobile: 844 };
 
   function loadCompare() {
     var s = screens[screenIndex(current.screen)];
     var doc = generated(s) ? (s.disclosure ? disclosureDoc() : s.overview ? overviewDoc() : instructionsDoc()) : null;
     var box = stage.getBoundingClientRect();
     var devs = ['desktop', 'tablet', 'mobile'];
+    /* Each keeps its OWN height, and all three share one scale - that is what
+       makes a laptop next to a tablet next to a phone read as three devices
+       rather than three columns. Stretching them to a common height throws the
+       relative sizes away and the picture stops meaning anything. */
     var total = devs.reduce(function (n, d) { return n + DEVW[d]; }, 0);
-    var scale = Math.min(1, (box.width - 52 - 26 * (devs.length - 1)) / total);
-    // the bezel and the browser bar are drawn outside the declared viewport, so
-    // the frame is taller than the screen it holds - leave room or it overflows
-    var h = Math.max(320, Math.round((box.height - 70) / scale) - 70);
+    var tallest = Math.max.apply(null, devs.map(function (d) { return DEVH[d]; }));
+    var byWidth = (box.width - 52 - 30 * (devs.length - 1)) / total;
+    var byHeight = (box.height - 80) / tallest;
+    var scale = Math.min(1, byWidth, byHeight);
 
     cmpEl.innerHTML = '';
     devs.forEach(function (dev) {
+      var h = DEVH[dev];
       var cell = document.createElement('div');
       cell.className = 'cmp';
       var head = document.createElement('span');
@@ -3315,21 +3380,23 @@
   }
   function fitCompare() { if (compareOn) loadCompare(); }
 
-  compareBtn.addEventListener('click', function () {
-    compareOn = !compareOn;
-    compareBtn.setAttribute('aria-pressed', String(compareOn));
-    document.body.classList.toggle('compare', compareOn);
-    paintCommentAvail();
-    if (compareOn) {
-      if (promoOn) promoBtn.click();
+  function setCompare(on) {
+    if (compareOn === on) return;
+    compareOn = on;
+    document.body.classList.toggle('compare', on);
+    if (on) {
+      setPromo(false);
       document.body.classList.remove('has-notes');
       loadCompare();
-      toast('This screen at all three widths. The device switcher steps aside; Mockup frames them.', 5000);
+      toast('This screen on all three, at true relative size. Mockup draws the hardware.', 5000);
     } else {
+      cmpEl.innerHTML = '';
       requestAnimationFrame(drawAnnots);
     }
-    record('harness:compare', compareOn);
-  });
+    paintDevice();
+    paintViewTools();
+    record('harness:compare', on);
+  }
 
   /* ---------- promo ----------
      Every screen at once, each rendered at its real width and scaled down into
@@ -3379,7 +3446,7 @@
   var promoBtn = document.querySelector('[data-promo-btn]');
   var promoEl = document.querySelector('[data-promo]');
   var PROMO_W = DEVW;
-  var PROMO_H = { desktop: 800, tablet: 1112, mobile: 844 };
+  var PROMO_H = DEVH;
 
   function buildPromo() {
     promoEl.innerHTML = '';
@@ -3408,13 +3475,13 @@
     });
   }
 
-  promoBtn.addEventListener('click', function () {
-    promoOn = !promoOn;
-    promoBtn.setAttribute('aria-pressed', String(promoOn));
-    document.body.classList.toggle('promo', promoOn);
-    paintCommentAvail();
-    if (promoOn) {
-      if (compareOn) document.querySelector('[data-compare-btn]').click();
+  function setPromo(on) {
+    if (promoOn === on) return;
+    promoOn = on;
+    promoBtn.setAttribute('aria-pressed', String(on));
+    document.body.classList.toggle('promo', on);
+    if (on) {
+      setCompare(false);
       document.body.classList.remove('has-notes');
       buildPromo();
       toast('Every screen at ' + current.device + ' width. Switch the device to reframe them; Mockup adds the hardware.', 5000);
@@ -3422,8 +3489,28 @@
       promoEl.innerHTML = '';
       requestAnimationFrame(drawAnnots);
     }
-    record('harness:promo', promoOn ? current.device : false);
-  });
+    paintViewTools();
+    record('harness:promo', on ? current.device : false);
+  }
+  promoBtn.addEventListener('click', function () { setPromo(!promoOn); });
+
+  /* What is bound to one frame cannot work across several. The grid measures
+     alignment against a viewport, and at 44% an 8px rule on screen is not 8px
+     in the artifact - it would quietly lie. */
+  function paintViewTools() {
+    var multi = compareOn || promoOn;
+    gridBtn.disabled = multi;
+    gridBtn.title = multi
+      ? 'The grid measures one frame at full size - come back to a single screen'
+      : 'Alignment grid - 8px, then 64px';
+    if (multi && GRIDS[gridAt]) {
+      gridAt = 0;
+      gridEl.removeAttribute('data-g');
+      gridBtn.setAttribute('aria-pressed', 'false');
+      gridLabel.textContent = 'Grid';
+    }
+    paintCommentAvail();
+  }
 
   /* ---------- presentation ----------
      Either a declared tour, or - with none - each screen in turn, its time swept

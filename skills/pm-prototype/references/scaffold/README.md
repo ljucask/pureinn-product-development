@@ -84,7 +84,7 @@ Both exist only if their block is filled in, and **`For review` lets you tick wh
 
 **Every figure on the Overview carries its class** - `observed` · `calculated` · `projected` · `target` · `sample` - printed beside the number. A projection in front of a committee is the most actionable unverifiable number a prototype can contain, and a footnote does not travel with a screenshot.
 
-**Both, and `What is real`, are documents about the prototype rather than screens of it.** The panel lists them below a divider, outlined instead of filled and without a number, and the numbering in the flow counts only the real screens. Mixed into the same list in the same styling they read as two more things to click through, and a tester will dutifully test them.
+**Both, and `What is real`, are documents about the prototype rather than screens of it.** The panel puts them in their own **collapsible section**, outlined instead of filled and without a number, and the numbering in the flow counts only the real screens. Mixed into the same list in the same styling they read as two more things to click through, and a tester will dutifully test them.
 
 They are shown at desktop width whatever the device switcher says. It is read by someone at a desk and is not part of the product surface.
 
@@ -94,7 +94,7 @@ Screens live in a slide-out panel on the left, dark against the light canvas, op
 
 That sentence is the reason it is a panel and not a dropdown. A reviewer who has to work out what *"02 Detail"* means is navigating by trial, and the first thing lost is the order the showing was meant to follow. The generated disclosure screen is tagged in the list, so nobody has to hunt for it.
 
-Arrow keys move through the list, Enter opens, Escape closes.
+Two sections - **Screens** and **About this prototype** - each headed and counted; the second collapses and stays collapsed. Arrow keys move through the list, Enter opens, Escape closes.
 
 ## Notes: three kinds, and they are not interchangeable
 
@@ -152,13 +152,16 @@ Reviewers never see each other's comments. For an async test with real users tha
 | | |
 |---|---|
 | **Grid** | cycles off → 8px → 64px. 8 asks whether an element sits on the rhythm, 64 whether the layout does. Drawn in the shell over the frame - measured from the iframe itself, so inside a device mockup it stops at the screen and takes its corner radius rather than bleeding over the bezel |
-| **Widths** | THIS screen at 1280 / 834 / 390 at once. The device switcher steps aside - every width is already on screen |
-| **Screens** | ALL screens at the width the device switcher is set to. Switch device to reframe them |
+| **All three** (in the device switcher) | THIS screen on desktop, tablet and phone at once, each at its own natural size and all at one scale, bottom-aligned - a product shot, not three columns. It is a choice of *device*, so it lives beside the three it replaces rather than as a control of its own |
+| **Screens** | ALL screens at the width the device switcher is set to |
+| **Time** | the bottom bar's heading is always *Time*; what this screen's axis measures - "Minutes since order" - is the screen's own business and reads in the line beside it, not in the heading. A bar labelled after one demo describes that demo, not the tool |
 | **Present** | full screen, chrome down to prev / pause / next, each slot sweeping that screen's time across its range and scrolling the page through its own height |
 
 A **pointer is on screen for the whole run**, resting inside the artifact and travelling to each declared target before it taps, so a run reads as someone using the prototype rather than as screens changing on their own.
 
 **Mockup is orthogonal to both.** The same button that frames the single view frames these, and they use the *same* markup and CSS as the single view, scaled - so there is one iPhone in this tool, not three that drift apart. Each frame still renders at its real width before scaling, so the artifact's own media queries fire.
+
+**Grid and Add note are off in both multi views.** A pin belongs to one frame, and a grid measures one viewport at full size - at 43% an 8px rule on screen is not 8px in the artifact, so it would quietly lie. Opening a document screen leaves the multi view too: three scaled copies of one page is nonsense.
 
 **A note cannot be placed in either multi view.** A pin belongs to one frame; with three or six on screen and no rail, `Add note` is disabled and says why.
 
@@ -225,6 +228,8 @@ Driven end to end in a real browser before shipping, per the contract's own "tes
 The second round added: per-screen time appearing, disappearing and keeping each screen's own value across a switch; a comment placed by clicking inside the artifact, with a real selector computed for it; collapse to a pin and reopen; an orphan anchor; the generated disclosure screen; and the review brief.
 
 The third: the screen panel with its descriptions and keyboard navigation, and the viewport transition - sampled mid-flight at 427px between a 1106px desktop and a 390px phone, with the annotations re-anchoring correctly once it settled.
+
+The thirteenth: All three selected from the device switcher and showing a laptop, a tablet and a phone at true relative size on one baseline, Grid and Add note disabled there, a document screen dropping out of it, and the documents section collapsing and staying collapsed.
 
 The twelfth: both multi views composing the single view's own frames at 44%, the mockup toggle reframing either, states reaching all three copies, `Add note` disabled in both, and the panel listing three documents below a divider while the count says two screens.
 
