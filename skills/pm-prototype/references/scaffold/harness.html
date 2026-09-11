@@ -445,13 +445,16 @@
   }
   .rail::-webkit-scrollbar { width: 6px; }
   .rail::-webkit-scrollbar-thumb { background: rgba(22,24,29,.18); border-radius: 3px; }
-  .rail__back {
-    flex: 0 0 auto; padding: 8px 11px; border: 0; border-radius: 10px;
-    background: rgba(22,24,29,.05); color: var(--ink-3);
-    font: 600 11px/1 var(--font); text-align: left; cursor: pointer;
-    transition: background var(--fast) var(--ease), color var(--fast) var(--ease);
+  /* rolled up: the title strip, still in place, still numbered */
+  .note--rolled {
+    align-items: center; gap: 9px; padding: 9px 11px;
+    border: 0; cursor: pointer; text-align: left;
+    opacity: .78; transition: opacity var(--fast) var(--ease), transform var(--fast) var(--ease);
   }
-  .rail__back:hover { background: rgba(22,24,29,.09); color: var(--ink-2); }
+  .note--rolled:hover { opacity: 1; transform: translateX(-2px); }
+  .note--rolled .note__kind { flex: 1 1 auto; margin: 0; }
+  .note--rolled > svg { width: 11px; height: 11px; color: var(--ink-3); transform: rotate(-90deg); flex: 0 0 auto; }
+  .note--rolled .note__n, .note--rolled .note__s { transform: scale(.88); }
   .annots svg.lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
   .annots path {
     fill: none; stroke: var(--co); stroke-width: 1.5; stroke-linecap: round; opacity: .55;
@@ -1792,7 +1795,6 @@
     if (open.length && !had) { requestAnimationFrame(drawAnnots); return; }
 
     annotEl.classList.toggle('is-focus', editing());
-    var hidden = [];
 
     var frameBox = frame.getBoundingClientRect();
     var wrapBox = wrap.getBoundingClientRect();
@@ -1858,18 +1860,38 @@
         py = py + (frameBox.top - wrapBox.top);
       }
 
-      /* collapsed: the pin stays, the card is gone until the pin is clicked */
+      /* Minimised: the card ROLLS UP to its title and stays in the rail. Letting
+         it leave the rail meant a note the reviewer merely wanted out of the
+         way had vanished, with nothing on screen saying it existed. */
       if (collapsed[id]) {
-        if (!target) { hidden.push({ id: id, kind: kind, scope: entry.scope }); return; }
-        var cp = document.createElement('div');
-        cp.className = 'pin pin--collapsed' + (kind.cls ? ' pin--' + kind.cls : '');
-        cp.textContent = num;
-        cp.title = 'Show this note';
-        cp.style.left = px + 'px'; cp.style.top = py + 'px';
-        cp.addEventListener('click', function () {
+        var roll = document.createElement('button');
+        roll.type = 'button';
+        roll.className = 'note note--rolled' + (kind.cls ? ' note--' + kind.cls : '');
+        roll.title = 'Expand this note';
+        var rb = document.createElement('span');
+        if (entry.scope === 'element') { rb.className = 'note__n'; rb.textContent = num; }
+        else { rb.className = 'note__s'; rb.innerHTML = icon(HEADERS[entry.scope].i); }
+        var rk = document.createElement('span');
+        rk.className = 'note__kind'; rk.textContent = kind.label;
+        roll.appendChild(rb); roll.appendChild(rk);
+        roll.insertAdjacentHTML('beforeend', icon('i-chevron'));
+        roll.addEventListener('click', function () {
           delete collapsed[id]; writeStore('collapsed', collapsed); drawAnnots();
         });
-        annotEl.appendChild(cp);
+        railEl.appendChild(roll);
+
+        if (target) {
+          var cp = document.createElement('div');
+          cp.className = 'pin pin--collapsed' + (kind.cls ? ' pin--' + kind.cls : '');
+          cp.textContent = num;
+          cp.title = 'Expand this note';
+          cp.style.left = px + 'px'; cp.style.top = py + 'px';
+          cp.addEventListener('click', function () {
+            delete collapsed[id]; writeStore('collapsed', collapsed); drawAnnots();
+          });
+          annotEl.appendChild(cp);
+          pairs.push({ pin: cp, note: roll, px: px, py: py, active: false, path: null });
+        }
         return;
       }
 
@@ -1966,18 +1988,6 @@
       pin.addEventListener('mouseenter', function () { lit(true); });
       pin.addEventListener('mouseleave', function () { lit(false); });
     });
-
-    if (hidden.length) {
-      var back = document.createElement('button');
-      back.type = 'button'; back.className = 'rail__back';
-      back.textContent = 'Show ' + hidden.length + ' minimised note' + (hidden.length === 1 ? '' : 's');
-      back.addEventListener('click', function () {
-        hidden.forEach(function (h) { delete collapsed[h.id]; });
-        writeStore('collapsed', collapsed);
-        drawAnnots();
-      });
-      railEl.appendChild(back);
-    }
 
     requestAnimationFrame(drawLines);
   }

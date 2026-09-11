@@ -107,7 +107,7 @@ Building three mechanisms would be duplicated work and three inconsistent surfac
 
 **An author's label is minimised, never dismissed; only the reviewer's own comment can be deleted.** A disclosure that the reader can make disappear is not a disclosure, and an × on it says the opposite of what the control does.
 
-**Closing a note collapses it to its pin. It never deletes it.** If an admission could be dismissed for good, and that state travelled in a shared link, someone could hand on a screen where an invented number carries no label - the one failure this layer exists to prevent. The whole layer still switches off in one action, because a reviewer must be able to see the artifact exactly as a user would; that is a visible toggle, and it is not carried in a shared link.
+**Closing a note rolls it up to its title, in place. It never deletes it and never leaves the rail** - a note the reviewer merely wanted out of the way must not vanish with nothing on screen saying it existed.** If an admission could be dismissed for good, and that state travelled in a shared link, someone could hand on a screen where an invented number carries no label - the one failure this layer exists to prevent. The whole layer still switches off in one action, because a reviewer must be able to see the artifact exactly as a user would; that is a visible toggle, and it is not carried in a shared link.
 
 **What earns an annotation** - the test is not "is it fake?" but **"could someone act on this, with no way to verify it?"**
 
