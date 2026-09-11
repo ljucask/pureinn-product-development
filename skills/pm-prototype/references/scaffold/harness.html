@@ -3218,9 +3218,11 @@
     return docShell('overview',
       inner +
       '<style>' +
-      '.lab{display:flex;align-items:center;gap:8px}' +
-      '.gi{width:14px;height:14px;color:var(--co);flex:0 0 auto}' +
-      '.sec > .lab .gi, .card .lab .gi{opacity:.9}' +
+      /* the mark sits ABOVE the label, not beside it - inline it just merges
+         into the first letters and reads as part of the word */
+      '.lab{display:block}' +
+      '.gi{display:block;width:16px;height:16px;margin-bottom:8px;color:var(--co)}' +
+      '.lab--top{display:flex;align-items:center;gap:8px}' +
       '.lab--top .spark{width:9px;height:9px;border-radius:50%;background:var(--grad);flex:0 0 auto;' +
         'box-shadow:0 0 0 4px rgba(237,109,87,.14)}' +
       '.card{position:relative;overflow:hidden}' +
