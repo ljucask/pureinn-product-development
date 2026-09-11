@@ -119,7 +119,7 @@ Building three mechanisms would be duplicated work and three inconsistent surfac
 
 **A covering note is not the same as six remarks.** A reviewer who wants to say something about the whole thing has nowhere honest to put it if every note must be pinned to an element, so the layer needs one unpinned note that leads the rail and leads whatever gets sent.
 
-**A reviewer's view is not the maker's view with a card on top.** The alignment grid, side-by-side widths, presentation, screenshot export, the event log and the sharing controls are the maker's tools; left in front of a reviewer they are an invitation to wander off the thing being asked, and they blur what the two links are even for. Strip them, and the two ways of sending a prototype stop meaning the same thing.
+**A reviewer's view differs by what it asks of them, not by what it takes away.** Every instrument that helps someone *look* - the widths, the mockup, the grid, side by side, the presentation, a screenshot to argue with elsewhere - is as useful in a reviewer's hands as in the maker's, and removing it only makes them worse at the job they were asked to do. What the review view adds is a task, a name on every note, and a return path that will not let them leave without offering. Two things do stay behind: the event log, which is the maker's own instrumentation, and the controls that mint links, which are not a reviewer's to hand out.
 
 **The author gets a line too.** What they asked this particular person to look at travels with the link, is shown before the reviewer starts, and is carried into whatever comes back - otherwise the reader of the result cannot tell which remarks answer the question and which are volunteered.
 

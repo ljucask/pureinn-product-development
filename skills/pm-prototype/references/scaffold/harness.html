@@ -775,10 +775,16 @@
   }
   .cta[data-idle="1"] .cta__n { background: rgba(22,24,29,.08); }
 
-  /* Review mode is not the same tool with a card on top. A reviewer has no use
-     for the alignment grid, side-by-side widths, presentation, screenshot
-     export, the event log or the sharing links - and every one of them left in
-     is an invitation to wander off the thing being asked. */
+  /* What review mode is, and is not.
+     It is NOT a smaller toolbar. Every instrument that helps someone look -
+     the widths, the mockup, the grid, side by side, the presentation, a
+     screenshot to argue with elsewhere - earns its place in a reviewer's hands
+     as much as in the maker's, and taking them away only makes the reviewer
+     worse at the job they were asked to do.
+     What it IS: a task, a name on the notes, and a way to hand them back that
+     will not let them leave without offering. So only two things go - the event
+     log, which is the maker's own instrumentation, and the controls that mint
+     links, which are not a reviewer's to hand out. */
   body.review .maker { display: none !important; }
 
   /* ══ review mode - the task first, and what to do at the end ══ */
@@ -1098,12 +1104,12 @@
     <button type="button" data-device-btn="tablet" aria-pressed="false" title="Tablet"><svg><use href="#i-tablet"/></svg></button>
     <button type="button" data-device-btn="mobile" aria-pressed="false" title="Mobile"><svg><use href="#i-mobile"/></svg></button>
   </div>
-  <button class="ib ib--icon maker" type="button" data-mockup aria-pressed="false" title="Device mockup"><svg><use href="#i-frame"/></svg></button>
-  <button class="ib ib--icon maker" type="button" data-compare-btn aria-pressed="false" title="All three widths side by side"><svg><use href="#i-columns"/></svg></button>
-  <button class="ib maker" type="button" data-grid-btn aria-pressed="false" title="Alignment grid - 8px, then 64px"><svg><use href="#i-grid"/></svg><span data-grid-label>Grid</span></button>
-  <span class="sep maker"></span>
-  <button class="ib ib--icon maker" type="button" data-present title="Presentation mode"><svg><use href="#i-play"/></svg></button>
-  <span class="sep maker"></span>
+  <button class="ib ib--icon" type="button" data-mockup aria-pressed="false" title="Device mockup"><svg><use href="#i-frame"/></svg></button>
+  <button class="ib ib--icon" type="button" data-compare-btn aria-pressed="false" title="All three widths side by side"><svg><use href="#i-columns"/></svg></button>
+  <button class="ib" type="button" data-grid-btn aria-pressed="false" title="Alignment grid - 8px, then 64px"><svg><use href="#i-grid"/></svg><span data-grid-label>Grid</span></button>
+  <span class="sep"></span>
+  <button class="ib ib--icon" type="button" data-present title="Presentation mode"><svg><use href="#i-play"/></svg></button>
+  <span class="sep"></span>
   <button class="ib" type="button" data-toggle-labels aria-pressed="true" title="The author's disclosure and prototype notes"><svg><use href="#i-tag"/></svg>Labels</button>
   <button class="ib" type="button" data-toggle-comments aria-pressed="true" title="Comments left in this browser"><svg><use href="#i-note"/></svg>Comments<span class="count" data-comment-count>0</span></button>
   <button class="ib" type="button" data-bare><svg><use href="#i-eye-off"/></svg>Hide <kbd>H</kbd></button>
@@ -1131,12 +1137,12 @@
     </div>
   </div>
 
-  <span class="sep maker"></span>
-  <div class="grp maker">
+  <span class="sep"></span>
+  <div class="grp">
     <span class="grp__l">Capture</span>
     <div class="grp__row">
       <button class="ib ib--icon" type="button" data-shot title="Save this screen as a PNG"><svg><use href="#i-image"/></svg></button>
-      <button class="ib" type="button" data-export title="Download the local event log"><svg><use href="#i-down"/></svg><span class="count" data-event-count>0</span></button>
+      <button class="ib maker" type="button" data-export title="Download the local event log"><svg><use href="#i-down"/></svg><span class="count" data-event-count>0</span></button>
     </div>
   </div>
 
@@ -1144,8 +1150,8 @@
   <div class="grp maker">
     <span class="grp__l">Send it on</span>
     <div class="grp__row">
-      <button class="ib" type="button" data-share title="Opens the full tool at this exact screen, state, time and device - for someone working on it with you"><svg><use href="#i-share"/></svg>This view</button>
-      <button class="ib" type="button" data-invite title="Opens the stripped-down reviewer's view - the task, their notes, and a prompt to send them back"><svg><use href="#i-user"/></svg>For review</button>
+      <button class="ib" type="button" data-share title="Opens at this exact screen, state, time and device - no task, no prompt to send anything back"><svg><use href="#i-share"/></svg>This view</button>
+      <button class="ib" type="button" data-invite title="Opens with the task, their name on every note, and a prompt to send them back"><svg><use href="#i-user"/></svg>For review</button>
     </div>
   </div>
 
@@ -1172,7 +1178,7 @@
     <h2 class="sheet__h" id="invite-h">Send it to someone</h2>
     <button class="nav__x" type="button" data-invite-close aria-label="Close"><svg><use href="#i-x"/></svg></button>
   </div>
-  <p class="sheet__p">A reviewer's link is not this tool with a card on top: the grid, side-by-side, presentation, screenshot export, the event log and these sharing controls are all absent. What is left is the prototype, the states, the widths, and their own notes.</p>
+  <p class="sheet__p">They get the same instruments you have - the widths, the mockup, the grid, side by side, the presentation, a screenshot - plus the task, their name on every note, and a Send control that will not let them leave without offering. What they do not get is your event log or the ability to hand out links.</p>
   <p class="sheet__p">Add a line if there is something specific you want <em>this</em> person to look at.</p>
   <textarea class="sheet__ta" data-invite-msg rows="3" placeholder="e.g. Ignore the styling - tell me whether the assignment step makes sense."></textarea>
   <div class="sheet__acts">

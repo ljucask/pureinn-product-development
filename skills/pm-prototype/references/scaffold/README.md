@@ -100,10 +100,10 @@ A selector that matches nothing renders as an orphan card with a warning instead
 
 | | |
 |---|---|
-| **This view** | the **full tool** at this exact screen, state, time and device - for someone working on it with you |
-| **For review** | the **reviewer's view**: no grid, no side-by-side, no presentation, no screenshot export, no event log, no sharing controls. The prototype, the states, the widths, and their own notes |
+| **This view** | this exact screen, state, time and device. No task, no prompt to send anything back |
+| **For review** | the same instruments **plus** the task, their name on every note, and a Send control that will not let them leave without offering |
 
-That second line is the point. A reviewer handed the maker's toolbar wanders off the thing being asked, and the two links stop meaning anything different.
+**A review link differs by what it asks, not by what it removes.** Every instrument that helps someone look - the widths, the mockup, the grid, side by side, the presentation, a screenshot to argue with elsewhere - is as useful to a reviewer as to you, and taking it away only makes them worse at the job you asked for. Two things stay behind: the **event log**, which is your instrumentation rather than theirs, and the **sharing controls**, which are not a reviewer's to hand out.
 
 `For review` opens a small composer: add a line saying what you want *this* person to look at, then copy the link. That line travels in the URL, is shown to them before they start, and is carried into what comes back - so the reader can tell which remarks answer the question.
 
@@ -191,7 +191,7 @@ The second round added: per-screen time appearing, disappearing and keeping each
 
 The third: the screen panel with its descriptions and keyboard navigation, and the viewport transition - sampled mid-flight at 427px between a 1106px desktop and a 390px phone, with the annotations re-anchoring correctly once it settled.
 
-The tenth: a reviewer's link opening with the maker's tools absent and the reviewer's own intact, the sheet reduced to Copy plus Email with two links under it, and the report's tally split into a desktop and a mobile group.
+The tenth: a reviewer's link keeping every looking instrument while the event log and the sharing controls stay behind, the sheet reduced to Copy plus Email with two links under it, and the report's tally split into a desktop and a mobile group.
 
 The ninth: a note written on mobile hidden on desktop with the rail offering to switch, the report grouped by screen/state/device with a phone shot held at 390px, and the sheet's roll-out opening below its control rather than beside it.
 
