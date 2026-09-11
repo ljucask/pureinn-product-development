@@ -1,6 +1,6 @@
 # pm-prototype
 
-> Cross-phase prototyping engine - compiles a tool-ready spec for Lovable, v0, Base44, or Figma Make
+> Cross-phase prototyping engine - compiles a tool-ready spec for an external tool, or builds in-repo against a harness that labels what is simulated and carries the feedback back
 
 **Phase:** Cross-phase (Discovery → Build)  
 **Agent mode:** `synthesis` - runs fully autonomously  

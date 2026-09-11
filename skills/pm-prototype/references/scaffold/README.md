@@ -22,7 +22,7 @@ cd <prototype>/build && python3 -m http.server 8000
 # open http://localhost:8000/harness.html
 ```
 
-**Serve it with caching off.** `python3 -m http.server` sends no `Cache-Control`, so browsers cache your config heuristically - you edit `harness.config.js`, reload, and see nothing changed. Use this instead:
+**Serve it with caching off, and threaded.** `python3 -m http.server` sends no `Cache-Control`, so browsers cache your config heuristically - you edit `harness.config.js`, reload, and see nothing changed. It is also single-threaded, and the harness holds the page plus an iframe plus the three side-by-side copies open at once, so one stalled connection wedges the whole server and every later request hangs with no error. Use this instead:
 
 ```python
 # serve.py
@@ -31,8 +31,10 @@ class H(http.server.SimpleHTTPRequestHandler):
     def end_headers(self):
         self.send_header('Cache-Control', 'no-store, must-revalidate')
         super().end_headers()
-socketserver.TCPServer.allow_reuse_address = True
-socketserver.TCPServer(("", 8000), H).serve_forever()
+class S(socketserver.ThreadingTCPServer):
+    allow_reuse_address = True
+    daemon_threads = True
+S(("", 8000), H).serve_forever()
 ```
 
 **It must be served, not opened as `file://`.** The artifact runs in an iframe so the device switcher triggers its real media queries - inside a plain container they respond to the window, not the container, and "mobile" would change nothing while appearing to work. Browsers block cross-document access for `file://` frames, so a local server is the price of that honesty.
@@ -81,7 +83,7 @@ A prototype meets two kinds of people, and they need opposite things first. A **
 | **Overview** | investor, sponsor, team, steering committee | `overview:` - six blocks: what this is, who for, the job it does, what it should move, what you will see, what is not in it |
 | **How to test it** | the tester | `instructions:` - the steps, what to ignore, how to leave a note |
 
-Both exist only if their block is filled in, and **`For review` lets you tick which of them travels with the link** - the overview to the sponsor, the instructions to the tester, neither to someone who has already seen it.
+Both exist only if their block is filled in, and **`Invite to review` lets you tick which of them travels with the link** - the overview to the sponsor, the instructions to the tester, neither to someone who has already seen it.
 
 **Every figure on the Overview carries its class** - `observed` · `calculated` · `projected` · `target` · `sample` - printed beside the number. A projection in front of a committee is the most actionable unverifiable number a prototype can contain, and a footnote does not travel with a screenshot.
 
@@ -140,7 +142,7 @@ Spotlight moved up beside `Present`: it is a way of showing someone something, n
 
 **Not every note points at something.** `Note` writes one about the screen with no anchor - "this screen has no way back" does not belong pinned to an arbitrary button. And after a box or a marker stroke, a bubble offers *Add a note here* for a few seconds and then gets out of the way.
 
-**`View all notes`** at the foot of the rail opens the note editor on the right: every note in one place, filtered by kind, severity and text, editable and deletable. Clicking a row goes to where that note lives - its screen, its state, its device - and flashes its pin. **Edit happens in the panel**, not back in the bubble; and a note being written in the bubble can carry on there with `More room`. The rail is a notepad; this is the register. While it is open the rail steps aside. Each card also carries an icon that opens the panel on that one note.
+**`View all notes`** at the foot of the rail opens the note editor on the right: every note in one place, filtered by kind, severity and text, editable and deletable. Clicking a row goes to where that note lives - its screen, its state, its device - and flashes its pin. **Edit happens in the panel**, not back in the bubble; and a note being written in the bubble can carry on there via the small expand icon beside its close control. The rail is a notepad; this is the register. While it is open the rail steps aside.
 
 **Closing a card rolls it up; it does not delete it.** Clicking the strip or its pin brings it back. Only the `Notes` toggle removes the layer, and that state is not carried in a shared link - so no link can hand on a screen where an invented number has lost its label.
 
@@ -161,22 +163,22 @@ Both are kept as **fractions of the frame**, so they survive a resize or a devic
 
 ## Getting feedback back
 
-**Overall** (beside Add note) writes one covering note about the whole prototype - no pin, no severity. It leads the rail, leads the sheet, and leads the report. Six remarks about six elements are not the same as what someone thinks of the thing.
+**`Add note ▾` → `The whole prototype`** writes one covering note about it - no pin, no severity. It leads the rail, leads the sheet, and leads the report. Six remarks about six elements are not the same as what someone thinks of the thing.
 
-**`This view` and `For review`** sit together under *Send it on*, and they open genuinely different things:
+**`Share ▾` → `Copy this view` and `Invite to review`** open genuinely different things:
 
 | | |
 |---|---|
-| **This view** | this exact screen, state, time and device. No task, no prompt to send anything back |
-| **For review** | the same instruments **plus** the task, their name on every note, and a Send control that will not let them leave without offering |
+| **Copy this view** | this exact screen, state, time and device. No task, no prompt to send anything back |
+| **Invite to review** | the same instruments **plus** the task, their name on every note, and a Send control that will not let them leave without offering |
 
-**A review link differs by what it asks, not by what it removes.** Every instrument that helps someone look - the widths, the mockup, the grid, side by side, the presentation, a screenshot to argue with elsewhere - is as useful to a reviewer as to you, and taking it away only makes them worse at the job you asked for. Two things stay behind: the **event log**, which is your instrumentation rather than theirs, and the **sharing controls**, which are not a reviewer's to hand out.
+**A review link differs by what it asks, not by what it removes.** Every instrument that helps someone look - the widths, the mockup, the grid, side by side, the presentation, a screenshot to argue with elsewhere - is as useful to a reviewer as to you, and taking it away only makes them worse at the job you asked for. Two things stay behind: the **event log**, which is your instrumentation rather than theirs, and **`Invite to review`** - minting a review link with a task on it is not a reviewer's to hand out. `Copy this view` stays: pointing at the exact screen they mean is useful, and they already have the link.
 
-`For review` opens a small composer: add a line saying what you want *this* person to look at, then copy the link. That line travels in the URL, is shown to them before they start, and is carried into what comes back - so the reader can tell which remarks answer the question.
+`Invite to review` opens a small composer: add a line saying what you want *this* person to look at, then copy the link. That line travels in the URL, is shown to them before they start, and is carried into what comes back - so the reader can tell which remarks answer the question.
 
 The reviewer's name is asked in the review brief, and - because most notes get written in an ordinary session where that card never appears - once more on the first note, inline. Severity is a labelled row of three dots: blue, orange, red.
 
-`Add note` puts the artifact into comment mode: the next click inside it places a pin and opens an empty card. The shell cannot see that click on its own, so the client forwards it together with a selector - nothing is injected into the page but a cursor.
+`Add note ▾` → `Something I click` puts the artifact into comment mode: the next click inside it places a pin and opens an empty card. The shell cannot see that click on its own, so the client forwards it together with a selector - nothing is injected into the page but a cursor.
 
 Comments live in that reviewer's own `localStorage`. **Without a backend they reach you only when the reviewer presses Send**, which is why that control is permanent, counts what is waiting, and nudges once after the first comment. `Send` copies a formatted summary to the clipboard, opens a prefilled mail when `review.to` is set, and saves a text file. Set `review.submitTo` to an endpoint and it posts instead - the only reason to do that is a run with several reviewers where you cannot depend on each of them remembering.
 
@@ -271,6 +273,8 @@ The second round added: per-screen time appearing, disappearing and keeping each
 
 The third: the screen panel with its descriptions and keyboard navigation, and the viewport transition - sampled mid-flight at 427px between a 1106px desktop and a 390px phone, with the annotations re-anchoring correctly once it settled.
 
+The twenty-first was a full code and security review of the three files rather than a feature round, run through the framework's own JIT review flow and then re-verified in the browser: the sanitiser rejecting every nested payload that used to pass, a note carrying a remote image scrubbed out of storage on load, a screenshot-only note counted and exported instead of silently deleted, the side-by-side columns measured at exactly the 1280 / 834 / 390 they advertise, Hide menu going white on desktop, the mockup staying off a document screen, a malformed `?m=` leaving a working harness, and an editor surviving a stage scroll with its caret and focus intact.
+
 The twentieth: the three note scopes reached from one menu and a screen note written through it, the Share menu carrying all four exports, and the mark menu relabelling its button to "Drag a box" while armed.
 
 The nineteenth: both bottom bars side by side at 1700 with a 12px gap, wrapping to two rows at 1200 and with both panels open, and everything above them following the measured height.
@@ -324,4 +328,15 @@ Bugs found that way, none of which a reading of the code would have caught:
 - the rail positioned its cards absolutely, so once a few notes existed the newest ran off the bottom of the window - and the one being written was the first to go
 - the annotation layer skipped its redraw while the chrome was hidden, silently dropping every change made in the meantime: toggles flipped there did nothing, and notes could come back missing after Hide
 - a cross-origin artifact reserved the annotation rail and then drew nothing into it, because the document was read only after the rail was measured
+- the `is-` prefix sweep missed two selectors, and both failed silently: `body.bare:has(...)` never matched, so Hide menu on a desktop viewport left the dotted canvas behind a full-bleed artifact, and `:not(.fixed-width)` guarded all seventeen mockup rules against a class nothing sets any more - so a text document was drawn inside an iPhone bezel with the toggle greyed out. A rename is not finished until you grep for the old name in the CSS as well as the JS
+- `clean()` snapshotted `childNodes` before unwrapping, so anything one level inside a `<span>` or `<p>` - the exact shape a paste produces - sailed past the tag allowlist with its attributes intact. It also parsed into a `document.createElement('div')`, which still has this document as its owner, so the input executed while it was being sanitised. It parses into `document.implementation.createHTMLDocument()` now and walks live nodes. **A sanitiser that trusts a snapshot is not one**
+- four code paths disagreed about what makes a note real. A screenshot with no words rendered in the rail, never reached the count or any export, and was deleted by the load filter on the next refresh - silently losing the single highest-value note the layer carries. `plain()` is the only test now, and everything that reads `.text` goes through `noteText()`
+- `writeStore` swallowed every exception, quota included, so past roughly twenty image notes the toast still said "Note added" and the reload found nothing. It reports once, while there is still time to export
+- the storage key was the config `name` alone, and two prototypes on one host are one origin: on the shipped default they shared every key, so Send in one posted the other's notes to the wrong endpoint. The path is part of the key now
+- `fetch` rejects only on a network failure, so a 413 or a 500 from the author's endpoint thanked the reviewer for notes that never arrived
+- `drawAnnots` empties the rail and rebuilds every card, and it was wired straight to the stage's scroll event - so scrolling to look at the thing you were describing tore the editor down mid-sentence. It waits while anyone is writing
+- the side-by-side copies set the wrap to the viewport width and then drew the bezel inside it, so the phone column rendered at 368px under a label reading 390. A media query at `min-width: 390px` fired in the single view and not in the comparison the view exists to make
+- only the `ready` branch of the message listener checked `e.source`, so the three scaled copies tripled every event in the log and answered a presented aim three extra times - up to sixteen clicks for one declared step
+- `annotEl.querySelector('.note--comment')` looked for cards in the layer they do not live in, so the saved-note confirmation flash never played once
+- and one introduced by the review itself, caught only because it was re-run in a browser: `clean()` is called at load on stored notes, so a module-level `var KEEP` was still `undefined` when it ran and the exception took the whole boot with it. `node --check` passed. **Hoisting is not an ordering guarantee, and a syntax check is not a load**
 - `.seg` and `.grp` set their own `display`, which beats the browser's rule for `[hidden]` - hiding the variant group did nothing at all

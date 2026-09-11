@@ -1,6 +1,6 @@
 ---
 name: pm-prototype
-description: Cross-phase prototyping engine. Takes a scoped chunk of the product (a feature, a PRD initiative, the whole product, or any slice) and gets a prototype of it built by one of two paths - compiled as a tool-ready spec for an external tool (Lovable, v0/Vercel, Base44, Figma Make), or built in-repo by a coding agent against a harness carrying states, fixtures, time, variants, device presets and an event log. Gate-checks whether a prototype is worth it at all, then decides depth and path from who it is for and which uncertainty it resolves. On re-run, captures the result against a precommitted threshold and feeds it back to the Feature Card / hypothesis register. Use anytime you want to validate before real build.
+description: Cross-phase prototyping engine. Takes a scoped chunk of the product (a feature, a PRD initiative, the whole product, or any slice) and gets a prototype of it built by one of two paths - compiled as a tool-ready spec for an external tool (Lovable, v0/Vercel, Base44, Figma Make), or built in-repo by a coding agent against a harness that carries the states, fixtures, per-screen time and latency, variants, device widths, an honesty layer that labels what is simulated, reviewer comments with a no-backend return path, and a feedback report. Gate-checks whether a prototype is worth it at all, then decides depth and path from who it is for and which uncertainty it resolves. On re-run, captures the result against a precommitted threshold and feeds it back to the Feature Card / hypothesis register. Use anytime you want to validate before real build.
 license: MIT
 metadata:
   agent-mode: synthesis
@@ -43,7 +43,7 @@ This file is the flow. Detail that only one path needs lives in `references/` ne
 | `in-repo-loop.md` | The harness shell contract, the rules of the iteration loop, stop and restart signals | the prototype is built here, by a coding agent |
 | `prototype-folder.md` | The folder an in-repo prototype lives in, `targets:`, provenance for `context/`, the decision state | **Step 3b - created before the build**, updated at 7, closed at 8 |
 | `promotion.md` | Classification before the first line of code; kill and promotion once there is a decision | Step 3b, then Step 8 |
-| `scaffold/` | The harness itself - copy it into the prototype's build folder | on the in-repo path |
+| `scaffold/` | The harness itself - copy `harness.html` and `harness-client.js` byte-for-byte, edit only `harness.config.js` | on the in-repo path |
 
 ---
 
@@ -56,7 +56,7 @@ Takes a scoped chunk of the product and gets a prototype of it built, so you can
 | | |
 |---|---|
 | **External tool** | compiles a tool-ready spec and hands it to Lovable / v0 / Figma Make. One shot out, iteration goes back through the tool |
-| **In-repo** | builds here, with a coding agent, against a harness that carries states, fixtures, time, variants, device presets, annotations and an event log. A continuous loop with no moment of handoff |
+| **In-repo** | builds here, with a coding agent, against a harness that carries the four states, fixtures, per-screen time and latency, variants, device widths, the disclosure layer, reviewer comments and the way they get back. A continuous loop with no moment of handoff |
 
 The path is an **output of the flow, not an input**: it follows from who the prototype is for and which uncertainty it resolves. Do not ask the user to pick it up front.
 

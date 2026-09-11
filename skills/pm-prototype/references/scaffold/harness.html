@@ -33,6 +33,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="img-src 'self' data: blob:">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Prototype harness</title>
 <style>
@@ -144,12 +145,12 @@
      Each device sets its own bezel, corner radius and cut-out. The numbers are
      proportional to the real thing rather than a generic rounded rectangle,
      which is what made the first attempt look like a toy. */
-  body.is-mock:not(.fixed-width) .mock { position: relative; }
-  body.is-mock:not(.fixed-width) .screen { box-shadow: none; }
+  body.is-mock:not(.is-fixed) .mock { position: relative; }
+  body.is-mock:not(.is-fixed) .screen { box-shadow: none; }
 
   /* iPhone: thin uniform bezel, deep corner radius, Dynamic Island */
-  body.is-mock:not(.fixed-width) .wrap[data-device="mobile"] { --bez: 11px; }
-  body.is-mock:not(.fixed-width) .wrap[data-device="mobile"] .mock {
+  body.is-mock:not(.is-fixed) .wrap[data-device="mobile"] { --bez: 11px; }
+  body.is-mock:not(.is-fixed) .wrap[data-device="mobile"] .mock {
     padding: var(--bez);
     background: #1c1c1e;
     border-radius: 56px;
@@ -159,14 +160,14 @@
       0 0 0 1px rgba(0,0,0,.5),
       0 40px 80px -30px rgba(22,24,29,.55);
   }
-  body.is-mock:not(.fixed-width) .wrap[data-device="mobile"] .screen { border-radius: 45px; }
-  body.is-mock:not(.fixed-width) .wrap[data-device="mobile"] .mock::before {
+  body.is-mock:not(.is-fixed) .wrap[data-device="mobile"] .screen { border-radius: 45px; }
+  body.is-mock:not(.is-fixed) .wrap[data-device="mobile"] .mock::before {
     content: ""; position: absolute; z-index: 2;
     top: calc(var(--bez) + 9px); left: 50%; transform: translateX(-50%);
     width: 112px; height: 33px; border-radius: 999px; background: #000;
   }
   /* left side: silent switch, then the volume pair */
-  body.is-mock:not(.fixed-width) .wrap[data-device="mobile"] .mock::after {
+  body.is-mock:not(.is-fixed) .wrap[data-device="mobile"] .mock::after {
     content: ""; position: absolute; z-index: 1; left: -2.5px; top: 118px;
     width: 3px; height: 26px; border-radius: 2px;
     background: #2a2a2e;
@@ -174,8 +175,8 @@
   }
 
   /* iPad: even bezel all round, softer radius, a single camera dot */
-  body.is-mock:not(.fixed-width) .wrap[data-device="tablet"] { --bez: 17px; }
-  body.is-mock:not(.fixed-width) .wrap[data-device="tablet"] .mock {
+  body.is-mock:not(.is-fixed) .wrap[data-device="tablet"] { --bez: 17px; }
+  body.is-mock:not(.is-fixed) .wrap[data-device="tablet"] .mock {
     padding: var(--bez);
     background: #2b2b2e;
     border-radius: 36px;
@@ -185,8 +186,8 @@
       0 0 0 1px rgba(0,0,0,.45),
       0 40px 80px -30px rgba(22,24,29,.5);
   }
-  body.is-mock:not(.fixed-width) .wrap[data-device="tablet"] .screen { border-radius: 20px; }
-  body.is-mock:not(.fixed-width) .wrap[data-device="tablet"] .mock::before {
+  body.is-mock:not(.is-fixed) .wrap[data-device="tablet"] .screen { border-radius: 20px; }
+  body.is-mock:not(.is-fixed) .wrap[data-device="tablet"] .mock::before {
     content: ""; position: absolute; z-index: 2;
     top: 7px; left: 50%; transform: translateX(-50%);
     width: 7px; height: 7px; border-radius: 50%;
@@ -196,8 +197,8 @@
   /* MacBook: thin screen bezel and camera notch. No base under the lid - it is
      drawn hardware nobody is reviewing, and it eats vertical space the artifact
      could have had. */
-  body.is-mock:not(.fixed-width) .wrap[data-device="desktop"] { --bez: 10px; }
-  body.is-mock:not(.fixed-width) .wrap[data-device="desktop"] .mock {
+  body.is-mock:not(.is-fixed) .wrap[data-device="desktop"] { --bez: 10px; }
+  body.is-mock:not(.is-fixed) .wrap[data-device="desktop"] .mock {
     padding: var(--bez);
     background: #26272b;
     border-radius: 16px;
@@ -207,19 +208,19 @@
       0 0 0 1px rgba(0,0,0,.45),
       0 44px 80px -34px rgba(22,24,29,.5);
   }
-  body.is-mock:not(.fixed-width) .wrap[data-device="desktop"] .screen { border-radius: 5px; }
+  body.is-mock:not(.is-fixed) .wrap[data-device="desktop"] .screen { border-radius: 5px; }
   /* the camera notch lives in the bezel, so it must not reach far enough down
      to collide with the browser bar inside the screen */
-  body.is-mock:not(.fixed-width) .wrap[data-device="desktop"] .mock::before {
+  body.is-mock:not(.is-fixed) .wrap[data-device="desktop"] .mock::before {
     content: ""; position: absolute; z-index: 3;
     top: 0; left: 50%; transform: translateX(-50%);
     width: 142px; height: 13px;
     background: #26272b;
     border-radius: 0 0 8px 8px;
   }
-  body.is-mock:not(.fixed-width) .wrap[data-device="desktop"] .mock__bar { margin-top: 4px; }
+  body.is-mock:not(.is-fixed) .wrap[data-device="desktop"] .mock__bar { margin-top: 4px; }
 
-  body.is-mock:not(.fixed-width) .wrap[data-device="desktop"] .mock__bar { display: flex; }
+  body.is-mock:not(.is-fixed) .wrap[data-device="desktop"] .mock__bar { display: flex; }
   .mock__bar {
     align-items: center; gap: 7px;
     height: 26px; padding: 0 4px 8px;
@@ -317,11 +318,6 @@
   .title {
     color: var(--co); font-size: 13px; font-weight: 680; letter-spacing: -.01em;
     max-width: 26ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  }
-  .title + .disclose__text::before { content: "·"; padding-right: 7px; color: rgba(22,24,29,.25); }
-  .disclose__text {
-    color: var(--ink-3); font-size: 12px; padding-right: 6px;
-    max-width: 34ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
 
   .sep { width: 1px; align-self: stretch; margin: 3px 2px; background: var(--glass-ring); }
@@ -1021,7 +1017,10 @@
   }
   .mk__ask svg { width: 13px; height: 13px; }
   .mk__ask.is-out { opacity: 0; transition: opacity var(--med) var(--ease); }
-  .marks:hover .mk__x { opacity: 1; }
+  /* Hover the MARK, not the layer: .marks is pointer-events:none outside
+     marking mode, so .marks:hover never matches - which left the × invisible
+     while the box it belongs to was lighting up under the same pointer. */
+  .marks g:hover .mk__x, .marks g:focus-within .mk__x { opacity: 1; }
 
   /* the spotlight: a hole in a dark sheet, following the pointer */
   .spot {
@@ -1345,7 +1344,6 @@
 
   /* ══ chrome hidden - the artifact exactly as a user would see it ══ */
   body.is-bare .isle, body.is-bare .annots, body.is-bare .rail { opacity: 0; pointer-events: none; transform: translateY(8px); }
-  body.is-bare .isle--b { transform: translateX(-50%) translateY(8px); }
   body.is-bare .mock {
     padding: 0 !important; background: none !important;
     box-shadow: none !important; border-radius: 0 !important;
@@ -1359,7 +1357,7 @@
      chrome" silently swaps the viewport being reviewed for a different one -
      and it must stay visibly bounded, or a white artifact on a white page
      reads as something that failed to load rather than as a phone. */
-  body.bare:has(.wrap[data-device="desktop"]) { background: #fff; }
+  body.is-bare:has(.wrap[data-device="desktop"]) { background: #fff; }
   body.is-bare .stage:has(.wrap[data-device="desktop"]) { padding: 0; }
   body.is-bare .wrap[data-device="desktop"] {
     width: 100% !important; max-width: none !important;
@@ -1775,21 +1773,57 @@
 
   /* Per-viewer memory. Never shared, never leaves this browser on its own -
      which is also what an async test with real users requires. */
-  var KEY = 'harness:' + (cfg.name || 'prototype');
+  /* The path is part of the key, not just the name. Two prototypes served from
+     one host are the SAME ORIGIN, so on the shipped config name they would
+     share every key - and Send in one would post the other's notes to the
+     wrong endpoint. */
+  var KEY = 'harness:' + (cfg.name || 'prototype') + '@' + location.pathname;
+  var storeBroken = false;
   function readStore(k, fallback) {
-    try { return JSON.parse(localStorage.getItem(KEY + ':' + k)) || fallback; }
+    try {
+      /* an empty string is a stored value, not a missing one - || would send
+         it to the fallback and undo a field the reviewer deliberately cleared */
+      var raw = localStorage.getItem(KEY + ':' + k);
+      return raw === null ? fallback : JSON.parse(raw);
+    }
     catch (e) { return fallback; }
   }
+  /* A swallowed write is the worst failure this tool has: the toast says "Note
+     added", the counter goes up, and the reload finds nothing. Private mode
+     refuses every write; a full quota refuses this one - images are the usual
+     cause. Either way the reviewer is told once, while they can still export. */
   function writeStore(k, v) {
-    try { localStorage.setItem(KEY + ':' + k, JSON.stringify(v)); } catch (e) { /* private mode */ }
+    try { localStorage.setItem(KEY + ':' + k, JSON.stringify(v)); return true; }
+    catch (e) {
+      if (!storeBroken) {
+        storeBroken = true;
+        try { toast('This browser is not keeping notes - they will be lost on reload. Export them before you close the tab.', 9000); } catch (e2) {}
+      }
+      return false;
+    }
   }
   var collapsed = readStore('collapsed', {});
+  /* Deleting a note has to take its fold state with it, or the map only ever
+     grows - one key per note anyone ever wrote here. */
+  function forget(id) {
+    if (id === undefined || !(id in collapsed)) return;
+    delete collapsed[id];
+    writeStore('collapsed', collapsed);
+  }
   var folded    = readStore('folded', {});
   /* The covering note: what the reviewer wants to say about the whole thing,
      which is not the same as six remarks about six elements and does not
      belong pinned to one of them. */
   var summary   = readStore('summary', null);
-  var askedFor  = q.get('m') ? decodeURIComponent(q.get('m')) : readStore('asked', '');
+  var askedFor  = (function () {
+    var m = q.get('m');
+    if (!m) return readStore('asked', '');
+    /* the composer encodes on top of URLSearchParams, so this undoes that -
+       but a link that has been through a mail client or a chat app may not
+       survive the round trip, and a lone % would otherwise throw here, at the
+       top of the IIFE, leaving an inert shell. */
+    try { return decodeURIComponent(m); } catch (e) { return m; }
+  })();
   if (q.get('m')) writeStore('asked', askedFor);
 
   /* A draft that survived a reload would hold the whole layer in writing mode
@@ -1797,11 +1831,17 @@
      dropped, and a half-written one comes back as a saved note the reviewer
      can edit - never as a live textarea nobody remembers opening. */
   var comments = readStore('comments', []).filter(function (cm) {
-    return (cm.text || '').trim();
+    return plain(cm);
   }).map(function (cm) {
     cm.draft = false; cm.editing = false; cm.fresh = false;
+    /* Cleaned on read as well as on write. What is in storage was not
+       necessarily put there by this code. */
+    if (cm.html) cm.html = clean(cm.html);
     return cm;
   });
+  /* write the cleaned notes straight back, so a payload someone put in storage
+     is gone from it rather than merely gone from this render */
+  writeStore('comments', comments);
 
   if (cfg.title || cfg.name) {
     var titleEl = document.querySelector('[data-title]');
@@ -1809,7 +1849,10 @@
     titleEl.hidden = false;
     document.title = (cfg.title || cfg.name) + ' - prototype';
   }
-  function icon(id) { return '<svg><use href="#' + id + '"/></svg>'; }
+  /* id reaches this from config and, at one call site, from a stored note - so
+     it is escaped rather than trusted, even though it should always be a
+     literal from our own sprite. */
+  function icon(id) { return '<svg><use href="#' + String(id).replace(/[^\w-]/g, '') + '"/></svg>'; }
 
   function toast(msg, ms) {
     toastEl.textContent = msg;
@@ -2345,6 +2388,12 @@
 
   async function exportPng() {
     if (!frameReady) { captureMode('The artifact is not ready yet.'); return; }
+    /* whatever measures one frame is off in a multi view - here it measured a
+       display:none element and wrote a blank file under a "Saved" toast */
+    if (document.body.classList.contains('is-compare') || document.body.classList.contains('is-promo')) {
+      captureMode('A screenshot captures the one screen. Leave the side-by-side view first.');
+      return;
+    }
     var doc;
     try { doc = frame.contentDocument; } catch (e) { doc = null; }
     if (!doc) { captureMode('Cannot read the artifact - is it served from this origin?'); return; }
@@ -2534,6 +2583,7 @@
     });
   }
 
+  var railSettle = null;
   function drawAnnots() {
     /* No early return while the chrome is hidden. The layer is only made
        transparent there, never unmounted, so measuring is still valid - and
@@ -2544,6 +2594,14 @@
     pairs = [];
     svg.innerHTML = '';
     if ((!labelsOn && !commentsOn) || !frameReady) { document.body.classList.remove('is-railed'); return; }
+    /* Same guard drawMarks carries. In the multi views the single .wrap is
+       display:none but still readable, so this would run to completion,
+       measure a zero-size frame, and reserve rail padding for a rail that is
+       not on screen - reflowing the three frames as you scroll them. */
+    if (document.body.classList.contains('is-compare') || document.body.classList.contains('is-promo')) {
+      document.body.classList.remove('is-railed');
+      return;
+    }
 
     var list = notesFor(current.screen);
     var open = list.filter(function (e) { return !collapsed[e.id]; });
@@ -2564,8 +2622,20 @@
 
     var had = document.body.classList.contains('is-railed');
     document.body.classList.toggle('is-railed', open.length > 0);
-    // reserving the rail resizes the frame; measure only once that has applied
-    if (open.length && !had) { requestAnimationFrame(drawAnnots); return; }
+    /* Reserving the rail resizes the frame, and .stage transitions its
+       padding over var(--med). One rAF is ~16ms into a 300ms ease, so the
+       pins used to be placed against a width the frame was still travelling
+       towards. Wait for the transition to end - with a timeout backstop,
+       because a padding change of zero fires no transitionend at all. */
+    if (open.length && !had) {
+      clearTimeout(railSettle);
+      var settled = false;
+      var done = function () { if (settled) return; settled = true; stage.removeEventListener('transitionend', onEnd); drawAnnots(); };
+      var onEnd = function (ev) { if (ev.target === stage && ev.propertyName === 'padding-right') done(); };
+      stage.addEventListener('transitionend', onEnd);
+      railSettle = setTimeout(done, 340);
+      return;
+    }
 
     annotEl.classList.toggle('is-focus', editing());
 
@@ -2752,6 +2822,7 @@
         setTimeout(function () {
           if (cm) {
             comments = comments.filter(function (o) { return o.id !== id; });
+            forget(id);
             writeStore('comments', comments);
             paintSend();
           } else {
@@ -2846,35 +2917,67 @@
 
   /* Only emphasis and one picture survive the trip: anything else pasted in
      would be someone else's markup living in our storage and our report. */
+  /* Two rules this function exists to obey, both of them easy to get wrong:
+
+     1. Parse somewhere inert. Assigning to the .innerHTML of an element made
+        with document.createElement gives that element this document as its
+        ownerDocument, so images start loading and error handlers run at the
+        moment of assignment - before a single node has been inspected. A
+        sanitiser that executes its input while sanitising it is not one.
+        createHTMLDocument() has no browsing context, so nothing runs.
+
+     2. Walk what is there NOW, not a snapshot. Unwrapping a disallowed element
+        hoists its children into the parent. A list of childNodes taken before
+        the loop does not contain them, so anything one level deep inside a
+        <span> or a <p> - the exact shape a paste produces - would sail past
+        the tag allowlist and the img src check with its attributes intact. */
   function clean(html) {
-    var d = document.createElement('div');
+    /* declared in here on purpose: clean() runs at load, on notes read from
+       storage, before a module-level var would have been assigned. */
+    var KEEP = ['b', 'strong', 'i', 'em', 'u', 'br', 'div'];
+    var doc = document.implementation.createHTMLDocument('');
+    var d = doc.createElement('div');
     d.innerHTML = html || '';
     (function walk(node) {
-      Array.prototype.slice.call(node.childNodes).forEach(function (n) {
-        if (n.nodeType === 3) return;
-        if (n.nodeType !== 1) { n.remove(); return; }
+      var n = node.firstChild;
+      while (n) {
+        var next = n.nextSibling;
+        if (n.nodeType === 3) { n = next; continue; }
+        if (n.nodeType !== 1) { n.remove(); n = next; continue; }
         var tag = n.tagName.toLowerCase();
         if (tag === 'img') {
-          if (String(n.getAttribute('src') || '').indexOf('data:image/') !== 0) { n.remove(); return; }
+          if (String(n.getAttribute('src') || '').indexOf('data:image/') !== 0) { n.remove(); n = next; continue; }
           Array.prototype.slice.call(n.attributes).forEach(function (a) {
             if (a.name !== 'src' && a.name !== 'alt') n.removeAttribute(a.name);
           });
-          return;
+          n = next; continue;
         }
-        if (['b','strong','i','em','u','br','div'].indexOf(tag) < 0) {
+        if (KEEP.indexOf(tag) < 0) {
+          var first = n.firstChild;
           while (n.firstChild) n.parentNode.insertBefore(n.firstChild, n);
           n.remove();
-          return;
+          /* re-enter at the first hoisted child, so what was inside the
+             element we just removed is inspected like everything else */
+          n = first || next;
+          continue;
         }
         Array.prototype.slice.call(n.attributes).forEach(function (a) { n.removeAttribute(a.name); });
         walk(n);
-      });
+        n = next;
+      }
     })(d);
     return d.innerHTML;
   }
   function plain(cm) {
     if ((cm.text || '').trim()) return true;
     return /<img /.test(cm.html || '');   // a picture on its own is a note
+  }
+  /* ...which means every reader of .text has to survive there being none. A
+     blank line in the report reads as a bug; naming what is there reads as the
+     note it actually is. */
+  function noteText(cm) {
+    var t = (cm && cm.text || '').trim();
+    return t || '(screenshot, no words)';
   }
 
   /* A full-size photo would fill the browser's storage on the second note, so
@@ -3012,7 +3115,7 @@
         if (isSummary) writeStore('summary', summary); else writeStore('comments', comments);
         paintSend();
         drawAnnots();
-        var el = annotEl.querySelector('.note--comment');
+        var el = railEl.querySelector('.note--comment');
         if (el) el.classList.add('is-saved');
         toast(isSummary ? 'Overall note saved. It goes at the top of what you send.'
                         : 'Note added' + (cm.severity && cm.severity !== 'normal' ? ' (' + SEV[cm.severity] + ')' : '') + '. You can still edit it.');
@@ -3023,7 +3126,7 @@
           if (cm.draft) summary = null; else cm.editing = false;
           writeStore('summary', summary);
         } else {
-          if (cm.draft) comments = comments.filter(function (o) { return o.id !== cm.id; });
+          if (cm.draft) { forget(cm.id); comments = comments.filter(function (o) { return o.id !== cm.id; }); }
           writeStore('comments', comments);
           if (!cm.draft) cm.editing = false;
         }
@@ -3085,7 +3188,7 @@
     share: function () { return [
       { h: 'Send it to someone' },
       { ico: 'i-share', t: 'Copy this view',   d: 'This exact screen, state, time and device. No task attached', fn: function () { press('[data-share]'); } },
-      { ico: 'i-user',  t: 'Invite to review', d: 'Opens with the task and a prompt to send notes back', fn: function () { press('[data-invite]'); } },
+      { ico: 'i-user',  t: 'Invite to review', d: 'Opens with the task and a prompt to send notes back', fn: function () { press('[data-invite]'); }, maker: true },
       { sep: true },
       { h: 'Take a copy' },
       { ico: 'i-image', t: 'Screenshot',    d: 'This screen as a PNG, without the annotation layer', fn: function () { press('[data-shot]'); } },
@@ -3317,12 +3420,10 @@
       drawAnnots();
     });
     marksEl.appendChild(ask);
-    marksEl.style.pointerEvents = 'auto';
     setTimeout(function () {
       ask.classList.add('is-out');
       setTimeout(function () {
         ask.remove();
-        if (!marking) marksEl.style.pointerEvents = '';
       }, 300);
     }, 5200);
   }
@@ -3487,6 +3588,7 @@
           e.stopPropagation();
           if (n.summary) { summary = null; writeStore('summary', null); }
           else {
+            forget(n.cm && n.cm.id);
             comments = comments.filter(function (o) { return o !== n.cm; });
             writeStore('comments', comments);
           }
@@ -3611,6 +3713,9 @@
       // the pin is the answer to "which one was that?"
       var pin = annotEl.querySelector('.pin.is-focus');
       if (pin) { pin.classList.remove('is-focus'); void pin.offsetWidth; pin.classList.add('is-focus'); }
+      /* it answers "which one was that?" once. Left set, it re-ran the
+         attention animation on every later redraw. */
+      setTimeout(function () { focusNote = null; }, 3200);
     }, 420);
   }
 
@@ -3630,7 +3735,6 @@
      Nothing is injected into the page - only the cursor changes. */
   var picking = false;
   var commentBtn = document.querySelector('[data-comment]');
-  var commentLabel = commentBtn.lastChild;
 
   function setPicking(on) {
     picking = on;
@@ -3746,11 +3850,15 @@
   var commentN  = document.querySelector('[data-comment-count]');
   var nudged = false;
 
+  /* plain() decides what counts as a written note, here and at load and in the
+     rail. It has to be the same test in all three: when it was not, a note
+     that was only a screenshot rendered, never reached the count or any
+     export, and vanished on reload without a word. */
   function written() {
-    return comments.filter(function (cm) { return !cm.draft && (cm.text || '').trim(); });
+    return comments.filter(function (cm) { return !cm.draft && plain(cm); });
   }
   function overall() {
-    return summary && !summary.draft && (summary.text || '').trim() ? summary : null;
+    return summary && !summary.draft && plain(summary) ? summary : null;
   }
   function total() { return written().length + (overall() ? 1 : 0); }
 
@@ -3771,13 +3879,13 @@
                  (reviewerName ? 'From: ' + reviewerName : ''),
                  new Date().toLocaleString(), ''];
     if (askedFor) { lines.push('What was asked: ' + askedFor, ''); }
-    if (overall()) { lines.push('OVERALL', overall().text.trim(), ''); }
+    if (overall()) { lines.push('OVERALL', noteText(overall()), ''); }
     written().forEach(function (cm, i) {
       var s = screens[screenIndex(cm.screen)];
       lines.push((i + 1) + '. [' + (SEV[cm.severity || 'normal']) + '] ' +
                  (s ? s.label : cm.screen) + ' / ' + cm.state +
                  (cm.anchor ? ' - near "' + cm.anchor + '"' : ''));
-      lines.push('   ' + cm.text.trim());
+      lines.push('   ' + noteText(cm));
       lines.push('');
     });
     return lines.filter(function (l, i) { return !(i === 1 && !l); }).join('\n');
@@ -3822,7 +3930,7 @@
       var so = document.createElement('li');
       so.className = 'sheet__sum';
       var sot = document.createElement('span');
-      sot.textContent = overall().text.trim();
+      sot.textContent = noteText(overall());
       var sow = document.createElement('span');
       sow.className = 'sheet__where'; sow.textContent = 'Overall note · edit it in the rail';
       sot.appendChild(sow);
@@ -3865,7 +3973,7 @@
         no.textContent = i + 1;
         var s = screens[screenIndex(cm.screen)];
         var txt = document.createElement('span');
-        txt.textContent = cm.text.trim();
+        txt.textContent = noteText(cm);
         var where = document.createElement('span');
         where.className = 'sheet__where';
         where.textContent = (s ? s.label : cm.screen) + ' · ' + cm.state +
@@ -3918,10 +4026,19 @@
 
   async function submitEndpoint() {
     try {
-      await fetch(review.submitTo, {
+      var res = await fetch(review.submitTo, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prototype: cfg.name || 'prototype', from: reviewerName, asked: askedFor, overall: overall() && overall().text, comments: written(), events: events })
       });
+      /* fetch rejects only on a network failure, so without this a 413 or a
+         500 resolved and the reviewer was thanked for notes that never
+         arrived. Telling someone their feedback was delivered when it was
+         rejected is the worst thing this one button can do. */
+      if (!res.ok) {
+        toast('The endpoint refused it (' + res.status + '). Copy or save the file instead.', 5200);
+        record('harness:feedback-refused', res.status);
+        return;
+      }
       toast('Sent. Thank you - nothing else to do.', 4200);
       record('harness:feedback-sent', written().length);
       closeSheet();
@@ -3938,7 +4055,7 @@
     } catch (e) { toast('The browser refused the clipboard - save the file instead.', 4600); }
   }
   function mailOut() {
-    window.open('mailto:' + review.to +
+    window.open('mailto:' + encodeURIComponent(review.to || '').replace(/%40/g, '@') +
       '?subject=' + encodeURIComponent('Prototype feedback - ' + (cfg.title || cfg.name || 'prototype')) +
       '&body=' + encodeURIComponent(feedbackText().slice(0, 1800)), '_blank');
     record('harness:feedback-mailed', written().length);
@@ -3959,7 +4076,7 @@
         anchor: cm.anchor || '',
         author: cm.who || '',
         at: cm.at || '',
-        note: (cm.text || '').replace(/\s+/g, ' ').trim(),
+        note: noteText(cm).replace(/\s+/g, ' '),
         hasImage: /<img /.test(cm.html || '') ? 'yes' : ''
       };
     });
@@ -4212,7 +4329,7 @@
           // the number is the whole point of the pin: without it the reader
           // cannot tell which mark on the picture this sentence belongs to
           return '<li><span class="no" style="background:' + SEVC[cm.severity || 'normal'] + '">' + (s.from + i) + '</span>' +
-            '<div><p>' + esc(cm.text.trim()) + '</p><span class="meta">' +
+            '<div><p>' + esc(noteText(cm)) + '</p><span class="meta">' +
             '<b style="color:' + SEVC[cm.severity || 'normal'] + '">' + esc(SEV[cm.severity || 'normal']) + '</b>' +
             (cm.anchor ? ' · near "' + esc(cm.anchor) + '"' : '') +
             (cm.who ? ' · ' + esc(cm.who) : '') + '</span></div></li>';
@@ -4308,7 +4425,7 @@
         '<div class="tally">' + tally + '</div></div>' +
       ((askedFor || overall()) ? '<div class="blocks">' +
         (askedFor ? '<div class="block ask"><span class="lab">What was asked</span>' + esc(askedFor) + '</div>' : '') +
-        (overall() ? '<div class="block sum"><span class="lab">Overall</span>' + esc(overall().text.trim()) + '</div>' : '') +
+        (overall() ? '<div class="block sum"><span class="lab">Overall</span>' + esc(noteText(overall())) + '</div>' : '') +
         '</div>' : '') +
       body +
       (rows.length ? '<section class="sim"><span class="lab">What was simulated</span>' +
@@ -4363,7 +4480,8 @@
      the reviewer reads. */
   function esc(s) {
     return String(s === undefined || s === null ? '' : s)
-      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
   /* Shared chrome for every generated page, in the tool's own language. */
   function docShell(title, inner, wide) {
@@ -4613,6 +4731,13 @@
   var compareBtn = deviceSeg.querySelector('[data-device-btn="all"]');
   var cmpEl = document.querySelector('[data-compare]');
   var DEVW = { desktop: 1280, tablet: 834, mobile: 390 };
+  /* What the drawn hardware adds to a device's viewport, per device: the bezel
+     on both sides, and the bezel plus the browser bar on top. The scale
+     arithmetic budgets for it AND mini() has to add it to the wrap, or the
+     iframe inside ends up narrower than the width printed above it - and a
+     media query at min-width:390px would then fire in the single view and not
+     in the side-by-side, which is the one comparison the view exists to make. */
+  var HWBOX = { desktop: [20, 46], tablet: [34, 34], mobile: [22, 22] };
   var DEVH = { desktop: 800,  tablet: 1112, mobile: 844 };
 
   function loadCompare() {
@@ -4628,7 +4753,6 @@
        viewport alone and then drawing a bezel around it pushed the whole row
        past the stage - and a centred flex row that overflows loses its left
        end off the edge, where no scrollbar can reach it. */
-    var HWBOX = { desktop: [20, 46], tablet: [34, 34], mobile: [22, 22] };  // extra w, h per device
     var mock = current.mockup;
     var total = devs.reduce(function (n, d) { return n + DEVW[d] + (mock ? HWBOX[d][0] : 0); }, 0);
     var tallest = Math.max.apply(null, devs.map(function (d) { return DEVH[d] + (mock ? HWBOX[d][1] : 0); }));
@@ -4677,7 +4801,6 @@
      Every screen at once, each rendered at its real width and scaled down into
      a device frame. Real width again, for the same reason as side by side: a
      shrunk iframe is the same layout smaller, not the layout at that size. */
-  function mockOn() { return current.mockup; }
 
   /* Build one scaled copy of the real thing: the same .wrap / .mock / .screen
      the single view uses, at its natural size, scaled as a whole. */
@@ -4687,8 +4810,12 @@
     var wrapEl = document.createElement('div');
     wrapEl.className = 'wrap';
     wrapEl.setAttribute('data-device', dev);
-    wrapEl.style.width = w + 'px';
-    wrapEl.style.height = h + 'px';
+    /* w and h are the VIEWPORT the copy has to present. The hardware is drawn
+       around it, so it is added on top - exactly as the single view's
+       calc(390px + var(--bez) * 2) does. */
+    var ex = current.mockup ? HWBOX[dev] : [0, 0];
+    wrapEl.style.width = (w + ex[0]) + 'px';
+    wrapEl.style.height = (h + ex[1]) + 'px';
     wrapEl.style.transform = 'scale(' + scale + ')';
 
     var mockEl2 = document.createElement('div');
@@ -4712,8 +4839,8 @@
       cell.style.width = Math.round(b.width) + 'px';
       cell.style.height = Math.round(b.height) + 'px';
     });
-    cell.style.width = Math.round(w * scale) + 'px';
-    cell.style.height = Math.round(h * scale) + 'px';
+    cell.style.width = Math.round((w + ex[0]) * scale) + 'px';
+    cell.style.height = Math.round((h + ex[1]) * scale) + 'px';
     return { cell: cell, frame: fr };
   }
 
@@ -4733,7 +4860,6 @@
     // fit them all, but never so small that the screen is unreadable
     /* fit the row, fit the height, and do not shrink further than that - two
        screens should not be postage stamps just because ten would have to be */
-    var HWBOX = { desktop: [20, 46], tablet: [34, 34], mobile: [22, 22] };
     var ew = current.mockup ? HWBOX[dev][0] : 0;
     var eh = current.mockup ? HWBOX[dev][1] : 0;
     var perRow = Math.max(1, Math.min(list.length, Math.floor((box.width - 60) / ((w + ew) * 0.2 + 30))));
@@ -4796,7 +4922,7 @@
      across its own range and the page scrolled through its own height. Clicks
      only ever happen where a tour asks for one: inventing input would show the
      audience something the prototype was never claimed to do. */
-  var presenting = false, playing = false, stepAt = 0, stepTimer = null, sweepTimer = null;
+  var presenting = false, playing = false, stepAt = 0, stepTimer = null, sweepTimer = null, aimTimer = null;
   var tour = cfg.tour || null;
   var HOLD = (cfg.present && cfg.present.hold) || 4000;
   var showEl   = document.querySelector('[data-show]');
@@ -4855,7 +4981,8 @@
       // aim first: the artifact reports where the target is, the pointer travels
       // there, and only then does the click fire
       pendingClick = st.click;
-      setTimeout(function () { send('aim', st.click); }, Math.min(700, hold / 5));
+      clearTimeout(aimTimer);
+      aimTimer = setTimeout(function () { send('aim', st.click); }, Math.min(700, hold / 5));
     } else {
       parkGhost();
     }
@@ -4896,6 +5023,10 @@
     document.querySelector('[data-show-play]').querySelector('use')
       .setAttribute('href', on ? '#i-pause' : '#i-play');
     clearTimeout(stepTimer);
+    /* the sweep is what moves the clock and scrolls the artifact - leaving it
+       running meant the thing the audience was asked to look at scrolled away
+       after the presenter pressed Pause. */
+    if (!on) clearInterval(sweepTimer);
     if (on) applyStep(stepAt);
   }
 
@@ -4910,7 +5041,7 @@
       setPlaying(true);
       record('harness:present', tour ? 'tour' : 'screens');
     } else {
-      clearTimeout(stepTimer); clearInterval(sweepTimer);
+      clearTimeout(stepTimer); clearInterval(sweepTimer); clearTimeout(aimTimer);
       playing = false;
       pendingClick = null;
       ghost.classList.remove('is-on', 'is-tap');
@@ -4999,6 +5130,11 @@
       if (picking) send('picking', true);
       requestAnimationFrame(drawAnnots);
     }
+    /* Everything past this point belongs to the ONE artifact being reviewed.
+       The scaled copies in the side-by-side and the promo views are the same
+       document loaded three more times: without this they would triple the
+       event log and answer a presented aim three extra times. */
+    if (e.source !== frame.contentWindow) return;
     if (d.type === 'event') { events.push(d.entry); countEvents(); }
     if (d.type === 'pick') { placeComment(d); }
     if (d.type === 'point') { aimed(d); }
@@ -5007,7 +5143,8 @@
   function load() {
     frameReady = false;
     svg.innerHTML = '';
-    annotEl.querySelectorAll('.note, .pin').forEach(function (n) { n.remove(); });
+    annotEl.querySelectorAll('.pin').forEach(function (n) { n.remove(); });
+    railEl.innerHTML = '';
     var s = screens[screenIndex(current.screen)];
     /* A generated screen is a document about the prototype, not a screen of it.
        It is read at a desk, it has no responsive behaviour worth testing, and
@@ -5049,9 +5186,14 @@
     fitCompare();
     if (promoOn) buildPromo();
     fitGrid();
-    drawAnnots();
+    redrawIdle();
   });
-  stage.addEventListener('scroll', drawAnnots);
+  /* Scroll and resize both want the pins re-placed, but drawAnnots rebuilds
+     every card from scratch - including the one being typed into. A stale pin
+     for as long as someone is writing is a far smaller cost than losing what
+     they were writing, so the rebuild waits. */
+  function redrawIdle() { if (editing()) return; drawAnnots(); }
+  stage.addEventListener('scroll', redrawIdle);
   document.querySelector('[data-rail]').addEventListener('scroll', drawLines);
 
   load();
