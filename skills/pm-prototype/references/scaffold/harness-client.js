@@ -8,12 +8,15 @@
   event capture.
 
   Copy byte-for-byte. Do not re-author per prototype.
+
+  Channels: state · variant · time · latency. Plus Harness.wait(), which is how
+  a simulated delay actually reaches the artifact.
 */
 (function (global) {
   'use strict';
 
-  var handlers = { state: [], time: [], variant: [] };
-  var current = { state: 'full', time: 0, variant: 'default' };
+  var handlers = { state: [], time: [], variant: [], latency: [] };
+  var current = { state: 'full', time: 0, variant: 'default', latency: 'none' };
   var embedded = global.parent !== global;
 
   function on(kind, fn) {
@@ -60,6 +63,24 @@
 
   function ago(minutes) {
     return new Date(Date.now() - minutes * 60000);
+  }
+
+  /* Latency, because a prototype that answers everything instantly teaches the
+     wrong expectation and hides a whole class of problem: nobody sees that the
+     flow assumed an instant result until something takes two seconds.
+
+       await Harness.wait();        // whatever the shell is simulating
+       await Harness.wait(1200);    // your own base, scaled by the setting
+
+     With latency off it resolves immediately, so the call costs nothing when
+     nobody is simulating anything. */
+  var LAG = { none: 0, realistic: 1, slow: 3.2 };
+
+  function wait(base) {
+    var f = LAG[current.latency] === undefined ? 0 : LAG[current.latency];
+    if (!f) return Promise.resolve();
+    var ms = (base || 450 + Math.random() * 400) * f;
+    return new Promise(function (r) { setTimeout(r, ms); });
   }
 
   /* Comment mode. The shell cannot see clicks inside this document, so when a
@@ -164,7 +185,7 @@
   global.addEventListener('message', function (e) {
     var d = e.data;
     if (!d || !d.__harness) return;
-    if (d.type === 'state' || d.type === 'time' || d.type === 'variant') apply(d.type, d.value);
+    if (d.type === 'state' || d.type === 'time' || d.type === 'variant' || d.type === 'latency') apply(d.type, d.value);
     if (d.type === 'picking') setPicking(d.value);
     if (d.type === 'scroll') scrollTo(d.value);
     if (d.type === 'aim') aimAt(d.value);
@@ -191,6 +212,7 @@
     embedded: embedded,
     get: function (kind) { return current[kind]; },
     nextWeekday: nextWeekday,
-    ago: ago
+    ago: ago,
+    wait: wait
   };
 })(window);

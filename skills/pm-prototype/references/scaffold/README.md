@@ -60,6 +60,7 @@ The artifact never depends on the harness. Open a page directly and it still run
 | `Harness.log(name, detail)` | one event into the local log. Never a network call |
 | `Harness.nextWeekday(day, hour)` | time-relative fixture helper - `nextWeekday(3, 20)` is the next Wednesday at 20:00 |
 | `Harness.ago(minutes)` | a timestamp in the past, relative to now |
+| `await Harness.wait()` | a simulated delay, scaled by the latency setting - zero when it is off |
 
 **Never hardcode a date in a fixture.** A prototype that has visibly rotted between the build and the showing discredits itself for free.
 
@@ -154,7 +155,8 @@ Reviewers never see each other's comments. For an async test with real users tha
 | **Grid** | cycles off → 8px → 64px. 8 asks whether an element sits on the rhythm, 64 whether the layout does. Drawn in the shell over the frame - measured from the iframe itself, so inside a device mockup it stops at the screen and takes its corner radius rather than bleeding over the bezel |
 | **All three** (in the device switcher) | THIS screen on desktop, tablet and phone at once, each at its own natural size and all at one scale, bottom-aligned - a product shot, not three columns. It is a choice of *device*, so it lives beside the three it replaces rather than as a control of its own |
 | **Screens** | ALL screens at the width the device switcher is set to |
-| **Time** | the bottom bar's heading is always *Time*; what this screen's axis measures - "Minutes since order" - is the screen's own business and reads in the line beside it, not in the heading. A bar labelled after one demo describes that demo, not the tool |
+| **Simulate** | opens the simulation panel - the time axis with **play** and reset, and latency. Time is something being *run*, not a value being picked, and the panel is where the next dimensions go (audience, data volume, locale) without the bar growing a row. The chip shows the current value; the panel remembers whether it was open |
+| **Latency** | `none` / `realistic` / `slow`, published to the artifact. `await Harness.wait()` resolves immediately when it is off and costs nothing to call, so a prototype can be honest about waiting without being slow to build. A prototype that answers everything instantly teaches the wrong expectation |
 | **Present** | full screen, chrome down to prev / pause / next, each slot sweeping that screen's time across its range and scrolling the page through its own height |
 
 A **pointer is on screen for the whole run**, resting inside the artifact and travelling to each declared target before it taps, so a run reads as someone using the prototype rather than as screens changing on their own.
@@ -201,7 +203,7 @@ Three conveniences the contract does not require, but that a reviewer expects fr
 The contract requires them; the kit cannot supply them:
 
 - **Fixtures** - realistic content in its own file, plausible for this audience, covering the unbounded cases. Never lorem ipsum on a task path.
-- **The four states themselves** - the harness switches them, the artifact renders them. An `unauth` state that renders identically to `full` is a missing state, not a satisfied one.
+- **The four states themselves** - the harness switches them, the artifact renders them. An `unauth` state that renders identically to `full` is a missing state, not a satisfied one. Five more are offered and none required - `loading`, `partial`, `long`, `offline`, `forbidden` - each answering a lie a prototype tells by default. Adding one obliges the artifact to render it; a state it ignores is worse than one never offered, because it reads as tested.
 - **What the time scrubber means on each screen** - its scale, its label, and the one line saying what moving it demonstrates *there*. Declared per screen; a screen without a `time` block has no scrubber, which is the right answer wherever time is not part of the question.
 - **Which elements earn an annotation** - the test is *"could someone act on this, with no way to verify it?"*, not *"is it fake?"*
 
@@ -228,6 +230,8 @@ Driven end to end in a real browser before shipping, per the contract's own "tes
 The second round added: per-screen time appearing, disappearing and keeping each screen's own value across a switch; a comment placed by clicking inside the artifact, with a real selector computed for it; collapse to a pin and reopen; an orphan anchor; the generated disclosure screen; and the review brief.
 
 The third: the screen panel with its descriptions and keyboard navigation, and the viewport transition - sampled mid-flight at 427px between a 1106px desktop and a 390px phone, with the annotations re-anchoring correctly once it settled.
+
+The fifteenth: the simulation panel opening from its chip, play running the axis from 0 to 25 min and pausing, reset returning it, and the latency setting arriving in the artifact.
 
 The fourteenth: the multi-device row staying inside the stage at 1440 and at 900 with the mockup on, the time axis changing from minutes to days between two screens, and the mockup no longer drawn around a document screen.
 

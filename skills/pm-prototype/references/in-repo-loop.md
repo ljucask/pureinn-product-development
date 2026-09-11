@@ -67,6 +67,18 @@ Four states, each reachable in **one action**:
 
 Deliberate empty states are content, not blanks: a first-ever session with its seed row reads differently from an empty grid.
 
+**Five more are worth offering, none of them required.** Each answers a lie a prototype tells by default:
+
+| | |
+|---|---|
+| **Loading** | the big one. A prototype answers instantly, so nobody notices the flow assumed an instant result. Pairs with the latency control |
+| **Partial** | real data is ragged - a null field, a missing image. A prototype's data is complete, so the layout is never actually tested |
+| **Long** | the 200-item list, the 60-character name. `content-and-copy.md` already asks fixtures to cover these; as a state it can be checked rather than hoped for |
+| **Offline** | for anything used away from a desk |
+| **Forbidden** | signed in but not allowed. *Unauthorised* is not signed in; they are different screens and the second is routinely missed |
+
+Adding one obliges the artifact to render it. **A state the artifact ignores is worse than a state it never offered** - it reads as tested.
+
 ### 2. Fixtures
 
 - **In their own editable file**, reusable across prototypes and across variants.
@@ -74,7 +86,15 @@ Deliberate empty states are content, not blanks: a first-ever session with its s
 - **Time-relative, never dated.** Compute from now (`the next Wednesday at 20:00`), never a hardcoded date. A prototype that has visibly rotted between the build and the showing discredits itself for free.
 - **Cover the unbounded cases** - the long name, the 200-item list, the message thread that never ends, the input that overflows. Decide per element whether it truncates or wraps; long Slovak and German strings break chips and fixed columns first.
 
-### 3. Time
+### 3. Simulation - time, latency, and what comes after
+
+**Time is not a setting, it is something being run.** A control bar that holds it beside the capture tools is mixing three different kinds of thing: what the artifact *is* (variant), what situation it is *in* (state, time, latency), and what you are *doing to it* (capture, share, notes). The situation deserves its own surface - with a **play** control, because running the axis through is a different act from dragging it, and it is the one you want in front of someone.
+
+That surface is also where the next dimensions go without the bar growing a row: content generated for a particular audience, data volume, locale, connection quality.
+
+**Latency belongs there, and it earns its place.** A prototype that answers everything instantly teaches the wrong expectation and hides a whole class of problem - nobody notices the flow assumed an instant result until something takes two seconds. The shell publishes the setting; the artifact decides what to do with it. A `wait()` helper that resolves immediately when latency is off costs nothing to call and makes the difference real when it is on.
+
+#### The scrubber itself
 
 A **scrubber, not a timer.** Reason, and it is the deciding one: a reviewer goes through the prototype alone and without narration. An autonomous transition on a timer is missed, and seen a second time only after a reload. A scrubber makes a forty-minute session arc replayable in ten seconds, in either direction, at the reviewer's pace.
 

@@ -840,6 +840,38 @@
   body.fixed-width [data-device-seg], body.fixed-width [data-mockup],
   body.fixed-width [data-promo-btn] { opacity: .35; pointer-events: none; }
 
+  /* ══ simulation - its own surface, because it is not a setting ══
+     Time is a thing being RUN, not a value being picked, and the bar was mixing
+     three kinds of control: what the artifact is (variant), what situation it
+     is in (state, time), and what you are doing to it (capture, share, notes).
+     This is where the situation lives, and where the next dimensions - audience,
+     data volume, locale, connection - will go without the bar growing a row. */
+  .sim {
+    position: fixed; left: 50%; bottom: 122px; z-index: 27;
+    width: min(420px, calc(100vw - 40px)); padding: 16px 18px 14px;
+    transform: translateX(-50%);
+    background: var(--glass-lit);
+    backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+    border-radius: var(--r-xl);
+    box-shadow: inset 0 1px 0 var(--glass-edge), 0 0 0 1px var(--glass-ring), 0 26px 60px -22px rgba(22,24,29,.45);
+    animation: rise var(--med) var(--spring);
+  }
+  body.nav-open .sim { transform: translateX(calc(-50% + var(--nav) / 2)); }
+  .sim__top { display: flex; align-items: center; gap: 10px; }
+  .sim__top .lab { flex: 1 1 auto; font: 700 8.5px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); }
+  .sim__play { display: flex; gap: 2px; }
+  .sim__row { margin-top: 15px; }
+  .sim__row + .sim__row { padding-top: 15px; border-top: 1px solid var(--glass-ring); }
+  .sim__head { display: flex; align-items: baseline; gap: 9px; margin-bottom: 9px; }
+  .sim__head b { flex: 1 1 auto; font-size: 12.5px; font-weight: 650; color: var(--ink); }
+  .sim__row .scrub { width: 100%; }
+  /* the explanation finally gets a line of its own instead of being clipped */
+  .sim__note { margin: 9px 0 0; font-size: 11.5px; line-height: 1.5; color: var(--ink-3); }
+  .sim__note code { font: 600 11px var(--mono); color: var(--ink-2); }
+  .sim__foot { margin: 13px 0 0; font-size: 11.5px; color: var(--ink-3); }
+  .sim .seg { width: 100%; }
+  .sim .seg button { flex: 1 1 0; justify-content: center; }
+
   /* ══ review mode - the task first, and what to do at the end ══ */
   .brief {
     position: fixed; inset: 0; z-index: 30;
@@ -1123,6 +1155,8 @@
   <symbol id="i-gallery" viewBox="0 0 16 16"><rect x="1.6" y="4" width="3.6" height="8" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.4"/><rect x="6.2" y="2.4" width="3.6" height="11.2" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.4"/><rect x="10.8" y="4" width="3.6" height="8" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.4"/></symbol>
   <symbol id="i-columns" viewBox="0 0 16 16"><rect x="1.6" y="3" width="4" height="10" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.4"/><rect x="7" y="3" width="3.2" height="10" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.4"/><rect x="11.6" y="3" width="2.8" height="10" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.4"/></symbol>
   <symbol id="i-grid" viewBox="0 0 16 16"><path d="M2 6h12M2 10h12M6 2v12M10 2v12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><rect x="2" y="2" width="12" height="12" rx="1.8" fill="none" stroke="currentColor" stroke-width="1.4"/></symbol>
+  <symbol id="i-sim" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.9" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M8 4.6V8l2.4 1.6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-reset" viewBox="0 0 16 16"><path d="M3.2 8a4.8 4.8 0 1 0 1.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M2.4 2.8v2.9h2.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-play" viewBox="0 0 16 16"><path d="M5 3.4l7 4.6-7 4.6z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></symbol>
   <symbol id="i-pause" viewBox="0 0 16 16"><path d="M6 3.5v9M10 3.5v9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
   <symbol id="i-prev" viewBox="0 0 16 16"><path d="M10 3.5L5.5 8l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
@@ -1211,13 +1245,11 @@
     <div class="seg" data-variants-group><div class="seg__thumb" data-thumb></div></div>
   </div>
 
-  <span class="sep" data-time-sep hidden></span>
-  <div class="grp" data-time-grp hidden>
-    <span class="grp__l">Time</span>
+  <span class="sep"></span>
+  <div class="grp">
+    <span class="grp__l">Simulate</span>
     <div class="grp__row">
-      <input class="scrub" type="range" data-scrub aria-label="Time on this screen">
-      <span class="time" data-time></span>
-      <span class="grp__hint"><b data-time-label></b><span data-time-hint></span></span>
+      <button class="ib" type="button" data-sim-btn aria-pressed="false" aria-controls="sim" title="Time, latency, and anything else this prototype pretends about the situation"><svg><use href="#i-sim"/></svg><span data-sim-chip>Situation</span></button>
     </div>
   </div>
 
@@ -1283,6 +1315,31 @@
   <p class="sheet__p" data-sheet-p></p>
   <ul class="sheet__list" data-sheet-list></ul>
   <div class="sheet__acts" data-sheet-acts></div>
+</div>
+
+<div class="sim" id="sim" data-sim hidden>
+  <div class="sim__top">
+    <span class="lab">Simulation</span>
+    <div class="sim__play" data-sim-run hidden>
+      <button class="ib ib--icon" type="button" data-sim-play title="Play the time axis through"><svg><use href="#i-play"/></svg></button>
+      <button class="ib ib--icon" type="button" data-sim-reset title="Back to the start"><svg><use href="#i-reset"/></svg></button>
+    </div>
+    <button class="nav__x" type="button" data-sim-close aria-label="Close"><svg><use href="#i-x"/></svg></button>
+  </div>
+
+  <div class="sim__row" data-time-grp hidden>
+    <div class="sim__head"><b data-time-label></b><span class="time" data-time></span></div>
+    <input class="scrub" type="range" data-scrub aria-label="Time on this screen">
+    <p class="sim__note" data-time-hint></p>
+  </div>
+
+  <div class="sim__row">
+    <div class="sim__head"><b>Latency</b></div>
+    <div class="seg" data-lag-seg><div class="seg__thumb" data-thumb></div></div>
+    <p class="sim__note">A prototype that answers instantly teaches the wrong expectation. The artifact decides what to do with this - <code>Harness.wait()</code> is the hook.</p>
+  </div>
+
+  <p class="sim__foot" data-sim-empty hidden>This screen declares no time axis. Latency still applies.</p>
 </div>
 
 <div class="brief" data-brief hidden>
@@ -1614,7 +1671,6 @@
   var scrub    = document.querySelector('[data-scrub]');
   var timeOut  = document.querySelector('[data-time]');
   var timeGrp  = document.querySelector('[data-time-grp]');
-  var timeSep  = document.querySelector('[data-time-sep]');
   var timeLbl  = document.querySelector('[data-time-label]');
   var timeHint = document.querySelector('[data-time-hint]');
 
@@ -1628,31 +1684,110 @@
 
   function mountTime() {
     var t = screenTime();
-    timeGrp.hidden = timeSep.hidden = !t;
-    if (!t) return;
+    timeGrp.hidden = !t;
+    paintChip();
+    if (!t) { stopSim(); return; }
     current.time = times[current.screen];
     /* The group says "Time" on every prototype; what THIS screen's axis measures
        is the screen's own business and belongs in the line, not in the heading -
        a bar labelled "Minutes since order" describes one demo, not the tool. */
-    timeLbl.textContent = t.label || '';
-    timeLbl.hidden = !t.label;
+    timeLbl.textContent = t.label || 'Time';
     timeHint.textContent = t.hint || '';
-    timeHint.parentNode.title = (t.label ? t.label + ' - ' : '') + (t.hint || '');
     timeHint.hidden = !t.hint;
     scrub.min = t.min; scrub.max = t.max; scrub.step = t.step || 1;
     scrub.value = current.time;
     paintScrub();
   }
 
+  /* ---------- the simulation panel ----------
+     Open/closed is remembered: during a demo it wants to stay up, while
+     reviewing a layout it is in the way. */
+  var simEl    = document.querySelector('[data-sim]');
+  var simBtn   = document.querySelector('[data-sim-btn]');
+  var simChip  = document.querySelector('[data-sim-chip]');
+  var simRun   = document.querySelector('[data-sim-run]');
+  var simEmpty = document.querySelector('[data-sim-empty]');
+  var simPlay  = document.querySelector('[data-sim-play]');
+
+  function paintChip() {
+    var t = screenTime();
+    simChip.textContent = t
+      ? (t.format ? t.format(current.time) : String(current.time))
+      : 'Situation';
+    simRun.hidden = !t;
+    simEmpty.hidden = !!t;
+  }
+
+  function openSim(on) {
+    simEl.hidden = !on;
+    simBtn.setAttribute('aria-pressed', String(on));
+    writeStore('simOpen', on);
+    if (on) mountTime();
+  }
+  simBtn.addEventListener('click', function () { openSim(simEl.hidden); });
+  document.querySelector('[data-sim-close]').addEventListener('click', function () { openSim(false); });
+
+  /* Play is a different action from dragging: it runs the axis through at a
+     watchable pace, which is what you want in front of someone. */
+  var simTimer = null;
+  function stopSim() {
+    clearInterval(simTimer); simTimer = null;
+    simPlay.querySelector('use').setAttribute('href', '#i-play');
+    simPlay.setAttribute('aria-pressed', 'false');
+  }
+  function runSim() {
+    var t = screenTime();
+    if (!t) return;
+    if (simTimer) { stopSim(); return; }
+    if (current.time >= t.max) setTime(t.min);
+    simPlay.querySelector('use').setAttribute('href', '#i-pause');
+    simPlay.setAttribute('aria-pressed', 'true');
+    var span = t.max - t.min;
+    var step = Math.max(t.step || 1, Math.round(span / 60));
+    simTimer = setInterval(function () {
+      var t2 = screenTime();
+      if (!t2) { stopSim(); return; }
+      var next = current.time + step;
+      if (next >= t2.max) { setTime(t2.max); stopSim(); return; }
+      setTime(next);
+    }, 110);
+    record('harness:sim-play', current.screen);
+  }
+  simPlay.addEventListener('click', runSim);
+  document.querySelector('[data-sim-reset]').addEventListener('click', function () {
+    var t = screenTime(); if (!t) return;
+    stopSim(); setTime(t.min);
+  });
+
+  function setTime(v) {
+    current.time = times[current.screen] = v;
+    scrub.value = v;
+    paintScrub();
+    paintChip();
+    send('time', v);
+  }
+
+  /* ---------- latency ----------
+     The artifact decides what to do with it; Harness.wait() is the hook. */
+  var LAGS = ['none', 'realistic', 'slow'];
+  current.latency = 'none';
+  segment(document.querySelector('[data-lag-seg]'), LAGS, 'latency', function (v) {
+    send('latency', v);
+    record('harness:latency', v);
+  });
+
   scrub.addEventListener('input', function () {
+    stopSim();
     current.time = parseInt(scrub.value, 10);
     times[current.screen] = current.time;
     paintScrub();
+    paintChip();
     send('time', current.time);
   });
   // one record on release, not on every pixel of the drag
   scrub.addEventListener('change', function () { record('harness:time', current.time); });
   mountTime();
+  if (readStore('simOpen', false)) openSim(true);
 
   /* ---------- device ---------- */
   /* All three at once is a choice of DEVICE, not a separate tool: it belongs in
@@ -3607,19 +3742,13 @@
       var tc = screenTime();
       if (tc && st.time === undefined) {
         var v = Math.round(tc.min + (tc.max - tc.min) * p);
-        if (v !== current.time) {
-          current.time = times[current.screen] = v;
-          scrub.value = v; paintScrub(); send('time', v);
-        }
+        if (v !== current.time) setTime(v);
       }
       if (st.scroll) send('scroll', p * (typeof st.scroll === 'number' ? st.scroll : 1));
       if (p >= 1) clearInterval(sweepTimer);
     }, 90);
 
-    if (st.time !== undefined && screenTime()) {
-      current.time = times[current.screen] = st.time;
-      scrub.value = st.time; paintScrub(); send('time', st.time);
-    }
+    if (st.time !== undefined && screenTime()) setTime(st.time);
     if (st.click) {
       // aim first: the artifact reports where the target is, the pointer travels
       // there, and only then does the click fire

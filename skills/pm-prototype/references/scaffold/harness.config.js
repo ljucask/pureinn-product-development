@@ -148,8 +148,27 @@ window.HARNESS_CONFIG = {
 
   /* Four states are the contract. Drop one only when it genuinely cannot exist
      for this artifact - and say so on the disclosure screen, because a missing
-     unauthorised state is usually an omission rather than an impossibility. */
+     unauthorised state is usually an omission rather than an impossibility.
+
+     Five more are offered, none required. Each answers a lie a prototype tells
+     by default, and the first three are the ones worth the trouble:
+
+       'loading'    the biggest one. A prototype answers instantly, so nobody
+                    notices the flow assumed an instant result. Pair it with the
+                    latency control and Harness.wait()
+       'partial'    real data is ragged - a null field, a missing image. A
+                    prototype's data is complete, so the layout is never tested
+       'long'       the 200-item list, the 60-character name. content-and-copy
+                    already asks fixtures to cover these; as a state it can be
+                    checked rather than hoped for
+       'offline'    for anything that will be used away from a desk
+       'forbidden'  signed in but not allowed. 'unauth' is NOT signed in; they
+                    are different screens and the second is routinely missed
+
+     Adding one means the artifact must render it. A state the artifact ignores
+     is worse than a state it does not offer. */
   states: ['empty', 'full', 'error', 'unauth'],
+  // states: ['empty', 'loading', 'full', 'partial', 'long', 'error', 'unauth', 'forbidden', 'offline'],
 
   /* Named directions, shown side by side.
      MANDATORY when the prototype exists to choose between directions: a single
