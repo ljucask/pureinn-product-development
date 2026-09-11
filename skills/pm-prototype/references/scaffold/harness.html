@@ -106,9 +106,9 @@
        sideways. */
     overflow-y: auto; overflow-x: hidden;
   }
-  body.compare .stage, body.promo .stage { overflow-x: auto; }
-  body.compare .rail, body.promo .rail { display: none; }
-  body.has-notes .stage { padding-right: calc(26px + var(--rail)); }
+  body.is-compare .stage, body.is-promo .stage { overflow-x: auto; }
+  body.is-compare .rail, body.is-promo .rail { display: none; }
+  body.is-railed .stage { padding-right: calc(26px + var(--rail)); }
 
   .wrap {
     position: relative; flex: 0 0 auto; display: flex;
@@ -135,11 +135,12 @@
   .wrap[data-device="mobile"]  { width: calc(390px + var(--bez) * 2); height: 100%; max-height: calc(844px + var(--bez) * 2); }
 
   /* ══ mockup: device frames modelled on the real hardware ══
-     The body's state class is `is-mock`, not `mock`: `.mock` is the frame
-     element, and a shared name means `document.querySelector('.mock')` hands
-     back <body>. That trap has been sprung four times in this file - see the
-     `compare` and `promo` containers - so no state class may share a name with
-     an element class again.
+     EVERY state class on <body> carries an `is-` prefix. Without one it can
+     collide with an element class, and then a rule meant for that element hits
+     <body> as well: `.spot { display: none }` blanked the entire page, and
+     `document.querySelector('.mock')` handed back <body> instead of the frame.
+     That trap sprang five times in this file before the prefix went in. An
+     element class must never begin with `is-`, and a body state must always.
      Each device sets its own bezel, corner radius and cut-out. The numbers are
      proportional to the real thing rather than a generic rounded rectangle,
      which is what made the first attempt look like a toy. */
@@ -251,16 +252,25 @@
   .isle--tl { top: 16px; left: 18px; padding-right: 15px; }
   .isle--tr { top: 16px; right: 18px; }
   .isle--b  { bottom: 18px; left: 50%; transform: translateX(-50%); }
+  /* its own island: notes are a different job from driving the prototype, and
+     they have outgrown being a group inside someone else's bar */
+  .isle--notes { bottom: 18px; right: 18px; align-items: stretch; padding: 9px 13px; gap: 13px; }
+  body.is-notes .isle--notes { right: calc(18px + var(--npanel)); }
+  @media (max-width: 1500px) {
+    .isle--b { left: 18px; transform: none; }
+    body.is-nav .isle--b { left: calc(18px + var(--nav)); transform: none; }
+    body.is-notes .isle--b, body.is-notes.is-nav .isle--b { transform: none; }
+  }
 
   /* Two fixed islands grow towards each other; below these widths the left one
      sheds what it can spare rather than sliding under the right one. */
   /* the panel eats 348px of the window, so the top bar has to shed as if the
      screen were that much narrower - a media query cannot know about it */
-  body.notes-open .isle--tl .title { display: none; }
-  @media (max-width: 1620px) { body.notes-open .isle--tl .badge__t { display: none; } body.notes-open .isle--tl .badge { padding: 7px; } }
-  @media (max-width: 1500px) { body.notes-open .isle--tl .cur__k { display: none; } }
-  @media (max-width: 1400px) { body.notes-open .isle--tl .badge { display: none; } }
-  @media (max-width: 1260px) { body.notes-open .isle--tl .cur { display: none; } }
+  body.is-notes .isle--tl .title { display: none; }
+  @media (max-width: 1620px) { body.is-notes .isle--tl .badge__t { display: none; } body.is-notes .isle--tl .badge { padding: 7px; } }
+  @media (max-width: 1500px) { body.is-notes .isle--tl .cur__k { display: none; } }
+  @media (max-width: 1400px) { body.is-notes .isle--tl .badge { display: none; } }
+  @media (max-width: 1260px) { body.is-notes .isle--tl .cur { display: none; } }
 
   @media (max-width: 1420px) { .isle--tl .title { display: none; } }
   @media (max-width: 1260px) { .isle--tl .badge__t { display: none; } .isle--tl .badge { padding: 7px; } }
@@ -458,9 +468,10 @@
      artifact hides the thing being reviewed, and the reviewer has to close it
      to check what they just read. */
   .stage, .isle--tl, .isle--b { transition: padding var(--med) var(--ease), left var(--med) var(--ease), transform var(--med) var(--ease); }
-  body.nav-open .stage  { padding-left: calc(26px + var(--nav)); }
-  body.nav-open .isle--tl { left: calc(18px + var(--nav)); }
-  body.nav-open .isle--b  { transform: translateX(calc(-50% + var(--nav) / 2)); }
+  body.is-nav .stage  { padding-left: calc(26px + var(--nav)); }
+  body.is-nav .isle--tl { left: calc(18px + var(--nav)); }
+  body.is-nav .isle--b  { transform: translateX(calc(-50% + var(--nav) / 2)); }
+  body.is-nav .isle--notes { /* anchored right; the panel moves it, not the nav */ }
 
   /* ══ scrub ══ */
   .scrub { -webkit-appearance: none; appearance: none; width: 148px; height: 22px; background: none; cursor: grab; }
@@ -648,6 +659,12 @@
   }
   .note__save[disabled] { background: rgba(22,24,29,.08); color: var(--ink-3); box-shadow: none; cursor: default; }
   .note__kbd { font: 700 8.5px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); flex: 0 0 auto; }
+  .note__more {
+    padding: 5px 9px; border: 0; border-radius: 7px;
+    background: rgba(22,24,29,.05); color: var(--ink-3);
+    font: 600 10.5px/1 var(--font); cursor: pointer; white-space: nowrap;
+  }
+  .note__more:hover { background: rgba(22,24,29,.1); color: var(--ink-2); }
   .note.is-saved { animation: saved 1.1s var(--ease); }
   @keyframes saved {
     0%   { box-shadow: inset 0 1px 0 var(--glass-edge), 0 0 0 2px #17a76b, 0 14px 30px -14px rgba(22,24,29,.3); }
@@ -702,7 +719,11 @@
   .sheet__list { margin: 14px 0 0; padding: 0 4px 0 0; list-style: none; overflow-y: auto; display: grid; gap: 8px; }
   .sheet__list li { display: flex; gap: 8px; align-items: flex-start; font-size: 12px; line-height: 1.5; color: var(--ink-2); }
   .sheet__where { display: block; font-size: 10.5px; color: var(--ink-3); }
-  .sheet__acts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px; }
+  .sheet__acts { display: grid; gap: 14px; margin-top: 16px; }
+  .sheet__grp { display: grid; gap: 7px; }
+  .sheet__row { display: grid; gap: 8px; }
+  .sheet__row .cta, .sheet__row .ib { justify-content: center; }
+  .sheet__row .ib { background: rgba(22,24,29,.05); }
   .sheet__acts .cta { justify-content: center; }
   .sheet__acts .ib { justify-content: center; background: rgba(22,24,29,.05); }
   .sheet__acts .wide { grid-column: 1 / -1; }
@@ -886,11 +907,11 @@
      will not let them leave without offering. So only two things go - the event
      log, which is the maker's own instrumentation, and the controls that mint
      links, which are not a reviewer's to hand out. */
-  body.review .maker { display: none !important; }
+  body.is-review .maker { display: none !important; }
   /* A document is not shown in a phone. The switcher and the mockup are dimmed
      here, and the frame is not drawn even if the toggle was left on. */
-  body.fixed-width [data-device-seg], body.fixed-width [data-mockup],
-  body.fixed-width [data-promo-btn] { opacity: .35; pointer-events: none; }
+  body.is-fixed [data-device-seg], body.is-fixed [data-mockup],
+  body.is-fixed [data-promo-btn] { opacity: .35; pointer-events: none; }
 
   /* ══ marks and spotlight ══
      An annotation explains; a mark POINTS. They are different jobs and the
@@ -903,7 +924,7 @@
      someone is watching - and is deliberately NOT saved: it is a gesture, not a
      record. */
   .marks { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
-  body.marking .marks { pointer-events: auto; cursor: crosshair; }
+  body.is-marking .marks { pointer-events: auto; cursor: crosshair; }
   .marks svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
   .mk__box {
     fill: rgba(237,109,87,.06); stroke: var(--co); stroke-width: 2; rx: 6;
@@ -926,6 +947,17 @@
     pointer-events: auto;
   }
   .mk__x svg { width: 10px; height: 10px; }
+  .mk__ask {
+    position: absolute; transform: translate(-50%, -125%);
+    display: flex; align-items: center; gap: 7px;
+    padding: 8px 13px; border: 0; border-radius: 999px;
+    background: var(--grad-45); color: #fff;
+    font: 650 11.5px/1 var(--font); white-space: nowrap; cursor: pointer;
+    box-shadow: 0 8px 22px -8px rgba(237,109,87,.9);
+    pointer-events: auto; animation: rise var(--med) var(--spring);
+  }
+  .mk__ask svg { width: 13px; height: 13px; }
+  .mk__ask.is-out { opacity: 0; transition: opacity var(--med) var(--ease); }
   .marks:hover .mk__x { opacity: 1; }
 
   /* the spotlight: a hole in a dark sheet, following the pointer */
@@ -933,8 +965,8 @@
     position: absolute; inset: 0; z-index: 5; display: none;
     pointer-events: none; transition: opacity var(--med) var(--ease);
   }
-  body.spot .spot { display: block; }
-  body.spot .stage { cursor: crosshair; }
+  body.is-spot .spot { display: block; }
+  body.is-spot .stage { cursor: crosshair; }
 
   /* ══ the note editor - the rail's second storey ══
      The rail is a notepad: fast to write in, useless once there are twelve
@@ -951,12 +983,12 @@
     transition: transform var(--med) var(--ease);
   }
   .notes.is-open { transform: none; }
-  body.notes-open .stage { padding-right: calc(26px + var(--npanel)); }
-  body.notes-open .isle--tr { right: calc(18px + var(--npanel)); }
-  body.notes-open .isle--b { transform: translateX(calc(-50% - var(--npanel) / 2)); }
-  body.notes-open.nav-open .isle--b { transform: translateX(calc(-50% + var(--nav) / 2 - var(--npanel) / 2)); }
-  body.notes-open .rail { display: none; }
-  body.notes-open .sim { transform: translateX(calc(-50% - var(--npanel) / 2)); }
+  body.is-notes .stage { padding-right: calc(26px + var(--npanel)); }
+  body.is-notes .isle--tr { right: calc(18px + var(--npanel)); }
+  body.is-notes .isle--b { transform: translateX(calc(-50% - var(--npanel) / 2)); }
+  body.is-notes.nav-open .isle--b { transform: translateX(calc(-50% + var(--nav) / 2 - var(--npanel) / 2)); }
+  body.is-notes .rail { display: none; }
+  body.is-notes .sim { transform: translateX(calc(-50% - var(--npanel) / 2)); }
 
   .notes__find { padding: 0 5px 12px; border-bottom: 1px solid rgba(255,255,255,.07); }
   .notes__find input {
@@ -999,6 +1031,26 @@
     font: 600 10.5px/1 var(--font); cursor: pointer;
   }
   .nrow__act button:hover { background: rgba(255,255,255,.13); color: #fff; }
+  .nrow.is-editing { background: rgba(255,255,255,.11); cursor: default; }
+  .nedit { display: block; }
+  .nedit__in {
+    min-height: 3em; padding: 9px 10px; border-radius: 9px;
+    background: rgba(0,0,0,.28); color: #eef0f4;
+    font: 12.5px/1.55 var(--font); outline: 0; word-break: break-word;
+  }
+  .nedit__in:focus { box-shadow: inset 0 0 0 1.5px rgba(237,109,87,.7); }
+  .nedit__in img { max-width: 100%; border-radius: 6px; margin-top: 6px; display: block; }
+  .nedit__tools { display: flex; align-items: center; gap: 4px; margin-top: 8px; flex-wrap: wrap; }
+  .nedit__tools .fmt { color: #8b93a1; }
+  .nedit__tools .fmt:hover { background: rgba(255,255,255,.1); color: #fff; }
+  .nedit__save, .nedit__cancel {
+    padding: 6px 12px; border: 0; border-radius: 8px;
+    font: 650 11px/1 var(--font); cursor: pointer;
+  }
+  .nedit__save { margin-left: auto; background: var(--grad-45); color: #fff; }
+  .nedit__save[disabled] { background: rgba(255,255,255,.08); color: #6d7482; cursor: default; }
+  .nedit__cancel { background: rgba(255,255,255,.07); color: #aab1bd; }
+
   .nrow--doc { opacity: .72; }
   .nrow--doc .nrow__t { color: #aab1bd; }
 
@@ -1018,7 +1070,7 @@
     box-shadow: inset 0 1px 0 var(--glass-edge), 0 0 0 1px var(--glass-ring), 0 26px 60px -22px rgba(22,24,29,.45);
     animation: rise var(--med) var(--spring);
   }
-  body.nav-open .sim { transform: translateX(calc(-50% + var(--nav) / 2)); }
+  body.is-nav .sim { transform: translateX(calc(-50% + var(--nav) / 2)); }
   .sim__top { display: flex; align-items: center; gap: 10px; }
   .sim__top .lab { flex: 1 1 auto; font: 700 8.5px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); }
   .sim__play { display: flex; gap: 2px; }
@@ -1125,9 +1177,9 @@
      pushes the overflow off BOTH edges and the left one can never be scrolled
      back into view. */
   .cmpset { display: none; gap: 30px; align-items: flex-end; justify-content: safe center; }
-  body.compare .cmpset { display: flex; }
-  body.compare .stage > .wrap { display: none; }
-  body.compare .stage { align-items: flex-end; }
+  body.is-compare .cmpset { display: flex; }
+  body.is-compare .stage > .wrap { display: none; }
+  body.is-compare .stage { align-items: flex-end; }
   .cmp { display: flex; flex-direction: column; gap: 9px; flex: 0 0 auto; }
   .cmp__h {
     display: flex; align-items: baseline; gap: 7px; padding-left: 2px;
@@ -1148,16 +1200,16 @@
      the container must not share its name or `.promo { display: none }` matches
      <body> and blanks the page. It caught me once already. */
   .proset { display: none; gap: 30px; flex-wrap: wrap; align-items: flex-end; justify-content: safe center; padding: 10px 0 6px; }
-  body.promo .proset { display: flex; }
-  body.promo .stage > .wrap, body.promo .cmpset { display: none; }
-  body.promo .stage { align-items: center; }
+  body.is-promo .proset { display: flex; }
+  body.is-promo .stage > .wrap, body.is-promo .cmpset { display: none; }
+  body.is-promo .stage { align-items: center; }
   .pro { display: flex; flex-direction: column; gap: 11px; align-items: center; }
   .pro__l { font: 700 8.5px/1 var(--mono); letter-spacing: .13em; text-transform: uppercase; color: var(--ink-3); }
 
   /* ══ presentation - the artifact, and only what is needed to move ══ */
-  body.present .isle, body.present .annots, body.present .rail, body.present .nav, body.present .sheet { opacity: 0; pointer-events: none; }
-  body.present .stage { padding: 26px 26px 92px; }
-  body.present.nav-open .stage { padding-left: 26px; }
+  body.is-present .isle, body.is-present .annots, body.is-present .rail, body.is-present .nav, body.is-present .sheet { opacity: 0; pointer-events: none; }
+  body.is-present .stage { padding: 26px 26px 92px; }
+  body.is-present.nav-open .stage { padding-left: 26px; }
   .show {
     position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 29;
     display: none; align-items: center; gap: 8px; padding: 8px 10px;
@@ -1167,7 +1219,7 @@
     box-shadow: 0 18px 44px -16px rgba(12,13,17,.7);
     color: #e8eaee;
   }
-  body.present .show { display: flex; }
+  body.is-present .show { display: flex; }
   .show button {
     display: inline-flex; align-items: center; gap: 7px;
     height: 32px; padding: 0 11px;
@@ -1181,7 +1233,7 @@
   .show__d { font: 500 11px/1 var(--mono); color: #8b93a1; }
   .show__sep { width: 1px; height: 20px; background: rgba(255,255,255,.14); }
   .show__bar { position: fixed; left: 0; top: 0; height: 2px; width: 0; z-index: 30; background: var(--grad-45); display: none; }
-  body.present .show__bar { display: block; }
+  body.is-present .show__bar { display: block; }
   .say {
     position: fixed; left: 50%; bottom: 78px; transform: translateX(-50%); z-index: 29;
     max-width: 60ch; padding: 11px 17px;
@@ -1202,7 +1254,7 @@
     transition: transform 900ms cubic-bezier(.32,.72,.24,1), opacity var(--med) var(--ease);
   }
   .ghost svg { width: 26px; height: 26px; filter: drop-shadow(0 3px 7px rgba(22,24,29,.45)); }
-  body.present .ghost.is-on { opacity: 1; }
+  body.is-present .ghost.is-on { opacity: 1; }
   .ghost::after {
     content: ""; position: absolute; left: 2px; top: 2px; width: 14px; height: 14px;
     border-radius: 50%; background: rgba(237,109,87,.5);
@@ -1230,41 +1282,41 @@
   .toast.is-on { opacity: 1; transform: translate(-50%, 0); }
 
   /* ══ chrome hidden - the artifact exactly as a user would see it ══ */
-  body.bare .isle, body.bare .annots, body.bare .rail { opacity: 0; pointer-events: none; transform: translateY(8px); }
-  body.bare .isle--b { transform: translateX(-50%) translateY(8px); }
-  body.bare .mock {
+  body.is-bare .isle, body.is-bare .annots, body.is-bare .rail { opacity: 0; pointer-events: none; transform: translateY(8px); }
+  body.is-bare .isle--b { transform: translateX(-50%) translateY(8px); }
+  body.is-bare .mock {
     padding: 0 !important; background: none !important;
     box-shadow: none !important; border-radius: 0 !important;
   }
   /* the frame, the notch, the island, the camera dot and the base are all
      chrome - hiding chrome has to take every one of them with it */
-  body.bare .mock::before, body.bare .mock::after { display: none !important; }
-  body.bare .mock__bar { display: none !important; }
+  body.is-bare .mock::before, body.is-bare .mock::after { display: none !important; }
+  body.is-bare .mock__bar { display: none !important; }
   /* Desktop goes full-bleed: the window IS the viewport, so white to the edges
      is honest. A phone or tablet must keep its own size - otherwise "hide
      chrome" silently swaps the viewport being reviewed for a different one -
      and it must stay visibly bounded, or a white artifact on a white page
      reads as something that failed to load rather than as a phone. */
   body.bare:has(.wrap[data-device="desktop"]) { background: #fff; }
-  body.bare .stage:has(.wrap[data-device="desktop"]) { padding: 0; }
-  body.bare .wrap[data-device="desktop"] {
+  body.is-bare .stage:has(.wrap[data-device="desktop"]) { padding: 0; }
+  body.is-bare .wrap[data-device="desktop"] {
     width: 100% !important; max-width: none !important;
     height: 100% !important; max-height: none !important;
     padding-bottom: 0 !important;
   }
-  body.bare .wrap[data-device="desktop"] .screen { border-radius: 0; box-shadow: none; }
+  body.is-bare .wrap[data-device="desktop"] .screen { border-radius: 0; box-shadow: none; }
 
-  body.bare .stage { padding: 34px 26px; }
-  body.bare .wrap[data-device="tablet"]  { width: 834px !important; max-height: 1112px !important; }
-  body.bare .wrap[data-device="mobile"]  { width: 390px !important; max-height: 844px !important; }
-  body.bare .wrap[data-device="tablet"] .screen,
-  body.bare .wrap[data-device="mobile"] .screen {
+  body.is-bare .stage { padding: 34px 26px; }
+  body.is-bare .wrap[data-device="tablet"]  { width: 834px !important; max-height: 1112px !important; }
+  body.is-bare .wrap[data-device="mobile"]  { width: 390px !important; max-height: 844px !important; }
+  body.is-bare .wrap[data-device="tablet"] .screen,
+  body.is-bare .wrap[data-device="mobile"] .screen {
     border-radius: 14px;
     box-shadow: 0 0 0 1px rgba(22,24,29,.12), 0 26px 54px -22px rgba(22,24,29,.34);
   }
   /* a quiet caption so the size on screen is never a guess */
-  body.bare .wrap[data-device="tablet"]::after,
-  body.bare .wrap[data-device="mobile"]::after {
+  body.is-bare .wrap[data-device="tablet"]::after,
+  body.is-bare .wrap[data-device="mobile"]::after {
     content: attr(data-size);
     position: absolute; left: 50%; bottom: -26px; transform: translateX(-50%);
     color: var(--ink-3); font: 500 11px/1 var(--mono);
@@ -1272,8 +1324,8 @@
   }
 
   /* capture mode: chrome and notes out of the way, mockup kept */
-  body.shot .isle, body.shot .annots, body.shot .rail { opacity: 0; pointer-events: none; }
-  body.shot .toast { opacity: 1; transform: translate(-50%, 0); }
+  body.is-shot .isle, body.is-shot .annots, body.is-shot .rail { opacity: 0; pointer-events: none; }
+  body.is-shot .toast { opacity: 1; transform: translate(-50%, 0); }
 
   .restore {
     position: fixed; right: 18px; bottom: 18px; z-index: 9;
@@ -1286,7 +1338,7 @@
   }
   .restore:hover { opacity: 1; transform: translateY(-2px); }
   .restore kbd { font: 700 9.5px/1 var(--mono); padding: 3px 5px; border-radius: 5px; background: rgba(255,255,255,.26); }
-  body.bare .restore { display: inline-flex; }
+  body.is-bare .restore { display: inline-flex; }
 </style>
 </head>
 <body>
@@ -1442,15 +1494,28 @@
     </div>
   </div>
 
-  <span class="sep"></span>
+</div>
+
+<!-- Notes are a different job from driving the prototype, and they now have
+     enough controls to stop being a group in someone else's bar. -->
+<div class="isle isle--notes">
   <div class="grp">
-    <span class="grp__l">Your notes</span>
+    <span class="grp__l">Mark something</span>
     <div class="grp__row">
-      <button class="ib" type="button" data-comment aria-pressed="false" title="Click an element in the prototype to attach a note"><svg><use href="#i-pin"/></svg>Add note</button>
+      <button class="ib" type="button" data-comment aria-pressed="false" title="Click an element in the prototype to attach a note"><svg><use href="#i-pin"/></svg>Pin</button>
       <button class="ib ib--icon" type="button" data-mark="box" aria-pressed="false" title="Draw a box around something"><svg><use href="#i-box"/></svg></button>
       <button class="ib ib--icon" type="button" data-mark="pen" aria-pressed="false" title="Marker pen - drag across what you mean"><svg><use href="#i-pen"/></svg></button>
       <button class="ib ib--icon" type="button" data-spot aria-pressed="false" title="Spotlight - dim everything except what you point at"><svg><use href="#i-spot"/></svg></button>
-      <button class="ib" type="button" data-summary title="One covering note about the whole prototype"><svg><use href="#i-note"/></svg>Overall</button>
+    </div>
+  </div>
+
+  <span class="sep"></span>
+  <div class="grp">
+    <span class="grp__l">Write one</span>
+    <div class="grp__row">
+      <button class="ib" type="button" data-loose title="A note about this screen, without pointing at anything"><svg><use href="#i-note"/></svg>Note</button>
+      <button class="ib" type="button" data-summary title="One covering note about the whole prototype"><svg><use href="#i-cube"/></svg>Overall</button>
+      <button class="ib ib--icon" type="button" data-open-notes title="Read, filter and edit every note"><svg><use href="#i-list"/></svg></button>
     </div>
   </div>
 
@@ -1817,7 +1882,7 @@
   }
   function openNav() {
     nav.classList.add('is-open');
-    document.body.classList.add('nav-open');
+    document.body.classList.add('is-nav');
     navBtn.setAttribute('aria-expanded', 'true');
     markCursor();
     var on = navList.querySelector('[aria-current="true"]');
@@ -1825,7 +1890,7 @@
   }
   function closeNav() {
     nav.classList.remove('is-open');
-    document.body.classList.remove('nav-open');
+    document.body.classList.remove('is-nav');
     navBtn.setAttribute('aria-expanded', 'false');
   }
   function navOpen() { return nav.classList.contains('is-open'); }
@@ -2046,7 +2111,7 @@
 
   /* ---------- chrome visibility ---------- */
   function bare(on) {
-    document.body.classList.toggle('bare', on);
+    document.body.classList.toggle('is-bare', on);
     if (!on) requestAnimationFrame(drawAnnots);
   }
   document.querySelector('[data-bare]').addEventListener('click', function () { bare(true); });
@@ -2054,7 +2119,7 @@
   document.addEventListener('keydown', function (e) {
     if ((e.key === 'h' || e.key === 'H') && !e.metaKey && !e.ctrlKey && !navOpen() &&
         !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) {
-      bare(!document.body.classList.contains('bare'));
+      bare(!document.body.classList.contains('is-bare'));
     }
   });
 
@@ -2165,9 +2230,9 @@
   document.querySelector('[data-shot]').addEventListener('click', function () { exportPng(); });
 
   function captureMode(msg) {
-    document.body.classList.add('shot');
+    document.body.classList.add('is-shot');
     toast(msg, 6000);
-    setTimeout(function () { document.body.classList.remove('shot'); }, 6000);
+    setTimeout(function () { document.body.classList.remove('is-shot'); }, 6000);
   }
 
   /* Rasterising the artifact is needed twice - the PNG export and the report -
@@ -2418,7 +2483,7 @@
     railEl.innerHTML = '';
     pairs = [];
     svg.innerHTML = '';
-    if ((!labelsOn && !commentsOn) || !frameReady) { document.body.classList.remove('has-notes'); return; }
+    if ((!labelsOn && !commentsOn) || !frameReady) { document.body.classList.remove('is-railed'); return; }
 
     var list = notesFor(current.screen);
     var open = list.filter(function (e) { return !collapsed[e.id]; });
@@ -2429,7 +2494,7 @@
     var doc;
     try { doc = frame.contentDocument; } catch (e) { doc = null; }
     if (!doc) {
-      document.body.classList.remove('has-notes');
+      document.body.classList.remove('is-railed');
       if (list.length && !drawAnnots._warned) {
         drawAnnots._warned = true;
         toast('Notes need the artifact on this origin - it cannot be read from another domain.', 5200);
@@ -2437,8 +2502,8 @@
       return;
     }
 
-    var had = document.body.classList.contains('has-notes');
-    document.body.classList.toggle('has-notes', open.length > 0);
+    var had = document.body.classList.contains('is-railed');
+    document.body.classList.toggle('is-railed', open.length > 0);
     // reserving the rail resizes the frame; measure only once that has applied
     if (open.length && !had) { requestAnimationFrame(drawAnnots); return; }
 
@@ -2874,9 +2939,15 @@
       sevLabel.className = 'note__kbd'; sevLabel.textContent = 'Severity';
       if (isSummary) sevLabel.hidden = true;
 
+      var more = document.createElement('button');
+      more.type = 'button'; more.className = 'note__more';
+      more.textContent = 'More room';
+      more.title = 'Carry on writing this in the note editor';
+      more.addEventListener('click', function () { panelEdit = cm; openNotes(true); });
+
       var row = document.createElement('div');
       row.className = 'note__add';
-      row.appendChild(sevLabel); row.appendChild(sev); row.appendChild(save);
+      row.appendChild(sevLabel); row.appendChild(sev); row.appendChild(more); row.appendChild(save);
       body.appendChild(row);
 
       function commit() {
@@ -2952,7 +3023,7 @@
 
   function setMarking(kind) {
     marking = marking === kind ? null : kind;
-    document.body.classList.toggle('marking', !!marking);
+    document.body.classList.toggle('is-marking', !!marking);
     markBtns().forEach(function (b) {
       b.setAttribute('aria-pressed', String(b.getAttribute('data-mark') === marking));
     });
@@ -2975,7 +3046,7 @@
   function drawMarks() {
     marksSvg.innerHTML = '';
     marksEl.querySelectorAll('.mk__x').forEach(function (n) { n.remove(); });
-    if (document.body.classList.contains('compare') || document.body.classList.contains('promo')) return;
+    if (document.body.classList.contains('is-compare') || document.body.classList.contains('is-promo')) return;
     var box = frame.getBoundingClientRect();
     var wrapBox = wrap.getBoundingClientRect();
     var ox = box.left - wrapBox.left, oy = box.top - wrapBox.top;
@@ -3068,9 +3139,11 @@
       if (keep) {
         delete live.from;
         live.screen = current.screen; live.state = current.state; live.device = current.device;
+        live.id = 'm' + Date.now();
         marks.push(live);
         writeStore('marks', marks);
         record('harness:mark', live.kind);
+        offerNote(live);
       }
       live = null; path = null;
       setMarking(null);
@@ -3079,6 +3152,44 @@
     marksEl.addEventListener('pointerup', finish);
     marksEl.addEventListener('pointercancel', finish);
   })();
+
+  /* A mark says "here"; often the next thing wanted is "and this is why". The
+     offer appears beside what was just drawn and goes away on its own - asking
+     outright would make every highlight a two-step chore. */
+  function markCentre(m) {
+    return m.kind === 'box'
+      ? [m.x + m.w / 2, m.y + m.h / 2]
+      : m.pts[Math.floor(m.pts.length / 2)];
+  }
+
+  function offerNote(m) {
+    marksEl.querySelectorAll('.mk__ask').forEach(function (n) { n.remove(); });
+    var box = frame.getBoundingClientRect();
+    var wrapBox = wrap.getBoundingClientRect();
+    var c0 = markCentre(m);
+    var ask = document.createElement('button');
+    ask.className = 'mk__ask'; ask.type = 'button';
+    ask.innerHTML = icon('i-note') + '<span>Add a note here</span>';
+    ask.style.left = (box.left - wrapBox.left + c0[0] * box.width) + 'px';
+    ask.style.top  = (box.top - wrapBox.top + (m.kind === 'box' ? m.y : c0[1]) * box.height) + 'px';
+    ask.addEventListener('click', function () {
+      var cm = looseNote(m.kind === 'box' ? 'the boxed area' : 'the marked text');
+      cm.mark = m.id;
+      cm.fx = c0[0]; cm.fy = c0[1];
+      writeStore('comments', comments);
+      ask.remove();
+      drawAnnots();
+    });
+    marksEl.appendChild(ask);
+    marksEl.style.pointerEvents = 'auto';
+    setTimeout(function () {
+      ask.classList.add('is-out');
+      setTimeout(function () {
+        ask.remove();
+        if (!marking) marksEl.style.pointerEvents = '';
+      }, 300);
+    }, 5200);
+  }
 
   /* ---------- spotlight ----------
      The live version of the same instinct: "look here" while someone is
@@ -3094,7 +3205,7 @@
   spotBtn.addEventListener('click', function () {
     spotOn = !spotOn;
     spotBtn.setAttribute('aria-pressed', String(spotOn));
-    document.body.classList.toggle('spot', spotOn);
+    document.body.classList.toggle('is-spot', spotOn);
     if (spotOn) {
       var b = wrap.getBoundingClientRect();
       paintSpot(b.width / 2, b.height / 2);
@@ -3128,6 +3239,7 @@
   var notesOpen = false;
   var filter = { q: '', kind: 'comment', sev: null };
   var focusNote = null;
+  var panelEdit = null;
 
   var CHIPS = [
     { k: 'kind', v: 'comment', t: 'My comments' },
@@ -3206,6 +3318,13 @@
       top.appendChild(dot); top.appendChild(where);
       row.appendChild(top);
 
+      if (panelEdit && n.cm === panelEdit) {
+        row.appendChild(rowEditor(n.cm, n.summary));
+        row.classList.add('is-editing');
+        notesList.appendChild(row);
+        return;
+      }
+
       var t = document.createElement('span');
       t.className = 'nrow__t';
       t.innerHTML = n.html || esc(n.text);
@@ -3218,10 +3337,10 @@
         ed.type = 'button'; ed.textContent = 'Edit';
         ed.addEventListener('click', function (e) {
           e.stopPropagation();
-          goToNote(n);
-          n.cm.editing = true; n.cm.fresh = true;
-          openNotes(false);
-          drawAnnots();
+          // edit where you are looking: being thrown back to the bubble beside
+          // the prototype loses the list you were working through
+          panelEdit = panelEdit === n.cm ? null : n.cm;
+          paintNotes();
         });
         var del = document.createElement('button');
         del.type = 'button'; del.textContent = 'Delete';
@@ -3247,6 +3366,95 @@
       : 'Nothing matches. Clear the search, or widen the filter.';
   }
 
+  /* The same editor as the bubble, in the panel's own clothes. */
+  function rowEditor(cm, isSummary) {
+    var box = document.createElement('div');
+    box.className = 'nedit';
+
+    var ed = document.createElement('div');
+    ed.className = 'nedit__in'; ed.contentEditable = 'true'; ed.spellcheck = true;
+    ed.innerHTML = cm.html || esc(cm.text || '');
+    ed.addEventListener('input', function () {
+      cm.html = clean(ed.innerHTML); cm.text = ed.textContent.trim();
+      save.disabled = !plain(cm);
+    });
+    ed.addEventListener('click', function (e) { e.stopPropagation(); });
+    box.appendChild(ed);
+
+    var tools = document.createElement('div');
+    tools.className = 'nedit__tools';
+    [['bold','B','Bold'],['italic','I','Italic'],['underline','U','Underline']].forEach(function (t) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'fmt fmt--' + t[0]; b.textContent = t[1]; b.title = t[2];
+      b.addEventListener('mousedown', function (e) { e.preventDefault(); });
+      b.addEventListener('click', function (e) {
+        e.stopPropagation(); ed.focus();
+        document.execCommand(t[0], false, null);
+        cm.html = clean(ed.innerHTML); cm.text = ed.textContent.trim();
+      });
+      tools.appendChild(b);
+    });
+    var pick = document.createElement('button');
+    pick.type = 'button'; pick.className = 'fmt fmt--img'; pick.title = 'Attach a reference image';
+    pick.innerHTML = icon('i-image');
+    var file = document.createElement('input');
+    file.type = 'file'; file.accept = 'image/*'; file.hidden = true;
+    pick.addEventListener('click', function (e) { e.stopPropagation(); file.click(); });
+    file.addEventListener('change', function () {
+      var f = file.files && file.files[0];
+      if (!f) return;
+      shrink(f, function (url) {
+        if (!url) { toast('That image could not be read.'); return; }
+        ed.focus();
+        document.execCommand('insertHTML', false, '<img src="' + url + '" alt="">');
+        cm.html = clean(ed.innerHTML); cm.text = ed.textContent.trim();
+        save.disabled = !plain(cm);
+      });
+      file.value = '';
+    });
+    tools.appendChild(pick); tools.appendChild(file);
+
+    if (!isSummary) {
+      var sev = document.createElement('span');
+      sev.className = 'sev';
+      Object.keys(SEV).forEach(function (k) {
+        var b = document.createElement('button');
+        b.type = 'button'; b.className = 'sev-' + k; b.title = SEV[k];
+        b.setAttribute('aria-pressed', String((cm.severity || 'normal') === k));
+        b.innerHTML = '<i></i>';
+        b.addEventListener('click', function (e) {
+          e.stopPropagation(); cm.severity = k;
+          sev.querySelectorAll('button').forEach(function (o) { o.setAttribute('aria-pressed', String(o === b)); });
+        });
+        sev.appendChild(b);
+      });
+      tools.appendChild(sev);
+    }
+
+    var save = document.createElement('button');
+    save.className = 'nedit__save'; save.type = 'button'; save.textContent = 'Save';
+    save.disabled = !plain(cm);
+    save.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (!plain(cm)) return;
+      cm.draft = false; cm.editing = false;
+      cm.at = new Date().toISOString();
+      if (isSummary) writeStore('summary', summary); else writeStore('comments', comments);
+      panelEdit = null;
+      paintSend(); paintNotes(); drawAnnots();
+      toast('Saved.');
+    });
+    var cancel = document.createElement('button');
+    cancel.className = 'nedit__cancel'; cancel.type = 'button'; cancel.textContent = 'Cancel';
+    cancel.addEventListener('click', function (e) {
+      e.stopPropagation(); panelEdit = null; paintNotes();
+    });
+    tools.appendChild(save); tools.appendChild(cancel);
+    box.appendChild(tools);
+    requestAnimationFrame(function () { ed.focus(); });
+    return box;
+  }
+
   function goToNote(n) {
     focusNote = n.cm || null;
     if (n.screen && n.screen !== current.screen) pickScreen(screenIndex(n.screen));
@@ -3270,8 +3478,8 @@
   function openNotes(on) {
     notesOpen = on;
     notesEl.classList.toggle('is-open', on);
-    document.body.classList.toggle('notes-open', on);
-    if (on) { paintNotes(); notesQ.focus(); } else { focusNote = null; }
+    document.body.classList.toggle('is-notes', on);
+    if (on) { paintNotes(); if (!panelEdit) notesQ.focus(); } else { focusNote = null; panelEdit = null; }
     requestAnimationFrame(drawAnnots);
     record('harness:notes-panel', on);
   }
@@ -3322,6 +3530,35 @@
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && picking) setPicking(false);
   });
+
+  /* A note does not always have somewhere to point. "The whole thing feels
+     slow", "this screen is missing a way back" - forcing a pin onto those puts
+     them somewhere arbitrary and makes the pin a lie. */
+  function looseNote(about) {
+    if (!commentsOn) {
+      commentsOn = true;
+      document.querySelector('[data-toggle-comments]').setAttribute('aria-pressed', 'true');
+      annotEl.hidden = false;
+    }
+    var cm = {
+      id: 'c' + Date.now(),
+      screen: current.screen, state: current.state, variant: current.variant,
+      device: current.device,
+      selector: null, anchor: about || '',
+      who: reviewerName, severity: 'normal', text: '', html: '',
+      at: new Date().toISOString(), draft: true, fresh: true
+    };
+    comments.push(cm);
+    writeStore('comments', comments);
+    paintSend();
+    drawAnnots();
+    return cm;
+  }
+  document.querySelector('[data-loose]').addEventListener('click', function () {
+    looseNote('');
+    record('harness:note-loose', current.screen);
+  });
+  document.querySelector('[data-open-notes]').addEventListener('click', function () { openNotes(true); });
 
   function placeComment(d) {
     setPicking(false);
@@ -3403,6 +3640,19 @@
       lines.push('');
     });
     return lines.filter(function (l, i) { return !(i === 1 && !l); }).join('\n');
+  }
+
+  function group(label, btns, cols) {
+    var g = document.createElement('div');
+    g.className = 'sheet__grp';
+    var h = document.createElement('span');
+    h.className = 'sheet__where'; h.textContent = label;
+    var row = document.createElement('div');
+    row.className = 'sheet__row';
+    row.style.gridTemplateColumns = 'repeat(' + cols + ', 1fr)';
+    btns.forEach(function (b) { row.appendChild(b); });
+    g.appendChild(h); g.appendChild(row);
+    return g;
   }
 
   function actionBtn(cls, ico, label, fn, wide) {
@@ -3491,40 +3741,35 @@
       sheetList.appendChild(peek);
     }
 
-    /* Four buttons of equal weight is not a choice, it is a menu - and it mixed
-       sending with saving. One thing to press, one alternative beside it, and
-       the rest as quiet links: what a reviewer wants is to send, what an author
-       wants is the report, so the primary follows whose hands this is in. */
+    /* Two jobs, and they were jumbled: getting the notes to a person, and
+       keeping a copy of them. Each gets its own row with its own heading, the
+       first one carries the primary, and which that is depends on whose hands
+       this is in - a reviewer wants to send, a maker wants the report. */
     if (total()) {
-      var acts = [
+      var send = [
         { k: 'send', ico: 'i-send', label: 'Send to the author', fn: submitEndpoint, on: !!review.submitTo },
         { k: 'copy', ico: 'i-copy', label: 'Copy',               fn: copyOut,        on: true },
-        { k: 'mail', ico: 'i-mail', label: 'Email',              fn: mailOut,        on: !!review.to },
-        { k: 'pdf',  ico: 'i-doc',  label: 'PDF report',         fn: buildReport,    on: true },
-        { k: 'file', ico: 'i-down', label: 'Download as text',   fn: fileOut,        on: true }
+        { k: 'mail', ico: 'i-mail', label: 'Email',              fn: mailOut,        on: !!review.to }
       ].filter(function (a) { return a.on; });
 
-      var order = review.submitTo ? ['send', reviewMode ? 'copy' : 'pdf']
-                                  : (reviewMode ? ['copy', review.to ? 'mail' : 'pdf'] : ['pdf', 'copy']);
-      var primary = order[0], second = order[1];
+      var keep = [
+        { k: 'pdf',  ico: 'i-doc',  label: 'PDF report', fn: buildReport, note: 'screens, pins and all' },
+        { k: 'txt',  ico: 'i-down', label: 'Text',       fn: fileOut,     note: 'plain, for a message' },
+        { k: 'csv',  ico: 'i-down', label: 'CSV',        fn: csvOut,      note: 'one row per note' },
+        { k: 'json', ico: 'i-down', label: 'JSON',       fn: jsonOut,     note: 'everything, machine-readable' }
+      ];
 
-      acts.forEach(function (a) {
-        if (a.k === primary) sheetActs.appendChild(actionBtn('cta', a.ico, a.label, a.fn, !second));
-        else if (a.k === second) sheetActs.appendChild(actionBtn('ib', a.ico, a.label, a.fn));
-      });
+      var primary = review.submitTo ? 'send' : (reviewMode ? 'copy' : null);
 
-      var rest = acts.filter(function (a) { return a.k !== primary && a.k !== second; });
-      if (rest.length) {
-        var row = document.createElement('div');
-        row.className = 'sheet__links';
-        rest.forEach(function (a) {
-          var l = document.createElement('button');
-          l.type = 'button'; l.className = 'lnk'; l.textContent = a.label;
-          l.addEventListener('click', a.fn);
-          row.appendChild(l);
-        });
-        sheetActs.appendChild(row);
-      }
+      sheetActs.appendChild(group('Send it back', send.map(function (a) {
+        return actionBtn(a.k === primary ? 'cta' : 'ib', a.ico, a.label, a.fn);
+      }), send.length));
+
+      sheetActs.appendChild(group('Or keep a copy', keep.map(function (a) {
+        var b = actionBtn(a.k === 'pdf' && !primary ? 'cta' : 'ib', a.ico, a.label, a.fn);
+        b.title = a.note;
+        return b;
+      }), 2));
     }
     sheet.hidden = false;
   }
@@ -3558,6 +3803,68 @@
     record('harness:feedback-mailed', written().length);
     closeSheet();
   }
+  /* CSV and JSON, because a note that cannot be filed anywhere is a note that
+     gets read once. CSV opens in a spreadsheet and sorts by severity; JSON
+     carries everything the harness knows, including the marks. */
+  function rows() {
+    return written().map(function (cm, i) {
+      var s = screens[screenIndex(cm.screen)];
+      return {
+        n: i + 1,
+        severity: cm.severity || 'normal',
+        screen: s ? s.label : cm.screen,
+        state: cm.state || '',
+        device: cm.device || '',
+        anchor: cm.anchor || '',
+        author: cm.who || '',
+        at: cm.at || '',
+        note: (cm.text || '').replace(/\s+/g, ' ').trim(),
+        hasImage: /<img /.test(cm.html || '') ? 'yes' : ''
+      };
+    });
+  }
+
+  function saveAs(name, text, mime) {
+    var blob = new Blob([text], { type: mime });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = (cfg.name || 'prototype') + '-' + name;
+    a.click();
+    URL.revokeObjectURL(a.href);
+    closeSheet();
+  }
+
+  function csvOut() {
+    var list = rows();
+    if (!list.length) return;
+    var cols = Object.keys(list[0]);
+    var esc2 = function (v) {
+      v = String(v === undefined || v === null ? '' : v);
+      return /[",\n;]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
+    };
+    var out = [cols.join(',')].concat(list.map(function (r) {
+      return cols.map(function (k) { return esc2(r[k]); }).join(',');
+    })).join('\r\n');
+    // the BOM is what makes Excel read it as UTF-8 rather than mojibake
+    saveAs('feedback.csv', '\ufeff' + out, 'text/csv;charset=utf-8');
+    record('harness:feedback-csv', list.length);
+  }
+
+  function jsonOut() {
+    saveAs('feedback.json', JSON.stringify({
+      prototype: cfg.name || 'prototype',
+      title: cfg.title || '',
+      from: reviewerName || '',
+      exported: new Date().toISOString(),
+      asked: askedFor || '',
+      overall: overall() ? overall().text : '',
+      notes: written(),
+      marks: marks,
+      events: events
+    }, null, 2), 'application/json');
+    record('harness:feedback-json', written().length);
+  }
+
   function fileOut() {
     var blob = new Blob([feedbackText()], { type: 'text/plain' });
     var a = document.createElement('a');
@@ -3888,7 +4195,7 @@
 
   /* ---------- review mode ---------- */
   if (reviewMode) {
-    document.body.classList.add('review');
+    document.body.classList.add('is-review');
     var brief = document.querySelector('[data-brief]');
     var nameField = document.querySelector('[data-brief-name]');
     brief.hidden = false;
@@ -4210,10 +4517,10 @@
     if (compareOn === on) return;
     compareOn = on;
     if (!on) stage.scrollLeft = 0;
-    document.body.classList.toggle('compare', on);
+    document.body.classList.toggle('is-compare', on);
     if (on) {
       setPromo(false);
-      document.body.classList.remove('has-notes');
+      document.body.classList.remove('is-railed');
       loadCompare();
       toast('This screen on all three, at true relative size. Mockup draws the hardware.', 5000);
     } else {
@@ -4310,10 +4617,10 @@
     promoOn = on;
     if (!on) stage.scrollLeft = 0;
     promoBtn.setAttribute('aria-pressed', String(on));
-    document.body.classList.toggle('promo', on);
+    document.body.classList.toggle('is-promo', on);
     if (on) {
       setCompare(false);
-      document.body.classList.remove('has-notes');
+      document.body.classList.remove('is-railed');
       buildPromo();
       toast('Every screen at ' + current.device + ' width. Switch the device to reframe them; Mockup adds the hardware.', 5000);
     } else {
@@ -4453,7 +4760,7 @@
 
   function present(on) {
     presenting = on;
-    document.body.classList.toggle('present', on);
+    document.body.classList.toggle('is-present', on);
     if (on) {
       if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(function () {});
       closeNav();
@@ -4564,7 +4871,7 @@
     /* A generated screen is a document about the prototype, not a screen of it.
        It is read at a desk, it has no responsive behaviour worth testing, and
        the device switcher would only invite someone to test the wrong thing. */
-    document.body.classList.toggle('fixed-width', generated(s));
+    document.body.classList.toggle('is-fixed', generated(s));
     if (generated(s) && current.device !== 'desktop') { current.device = 'desktop'; paintDevice(); }
     if (generated(s)) {
       frame.removeAttribute('src');

@@ -156,6 +156,12 @@ Building three mechanisms would be duplicated work and three inconsistent surfac
 
 **A note has to be writable, and a picture is often the note.** Emphasis and one attached image: *"make it look like this"* with a reference is worth ten sentences, and nothing else in the loop carries it. Strip pasted markup to the few tags you actually render, and scale the image down before keeping it, or the second note fills the browser's storage.
 
+**Not every note has somewhere to point.** "The whole thing feels slow", "this screen has no way back" - forcing a pin onto those puts them somewhere arbitrary and makes the pin a lie. A note about the screen, with no anchor, has to be as easy to write as one about an element.
+
+**A mark asks for a note.** Having said "here", the next thing wanted is usually "and this is why" - so offer it beside what was just drawn, and let the offer go away on its own. Asking outright makes every highlight a two-step chore.
+
+**Edit where the reader is looking.** A register that throws you back to the artifact to change a word loses the list you were working through. The same is true in reverse: a note being written beside the prototype should be able to carry on in the register without starting again.
+
 **A rail is a notepad, not a register.** It is fast to write in and useless at twelve notes across four screens. Whatever reads them back needs filtering, editing, and a way to jump to where a note lives - its screen, its state, its device - and say *which* one it is when it gets there.
 
 **Comments have to get back, and without a backend nothing is automatic.** They live in that reviewer's own browser and reach the author only when the reviewer sends them, which makes the prompt to do so part of the instrument rather than a button they might find: the task stated before they start, a send control that is always visible and counts what is waiting, and one nudge after the first comment. Where a run cannot depend on that - several reviewers, one pass - an endpoint removes the dependency, and that is the only reason to introduce one.
@@ -163,6 +169,8 @@ Building three mechanisms would be duplicated work and three inconsistent surfac
 **The last step must not repeat the rail.** A sheet that lists every note again is a wall to scroll past at the moment the reviewer wants to finish. What belongs there is the covering note - written then, if it is still missing - and one control to look the rest over before they go.
 
 **One thing to press.** Four ways out of equal weight is a menu, not a choice, and it mixes sending with saving. One primary, one alternative beside it, the rest as quiet links - and which is primary follows whose hands it is in: a reviewer wants to send, a maker wants the report.
+
+**Sending and keeping are two jobs.** Getting the notes to a person and keeping a copy of them are not the same act, and a single row of equal buttons jumbles them. A copy has to be filable too: a spreadsheet row per note sorts by severity, and a machine-readable dump is what a register or a script can actually consume. A note that cannot be filed anywhere is a note that gets read once.
 
 **Returning them is not the same as reporting them.** Plain text is enough to paste into a chat; it is not enough to file, and nobody reading it can tell what a remark was about. A report puts each screen as it was when it was commented on, with the pins drawn back on and the notes numbered against them - and ends with what was simulated, so the remarks are read against a prototype rather than against a finished product. Count by device first and severity inside - three high on a phone and three high on a desktop are not the same finding, and one row of totals hides exactly what the device tag exists to expose. It should also look like the tool it came from, and never blow a phone capture up to the width of a page - an enlarged screenshot of a 390px screen is a blurry poster of itself.
 

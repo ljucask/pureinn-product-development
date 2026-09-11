@@ -121,7 +121,11 @@ Every disclosure note carries `real:`, what the element would be in production. 
 
 **Comments take emphasis and one picture** - bold, italic, underline, and an attached reference image, because *"make it look like this"* with a screenshot is worth ten sentences. Pasted markup is stripped to `b/i/u/br/img` and an image is scaled to 1100px before it is kept, or the second note fills the browser's quota.
 
-**`View all notes`** at the foot of the rail opens the note editor on the right: every note in one place, filtered by kind, severity and text, editable and deletable. Clicking a row goes to where that note lives - its screen, its state, its device - and flashes its pin. The rail is a notepad; this is the register. While it is open the rail steps aside. Each card also carries an icon that opens the panel on that one note.
+**Notes have their own island**, bottom right: *Mark something* (pin, box, marker, spotlight), *Write one* (an unanchored note, the overall note, the editor) and *When you finish*. They had outgrown being a group inside the bar that drives the prototype.
+
+**Not every note points at something.** `Note` writes one about the screen with no anchor - "this screen has no way back" does not belong pinned to an arbitrary button. And after a box or a marker stroke, a bubble offers *Add a note here* for a few seconds and then gets out of the way.
+
+**`View all notes`** at the foot of the rail opens the note editor on the right: every note in one place, filtered by kind, severity and text, editable and deletable. Clicking a row goes to where that note lives - its screen, its state, its device - and flashes its pin. **Edit happens in the panel**, not back in the bubble; and a note being written in the bubble can carry on there with `More room`. The rail is a notepad; this is the register. While it is open the rail steps aside. Each card also carries an icon that opens the panel on that one note.
 
 **Closing a card rolls it up; it does not delete it.** Clicking the strip or its pin brings it back. Only the `Notes` toggle removes the layer, and that state is not carried in a shared link - so no link can hand on a screen where an invented number has lost its label.
 
@@ -194,6 +198,8 @@ The sheet offers **one primary action and one beside it**, with the rest as quie
 
 The sheet behind `Return notes` does not list the notes again - the rail already shows them. It carries the covering note (or a field to write one, if it is still missing) and a single control to look the rest over before they go.
 
+The sheet separates **Send it back** (Copy · Email · the endpoint) from **Or keep a copy** (PDF report · Text · CSV · JSON). Getting the notes to a person and keeping a copy of them are not the same act. CSV is one row per note - severity, screen, state, device, anchor, author, time - and opens in a spreadsheet with a BOM so Excel reads it as UTF-8. JSON carries everything, marks included.
+
 `Return notes` → **PDF report** assembles everything into one page and hands it to the browser's print dialogue, which is where a PDF comes from without a library:
 
 It is styled in the tool's own language - the coral-to-gold accent, the mono labels, the same cards - so what lands in someone's inbox is recognisably the thing they were looking at.
@@ -250,6 +256,8 @@ The second round added: per-screen time appearing, disappearing and keeping each
 
 The third: the screen panel with its descriptions and keyboard navigation, and the viewport transition - sampled mid-flight at 427px between a 1106px desktop and a 390px phone, with the annotations re-anchoring correctly once it settled.
 
+The eighteenth: the spotlight no longer blanking the page, a note written with no anchor, a box offering a note and getting one, editing inside the panel, and a CSV with one row per note.
+
 The seventeenth: a comment written with bold and saved as HTML, the note panel filtering 5 notes down to 1 by text and by kind, a box and a marker stroke drawn, stored and disappearing on another state, and the spotlight following the pointer.
 
 The sixteenth: Present moved beside Hide menu with its own icon, and the note rail anchored to the window - no horizontal scrollbar behind it and the curves still landing after a device change.
@@ -291,7 +299,7 @@ Bugs found that way, none of which a reading of the code would have caught:
 - the promo frames put their iframes at `top: 0`, which measures from the padding box, so each artifact covered the bezel it was supposed to sit inside
 - the note rail positioned itself from the frame's measured width, caught a mid-transition number, and drifted off the right edge - with a horizontal scrollbar behind it, because an absolutely positioned child in the reserved padding counts as overflow. It is anchored to the window now
 - `body.compare .wrap { display: none }` hid the scaled copies too, because they are `.wrap` as well - the third time in this file that a rule meant for one element caught everything sharing its name
-- and the fourth: the body's mockup state class was `mock`, the same as the frame element's, so `document.querySelector('.mock')` returned `<body>`. **No state class on `<body>` may share a name with an element class** - they are `is-mock`, `compare`, `promo` now, and the containers are `.mock`, `.cmpset`, `.proset`
+- and the fifth: `body.spot` shared its name with `.spot`, so `.spot { display: none }` matched `<body>` and **the whole page went white**. Every body state now carries an `is-` prefix - `is-spot`, `is-compare`, `is-promo`, `is-mock`, `is-bare`, `is-notes` - and no element class may begin with one. Before that, the fourth: the mockup state was `mock`, the same as the frame element's, so `document.querySelector('.mock')` returned `<body>`. **No state class on `<body>` may share a name with an element class** - they are `is-mock`, `compare`, `promo` now, and the containers are `.mock`, `.cmpset`, `.proset`
 - the multi-device row sized itself from the viewports alone and then drew a bezel around each, pushing the row past the stage - and a centred flex row that overflows loses its left end where no scrollbar can reach it (`justify-content: safe center`)
 - the rail positioned its cards absolutely, so once a few notes existed the newest ran off the bottom of the window - and the one being written was the first to go
 - the annotation layer skipped its redraw while the chrome was hidden, silently dropping every change made in the meantime: toggles flipped there did nothing, and notes could come back missing after Hide
