@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.41.0] - 2026-09-11
+
+### pm-prototype harness code and security review - 19 defects fixed across the scaffold (sanitiser bypass, two missed is- prefix renames, screenshot-only notes silently deleted, unchecked endpoint status, editor destroyed on scroll, side-by-side columns narrower than their labels) plus three decisions settled: Send discloses the session record, the share URL is no longer logged, and marks now appear in the PNG and the report while notes stay out
+
+---
+
+
 ## [5.40.0] - 2026-09-10
 
 ### Entry gate hardening (Stream A) - the 1959-line /pureinn command is split into a 213-line router plus seven on-demand reference files, fixing the failure that a free-text brief fell through the router and never entered the framework at all; new STEP 0 Intent Gate classifies input into five modes, adding 'explore' for a brief or situation described out loud (reads it back, offers three routes, creates no workspace until the user picks) and restricting stage keywords to bare commands so build/plan/research inside a sentence stop matching; the document scan moves out of intake and runs on every path (full for new/explore, delta for resume/stage, so material dropped in between sessions is never silently ignored); repo presence becomes a routing signal stored in state.json and cross-checked at playbook selection, so no code-reading playbook is offered without reachable code; design context lifts out of Phase 6-7 into a composable cross-phase layer documenting six sources - codebase, Figma, live product via Playwright, screenshots, references, Claude Design - with rules for provenance and conflicts; release.sh now checks the release message itself against the name blocklist, closing the gap that let a real client name ship in v5.39.0
