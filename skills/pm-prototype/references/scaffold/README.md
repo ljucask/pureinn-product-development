@@ -84,7 +84,9 @@ Both exist only if their block is filled in, and **`For review` lets you tick wh
 
 **Every figure on the Overview carries its class** - `observed` · `calculated` · `projected` · `target` · `sample` - printed beside the number. A projection in front of a committee is the most actionable unverifiable number a prototype can contain, and a footnote does not travel with a screenshot.
 
-The Overview is shown at desktop width whatever the device switcher says. It is read by someone at a desk and is not part of the product surface.
+**Both, and `What is real`, are documents about the prototype rather than screens of it.** The panel lists them below a divider, outlined instead of filled and without a number, and the numbering in the flow counts only the real screens. Mixed into the same list in the same styling they read as two more things to click through, and a tester will dutifully test them.
+
+They are shown at desktop width whatever the device switcher says. It is read by someone at a desk and is not part of the product surface.
 
 ## The screen panel
 
@@ -150,11 +152,15 @@ Reviewers never see each other's comments. For an async test with real users tha
 | | |
 |---|---|
 | **Grid** | cycles off → 8px → 64px. 8 asks whether an element sits on the rhythm, 64 whether the layout does. Drawn in the shell over the frame - measured from the iframe itself, so inside a device mockup it stops at the screen and takes its corner radius rather than bleeding over the bezel |
-| **Side by side** | the same screen at 1280 / 834 / 390 at once, each rendered at its **real width** and then scaled to fit, so the artifact's own media queries fire. Annotations are anchored to the single frame, so they step aside here and say why |
-| **Promo** | every screen at once, each rendered at its real width and scaled into a device frame - bezel, corner radius and Dynamic Island all in proportion. The whole flow in one picture, for a deck or the top of a note. Switch the device to reframe them |
+| **Widths** | THIS screen at 1280 / 834 / 390 at once. The device switcher steps aside - every width is already on screen |
+| **Screens** | ALL screens at the width the device switcher is set to. Switch device to reframe them |
 | **Present** | full screen, chrome down to prev / pause / next, each slot sweeping that screen's time across its range and scrolling the page through its own height |
 
 A **pointer is on screen for the whole run**, resting inside the artifact and travelling to each declared target before it taps, so a run reads as someone using the prototype rather than as screens changing on their own.
+
+**Mockup is orthogonal to both.** The same button that frames the single view frames these, and they use the *same* markup and CSS as the single view, scaled - so there is one iPhone in this tool, not three that drift apart. Each frame still renders at its real width before scaling, so the artifact's own media queries fire.
+
+**A note cannot be placed in either multi view.** A pin belongs to one frame; with three or six on screen and no rail, `Add note` is disabled and says why.
 
 **A presentation may drive the artifact; it must not invent input.** With no `tour` it walks the screens in order at `present.hold` ms each. Declare a `tour` when the demo has a story, and each step says exactly what is shown - `screen`, `state`, `variant`, `time`, `scroll`, `click`, `say`, `hold`. `click` is the only thing that touches the artifact, it is declared rather than guessed, and the element is ringed before it fires. Arrow keys step, space pauses, Escape exits.
 
@@ -220,6 +226,8 @@ The second round added: per-screen time appearing, disappearing and keeping each
 
 The third: the screen panel with its descriptions and keyboard navigation, and the viewport transition - sampled mid-flight at 427px between a 1106px desktop and a 390px phone, with the annotations re-anchoring correctly once it settled.
 
+The twelfth: both multi views composing the single view's own frames at 44%, the mockup toggle reframing either, states reaching all three copies, `Add note` disabled in both, and the panel listing three documents below a divider while the count says two screens.
+
 The eleventh: the Overview rendering its six blocks with three provenance classes and the device switcher locked to desktop, the instructions screen, both screens dropping out of a link when unticked, and the promo view framing every screen at a proportional bezel.
 
 The tenth: a reviewer's link keeping every looking instrument while the event log and the sharing controls stay behind, the sheet reduced to Copy plus Email with two links under it, and the report's tally split into a desktop and a mobile group.
@@ -247,6 +255,7 @@ Bugs found that way, none of which a reading of the code would have caught:
 - a draft comment survived a reload and held the whole annotation layer in writing mode for ever
 - the side-by-side container and the body-state class were both called `compare`, so `.compare { display: none }` matched `<body>` and blanked the entire document - and the promo view repeated the mistake a week later
 - the promo frames put their iframes at `top: 0`, which measures from the padding box, so each artifact covered the bezel it was supposed to sit inside
+- `body.compare .wrap { display: none }` hid the scaled copies too, because they are `.wrap` as well - the third time in this file that a rule meant for one element caught everything sharing its name
 - the rail positioned its cards absolutely, so once a few notes existed the newest ran off the bottom of the window - and the one being written was the first to go
 - the annotation layer skipped its redraw while the chrome was hidden, silently dropping every change made in the meantime: toggles flipped there did nothing, and notes could come back missing after Hide
 - a cross-origin artifact reserved the annotation rail and then drew nothing into it, because the document was read only after the rail was measured

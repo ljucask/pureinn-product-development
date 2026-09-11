@@ -47,6 +47,9 @@ It also carries a handful of things the contract does not require but a reviewer
 Two of those are worth a sentence, because they are easy to build wrongly:
 
 - **Side by side** must render each frame at its **real width** and scale it down. Shrinking one iframe to a narrow box shows the same layout smaller; it does not fire the artifact's own media queries, which is the entire question being asked.
+- **Two different comparisons, and a mockup is neither of them.** One screen at every width answers "does this hold up narrow"; every screen at one width answers "does the flow read". They are separate views, the device switcher belongs to the second, and the device frame is a toggle that applies to both - baking a frame into one of them makes the pair look like the same button twice.
+- **One set of frames.** Whatever draws a device frame must be the *same* markup and CSS in every view, scaled. Drawing a second set by hand put two different-looking phones in one tool, and they drift apart on the next change to either.
+- **A note cannot be placed in a multi-screen view.** A pin belongs to one frame; with three on screen and no rail, the control has to be off rather than misleading.
 - **Presentation** may drive the artifact, but it must not **invent input**. Advancing screens, sweeping time and scrolling are the shell asking for things the artifact already does. A click belongs in a declared tour, ringed before it fires - a demo that improvises interaction shows an audience behaviour the prototype was never claimed to have. Show a **pointer travelling to the target** before it fires: a click with no visible approach reads as a glitch rather than as someone using the thing.
 
 ### 1. State switcher
@@ -147,6 +150,8 @@ A prototype is shown to two kinds of people and they need opposite things first.
 |---|---|
 | **A tester** needs the task and nothing else. Framing contaminates them: tell someone what you are hoping to prove and they will hand it to you |
 | **Whoever decides** - investor, sponsor, steering committee - needs exactly that framing. `audience-depth.md` already says so: narrative, key screens, numbers that survive questions |
+
+These are **documents about the prototype, not screens of it** - so they sit apart in whatever lists the screens, look different from the real ones, carry no number in the flow, and are read at desktop width. Mixed into the same list in the same styling they read as two more things to click through, and a tester will dutifully test them.
 
 So: two optional front screens, each **assembled from the prototype folder** rather than written twice, and each **left out of a shared link at the moment you send it** - the overview to the sponsor, the instructions to the tester.
 
