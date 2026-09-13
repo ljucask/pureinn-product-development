@@ -326,6 +326,15 @@ window.HARNESS_CONFIG = {
      first thing to turn off for a usability test, and switchable there too. */
   // glare: true,
 
+  /* The app being opened, once, when the harness first shows it with the
+     hardware drawn: a web app arrives at its address, a native one grows out
+     of its icon on a home screen. Costs a second and is the difference between
+     "here is a screen" and "here is the app".
+
+     Any click skips it, it never plays with the mockup off, and it is skipped
+     entirely under prefers-reduced-motion. Set false if even that is too much. */
+  // opening: true,
+
   // brand: { logo: '', name: '' },
 
   review: {

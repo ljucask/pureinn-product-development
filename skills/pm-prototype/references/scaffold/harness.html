@@ -249,6 +249,62 @@
     background: rgba(255,255,255,.1);
   }
 
+  /* ══ opening ══
+     A prototype that is simply THERE when the page loads skips the one moment
+     every real product has: being opened. Showing it costs a second and is the
+     difference between "here is a screen" and "here is the app" - which is the
+     whole job in a stakeholder showing.
+
+     It plays once, only with the hardware drawn, and any click skips it. It is
+     never in the way of a usability test, because there the mockup is off. */
+  .boot {
+    position: absolute; z-index: 5; inset: var(--bez); overflow: hidden;
+    border-radius: 45px; pointer-events: auto;
+  }
+  body.is-mock:not(.is-fixed) .wrap[data-device="tablet"] .boot { border-radius: 20px; }
+  body.is-mock:not(.is-fixed) .wrap[data-device="desktop"] .boot { border-radius: 5px; inset: var(--bez); top: calc(var(--bez) + 26px); }
+
+  .boot__home {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(120% 80% at 20% 0%, #3d4a6b 0%, rgba(61,74,107,0) 55%),
+      radial-gradient(120% 90% at 85% 100%, #6b4a5e 0%, rgba(107,74,94,0) 50%),
+      linear-gradient(165deg, #222838 0%, #14161f 100%);
+    opacity: 1; transition: opacity 260ms var(--ease);
+  }
+  .boot__grid {
+    position: absolute; inset: 34px 22px auto; display: grid;
+    grid-template-columns: repeat(4, 1fr); gap: 20px 16px;
+  }
+  .boot__grid i { display: block; padding-top: 100%; border-radius: 22%; background: rgba(255,255,255,.11); }
+  .boot__grid i.is-app { background: none; }
+  .boot__dock {
+    position: absolute; left: 16px; right: 16px; bottom: 16px; height: 74px;
+    border-radius: 26px; background: rgba(255,255,255,.11);
+  }
+
+  /* the app's own tile, which is what grows into the screen */
+  .boot__tile {
+    position: absolute; border-radius: 22%; overflow: hidden;
+    display: grid; place-items: center;
+    background: linear-gradient(150deg, #ed6d57, #ffc94f);
+    box-shadow: 0 10px 22px -8px rgba(0,0,0,.5);
+    transform-origin: top left;
+    transition: transform 520ms cubic-bezier(.3,0,.2,1), border-radius 520ms var(--ease), opacity 200ms 400ms linear;
+  }
+  .boot__tile img, .boot__tile svg { max-width: 58%; max-height: 58%; display: block; }
+  .boot.is-launch .boot__home { opacity: 0; }
+  .boot.is-launch .boot__tile { border-radius: 0; opacity: 0; }
+
+  /* the web opening has no home screen - the address arrives and the page does */
+  .boot--web .boot__home,
+  .boot--web .boot__tile { display: none; }
+  .boot--web { background: #fff; transition: opacity 260ms var(--ease); }
+  body.is-darkart .boot--web { background: #14161b; }
+  .boot--web.is-launch { opacity: 0; }
+
+  @media (prefers-reduced-motion: reduce) { .boot { display: none !important; } }
+
   /* iPad: even bezel all round, softer radius, a single camera dot */
   body.is-mock:not(.is-fixed) .wrap[data-device="tablet"] { --bez: 17px; }
   body.is-mock:not(.is-fixed) .wrap[data-device="tablet"] .mock {
@@ -1609,6 +1665,13 @@
           <svg viewBox="0 0 26 12" class="status__b"><rect x=".75" y=".75" width="21" height="10.5" rx="3.2" fill="none" stroke="currentColor" stroke-width="1.1" opacity=".45"/><rect x="2.4" y="2.4" width="14" height="7.2" rx="1.9" fill="currentColor"/><path d="M23.4 4.3v3.4a2.1 2.1 0 000-3.4z" fill="currentColor" opacity=".45"/></svg>
         </span>
       </div>
+      <div class="boot" data-boot hidden>
+        <div class="boot__home" data-boot-home>
+          <div class="boot__grid" data-boot-grid></div>
+          <span class="boot__dock"></span>
+        </div>
+        <div class="boot__tile" data-boot-tile></div>
+      </div>
       <div class="glare" data-glare aria-hidden="true"></div>
       <div class="grid" data-grid></div>
       <div class="marks" data-marks><svg data-marks-svg></svg></div>
@@ -2418,6 +2481,72 @@
     var lum = (0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]) / 255;
     document.body.classList.toggle('is-darkart', lum < 0.5);
   }
+  /* Opening the app. Once per session, only with the hardware on, and any
+     click ends it - a reviewer who wants to get on with the task must never
+     have to sit through it twice. */
+  var booted = false, bootTimers = [];
+  function endBoot() {
+    var b = document.querySelector('[data-boot]');
+    bootTimers.forEach(clearTimeout); bootTimers = [];
+    if (b) { b.hidden = true; b.classList.remove('is-launch', 'boot--web'); }
+  }
+
+  function playOpening() {
+    var b = document.querySelector('[data-boot]');
+    if (!b || booted || cfg.opening === false) return;
+    if (!current.mockup) return;                       // hardware off: nothing to open
+    if (generated(screens[screenIndex(current.screen)])) return;  // a document is not an app
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    booted = true;
+
+    b.hidden = false;
+    b.classList.remove('is-launch');
+    b.classList.toggle('boot--web', !native);
+    b.onclick = endBoot;
+
+    if (!native) {
+      /* A web app is opened by its address. The URL bar is already drawn, so
+         the opening is the page arriving in it rather than a separate scene. */
+      bootTimers.push(setTimeout(function () { b.classList.add('is-launch'); }, 620));
+      bootTimers.push(setTimeout(endBoot, 900));
+      return;
+    }
+
+    /* Native: a home screen, and the app's own tile growing out of it. The
+       tile carries the brand mark, so a prototype with the product's logo
+       opens with the product's icon - which is the whole point of the moment. */
+    var grid = b.querySelector('[data-boot-grid]');
+    var tile = b.querySelector('[data-boot-tile]');
+    grid.innerHTML = '';
+    var SLOT = 6;                                   // where the app sits in the grid
+    for (var i = 0; i < 12; i++) {
+      var c = document.createElement('i');
+      if (i === SLOT) c.className = 'is-app';
+      grid.appendChild(c);
+    }
+    var mark = document.querySelector('[data-brand-mark]');
+    tile.innerHTML = mark ? mark.innerHTML : '';
+
+    requestAnimationFrame(function () {
+      var slot = grid.children[SLOT].getBoundingClientRect();
+      var box  = b.getBoundingClientRect();
+      tile.style.left   = (slot.left - box.left) + 'px';
+      tile.style.top    = (slot.top - box.top) + 'px';
+      tile.style.width  = slot.width + 'px';
+      tile.style.height = slot.height + 'px';
+
+      bootTimers.push(setTimeout(function () {
+        /* grow the tile from where it sits to the whole screen */
+        var sx = box.width / slot.width, sy = box.height / slot.height;
+        tile.style.transform =
+          'translate(' + (box.left - slot.left) + 'px,' + (box.top - slot.top) + 'px) ' +
+          'scale(' + sx + ',' + sy + ')';
+        b.classList.add('is-launch');
+      }, 640));
+      bootTimers.push(setTimeout(endBoot, 1280));
+    });
+  }
+
   function setNative(v) {
     if (native === v) return;
     native = v;
@@ -5601,6 +5730,7 @@
       if (screenTime()) send('time', current.time);
       if (picking) send('picking', true);
       paintArtworkTone();
+      playOpening();
       requestAnimationFrame(drawAnnots);
     }
     /* Everything past this point belongs to the ONE artifact being reviewed.
@@ -5614,6 +5744,7 @@
   });
 
   function load() {
+    endBoot();          // a half-played opening must not survive a screen change
     frameReady = false;
     svg.innerHTML = '';
     annotEl.querySelectorAll('.pin').forEach(function (n) { n.remove(); });
