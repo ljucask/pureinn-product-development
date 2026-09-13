@@ -1243,6 +1243,19 @@
   /* `safe center` keeps a row that outgrows the stage reachable: plain centring
      pushes the overflow off BOTH edges and the left one can never be scrolled
      back into view. */
+  /* Switching to a multi view was a display swap, so it cut where changing
+     device travels. The device switcher's whole point is that you SEE the
+     artifact move between sizes; jumping to the three-up beside it read as a
+     different screen rather than the same one shown three ways. Both now go
+     through the same fade-out / fade-in, so every control in that segmented
+     group behaves the same way. */
+  .stage > .wrap, .cmpset, .proset {
+    transition: opacity var(--med) var(--ease), transform var(--med) var(--ease);
+  }
+  body.is-viewswap .stage > .wrap,
+  body.is-viewswap .cmpset,
+  body.is-viewswap .proset { opacity: 0; transform: scale(.985); }
+
   .cmpset { display: none; gap: 30px; align-items: flex-end; justify-content: safe center; }
   body.is-compare .cmpset { display: flex; }
   body.is-compare .stage > .wrap { display: none; }
@@ -4849,21 +4862,50 @@
   }
   function fitCompare() { if (compareOn) loadCompare(); }
 
+  /* Fade the stage out, change what is in it, fade it back. display cannot be
+     transitioned, so the swap happens while nothing is visible and the change
+     reads as one movement instead of a cut. Callers hand over the mutation
+     rather than doing it themselves, so neither view can forget the fade.
+
+     prefers-reduced-motion is honoured by the CSS transition being zero there,
+     which makes this collapse to the old instant swap - correct, not a bug. */
+  var swapTimer = null, swapping = false;
+  function swapView(mutate) {
+    /* setCompare turns promo off and setPromo turns compare off, so one swap
+       can start another from inside its own mutation. The stage is already
+       faded out at that point, so the inner one just runs - starting a second
+       fade would cancel the outer one's timer and leave the stage blank. */
+    if (swapping) { mutate(); return; }
+    swapping = true;
+    document.body.classList.add('is-viewswap');
+    clearTimeout(swapTimer);
+    swapTimer = setTimeout(function () {
+      mutate();
+      swapping = false;
+      // let the new content lay out at opacity 0, then let it arrive
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () { document.body.classList.remove('is-viewswap'); });
+      });
+    }, 160);
+  }
+
   function setCompare(on) {
     if (compareOn === on) return;
     compareOn = on;
     if (!on) stage.scrollLeft = 0;
-    document.body.classList.toggle('is-compare', on);
-    if (on) {
-      setPromo(false);
-      document.body.classList.remove('is-railed');
-      loadCompare();
-      toast('This screen on all three, at true relative size. Mockup draws the hardware.', 5000);
-    } else {
-      cmpEl.innerHTML = '';
-      requestAnimationFrame(drawAnnots);
-    }
-    paintDevice();
+    swapView(function () {
+      document.body.classList.toggle('is-compare', on);
+      if (on) {
+        setPromo(false);
+        document.body.classList.remove('is-railed');
+        loadCompare();
+        toast('This screen on all three, at true relative size. Mockup draws the hardware.', 5000);
+      } else {
+        cmpEl.innerHTML = '';
+        requestAnimationFrame(drawAnnots);
+      }
+      paintDevice();
+    });
     paintViewTools();
     record('harness:compare', on);
   }
@@ -4955,16 +4997,18 @@
     promoOn = on;
     if (!on) stage.scrollLeft = 0;
     promoBtn.setAttribute('aria-pressed', String(on));
-    document.body.classList.toggle('is-promo', on);
-    if (on) {
-      setCompare(false);
-      document.body.classList.remove('is-railed');
-      buildPromo();
-      toast('Every screen at ' + current.device + ' width. Switch the device to reframe them; Mockup adds the hardware.', 5000);
-    } else {
-      promoEl.innerHTML = '';
-      requestAnimationFrame(drawAnnots);
-    }
+    swapView(function () {
+      document.body.classList.toggle('is-promo', on);
+      if (on) {
+        setCompare(false);
+        document.body.classList.remove('is-railed');
+        buildPromo();
+        toast('Every screen at ' + current.device + ' width. Switch the device to reframe them; Mockup adds the hardware.', 5000);
+      } else {
+        promoEl.innerHTML = '';
+        requestAnimationFrame(drawAnnots);
+      }
+    });
     paintViewTools();
     record('harness:promo', on ? current.device : false);
   }
