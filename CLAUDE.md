@@ -390,6 +390,64 @@ Checks `state.json` → `artifact_language`. Default (unset or "English"): no ch
 
 ---
 
+## Standalone run (universal standard)
+
+Pureinn has to work from both ends: as an **orchestrator** someone enters through
+`/pureinn`, and as a **toolkit** someone installs and takes one skill from. The
+second one is the one that breaks, because 49 of 51 skills write into
+`pureinn-workspace/` and half of them read from it, while only the orchestrator
+ever creates it.
+
+**Runtime delivery (critical, same reason as agent-mode and artifact-language).**
+`CLAUDE.md` is author-facing only. The behavior must reach the user through the
+**skill itself**, via a compact `## Standalone run` block inline near the top of
+`SKILL.md`. This section is the single authoring source of truth; the inline
+block is the runtime instance. Keep them in sync when the rule changes.
+
+**Two classes, and the difference is inputs - never storage.**
+
+| Class | Meaning | `metadata.standalone` |
+|---|---|---|
+| **Self-contained** | Needs nothing from other skills. Its inputs come from the user, the repo, or its own research. A missing workspace is only a question of *where output goes* | `yes` |
+| **Needs inputs** | Genuinely synthesizes other skills' artifacts - `pm-prd` assembles five upstream documents. Running it alone would mean inventing them, which the anti-hallucination rule forbids | `needs-inputs` |
+
+Classify by one question: **"if no other Pureinn artifact existed, could this skill still do its job honestly?"** Writing to a folder that does not exist is not a reason to answer no - that is solved below. Needing a validated problem statement that nobody has written is.
+
+**The storage rule, for both classes.** A skill never refuses to run because
+`pureinn-workspace/` is absent. When it is about to write and there is no
+workspace, it **creates just the folders it writes into** - not the full tree,
+which is `/pureinn`'s job - or writes to a path the user names. It says where
+the file went, in one line. It does not scaffold a project, ask the user to run
+`/pureinn` first, or invent a `state.json`.
+
+**The read rule.** A skill reads `pureinn-variables.md` or `state.json` **at the
+point it needs the value, not at the top of the run**. Reading on spec makes a
+file that half the paths never touch into a hard dependency for all of them.
+When the value is missing, degrade per the PREREQ standard - proceed, and say
+which capability is unavailable without it.
+
+**Compact inline block templates** (paste near the top of each `SKILL.md`, after
+the Agent mode and Artifact language blocks where they exist):
+
+*self-contained:*
+```
+## Standalone run
+Runs with or without a Pureinn workspace - it needs no other skill's artifact.
+- No workspace: writes to `pureinn-workspace/[slug]/[path]`, creating just that folder, or to a path you name. Says where the file went.
+- Reads `pureinn-variables.md` / `state.json` only where a value is actually used, and degrades with a named limitation when one is missing.
+```
+*needs-inputs:*
+```
+## Standalone run
+Needs [the artifacts listed under Dependencies] - it synthesizes them, so without them there is nothing to synthesize.
+- No workspace or missing inputs: say which are missing and what each unlocks, then offer the PREREQ paths - proceed on stated assumptions marked `[ASSUMED - ...]`, or route to the skill that produces the missing input. Never hard-block, never invent the input.
+- Writes as above: creates just the folder it writes into.
+```
+
+Every new skill MUST declare `standalone` and carry the matching block.
+
+---
+
 ### Renaming or removing a skill
 
 This is a major version change - existing users may have workflows referencing the old name.
