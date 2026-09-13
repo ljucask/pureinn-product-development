@@ -975,6 +975,28 @@
   .menu__i.is-on b { color: var(--co); }
   .menu__i.is-on > svg:last-child { width: 12px; height: 12px; margin-left: auto; margin-top: 3px; }
 
+  /* The shape of the session, above the controls that filter it.
+     This panel is a DARK surface - it does not inherit the page's ink tokens,
+     and the rows beside it hardcode their own light colours for the same
+     reason. Using var(--ink) here rendered the count dark-on-dark. */
+  .tal { padding: 2px 2px 13px; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,.08); }
+  .tal__n { font-size: 11.5px; color: #8e97a6; margin-bottom: 10px; }
+  .tal__n b { font-size: 16px; font-weight: 680; color: #eef1f5; margin-right: 3px; }
+  .tal__d { display: flex; align-items: center; gap: 5px; margin-top: 6px; }
+  .tal__dev {
+    flex: 1 1 auto; display: flex; align-items: baseline; gap: 6px;
+    font: 700 8px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: #6d7482;
+  }
+  .tal__dev b { font-family: inherit; font-size: 11px; font-weight: 620; letter-spacing: 0; color: #c3cad4; }
+  .tal__p {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 7px; border-radius: 99px; background: rgba(255,255,255,.06);
+    font-size: 10.5px; font-variant-numeric: tabular-nums; color: #c3cad4;
+  }
+  .tal__p i { width: 6px; height: 6px; border-radius: 50%; flex: 0 0 auto; }
+  .tal__p.is-nil { opacity: .3; }
+  .tal__none { margin: 0; font-size: 11.5px; line-height: 1.5; color: #8e97a6; }
+
   .menu__sep { height: 1px; margin: 5px 9px; background: var(--glass-ring); }
   .menu__h {
     display: block; padding: 7px 11px 5px;
@@ -1697,6 +1719,8 @@
     <span class="nav__k">Notes</span>
     <button class="nav__x" type="button" data-notes-close aria-label="Close the note editor"><svg><use href="#i-x"/></svg></button>
   </div>
+
+  <div class="tal" data-notes-tally></div>
 
   <div class="notes__find">
     <input type="search" data-notes-q placeholder="Search the text of a note">
@@ -3657,7 +3681,53 @@
     return s ? s.label : src;
   }
 
+  var SEV_COL = { low: '#3d7dd8', normal: '#f0913a', high: '#e0483d' };
+
+  /* Split by device first, severity inside - the same split the report makes,
+     for the same reason: three high on a phone and three high on a desktop are
+     not the same finding, and one row of totals hides exactly what the device
+     tag exists to expose. */
+  function tallyNotes() {
+    var byDev = {}, order = [];
+    written().forEach(function (cm) {
+      var dv = cm.device || 'desktop';
+      if (!byDev[dv]) { byDev[dv] = { low: 0, normal: 0, high: 0, n: 0 }; order.push(dv); }
+      byDev[dv][cm.severity || 'normal']++;
+      byDev[dv].n++;
+    });
+    var rank = { desktop: 0, tablet: 1, mobile: 2 };
+    order.sort(function (a, b) {
+      return (rank[a] === undefined ? 9 : rank[a]) - (rank[b] === undefined ? 9 : rank[b]);
+    });
+    return { byDev: byDev, order: order, total: written().length };
+  }
+
+  /* The panel opened on a search field and a filter row - controls for a list
+     you had not been shown yet. The shape of what is there belongs above them:
+     how many, on which device, how bad. It is also the one place a reviewer
+     sees their own session summed up before they send it. */
+  function paintTally() {
+    var box = document.querySelector('[data-notes-tally]');
+    if (!box) return;
+    var t = tallyNotes();
+    if (!t.total) {
+      box.innerHTML = '<p class="tal__none">No notes yet. Add one from the bar below, or click anything in the screen.</p>';
+      return;
+    }
+    box.innerHTML =
+      '<div class="tal__n"><b>' + t.total + '</b> note' + (t.total === 1 ? '' : 's') + ' to return</div>' +
+      t.order.map(function (dv) {
+        var d = t.byDev[dv];
+        return '<div class="tal__d"><span class="tal__dev">' + esc(dv) + '<b>' + d.n + '</b></span>' +
+          ['high', 'normal', 'low'].map(function (sv) {
+            return '<span class="tal__p' + (d[sv] ? '' : ' is-nil') + '">' +
+                   '<i style="background:' + SEV_COL[sv] + '"></i>' + d[sv] + '</span>';
+          }).join('') + '</div>';
+      }).join('');
+  }
+
   function paintNotes() {
+    paintTally();
     var list = allNotes().filter(function (n) {
       if (filter.kind && n.kind !== filter.kind) return false;
       if (filter.sev && !(n.cm && (n.cm.severity || 'normal') === filter.sev)) return false;
