@@ -968,6 +968,13 @@
   .menu__txt { flex: 1 1 auto; min-width: 0; }
   .menu__i b { display: block; font-size: 12.5px; font-weight: 620; color: var(--ink); }
   .menu__i span { display: block; margin-top: 2px; font-size: 11px; line-height: 1.45; color: var(--ink-3); }
+  /* The one in force, marked where it is rather than in a separate readout -
+     a menu that lists options and says nowhere which is current makes you open
+     it to find out and then guess. */
+  .menu__i.is-on { background: rgba(237,109,87,.07); }
+  .menu__i.is-on b { color: var(--co); }
+  .menu__i.is-on > svg:last-child { width: 12px; height: 12px; margin-left: auto; margin-top: 3px; }
+
   .menu__sep { height: 1px; margin: 5px 9px; background: var(--glass-ring); }
   .menu__h {
     display: block; padding: 7px 11px 5px;
@@ -1541,7 +1548,7 @@
 <div class="isle isle--b">
   <div class="grp">
     <span class="grp__l">State</span>
-    <div class="seg" data-states-group><div class="seg__thumb" data-thumb></div></div>
+    <button class="ib" type="button" data-menu="state" aria-haspopup="menu" aria-expanded="false"><svg><use href="#i-layers"/></svg><span data-state-label>full</span><svg class="caret"><use href="#i-chevron"/></svg></button>
   </div>
 
   <span class="sep" data-variants-sep hidden></span>
@@ -1592,6 +1599,12 @@
 <!-- The real controls, kept out of sight: every listener in this file still
      attaches to them, and the menus above simply press them. -->
 <div class="stash" hidden>
+  <!-- The real state segment. It stays a segment because four other places
+       drive it - the share link, the report's screen tour, goToNote and the
+       screen loader all set aria-pressed and slide the thumb - and a menu that
+       replaced it would have to reimplement every one of them. The dock shows
+       a menu; this is what the menu presses. -->
+  <div class="seg" data-states-group><div class="seg__thumb" data-thumb></div></div>
   <button type="button" data-comment aria-pressed="false"></button>
   <button type="button" data-loose></button>
   <button type="button" data-summary></button>
@@ -1894,12 +1907,14 @@
       var b = document.createElement('button');
       b.type = 'button';
       b.textContent = v;
+      b.setAttribute('data-v', v);
       b.setAttribute('aria-pressed', String(current[key] === v));
       b.addEventListener('click', function () {
         if (current[key] === v) return;
         current[key] = v;
         seg.querySelectorAll('[aria-pressed]').forEach(function (o) { o.setAttribute('aria-pressed', String(o === b)); });
         slide(seg);
+        if (key === 'state') paintState();
         onPick(v);
       });
       seg.appendChild(b);
@@ -2035,6 +2050,7 @@
   });
 
   /* ---------- state + variant ---------- */
+  paintState();
   segment(document.querySelector('[data-states-group]'), states, 'state', function (v) {
     send('state', v); record('harness:state', v);
     // marks belong to a state; without this they hang over the wrong one
@@ -3236,7 +3252,50 @@
 
   function press(sel) { var b = document.querySelector(sel); if (b) b.click(); }
 
+  /* The segment used to BE the display; now it is only the mechanism, so the
+     label has to be repainted from whatever drove it - the picker, a share
+     link, the report's screen tour, goToNote and the screen loader.
+
+     The element is looked up on each call rather than cached in a var above.
+     A cached one is hoisted as undefined, and the first repaint happens at
+     startup, far above this line - so it would silently do nothing and a link
+     carrying ?state=unauth would open showing "full". Twice in one file is
+     enough: resolve it where it is used. */
+  function paintState() {
+    var el = document.querySelector('[data-state-label]');
+    if (el) el.textContent = current.state;
+  }
+
+  /* A segmented control shows every option at once and says what none of them
+     mean. Folded into a menu there is room for the one line that matters: what
+     each state is there to catch. The text is the config's own commentary, so
+     the two cannot drift. An unlisted state still works - it just carries no
+     description, which is honest. */
+  var STATE_DESC = {
+    empty:     'Nothing yet - first run, or everything cleared',
+    loading:   'The wait before the answer. Pair it with the latency control',
+    full:      'The ordinary case, with data in it',
+    partial:   'Ragged real data - a null field, a missing image',
+    long:      'The 200-item list, the 60-character name',
+    error:     'It went wrong, and the screen has to say so',
+    unauth:    'Not signed in',
+    forbidden: 'Signed in, but not allowed - a different screen from unauth',
+    offline:   'No connection, for anything used away from a desk'
+  };
+
   var MENUS = {
+    state: function () { return [{ h: 'What situation is the screen in?' }].concat(
+      states.map(function (v) {
+        return {
+          ico: 'i-layers', t: v, d: STATE_DESC[v] || 'A state this prototype declares',
+          on: v === current.state,
+          fn: function () {
+            var b = document.querySelector('[data-states-group] button[data-v="' + v + '"]');
+            if (b) b.click();
+          }
+        };
+      })
+    ); },
     note: function () { return [
       { h: 'What is the note about?' },
       { ico: 'i-pin',  t: 'Something I click',   d: 'Pins it to that element, where the pointer lands', fn: function () { press('[data-comment]'); } },
@@ -3283,6 +3342,10 @@
       b.innerHTML = icon(it.ico) + '<span class="menu__txt"><b></b><span></span></span>';
       b.querySelector('b').textContent = it.t;
       b.querySelector('.menu__txt span').textContent = it.d;
+      if (it.on) {
+        b.classList.add('is-on');
+        b.insertAdjacentHTML('beforeend', icon('i-check'));
+      }
       b.addEventListener('click', function () { closeMenu(); it.fn(); });
       el.appendChild(b);
     });
@@ -3765,6 +3828,7 @@
     if (n.cm && n.cm.device && n.cm.device !== current.device) { current.device = n.cm.device; paintDevice(); }
     if (n.cm && n.cm.state && states.indexOf(n.cm.state) > -1 && n.cm.state !== current.state) {
       current.state = n.cm.state;
+      paintState();
       var seg = document.querySelector('[data-states-group]');
       seg.querySelectorAll('button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.textContent === n.cm.state)); });
       slide(seg);
@@ -4330,6 +4394,7 @@
       if (part[3] && part[3] !== current.device) { current.device = part[3]; paintDevice(); }
       if (current.screen !== part[0]) pickScreen(screenIndex(part[0]));
       current.state = part[1];
+      paintState();
       send('state', part[1]);
       if (variants.length && part[2]) { current.variant = part[2]; send('variant', part[2]); }
       // the frame travels between widths, so wait for it to arrive before shooting
@@ -4346,6 +4411,7 @@
     if (current.device !== keep.device) { current.device = keep.device; paintDevice(); }
     if (current.screen !== keep.screen) pickScreen(screenIndex(keep.screen));
     current.state = keep.state; send('state', keep.state);
+    paintState();
     if (variants.length) { current.variant = keep.variant; send('variant', keep.variant); }
     var seg = document.querySelector('[data-states-group]');
     seg.querySelectorAll('button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.textContent === keep.state)); });
@@ -5061,6 +5127,7 @@
     if (st.screen && st.screen !== current.screen) pickScreen(screenIndex(st.screen));
     if (st.state && states.indexOf(st.state) > -1) {
       current.state = st.state;
+      paintState();
       var seg = document.querySelector('[data-states-group]');
       seg.querySelectorAll('button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.textContent === st.state)); });
       slide(seg);
