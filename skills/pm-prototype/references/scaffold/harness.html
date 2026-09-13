@@ -166,10 +166,23 @@
       0 40px 80px -30px rgba(22,24,29,.55);
   }
   body.is-mock:not(.is-fixed) .wrap[data-device="mobile"] .screen { border-radius: 45px; }
+  /* The Dynamic Island. A flat black pill reads as a hole cut in the picture;
+     the real thing is a glossy black capsule with a visibly recessed lens at
+     one end and the depth sensor as a faint spot at the other. Two inset
+     highlights give it the "under glass" look rather than "cut out of it". */
   body.is-mock:not(.is-fixed) .wrap[data-device="mobile"] .mock::before {
-    content: ""; position: absolute; z-index: 2;
-    top: calc(var(--bez) + 9px); left: 50%; transform: translateX(-50%);
-    width: 112px; height: 33px; border-radius: 999px; background: #000;
+    content: ""; position: absolute; z-index: 6;
+    top: calc(var(--bez) + 11px); left: 50%; transform: translateX(-50%);
+    width: 118px; height: 35px; border-radius: 999px;
+    background:
+      radial-gradient(circle at 78% 50%, #1b1d22 0 8.5px, rgba(27,29,34,0) 9px),
+      radial-gradient(circle at 78% 50%, #2c3038 0 6.4px, rgba(44,48,56,0) 6.9px),
+      radial-gradient(circle at 76.5% 44%, #4a5566 0 3.1px, rgba(74,85,102,0) 3.5px),
+      radial-gradient(circle at 22% 50%, #17191d 0 2.6px, rgba(23,25,29,0) 3px),
+      linear-gradient(180deg, #0a0b0d 0%, #050506 100%);
+    box-shadow:
+      inset 0 .5px 0 rgba(255,255,255,.1),
+      inset 0 -.5px 0 rgba(255,255,255,.045);
   }
   /* left side: silent switch, then the volume pair */
   body.is-mock:not(.is-fixed) .wrap[data-device="mobile"] .mock::after {
@@ -217,11 +230,34 @@
     height: 30px; padding: 0 18px; font-size: 12px; border-radius: 20px 20px 0 0;
   }
   .status__r { display: flex; align-items: center; gap: 5px; }
-  .status__i { width: 16px; height: 11px; }
-  .status__b { width: 25px; height: 11px; }
+  .status__sig  { width: 17px; height: 11px; }
+  .status__wifi { width: 16px; height: 11px; }
+
+  /* The battery. iOS puts the percentage INSIDE the shell, which is the detail
+     that makes a drawn battery read as a real one - an empty outline beside a
+     separate number does not. */
+  .status__bat {
+    position: relative; display: inline-flex; align-items: center; justify-content: center;
+    width: 27px; height: 13px; margin-left: 1px;
+    border-radius: 4.2px; box-shadow: inset 0 0 0 1.1px currentColor;
+    opacity: .92;
+  }
+  .status__bat::after {                       /* the terminal nub */
+    content: ""; position: absolute; right: -3.2px; top: 50%; transform: translateY(-50%);
+    width: 2px; height: 5px; border-radius: 0 2px 2px 0; background: currentColor; opacity: .5;
+  }
+  .status__bat b {
+    position: relative; z-index: 2; font-size: 8.5px; font-weight: 700;
+    letter-spacing: -.02em; line-height: 1; font-variant-numeric: tabular-nums;
+    color: var(--bat-ink, #fff);
+  }
+  .status__bat i { position: absolute; inset: 2px; border-radius: 2.4px; overflow: hidden; }
+  .status__bat u { display: block; height: 100%; background: currentColor; border-radius: 2.4px; }
   /* a light artifact is the common case; on a dark one the bar inverts so it
      stays legible rather than disappearing into the content under it */
   body.is-darkart .status { color: #f2f3f5; }
+  .status { --bat-ink: #fff; }
+  body.is-darkart .status { --bat-ink: #14161b; }
 
   /* The glass. Two very low-opacity diagonals, no blur and no backdrop-filter:
      the point is a hint that there is a surface in front of the screen, not a
@@ -230,9 +266,33 @@
   .glare {
     position: absolute; z-index: 4; inset: var(--bez);
     display: none; border-radius: inherit; pointer-events: none;
+    /* No blend mode. `screen` brightens, and most prototypes are white, so a
+       white highlight over white produced exactly nothing - the toggle looked
+       broken because on screen it did nothing at all.
+
+       Glass over a bright surface does not read as a white streak, it reads as
+       a COOL, slightly darker sheet with a bright edge. So: a faint blue-grey
+       wash with a white leading edge, plus a vignette for the curve. Visible on
+       white, and still right on a dark artifact. */
     background:
-      linear-gradient(148deg, rgba(255,255,255,.16) 0%, rgba(255,255,255,.05) 18%, rgba(255,255,255,0) 34%),
-      linear-gradient(148deg, rgba(255,255,255,0) 56%, rgba(255,255,255,.045) 66%, rgba(255,255,255,0) 78%);
+      /* the bright leading edge of the reflection */
+      linear-gradient(146deg,
+        rgba(255,255,255,.50) 0%,
+        rgba(255,255,255,.16) 9%,
+        rgba(255,255,255,0)   17%),
+      /* the body of the sheet: cool, and just dark enough to be seen on white */
+      linear-gradient(146deg,
+        rgba(150,170,205,.17) 0%,
+        rgba(150,170,205,.09) 24%,
+        rgba(150,170,205,0)   40%),
+      /* the narrow secondary band further down the glass */
+      linear-gradient(146deg,
+        rgba(170,190,220,0)   54%,
+        rgba(170,190,220,.13) 62%,
+        rgba(255,255,255,.07) 66%,
+        rgba(170,190,220,0)   74%),
+      /* the curve at the edges, so it is a pane and not two stripes */
+      radial-gradient(122% 86% at 50% 40%, rgba(0,0,0,0) 58%, rgba(20,26,40,.13) 100%);
   }
   body.is-mock:not(.is-fixed).is-glare .wrap[data-device="mobile"] .glare { display: block; border-radius: 45px; }
   body.is-mock:not(.is-fixed).is-glare .wrap[data-device="tablet"] .glare { display: block; border-radius: 20px; }
@@ -282,44 +342,108 @@
 
      It plays once, only with the hardware drawn, and any click skips it. It is
      never in the way of a usability test, because there the mockup is off. */
+  /* Below the status bar, above everything else. A home screen with no clock
+     on it is the one thing that gives the whole illusion away. */
   .boot {
-    position: absolute; z-index: 5; inset: var(--bez); overflow: hidden;
+    position: absolute; z-index: 2; inset: var(--bez); overflow: hidden;
     border-radius: 45px; pointer-events: auto;
   }
+  /* and the bar goes white over the wallpaper for as long as it is up */
+  body.is-booting .status { color: #fff; --bat-ink: #14161b; }
+  body.is-booting .status { background: none; }
   body.is-mock:not(.is-fixed) .wrap[data-device="tablet"] .boot { border-radius: 20px; }
   body.is-mock:not(.is-fixed) .wrap[data-device="desktop"] .boot { border-radius: 5px; inset: var(--bez); top: calc(var(--bez) + 26px); }
 
-  .boot__home {
+  .boot__home { position: absolute; inset: 0; opacity: 1; transition: opacity 420ms var(--ease); }
+  .boot__wall {
     position: absolute; inset: 0;
     background:
-      radial-gradient(120% 80% at 20% 0%, #3d4a6b 0%, rgba(61,74,107,0) 55%),
-      radial-gradient(120% 90% at 85% 100%, #6b4a5e 0%, rgba(107,74,94,0) 50%),
-      linear-gradient(165deg, #222838 0%, #14161f 100%);
-    opacity: 1; transition: opacity 260ms var(--ease);
+      radial-gradient(78% 52% at 22% 8%,  rgba(255,146,92,.50) 0%, rgba(255,146,92,0) 62%),
+      radial-gradient(70% 46% at 86% 26%, rgba(150,110,230,.45) 0%, rgba(150,110,230,0) 60%),
+      radial-gradient(96% 60% at 50% 104%, rgba(58,120,210,.40) 0%, rgba(58,120,210,0) 64%),
+      linear-gradient(168deg, #1b2030 0%, #12141d 52%, #0c0e15 100%);
   }
+  .boot__page { position: absolute; inset: 64px 18px 118px; display: flex; flex-direction: column; gap: 13px; }
+
+  /* Widgets. A home screen that is only a grid of grey squares reads as a
+     placeholder; the weather and the calendar are what make it read as
+     somebody's phone. Both are generic on purpose - a real city and a real
+     meeting would be someone's data on a screenshot that gets passed around. */
+  .boot__wx, .boot__cal {
+    position: relative; border-radius: 20px; padding: 13px 15px;
+    background: rgba(255,255,255,.13);
+    box-shadow: inset 0 .5px 0 rgba(255,255,255,.18);
+    color: #fff; display: grid;
+  }
+  .boot__wx { grid-template-columns: 1fr auto; align-items: start; }
+  .boot__wx-c { font-size: 12.5px; font-weight: 600; opacity: .95; }
+  .boot__wx-t { grid-row: 1 / 3; font-size: 34px; font-weight: 300; line-height: .9; letter-spacing: -.02em; }
+  .boot__wx-s { font-size: 11px; opacity: .72; margin-top: 2px; }
+  .boot__wx-r { grid-column: 1 / -1; font-size: 11px; opacity: .72; margin-top: 6px; }
+
+  .boot__cal { gap: 1px; }
+  .boot__cal-d { font-size: 10px; font-weight: 700; letter-spacing: .06em; color: #ff6b5e; }
+  .boot__cal-n { font-size: 27px; font-weight: 600; line-height: 1.05; letter-spacing: -.02em; }
+  .boot__cal-e { display: flex; align-items: center; gap: 7px; margin-top: 5px; font-size: 10.5px; opacity: .8; }
+  .boot__cal-e i { width: 2.5px; height: 12px; border-radius: 2px; background: #5aa9ff; flex: 0 0 auto; }
+  .boot__cal-e i.alt { background: #ffb454; }
+
+  /* straight after the widgets, the way a page of a home screen fills from the
+     top - the icons pushed to the bottom left a hole in the middle of it */
   .boot__grid {
-    position: absolute; inset: 34px 22px auto; display: grid;
-    grid-template-columns: repeat(4, 1fr); gap: 20px 16px;
+    margin-top: 5px; display: grid;
+    grid-template-columns: repeat(4, 1fr); gap: 26px 16px;
   }
-  .boot__grid i { display: block; padding-top: 100%; border-radius: 22%; background: rgba(255,255,255,.11); }
-  .boot__grid i.is-app { background: none; }
+  .boot__grid i {
+    display: block; padding-top: 100%; border-radius: 23%;
+    background: rgba(255,255,255,.15);
+    box-shadow: inset 0 .5px 0 rgba(255,255,255,.2);
+  }
+  .boot__grid i.is-app { background: none; box-shadow: none; }
+
   .boot__dock {
-    position: absolute; left: 16px; right: 16px; bottom: 16px; height: 74px;
-    border-radius: 26px; background: rgba(255,255,255,.11);
+    position: absolute; left: 14px; right: 14px; bottom: 26px; height: 76px;
+    border-radius: 28px; background: rgba(255,255,255,.14);
+    box-shadow: inset 0 .5px 0 rgba(255,255,255,.16);
+    display: grid; grid-template-columns: repeat(4, 1fr); align-items: center;
+    gap: 14px; padding: 0 16px;
+  }
+  .boot__dock i { display: block; padding-top: 100%; border-radius: 23%; background: rgba(255,255,255,.17); }
+  .boot__bar {
+    position: absolute; left: 50%; transform: translateX(-50%); bottom: 9px;
+    width: 134px; height: 5px; border-radius: 99px; background: rgba(255,255,255,.55);
   }
 
-  /* the app's own tile, which is what grows into the screen */
+  /* The app's own tile, which is what grows into the screen. Slower than a
+     normal transition on purpose: the point is that someone SEES the app being
+     opened, and at 300ms it is over before it registers. */
   .boot__tile {
-    position: absolute; border-radius: 22%; overflow: hidden;
+    position: absolute; border-radius: 23%;
     display: grid; place-items: center;
     background: linear-gradient(150deg, #ed6d57, #ffc94f);
-    box-shadow: 0 10px 22px -8px rgba(0,0,0,.5);
+    box-shadow: 0 12px 26px -10px rgba(0,0,0,.6);
     transform-origin: top left;
-    transition: transform 520ms cubic-bezier(.3,0,.2,1), border-radius 520ms var(--ease), opacity 200ms 400ms linear;
+    transition: transform 900ms cubic-bezier(.34,0,.16,1),
+                border-radius 900ms var(--ease),
+                opacity 260ms 620ms linear;
   }
-  .boot__tile img, .boot__tile svg { max-width: 58%; max-height: 58%; display: block; }
+  /* the artwork is clipped to the tile; the NAME is not, which is why the tile
+     itself cannot be overflow:hidden */
+  .boot__tile img, .boot__tile svg { max-width: 56%; max-height: 56%; display: block; border-radius: inherit; }
+  .boot.is-launch .boot__tile { overflow: hidden; }
+  .boot__tile-l {
+    position: absolute; left: 0; right: 0; bottom: -19px;
+    text-align: center; font-size: 10.5px; color: #fff;
+    text-shadow: 0 1px 3px rgba(0,0,0,.55);
+    transition: opacity 200ms linear;
+  }
+  /* the press. A tile that grows with no touch first reads as a zoom, not as
+     someone opening an app. */
+  .boot__tile.is-tap { transform: scale(.9); transition: transform 170ms var(--ease); }
+
   .boot.is-launch .boot__home { opacity: 0; }
   .boot.is-launch .boot__tile { border-radius: 0; opacity: 0; }
+  .boot.is-launch .boot__tile-l { opacity: 0; }
 
   /* the web opening has no home screen - the address arrives and the page does */
   .boot--web .boot__home,
@@ -1696,16 +1820,46 @@
       <div class="status" data-status aria-hidden="true">
         <span class="status__t" data-status-time>9:41</span>
         <span class="status__r">
-          <svg viewBox="0 0 18 12" class="status__i"><path d="M1 4.2a11 11 0 0116 0M3.6 7a7.4 7.4 0 0110.8 0M6.4 9.7a3.5 3.5 0 015.2 0" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-          <svg viewBox="0 0 26 12" class="status__b"><rect x=".75" y=".75" width="21" height="10.5" rx="3.2" fill="none" stroke="currentColor" stroke-width="1.1" opacity=".45"/><rect x="2.4" y="2.4" width="14" height="7.2" rx="1.9" fill="currentColor"/><path d="M23.4 4.3v3.4a2.1 2.1 0 000-3.4z" fill="currentColor" opacity=".45"/></svg>
+          <!-- carrier signal: four bars, the last one dimmed -->
+          <svg viewBox="0 0 18 12" class="status__sig">
+            <rect x="0"    y="8.2" width="3.1" height="3.8" rx="1" fill="currentColor"/>
+            <rect x="4.7"  y="6"   width="3.1" height="6"   rx="1" fill="currentColor"/>
+            <rect x="9.4"  y="3.4" width="3.1" height="8.6" rx="1" fill="currentColor"/>
+            <rect x="14.1" y="0.6" width="3.1" height="11.4" rx="1" fill="currentColor" opacity=".32"/>
+          </svg>
+          <svg viewBox="0 0 17 12" class="status__wifi">
+            <path d="M1 4.1a11.4 11.4 0 0115 0"   fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+            <path d="M3.7 6.9a7.6 7.6 0 019.6 0"  fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+            <path d="M6.5 9.6a3.6 3.6 0 014 0"    fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+          </svg>
+          <span class="status__bat">
+            <b data-status-pct>84</b>
+            <i><u data-status-fill></u></i>
+          </span>
         </span>
       </div>
       <div class="boot" data-boot hidden>
         <div class="boot__home" data-boot-home>
-          <div class="boot__grid" data-boot-grid></div>
-          <span class="boot__dock"></span>
+          <div class="boot__wall"></div>
+          <div class="boot__page">
+            <div class="boot__wx">
+              <span class="boot__wx-c" data-boot-city>Bratislava</span>
+              <span class="boot__wx-t">18°</span>
+              <span class="boot__wx-s">Mostly Clear</span>
+              <span class="boot__wx-r">23° / 11°</span>
+            </div>
+            <div class="boot__cal">
+              <span class="boot__cal-d" data-boot-day>FRIDAY</span>
+              <span class="boot__cal-n" data-boot-date>13</span>
+              <span class="boot__cal-e"><i></i>Standup · 9:30</span>
+              <span class="boot__cal-e"><i class="alt"></i>Review · 14:00</span>
+            </div>
+            <div class="boot__grid" data-boot-grid></div>
+          </div>
+          <div class="boot__dock"><i></i><i></i><i></i><i></i></div>
+          <span class="boot__bar"></span>
         </div>
-        <div class="boot__tile" data-boot-tile></div>
+        <div class="boot__tile" data-boot-tile><span class="boot__tile-l" data-boot-tile-l></span></div>
       </div>
       <div class="glare" data-glare aria-hidden="true"></div>
       <div class="grid" data-grid></div>
@@ -2436,6 +2590,7 @@
     });
     wrap.setAttribute('data-device', current.device);
     wrap.setAttribute('data-size', { desktop: '', tablet: '834 x 1112', mobile: '390 x 844' }[current.device]);
+    paintSafeArea();          // the notch is a different size on each device
     slide(deviceSeg);
   }
 
@@ -2473,6 +2628,7 @@
     document.body.classList.toggle('is-native', native);
     var ml = document.querySelector('[data-mock-label]');
     if (ml) ml.textContent = native ? 'Native' : 'Web';
+    paintSafeArea();
     document.body.classList.toggle('is-glare', glare);
     mockBtn.setAttribute('aria-pressed', String(current.mockup));
     var url = location.origin + '/' + current.screen;
@@ -2498,9 +2654,65 @@
   }
   setInterval(tickClock, 20000);
 
+  /* The real battery where the browser exposes it, a plausible one where it
+     does not. Same reasoning as the clock: a number taken from the machine
+     cannot be caught looking wrong, and 84% is a level that reads as "a phone
+     someone is using" rather than a staged 100. */
+  function paintBattery(pct) {
+    var n = document.querySelector('[data-status-pct]');
+    var f = document.querySelector('[data-status-fill]');
+    if (!n || !f) return;
+    n.textContent = pct;
+    f.style.width = Math.max(6, Math.min(100, pct)) + '%';
+  }
+  paintBattery(84);
+  if (navigator.getBattery) {
+    navigator.getBattery().then(function (b) {
+      var push = function () { paintBattery(Math.round(b.level * 100)); };
+      push(); b.addEventListener('levelchange', push);
+    }).catch(function () { /* keep the default */ });
+  }
+
   /* A status bar in ink on a dark artifact is an invisible status bar. Sample
      what the artifact actually paints and invert when it is dark. Cross-origin
      or not-yet-ready simply leaves it light, which is the common case. */
+  /* THE SAFE AREA.
+     A phone's content starts below the notch and slides under it as you
+     scroll. The harness cannot ask the artifact to do that - the artifact is a
+     separate document that must also run with no harness at all - so the shell
+     adds the padding itself, in a stylesheet it owns and can take away again.
+
+     Padding rather than a shorter viewport, deliberately: the frame stays
+     390 x 844, every media query still fires on the real numbers, and because
+     padding scrolls with the content the first screenful sits below the notch
+     and everything after it passes underneath - which is the behaviour asked
+     for and also what iOS actually does.
+
+     The rule is tagged so it can be removed cleanly, and it is only ever added
+     for a native phone or tablet with the hardware drawn. */
+  var SAFE = { mobile: 59, tablet: 30 };
+  function paintSafeArea() {
+    var doc = null;
+    try { doc = frame.contentDocument; } catch (e) { doc = null; }
+    if (!doc || !doc.head) return;
+    var id = 'harness-safe-area';
+    var tag = doc.getElementById(id);
+    var want = current.mockup && native && !document.body.classList.contains('is-bare') &&
+               SAFE[current.device] && !generated(screens[screenIndex(current.screen)]);
+    if (!want) { if (tag) tag.remove(); return; }
+    if (!tag) {
+      tag = doc.createElement('style');
+      tag.id = id;
+      doc.head.appendChild(tag);
+    }
+    /* --harness-safe-top is published as well as applied, so a prototype that
+       wants to lay itself out properly - a sticky header that should sit under
+       the notch, say - can read it instead of being padded blindly. */
+    tag.textContent =
+      ':root{--harness-safe-top:' + SAFE[current.device] + 'px}' +
+      'body{padding-top:var(--harness-safe-top)}';
+  }
+
   function paintArtworkTone() {
     var doc = null;
     try { doc = frame.contentDocument; } catch (e) { doc = null; }
@@ -2530,8 +2742,15 @@
   function endBoot() {
     var b = document.querySelector('[data-boot]');
     bootTimers.forEach(clearTimeout); bootTimers = [];
+    document.body.classList.remove('is-booting');
     if (b) { b.hidden = true; b.classList.remove('is-launch', 'boot--web'); }
   }
+
+  var SAFARI_MARK =
+    '<svg viewBox="0 0 44 44" width="30" height="30" aria-hidden="true">' +
+    '<circle cx="22" cy="22" r="19" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="2.4"/>' +
+    '<path d="M30 14L18.5 18.5 14 30l11.5-4.5z" fill="#fff"/>' +
+    '<path d="M30 14L25.5 25.5 14 30z" fill="#ff5a4e"/></svg>';
 
   function playOpening() {
     var b = document.querySelector('[data-boot]');
@@ -2542,50 +2761,78 @@
     booted = true;
 
     b.hidden = false;
-    b.classList.remove('is-launch');
-    b.classList.toggle('boot--web', !native);
+    b.classList.remove('is-launch', 'boot--web');
+    document.body.classList.add('is-booting');
     b.onclick = endBoot;
 
-    if (!native) {
-      /* A web app is opened by its address. The URL bar is already drawn, so
-         the opening is the page arriving in it rather than a separate scene. */
-      bootTimers.push(setTimeout(function () { b.classList.add('is-launch'); }, 620));
-      bootTimers.push(setTimeout(endBoot, 900));
+    /* A home screen is a phone and a tablet thing. On a desktop there is no
+       springboard to open anything from, so the page simply arrives. */
+    if (current.device === 'desktop') {
+      b.classList.add('boot--web');
+      bootTimers.push(setTimeout(function () { b.classList.add('is-launch'); }, 700));
+      bootTimers.push(setTimeout(endBoot, 1050));
       return;
     }
 
-    /* Native: a home screen, and the app's own tile growing out of it. The
-       tile carries the brand mark, so a prototype with the product's logo
-       opens with the product's icon - which is the whole point of the moment. */
+    /* Both kinds start on the home screen, because both are opened from one.
+       What differs is which icon is tapped: the product's own for a native app,
+       Safari for a web one - which is the honest picture, since a web prototype
+       IS reached through a browser. */
     var grid = b.querySelector('[data-boot-grid]');
+    var dock = b.querySelector('.boot__dock');
     var tile = b.querySelector('[data-boot-tile]');
+    var lab  = b.querySelector('[data-boot-tile-l]');
+
+    var d = new Date();
+    b.querySelector('[data-boot-day]').textContent =
+      ['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'][d.getDay()];
+    b.querySelector('[data-boot-date]').textContent = d.getDate();
+
     grid.innerHTML = '';
-    var SLOT = 6;                                   // where the app sits in the grid
-    for (var i = 0; i < 12; i++) {
+    var SLOT = native ? 5 : 0;                 // the app mid-grid; Safari first
+    var CELLS = 8;
+    for (var k = 0; k < CELLS; k++) {
       var c = document.createElement('i');
-      if (i === SLOT) c.className = 'is-app';
+      if (k === SLOT && native) c.className = 'is-app';
       grid.appendChild(c);
     }
+    /* a web app is opened from Safari, which lives in the dock */
+    var host = native ? grid.children[SLOT] : dock.children[0];
+    if (!native) host.style.visibility = 'hidden';
+
     var mark = document.querySelector('[data-brand-mark]');
-    tile.innerHTML = mark ? mark.innerHTML : '';
+    if (native) {
+      tile.innerHTML = mark ? mark.innerHTML : '';
+      tile.style.background = 'linear-gradient(150deg,#ed6d57,#ffc94f)';
+      lab.textContent = (cfg.brand && cfg.brand.name) || cfg.title || cfg.name || 'App';
+    } else {
+      tile.innerHTML = SAFARI_MARK;
+      tile.style.background = 'linear-gradient(160deg,#f2f4f7 0%,#cfd6e0 100%)';
+      lab.textContent = 'Safari';
+    }
+    tile.appendChild(lab);
 
     requestAnimationFrame(function () {
-      var slot = grid.children[SLOT].getBoundingClientRect();
+      var slot = host.getBoundingClientRect();
       var box  = b.getBoundingClientRect();
+      tile.style.transform = '';
       tile.style.left   = (slot.left - box.left) + 'px';
       tile.style.top    = (slot.top - box.top) + 'px';
       tile.style.width  = slot.width + 'px';
       tile.style.height = slot.height + 'px';
 
+      /* Long enough to be noticed, which is the whole point: the home screen
+         holds for a beat, the icon is pressed, and only then does it open. */
+      bootTimers.push(setTimeout(function () { tile.classList.add('is-tap'); }, 850));
       bootTimers.push(setTimeout(function () {
-        /* grow the tile from where it sits to the whole screen */
+        tile.classList.remove('is-tap');
         var sx = box.width / slot.width, sy = box.height / slot.height;
         tile.style.transform =
           'translate(' + (box.left - slot.left) + 'px,' + (box.top - slot.top) + 'px) ' +
           'scale(' + sx + ',' + sy + ')';
         b.classList.add('is-launch');
-      }, 640));
-      bootTimers.push(setTimeout(endBoot, 1280));
+      }, 1050));
+      bootTimers.push(setTimeout(endBoot, 2150));
     });
   }
 
@@ -5775,6 +6022,7 @@
       if (screenTime()) send('time', current.time);
       if (picking) send('picking', true);
       paintArtworkTone();
+      paintSafeArea();
       playOpening();
       requestAnimationFrame(drawAnnots);
     }
