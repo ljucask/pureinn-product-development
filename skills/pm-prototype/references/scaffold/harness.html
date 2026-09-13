@@ -605,6 +605,15 @@
     max-width: 26ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
 
+  /* The mark, beside the closed screen list - where a favicon sits beside a
+     tab. Same artwork as the one at the top of the panel; when the author
+     names their own it is theirs here too, because two different marks in one
+     window is worse than none. */
+  .pitile { display: flex; align-items: center; margin: 0 7px 0 2px; flex: 0 0 auto; }
+  .pitile .pi, .pitile img { display: block; width: 19px; height: 19px; border-radius: 5px; }
+  .pitile img { object-fit: cover; }
+  .pitile:empty { display: none; }
+
   .sep { width: 1px; align-self: stretch; margin: 3px 2px; background: var(--glass-ring); }
 
   /* ══ icon button ══ */
@@ -1309,16 +1318,17 @@
     font: 700 8px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3);
   }
 
-  /* ══ marks and spotlight ══
+  /* ══ marks ══
      An annotation explains; a mark POINTS. They are different jobs and the
      second one had nothing: no way to say "this region", only "this element".
      Marks live in the shell over the artifact, are kept as fractions of the
      frame so they survive every resize, and belong to a screen + state + device
      exactly as a comment does.
 
-     The spotlight is the live version of the same instinct - "look here" while
-     someone is watching - and is deliberately NOT saved: it is a gesture, not a
-     record. */
+     A live "look here" pointer used to sit beside this and was taken out: the
+     marks already say "this region" and Present already directs attention, so
+     it was a third way of saying the same thing carrying a whole layer of its
+     own. A feature nobody reaches for is still code everybody reads. */
   .marks { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
   body.is-marking .marks { pointer-events: auto; cursor: crosshair; }
   /* the DRAWING surface only - not every svg that happens to be inside the
@@ -1362,15 +1372,6 @@
      marking mode, so .marks:hover never matches - which left the × invisible
      while the box it belongs to was lighting up under the same pointer. */
   .marks g:hover .mk__x, .marks g:focus-within .mk__x { opacity: 1; }
-
-  /* the spotlight: a hole in a dark sheet, following the pointer */
-  .spot {
-    position: absolute; inset: 0; z-index: 5; display: none;
-    pointer-events: none; border-radius: var(--r-lg);
-    transition: background 90ms linear;
-  }
-  body.is-spot .spot { display: block; }
-  body.is-spot .stage { cursor: crosshair; }
 
   /* ══ the note editor - the rail's second storey ══
      The rail is a notepad: fast to write in, useless once there are twelve
@@ -1779,6 +1780,14 @@
   <symbol id="s-cog" viewBox="0 0 16 16"><circle cx="8" cy="8" r="2.3" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M8 1.8v1.6M8 12.6v1.6M14.2 8h-1.6M3.4 8H1.8M12.4 3.6l-1.1 1.1M4.7 11.3l-1.1 1.1M12.4 12.4l-1.1-1.1M4.7 4.7L3.6 3.6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></symbol>
   <symbol id="s-map" viewBox="0 0 16 16"><path d="M8 14s4.4-4.1 4.4-7.3A4.4 4.4 0 0 0 3.6 6.7C3.6 9.9 8 14 8 14z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><circle cx="8" cy="6.6" r="1.5" fill="none" stroke="currentColor" stroke-width="1.3"/></symbol>
   <symbol id="s-info" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.8" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M8 7.2v4M8 4.9v.1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  <symbol id="i-pureinn" viewBox="0 0 48 48">
+    <defs><linearGradient id="pi-grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ed6d57"/><stop offset="1" stop-color="#ff9d5c"/>
+    </linearGradient></defs>
+    <rect width="48" height="48" rx="11" fill="url(#pi-grad)"/>
+    <path d="M29.4 8.5h5.4L19.9 39.5h-5.4z" fill="#fff"/>
+    <path d="M29.6 32.2h3.1a2.6 2.6 0 012.6 2.6v3.1h-3.1a2.6 2.6 0 01-2.6-2.6z" fill="#fff"/>
+  </symbol>
   <symbol id="i-layers" viewBox="0 0 16 16"><path d="M8 1.8L14 5l-6 3.2L2 5zM2 8.4l6 3.2 6-3.2M2 11.6l6 3.2 6-3.2" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></symbol>
   <symbol id="i-gallery" viewBox="0 0 16 16"><rect x="1.6" y="4" width="3.6" height="8" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.4"/><rect x="6.2" y="2.4" width="3.6" height="11.2" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.4"/><rect x="10.8" y="4" width="3.6" height="8" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.4"/></symbol>
   <symbol id="i-columns" viewBox="0 0 16 16"><rect x="1.6" y="3" width="4" height="10" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.4"/><rect x="7" y="3" width="3.2" height="10" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.4"/><rect x="11.6" y="3" width="2.8" height="10" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.4"/></symbol>
@@ -1786,7 +1795,6 @@
   <symbol id="i-present" viewBox="0 0 16 16"><rect x="1.6" y="2.6" width="12.8" height="9" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M6.6 5.6l3.4 2.1-3.4 2.1z" fill="currentColor"/><path d="M5.6 14h4.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></symbol>
   <symbol id="i-box" viewBox="0 0 16 16"><rect x="2.4" y="3.6" width="11.2" height="8.8" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.4" stroke-dasharray="2.6 2"/></symbol>
   <symbol id="i-pen" viewBox="0 0 16 16"><path d="M11.6 1.9l2.5 2.5-7.6 7.6-3.3.8.8-3.3z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M2.2 14.2h11.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity=".5"/></symbol>
-  <symbol id="i-spot" viewBox="0 0 16 16"><circle cx="8" cy="8" r="3.2" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M8 1.4v1.8M8 12.8v1.8M14.6 8h-1.8M3.2 8H1.4M12.7 3.3l-1.3 1.3M4.6 11.4l-1.3 1.3M12.7 12.7l-1.3-1.3M4.6 4.6L3.3 3.3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></symbol>
   <symbol id="i-grow" viewBox="0 0 16 16"><path d="M6.2 2.4H2.4v3.8M9.8 13.6h3.8V9.8M2.4 2.4l4.6 4.6M13.6 13.6L9 9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-list" viewBox="0 0 16 16"><path d="M5.5 4.5h8M5.5 8h8M5.5 11.5h8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="2.6" cy="4.5" r="1" fill="currentColor"/><circle cx="2.6" cy="8" r="1" fill="currentColor"/><circle cx="2.6" cy="11.5" r="1" fill="currentColor"/></symbol>
   <symbol id="i-sim" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.9" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M8 4.6V8l2.4 1.6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
@@ -1864,7 +1872,6 @@
       <div class="glare" data-glare aria-hidden="true"></div>
       <div class="grid" data-grid></div>
       <div class="marks" data-marks><svg data-marks-svg></svg></div>
-      <div class="spot" data-spot-layer></div>
     </div>
     <div class="annots" data-annots><svg class="lines" data-lines></svg></div>
   </div>
@@ -1875,6 +1882,7 @@
 </div>
 
 <div class="isle isle--tl">
+  <span class="pitile" data-toolbar-mark aria-hidden="true"></span>
   <button class="navbtn" type="button" data-nav-btn aria-expanded="false" aria-controls="nav" title="Open the list of screens">
     <span class="bars" aria-hidden="true"><i></i><i></i><i></i></span>Screens<span class="navbtn__n" data-nav-count></span>
   </button>
@@ -1918,7 +1926,6 @@
   <button class="ib" type="button" data-toggle-comments aria-pressed="true" title="Comments left in this browser"><svg><use href="#i-note"/></svg>Comments<span class="count" data-comment-count>0</span></button>
   <span class="sep"></span>
   <!-- modes: they take the whole surface over, rather than changing one thing on it -->
-  <button class="ib ib--icon" type="button" data-spot aria-pressed="false" title="Spotlight - dim everything except what you point at"><svg><use href="#i-spot"/></svg></button>
   <button class="ib" type="button" data-present title="Full screen, screens playing through on their own"><svg><use href="#i-present"/></svg>Present</button>
   <button class="ib" type="button" data-bare title="Hide every control and see the artifact exactly as a user would"><svg><use href="#i-eye-off"/></svg>Hide menu <kbd>H</kbd></button>
 </div>
@@ -3900,14 +3907,10 @@
 
        The rule for this file: anything an init-time function reads lives
        inside that function. */
-    var PUREINN_MARK =
-      '<svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true">' +
-      '<defs><linearGradient id="pi-g" x1="0" y1="0" x2="1" y2="1">' +
-      '<stop offset="0" stop-color="#ed6d57"/><stop offset="1" stop-color="#ffc94f"/>' +
-      '</linearGradient></defs>' +
-      '<rect x="1" y="1" width="18" height="18" rx="5.5" fill="url(#pi-g)"/>' +
-      '<path d="M7 14V6.6h3.1a2.45 2.45 0 010 4.9H7" fill="none" stroke="#fff" ' +
-      'stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    /* From the sprite, which carries the real mark from the framework site -
+       the warm tile with the slash and its dot. It was a made-up "P" in a
+       gradient square until someone who knows the brand looked at it. */
+    var PUREINN_MARK = '<svg class="pi" viewBox="0 0 48 48" aria-hidden="true"><use href="#i-pureinn"/></svg>';
 
     var row  = document.querySelector('[data-brand]');
     var mark = document.querySelector('[data-brand-mark]');
@@ -3928,6 +3931,10 @@
       mark.innerHTML = PUREINN_MARK;
     }
     txt.textContent = b.name || (b.logo ? '' : 'Pureinn');
+
+    /* the toolbar carries the same artwork, so the two never disagree */
+    var tb = document.querySelector('[data-toolbar-mark]');
+    if (tb) tb.innerHTML = mark.innerHTML;
   }
 
   /* The segment used to BE the display; now it is only the mechanism, so the
@@ -4246,45 +4253,6 @@
       }, 300);
     }, 5200);
   }
-
-  /* ---------- spotlight ----------
-     The live version of the same instinct: "look here" while someone is
-     watching. Deliberately not saved - it is a gesture, not a record. */
-  var spotEl = document.querySelector('[data-spot-layer]');
-  var spotOn = false;
-  var spotBtn = document.querySelector('[data-spot]');
-
-  /* Small and soft. A wide hard-edged hole reads as a broken overlay; what is
-     wanted is the rest of the screen quietly stepping back. */
-  function paintSpot(x, y) {
-    spotEl.style.background =
-      'radial-gradient(circle 86px at ' + x + 'px ' + y + 'px,' +
-      ' rgba(20,22,27,0) 0, rgba(20,22,27,.04) 45%, rgba(20,22,27,.22) 72%, rgba(20,22,27,.40) 100%)';
-  }
-  spotBtn.addEventListener('click', function () {
-    spotOn = !spotOn;
-    spotBtn.setAttribute('aria-pressed', String(spotOn));
-    document.body.classList.toggle('is-spot', spotOn);
-    if (spotOn) {
-      var b = wrap.getBoundingClientRect();
-      paintSpot(b.width / 2, b.height / 2);
-      toast('Move the pointer over the prototype. Everything else steps back.', 4200);
-    }
-    record('harness:spotlight', spotOn);
-  });
-  stage.addEventListener('pointermove', function (e) {
-    if (!spotOn) return;
-    var b = wrap.getBoundingClientRect();
-    paintSpot(e.clientX - b.left, e.clientY - b.top);
-  });
-  // the artifact is in an iframe, so its own pointer moves have to be relayed
-  window.addEventListener('message', function (e) {
-    var d = e.data;
-    if (!d || !d.__harness || d.type !== 'move' || !spotOn) return;
-    var b = wrap.getBoundingClientRect();
-    var f = frame.getBoundingClientRect();
-    paintSpot(f.left - b.left + d.x, f.top - b.top + d.y);
-  });
 
   /* ---------- the note editor panel ----------
      Reached from the foot of the rail, or from the icon on any single card.
