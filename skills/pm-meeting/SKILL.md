@@ -4,8 +4,9 @@ description: Structured meeting notes, summary, and action items from raw notes 
 license: MIT
 metadata:
   agent-mode: synthesis
+  standalone: yes
   author: https://github.com/ljucask
-  version: "1.2.0"
+  version: "1.3.0"
   domain: product-management
   triggers: meeting, notes, transcript, summary, action items, action points, standup, retro, retrospective, planning, grooming, customer interview, discovery call, strategic review, client discovery, requirements session, client brief
   role: specialist
@@ -23,6 +24,13 @@ Supports `--agent`: runs autonomously in a subagent, drafts the artifact from ex
 
 - **No flag** → interactive (default); if inputs are heavy, offer agent mode.
 - **`--agent`** → obey. First check inputs are complete. Anything missing: do NOT invent it - mark `[ASSUMED - what/why]` in the output and summary. Never hallucinate to fill a gap.
+
+---
+
+## Standalone run
+Runs with or without a Pureinn workspace - it needs no other skill's artifact, so it works as a single tool from an install that never ran `/pureinn`.
+- No workspace: create just the folder this skill writes into, or write to a path the user names, and say where the file went. Do not scaffold a project, do not invent a `state.json`, and do not send the user to `/pureinn` first.
+- Read `pureinn-variables.md` / `state.json` where a value is actually used, not at the top of the run. Missing value: continue and name the capability it costs.
 
 ---
 
@@ -68,14 +76,24 @@ Takes raw meeting notes or a transcript and produces:
 
 ---
 
-## Step 0: Read pureinn-variables + current state
+## Step 0: Current state check
 
-Read `pureinn-variables.md`:
-- Check "Meetings" key for Notion DB URL
-- Check "Feature Backlog" key (for Feature Card action items)
-- Check "Team Roster" for member list (to validate assignees)
+**Capture the meeting first; look things up when they are needed.** All three
+values below serve steps that come after the notes exist, and a meeting can be
+captured with none of them - which is the common case when someone runs this
+from a bare install with no Pureinn workspace at all.
 
-If "Meetings" URL is blank: proceed, save locally, remind user to push manually.
+Read each where it is used, and treat every one as optional:
+
+| Value | Read when | Missing |
+|---|---|---|
+| "Meetings" key - Notion DB URL | pushing the finished notes | save locally, say it was not pushed and how to push later |
+| "Feature Backlog" key | an action item becomes a Feature Card | record the item in the notes, name the card it would have created |
+| "Team Roster" | validating assignee names | keep the names as written, flag that they were not checked against a roster |
+
+No `pureinn-variables.md` at all - no workspace, a first run, a standalone
+install - is not an error condition. Capture the meeting, write it where this
+skill writes, and name in one line what could not be linked.
 
 **Interaction:** Group related questions (2-4 per round) and confirm before moving on. For any A/B/C/D choice, use the AskUserQuestion tool with one option marked **(Recommended)** - never print options as plain text. Keep open-ended questions free-text (don't fake options). If the user is unsure, propose 3-4 concrete options plus "Other". Surface an assumption the moment you make one; never fabricate to fill a gap. (Full standard: CLAUDE.md.)
 

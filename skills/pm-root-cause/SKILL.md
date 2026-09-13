@@ -4,6 +4,7 @@ description: Diagnostic engine for in-flight anomalies. When something live beha
 license: MIT
 metadata:
   agent-mode: never
+  standalone: yes
   author: https://github.com/ljucask
   version: "1.0.0"
   domain: product-management
@@ -20,6 +21,13 @@ metadata:
 ## Agent mode (`--agent`)
 
 This skill's value is the live dialogue - `--agent` is not supported. If invoked with `--agent`, warn once ("this skill needs interactive back-and-forth; agent mode would hollow it out") and proceed interactively.
+
+---
+
+## Standalone run
+Runs with or without a Pureinn workspace - it needs no other skill's artifact, so it works as a single tool from an install that never ran `/pureinn`.
+- No workspace: create just the folder this skill writes into, or write to a path the user names, and say where the file went. Do not scaffold a project, do not invent a `state.json`, and do not send the user to `/pureinn` first.
+- Read `pureinn-variables.md` / `state.json` where a value is actually used, not at the top of the run. Missing value: continue and name the capability it costs.
 
 ---
 

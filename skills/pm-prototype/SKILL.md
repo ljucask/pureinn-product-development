@@ -4,8 +4,9 @@ description: Cross-phase prototyping engine. Takes a scoped chunk of the product
 license: MIT
 metadata:
   agent-mode: synthesis
+  standalone: yes
   author: https://github.com/ljucask
-  version: "1.2.0"
+  version: "1.3.0"
   domain: product-management
   triggers: prototype, prototyping, proof of concept, POC, spike, validate before build, lovable, base44, v0, figma make, clickable prototype, mockup, throwaway, quick validation, in-repo prototype, coding agent prototype, prototype harness
   role: specialist
@@ -23,6 +24,13 @@ Supports `--agent`: runs autonomously in a subagent, drafts the artifact from ex
 
 - **No flag** → interactive (default); if inputs are heavy, offer agent mode.
 - **`--agent`** → obey. First check inputs are complete. Anything missing: do NOT invent it - mark `[ASSUMED - what/why]` in the output and summary. Never hallucinate to fill a gap.
+
+---
+
+## Standalone run
+Runs with or without a Pureinn workspace - it needs no other skill's artifact, so it works as a single tool from an install that never ran `/pureinn`.
+- No workspace: create just the folder this skill writes into, or write to a path the user names, and say where the file went. Do not scaffold a project, do not invent a `state.json`, and do not send the user to `/pureinn` first.
+- Read `pureinn-variables.md` / `state.json` where a value is actually used, not at the top of the run. Missing value: continue and name the capability it costs.
 
 ---
 
@@ -73,6 +81,7 @@ The scope is whatever you point at, with **no limit**:
 | Mode | When | What it does |
 |---|---|---|
 | **Spec mode** (default) | You want to build a prototype | Gate-check → ingest inputs → audience, depth and path → build it, by whichever path fits |
+| **Wrap mode** | You already have the app or prototype and want the review layer on it | Straight to the harness - no gate, no path decision, no spec. Needs no workspace |
 | **Result mode** (re-run) | The prototype exists, you have a result | Capture what the prototype proved/disproved → decision → cascade to Feature Card / hypotheses |
 
 **What the skill is NOT:** it does not replace `pm-feature-design` (JIT production spec) and it does not build the prototype's production version. A prototype is a throwaway or a reference, not the build.
@@ -99,21 +108,50 @@ A spec with three well-sourced screens beats a spec with ten invented ones.
 - `pm-hypotheses` - the prototype usually tests a hypothesis; result mode writes back here
 - Feature Card (if feature-scoped) - the spec pulls from it and writes a prototype reference back into it
 
-**pureinn-variables.md - "Prototyping" section:**
-Holds the MCP endpoint(s) for the prototyping tool(s). The user may have **more than one** (Lovable, v0/Vercel, Figma Make...). At run time the skill lets the user pick which tool to target for this run - it never hardcodes one.
+**pureinn-variables.md - read at the point of use, never at the top of a run:**
+- *"Prototyping" section* - the MCP endpoint(s) for the prototyping tool(s), read in `references/external-tools.md` when the external path is chosen. The user may have **more than one** (Lovable, v0/Vercel, Figma Make...); the skill lets them pick per run and never hardcodes one. No endpoints, or no variables file at all: manual-paste mode, which is the default anyway - the spec is always paste-ready.
+- *"Feature Backlog" key* - read only when the scope is a feature, to resolve the FEAT-ID.
+- *design context URLs* - read only in `references/design-direction.md`, and only for the "Inherit" direction.
+
+None of them is needed for **Wrap mode** or for the in-repo path, which is why none is read up front.
 
 ---
 
-## Step 0: Read variables + detect mode
+## Step 0: Detect mode
 
-Read `pureinn-variables.md`:
-- **Prototyping** section - which tool MCP endpoints are configured (Lovable / v0 / Figma Make / other). If none configured: proceed in manual-paste mode, remind the user they can add an endpoint to enable push.
-- **Feature Backlog** key (if the scope is a feature - to resolve/verify the FEAT-ID).
+**Read no variables here.** `pureinn-variables.md` holds three things this skill
+uses - the prototyping tool endpoints, the Feature Backlog key, and the design
+context URLs - and each one belongs to a path that most runs never take. They
+are read where they are used: the endpoints in `references/external-tools.md`,
+the backlog key only when the scope is a feature, the design context only in
+`references/design-direction.md`. Reading them here made a workspace file a
+hard dependency for runs that need nothing from it.
 
-**Detect mode:**
-- If the user references an existing prototype in `/prototypes/` - a spec file **or** a prototype folder - and talks about an outcome or result → **Result mode** (Step 8).
-- If a prototype folder exists whose `meta.md` still says `Decision: open`, say so before anything else. An open prototype with no decision is the state this whole structure exists to prevent.
-- Otherwise → **Spec mode**: Steps 1 → 2 → 3 → 3b → the chosen path (Steps 4-6 live in `references/external-tools.md`, or the loop in `references/in-repo-loop.md`) → 7 → 7b → 8 when there is a result.
+**Detect mode - four, not three:**
+
+- **Wrap mode** - the user already has the thing. A built prototype, a running
+  app, a set of HTML screens, a deployed URL, and what they want is the review
+  layer around it: *"I have an app, put the harness on it"*, *"I need reviewers
+  to comment on this"*. **Go straight to `references/in-repo-loop.md` § the
+  harness and Step 7b.** Do not run the intent gate, do not ask about audience
+  and path, do not compile a spec. Those steps decide *whether and what* to
+  build; here it is built. Asking them is asking a question the user has
+  already answered by turning up with the artifact.
+- **Result mode** (Step 8) - the user references an existing prototype in
+  `/prototypes/` - a spec file **or** a prototype folder - and talks about an
+  outcome or result.
+- If a prototype folder exists whose `meta.md` still says `Decision: open`, say
+  so before anything else. An open prototype with no decision is the state this
+  whole structure exists to prevent.
+- Otherwise → **Spec mode**: Steps 1 → 2 → 3 → 3b → the chosen path (Steps 4-6
+  live in `references/external-tools.md`, or the loop in
+  `references/in-repo-loop.md`) → 7 → 7b → 8 when there is a result.
+
+**Wrap mode needs no workspace and no Pureinn project.** It is the one entry
+someone reaches from a bare install, and it must stay that way: the harness is
+three files copied next to what they already have, plus a config naming their
+screens. If there is a workspace, write the prototype reference back as Step 7
+describes; if there is not, say where the harness landed and stop there.
 
 **Interaction:** Group related questions (2-4 per round) and confirm before moving on. For any A/B/C/D choice, use the AskUserQuestion tool with one option marked **(Recommended)** - never print options as plain text. Keep open-ended questions free-text (don't fake options). If the user is unsure, propose 3-4 concrete options plus "Other". Surface an assumption the moment you make one; never fabricate to fill a gap. (Full standard: CLAUDE.md.)
 

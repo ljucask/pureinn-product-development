@@ -4,6 +4,7 @@ description: Create and manage Feature Cards for individual features (FEAT-ID). 
 license: MIT
 metadata:
   agent-mode: synthesis
+  standalone: needs-inputs
   author: https://github.com/ljucask
   version: "2.5.0"
   domain: product-management
@@ -28,6 +29,14 @@ Supports `--agent`: runs autonomously in a subagent, drafts the artifact from ex
 Checks `state.json` → `artifact_language`. Default (unset or "English"): no change in behavior.
 - If set to a non-English language: write the card's prose (feature description, acceptance criteria narrative, rationale in Sections 1-4) in that language.
 - Never translate: `FEAT-ID`, `BR-ID`/`TBL-ID` references, frontmatter keys and enum values (`status: 4_In_Build`, `layer:`, `priority:`...), section headers (`## Section 1 - Business Constraints`, etc.), file names - these stay English always, regardless of the setting.
+
+---
+
+## Standalone run
+Needs the artifacts listed under **Dependencies** - it synthesizes them, so without them there is nothing to synthesize.
+- No workspace, or inputs missing: name which are missing and what each one unlocks, then offer the PREREQ paths - proceed on stated assumptions marked `[ASSUMED - what/why]`, or route to the skill that produces the missing input. Never hard-block, and never invent the input.
+- Writing never depends on `/pureinn` having run: with no workspace, create just the folder this skill writes into, or write to a path the user names, and say where the file went.
+- Read `pureinn-variables.md` / `state.json` where a value is actually used, not at the top of the run. Missing value: continue and name the capability it costs.
 
 ---
 

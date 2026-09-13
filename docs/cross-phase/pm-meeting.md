@@ -4,7 +4,7 @@
 
 **Phase:** Cross-phase  
 **Agent mode:** `synthesis` - runs fully autonomously  
-**Version:** 1.2.0  
+**Version:** 1.3.0  
 **Triggers:** meeting, notes, transcript, summary, action items, action points, standup, retro, retrospective, planning, grooming, customer interview, discovery call, strategic review, client discovery, requirements session, client brief
 
 ---

@@ -4,6 +4,7 @@ description: Progress dashboard for an in-flight reconciliation rebuild. Reads t
 license: MIT
 metadata:
   agent-mode: synthesis
+  standalone: needs-inputs
   author: https://github.com/ljucask
   version: "1.1.0"
   domain: product-management
@@ -23,6 +24,14 @@ Supports `--agent`: runs autonomously in a subagent, drafts the artifact from ex
 
 - **No flag** → interactive (default); if inputs are heavy, offer agent mode.
 - **`--agent`** → obey. First check inputs are complete. Anything missing: do NOT invent it - mark `[ASSUMED - what/why]` in the output and summary. Never hallucinate to fill a gap.
+
+---
+
+## Standalone run
+Needs the artifacts listed under **Dependencies** - it synthesizes them, so without them there is nothing to synthesize.
+- No workspace, or inputs missing: name which are missing and what each one unlocks, then offer the PREREQ paths - proceed on stated assumptions marked `[ASSUMED - what/why]`, or route to the skill that produces the missing input. Never hard-block, and never invent the input.
+- Writing never depends on `/pureinn` having run: with no workspace, create just the folder this skill writes into, or write to a path the user names, and say where the file went.
+- Read `pureinn-variables.md` / `state.json` where a value is actually used, not at the top of the run. Missing value: continue and name the capability it costs.
 
 ---
 

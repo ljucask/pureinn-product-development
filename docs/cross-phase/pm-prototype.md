@@ -4,7 +4,7 @@
 
 **Phase:** Cross-phase (Discovery → Build)  
 **Agent mode:** `synthesis` - runs fully autonomously  
-**Version:** 1.2.0  
+**Version:** 1.3.0  
 **Triggers:** prototype, prototyping, proof of concept, POC, spike, validate before build, lovable, base44, v0, figma make, clickable prototype, mockup, throwaway, quick validation, in-repo prototype, coding agent prototype, prototype harness
 
 ---
