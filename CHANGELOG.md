@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.42.0] - 2026-09-13
+
+### Standalone run - every skill now declares whether it needs another skill's artifact, so Pureinn works as a toolkit as well as an orchestrator: 27 self-contained skills create just the folder they write into instead of assuming /pureinn has run, 24 that genuinely synthesize upstream artifacts name what is missing and route to the skill that produces it rather than stalling, and workspace variables are read at the point of use instead of up front (only 4 skills read them eagerly, 2 with no reason to); /pureinn builds the workspace tree the moment the product has a name rather than at the end of intake, and STEP 6 is idempotent and re-checks it on every run so an interrupted session can no longer leave a partial tree; pm-prototype gains Wrap mode for someone who already has the app and wants only the review layer around it - no intent gate, no path decision, no spec, and no workspace required, making it reachable from a bare install
+
+---
+
+
 ## [5.41.0] - 2026-09-11
 
 ### pm-prototype harness code and security review - 19 defects fixed across the scaffold (sanitiser bypass, two missed is- prefix renames, screenshot-only notes silently deleted, unchecked endpoint status, editor destroyed on scroll, side-by-side columns narrower than their labels) plus three decisions settled: Send discloses the session record, the share URL is no longer logged, and marks now appear in the PNG and the report while notes stay out
