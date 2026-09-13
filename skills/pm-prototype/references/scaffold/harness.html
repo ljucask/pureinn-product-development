@@ -2161,6 +2161,12 @@
   var startScreen = screens.findIndex(function (s) { return s.src === q.get('screen'); });
   if (startScreen < 0) startScreen = 0;
   var reviewMode = q.get('review') === '1';
+  /* Declared up here because paintDevice and paintCommentAvail both read them
+     during setup, long before the multi-view sections further down. Hoisted
+     they were `undefined`, which happens to be falsy and so happened to behave
+     - a bug that works by luck is still a bug. */
+  var compareOn = false, promoOn = false;
+
   var current = {
     screen:  screens[startScreen].src,
     state:   states.indexOf(q.get('state')) > -1 ? q.get('state') : (states.indexOf('full') > -1 ? 'full' : states[0]),
@@ -2690,27 +2696,42 @@
 
      The rule is tagged so it can be removed cleanly, and it is only ever added
      for a native phone or tablet with the hardware drawn. */
-  var SAFE = { mobile: 59, tablet: 30 };
+  /* Top clears the status bar, bottom clears the browser's address pill. The
+     bar is device chrome and shows for BOTH app types, so the top inset is not
+     a native-only thing - gating it on native left a web prototype's first line
+     running through the clock. The bottom inset only exists in web, because
+     that is the only mode with a bar down there. */
   function paintSafeArea() {
+    /* Inside the function, like every other table an init-time caller reads.
+       paintDevice runs during setup, a thousand lines above this point, and a
+       module-level var is hoisted as undefined until its assignment executes -
+       so this threw on the very first paint. Fourth time in this file. */
+    var SAFE = {
+      mobile: { top: 59, webBottom: 52 },
+      tablet: { top: 30, webBottom: 42 }
+    };
     var doc = null;
     try { doc = frame.contentDocument; } catch (e) { doc = null; }
     if (!doc || !doc.head) return;
     var id = 'harness-safe-area';
     var tag = doc.getElementById(id);
-    var want = current.mockup && native && !document.body.classList.contains('is-bare') &&
-               SAFE[current.device] && !generated(screens[screenIndex(current.screen)]);
+    var d = SAFE[current.device];
+    var want = current.mockup && d && !document.body.classList.contains('is-bare') &&
+               !generated(screens[screenIndex(current.screen)]);
     if (!want) { if (tag) tag.remove(); return; }
     if (!tag) {
       tag = doc.createElement('style');
       tag.id = id;
       doc.head.appendChild(tag);
     }
-    /* --harness-safe-top is published as well as applied, so a prototype that
-       wants to lay itself out properly - a sticky header that should sit under
-       the notch, say - can read it instead of being padded blindly. */
+    var bottom = native ? 0 : d.webBottom;
+    /* Published as well as applied, so a prototype that wants to lay itself out
+       properly - a sticky header that should sit under the notch, a toolbar
+       that should clear the address pill - can read these instead of being
+       padded blindly. */
     tag.textContent =
-      ':root{--harness-safe-top:' + SAFE[current.device] + 'px}' +
-      'body{padding-top:var(--harness-safe-top)}';
+      ':root{--harness-safe-top:' + d.top + 'px;--harness-safe-bottom:' + bottom + 'px}' +
+      'body{padding-top:var(--harness-safe-top);padding-bottom:var(--harness-safe-bottom)}';
   }
 
   function paintArtworkTone() {
@@ -5588,7 +5609,6 @@
   /* ---------- side by side ----------
      One screen at three widths at once. Annotations are anchored to the single
      frame, so they step aside here and say why rather than pointing at nothing. */
-  var compareOn = false;
   var compareBtn = deviceSeg.querySelector('[data-device-btn="all"]');
   var cmpEl = document.querySelector('[data-compare]');
   var DEVW = { desktop: 1280, tablet: 834, mobile: 390 };
@@ -5734,7 +5754,6 @@
     return { cell: cell, frame: fr };
   }
 
-  var promoOn = false;
   var promoBtn = document.querySelector('[data-promo-btn]');
   var promoEl = document.querySelector('[data-promo]');
   var PROMO_W = DEVW;
