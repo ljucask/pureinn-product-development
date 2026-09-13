@@ -174,15 +174,19 @@
   body.is-mock:not(.is-fixed) .wrap[data-device="mobile"] .mock {
     padding: var(--bez);
     border-radius: var(--rad);
+    /* Black, the darkest of the four 18 Pro finishes, in anodised aluminium.
+       Matte: the edges catch a little light and the faces stay dark, so the
+       highlights are thin and dim rather than the broad bright sweep that made
+       the grey read as an illustration of metal. */
     background:
-      linear-gradient(107deg, #6f7278 0%, #a8acb3 7%, #7d8188 17%, #6c7076 50%,
-                              #7d8188 83%, #a8acb3 93%, #6f7278 100%);
+      linear-gradient(106deg, #17181b 0%, #34363b 5%, #202226 13%, #17181b 50%,
+                              #202226 87%, #34363b 95%, #17181b 100%);
     box-shadow:
-      inset 0 1px 0 rgba(255,255,255,.34),
-      inset 0 -1px 0 rgba(255,255,255,.16),
-      0 0 0 .5px rgba(0,0,0,.55),
-      0 44px 88px -34px rgba(22,24,29,.62),
-      0 12px 24px -12px rgba(22,24,29,.34);
+      inset 0 .5px 0 rgba(255,255,255,.16),
+      inset 0 -.5px 0 rgba(255,255,255,.07),
+      0 0 0 .5px rgba(0,0,0,.75),
+      0 44px 88px -34px rgba(10,11,14,.62),
+      0 12px 24px -12px rgba(10,11,14,.38);
   }
   /* the thin black band between the rail and the glass */
   body.is-mock:not(.is-fixed) .wrap[data-device="mobile"] .mock::after {
@@ -220,17 +224,24 @@
      which is the browser's address bar and has to stay available in web mode.
      Left rail: the action button, then the volume pair. Right: the side button. */
   .btns { display: none; }
+  /* Barely proud of the rail and nearly its colour, which is what they are.
+     Standing 3px off in a lighter grey made them read as tabs stuck on the
+     side. 1.5px, a hair lighter than the body, and the only thing that really
+     marks them is the thin highlight along the top edge. */
   body.is-mock:not(.is-fixed) .wrap[data-device="mobile"] .btns {
-    display: block; position: absolute; z-index: 0; left: -2.5px; top: 122px;
-    width: 3px; height: 28px; border-radius: 2px 0 0 2px;
-    background: linear-gradient(90deg, #53565d, #83878e);
-    box-shadow: 0 50px 0 4px #53565d, 0 108px 0 4px #53565d;
+    display: block; position: absolute; z-index: 0; left: -1.5px; top: 126px;
+    width: 1.5px; height: 26px; border-radius: 1px 0 0 1px;
+    background: #26282c;
+    box-shadow:
+      inset 0 .5px 0 rgba(255,255,255,.2),
+      0 48px 0 3px #26282c, 0 104px 0 3px #26282c;
   }
   body.is-mock:not(.is-fixed) .wrap[data-device="mobile"] .btns::after {
-    content: ""; position: absolute; right: -100%; top: 96px;
-    width: 3px; height: 74px; border-radius: 0 2px 2px 0;
-    background: linear-gradient(270deg, #53565d, #83878e);
-    transform: translateX(calc(var(--w-mobile) + var(--bez) * 2 - 3px));
+    content: ""; position: absolute; left: 0; top: 92px;
+    width: 1.5px; height: 70px; border-radius: 0 1px 1px 0;
+    background: #26282c;
+    box-shadow: inset 0 .5px 0 rgba(255,255,255,.2);
+    transform: translateX(calc(var(--w-mobile) + var(--bez) * 2));
   }
 
   /* ══ status bar and glass ══
@@ -721,7 +732,13 @@
      beside it would read as the badge belonging to the brand. */
   .brand { display: flex; align-items: center; gap: 9px; padding: 2px 6px 13px; margin-bottom: 3px; border-bottom: 1px solid rgba(255,255,255,.07); }
   .brand__mark { display: flex; align-items: center; flex: 0 0 auto; }
-  .brand__mark img, .brand__mark svg { display: block; max-height: 22px; max-width: 96px; width: auto; height: auto; }
+  /* An inline <svg> carrying only a viewBox has no intrinsic size, so
+     width:auto resolved to 0 and the mark rendered at 0x0 - present in the DOM,
+     invisible on screen, and indistinguishable from "the logo was never
+     changed". The sprite gets explicit dimensions; a supplied image keeps the
+     flexible box, because an author's logo can be any shape. */
+  .brand__mark .pi { display: block; width: 22px; height: 22px; border-radius: 6px; }
+  .brand__mark img { display: block; max-height: 22px; max-width: 96px; width: auto; height: auto; }
   .brand__t { font-size: 12px; font-weight: 620; color: #dde1e7; letter-spacing: -.01em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .brand--none { display: none; }
 
@@ -1615,7 +1632,9 @@
   body.is-compare .cmpset { display: flex; }
   body.is-compare .stage > .wrap { display: none; }
   body.is-compare .stage { align-items: flex-end; }
-  .cmp { display: flex; flex-direction: column; gap: 9px; flex: 0 0 auto; }
+  /* The label names the frame below it but is not part of it, and at 9px it
+     sat on the hardware. Room enough to read as a caption. */
+  .cmp { display: flex; flex-direction: column; gap: 18px; flex: 0 0 auto; }
   .cmp__h {
     display: flex; align-items: baseline; gap: 7px; padding-left: 2px;
     font: 700 8.5px/1 var(--mono); letter-spacing: .13em; text-transform: uppercase; color: var(--ink-3);
@@ -1638,7 +1657,7 @@
   body.is-promo .proset { display: flex; }
   body.is-promo .stage > .wrap, body.is-promo .cmpset { display: none; }
   body.is-promo .stage { align-items: center; }
-  .pro { display: flex; flex-direction: column; gap: 11px; align-items: center; }
+  .pro { display: flex; flex-direction: column; gap: 18px; align-items: center; }
   .pro__l { font: 700 8.5px/1 var(--mono); letter-spacing: .13em; text-transform: uppercase; color: var(--ink-3); }
 
   /* ══ presentation - the artifact, and only what is needed to move ══ */
