@@ -276,29 +276,47 @@
     height: 30px; padding: 0 18px; font-size: 12px; border-radius: 20px 20px 0 0;
   }
   .status__r { display: flex; align-items: center; gap: 5px; }
-  .status__sig  { width: 17px; height: 11px; }
-  .status__wifi { width: 16px; height: 11px; }
+  /* Sized so one viewBox unit is one pixel - the shapes are drawn on integer
+     coordinates, so at this size every edge lands on a pixel boundary. */
+  .status__sig  { width: 18px; height: 12px; }
+  .status__wifi { width: 16px; height: 12px; }
 
   /* The battery. iOS puts the percentage INSIDE the shell, which is the detail
      that makes a drawn battery read as a real one - an empty outline beside a
      separate number does not. */
+  /* The shell is a thin outline, the fill sits inside it, and the number sits
+     on top - which is iOS. What makes the level readable is that the EMPTY part
+     stays empty: a fill that rounds up to the full width at 74% is a battery
+     that never looks anything but charged. */
   .status__bat {
     position: relative; display: inline-flex; align-items: center; justify-content: center;
     width: 27px; height: 13px; margin-left: 1px;
-    border-radius: 4.2px; box-shadow: inset 0 0 0 1.1px currentColor;
+    border-radius: 4px; box-shadow: inset 0 0 0 1px currentColor;
     opacity: .92;
   }
   .status__bat::after {
     content: ""; position: absolute; right: -3.2px; top: 50%; transform: translateY(-50%);
     width: 2px; height: 5px; border-radius: 0 2px 2px 0; background: currentColor; opacity: .5;
   }
+  /* The number crosses the boundary between filled and empty, so it carries a
+     faint outline in the bar's own ink rather than a flat colour that is
+     invisible on one side of the line. */
   .status__bat b {
     position: relative; z-index: 2; font-size: 8.5px; font-weight: 700;
     letter-spacing: -.02em; line-height: 1; font-variant-numeric: tabular-nums;
     color: var(--bat-ink, #fff);
+    text-shadow: 0 0 1.5px var(--bat-halo, rgba(0,0,0,.45));
   }
-  .status__bat i { position: absolute; inset: 2px; border-radius: 2.4px; overflow: hidden; }
-  .status__bat u { display: block; height: 100%; background: currentColor; border-radius: 2.4px; }
+  .status { --bat-halo: rgba(0,0,0,.5); }
+  body.is-darkart .status { --bat-halo: rgba(255,255,255,.5); }
+  .status__bat i { position: absolute; inset: 2px; border-radius: 2px; overflow: hidden; }
+  .status__bat u {
+    display: block; height: 100%; background: currentColor; border-radius: 2px;
+    transition: width var(--med) var(--ease);
+  }
+  /* below a fifth it goes red, as the real one does */
+  .status__bat.is-low u { background: #ff453a; }
+  .status__bat.is-low { box-shadow: inset 0 0 0 1px currentColor; }
   .status { --bat-ink: #fff; }
   body.is-darkart .status { --bat-ink: #14161b; }
   body.is-booting .status { color: #fff; --bat-ink: #14161b; background: none; }
@@ -1867,17 +1885,20 @@
       <div class="status" data-status aria-hidden="true">
         <span class="status__t" data-status-time>9:41</span>
         <span class="status__r">
-          <!-- carrier signal: four bars, the last one dimmed -->
+          <!-- four bars, all solid: a mockup shows full signal, and a dimmed
+               fourth bar reads as a rendering fault rather than as reception -->
           <svg viewBox="0 0 18 12" class="status__sig">
-            <rect x="0"    y="8.2" width="3.1" height="3.8" rx="1" fill="currentColor"/>
-            <rect x="4.7"  y="6"   width="3.1" height="6"   rx="1" fill="currentColor"/>
-            <rect x="9.4"  y="3.4" width="3.1" height="8.6" rx="1" fill="currentColor"/>
-            <rect x="14.1" y="0.6" width="3.1" height="11.4" rx="1" fill="currentColor" opacity=".32"/>
+            <rect x="0"  y="8" width="3" height="4"  rx="1" fill="currentColor"/>
+            <rect x="5"  y="6" width="3" height="6"  rx="1" fill="currentColor"/>
+            <rect x="10" y="3" width="3" height="9"  rx="1" fill="currentColor"/>
+            <rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor"/>
           </svg>
-          <svg viewBox="0 0 17 12" class="status__wifi">
-            <path d="M1 4.1a11.4 11.4 0 0115 0"   fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
-            <path d="M3.7 6.9a7.6 7.6 0 019.6 0"  fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
-            <path d="M6.5 9.6a3.6 3.6 0 014 0"    fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+          <!-- a solid fan, the way the real glyph is drawn: three bands and the
+               dot, all filled, so there is no hairline to fall between pixels -->
+          <svg viewBox="0 0 16 12" class="status__wifi">
+            <path d="M8 1.1c2.9 0 5.6 1.1 7.6 2.9l-1.6 1.7A9 9 0 008 3.4a9 9 0 00-6 2.3L.4 4A11.3 11.3 0 018 1.1z" fill="currentColor"/>
+            <path d="M8 5.3c1.8 0 3.4.7 4.6 1.8l-1.6 1.7A4.7 4.7 0 008 7.6c-1.1 0-2.2.4-3 1.2L3.4 7.1A6.7 6.7 0 018 5.3z" fill="currentColor"/>
+            <path d="M8 9.2c.8 0 1.5.3 2 .9L8 12l-2-1.9c.5-.6 1.2-.9 2-.9z" fill="currentColor"/>
           </svg>
           <span class="status__bat">
             <b data-status-pct>84</b>
@@ -2740,9 +2761,14 @@
   var battPct = 84;
   function paintBattery(pct) {
     if (pct !== undefined) battPct = pct;
-    var w = Math.max(6, Math.min(100, battPct)) + '%';
+    /* No minimum width. Clamping the fill to 6% meant 2% and 6% drew the same
+       bar; the empty part is the whole point of the graphic. */
+    var w = Math.max(0, Math.min(100, battPct)) + '%';
     document.querySelectorAll('[data-status-pct]').forEach(function (n) { n.textContent = battPct; });
     document.querySelectorAll('[data-status-fill]').forEach(function (f) { f.style.width = w; });
+    document.querySelectorAll('.status__bat').forEach(function (b) {
+      b.classList.toggle('is-low', battPct <= 20);
+    });
   }
   paintBattery(84);
   if (navigator.getBattery) {
