@@ -101,7 +101,14 @@ window.HARNESS_CONFIG = {
 
     /* Three generated screens. Each exists only if its block above is filled in,
        each is a view of something already written down, and each can be left
-       out of a shared link at the moment you send it. Give them no `src`. */
+       out of a shared link at the moment you send it. Give them no `src`.
+
+       A prototype may already carry a document of its own - an honesty page the
+       author wrote by hand, a README screen. `about: true` on a normal screen
+       puts it in the same section: unnumbered, read at desktop width, still
+       loaded from its own file. Without it the only way into that section was
+       to regenerate the page from the config, which produces a near-copy of one
+       that already exists and is not the page anyone was shown. */
     {
       label: 'Overview',
       overview: true,
@@ -270,12 +277,45 @@ window.HARNESS_CONFIG = {
     // ]
   },
 
-  /* The generated disclosure screen's opening pair. Both halves are stated -
-     what the prototype proves is worthless without what it does not. */
+  /* The generated disclosure screen. Both halves are stated - what the
+     prototype proves is worthless without what it does not.
+
+     `proves` and `doesNotProve` take a string or an ARRAY. Written as separate
+     claims they should be shown as separate claims: run together in one
+     paragraph they read as a pitch, while a list lets each one be disagreed
+     with on its own, which is why they were written down.
+
+     `title` overrides the generated heading. Use it when the prototype already
+     has a name for this page - retrofitting a harness over a prototype that
+     carries its own honesty screen, for instance - so the two do not disagree
+     about what the same page is called.
+
+     `classificationNote` is the paragraph under the classification, for what
+     the choice actually binds. Without it a default sentence is used.
+
+     `beforeLaunch` lists what still has to happen before any of this could
+     ship. "This is simulated" invites "and how hard is the real one" - the
+     effort column answers that per element, and this answers it for the things
+     that belong to no element at all: a legal review, a retraction policy, an
+     accessibility pass, the measurement contract. They are the difference
+     between a prototype someone trusts and one someone schedules. */
   disclosure: {
-    proves: 'That the assignment flow is understandable end to end, and where it stalls.',
-    doesNotProve: 'Anything about performance, permissions, or whether the matching logic is correct.',
-    classification: 'Reference'   // Disposable | Reference | Evolutionary
+    proves: [
+      'That the assignment flow is understandable end to end, and where it stalls.',
+      'That a dispatcher can find the job they are looking for without being told how.'
+    ],
+    doesNotProve: [
+      'Anything about performance, permissions, or whether the matching logic is correct.',
+      'Whether this holds at 200 jobs a day. Nobody has run it at that size.'
+    ],
+    classification: 'Reference',  // Disposable | Reference | Evolutionary
+    // title: 'What is real and what is simulated',
+    // classificationNote: 'Binding on flow, states and measurement, not on architecture.',
+    // beforeLaunch: [
+    //   'A legal view on consent and retention for the notification emails',
+    //   'Accessibility, the browser matrix, a performance budget',
+    //   'The measurement contract agreed before launch, not after'
+    // ]
   },
 
   /* ─────────────────────────────────────────────────────────────────────

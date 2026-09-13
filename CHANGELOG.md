@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.46.0] - 2026-09-14
+
+### pm-prototype harness: the shell follows the artifact instead of assuming it - a prototype's own links now move the screen selection, the activity list, the time axis and the notes with it, and pins are re-measured against their element on every scroll instead of staying where they were first painted; placing a comment focuses the note rather than the name field and closes the all-notes panel that was hiding the rail it writes into; hiding the chrome now takes the safe area, the runtime-injected hardware and the rounded corners with it, so what is left is the artifact as a browser would show it; the disclosure page gains title, classificationNote, beforeLaunch, list-form proves/doesNotProve and per-note of/effort/table, and about:true files a prototype's own hand-written honesty page in About this prototype rather than regenerating a near-copy of it
+
+---
+
+
 ## [5.45.0] - 2026-09-13
 
 ### pm-prototype harness: per-screen activities, and two fixes to what the shell can do over an artifact it may not edit - screens now declare what can be done on them (state, time, scroll, a named click, or a says line) and the shell lists them under Try it, so the demo panel that used to be drawn inside the artifact's own UI comes out of the product surface; comment placement no longer depends on harness-client.js, because the shell captures the pick itself on a same-origin document; and the mockup status bar is a solid strip instead of a gradient smear, with sticky elements inside the artifact nudged clear of it so a sticky header stops sliding under the clock

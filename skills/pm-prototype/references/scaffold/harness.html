@@ -1797,6 +1797,11 @@
      chrome - hiding chrome has to take every one of them with it */
   body.is-bare .mock::before, body.is-bare .mock::after { display: none !important; }
   body.is-bare .mock__bar { display: none !important; }
+  /* The side buttons, the address pill and the glare are injected by
+     hardware() after these rules were written, so they were surviving into
+     bare mode - a naked artifact with two aluminium buttons floating beside
+     it. Hidden together with everything else the phone is made of. */
+  body.is-bare .btns, body.is-bare .barphone, body.is-bare .glare { display: none !important; }
   /* Desktop goes full-bleed: the window IS the viewport, so white to the edges
      is honest. A phone or tablet must keep its own size - otherwise "hide
      chrome" silently swaps the viewport being reviewed for a different one -
@@ -1814,9 +1819,14 @@
   body.is-bare .stage { padding: 34px 26px; }
   body.is-bare .wrap[data-device="tablet"]  { width: var(--w-tablet) !important; max-height: var(--h-tablet) !important; }
   body.is-bare .wrap[data-device="mobile"]  { width: var(--w-mobile) !important; max-height: var(--h-mobile) !important; }
+  /* Square, because this is the artifact as a browser would show it. A rounded
+     corner is the last thing left of the phone, and it keeps suggesting a
+     device is still there - which is exactly what hiding the chrome was for.
+     The outline and shadow stay: they say where the artifact ends, which a
+     white page on a white canvas otherwise does not. */
   body.is-bare .wrap[data-device="tablet"] .screen,
   body.is-bare .wrap[data-device="mobile"] .screen {
-    border-radius: 14px;
+    border-radius: 0;
     box-shadow: 0 0 0 1px rgba(22,24,29,.12), 0 26px 54px -22px rgba(22,24,29,.34);
   }
   /* a quiet caption so the size on screen is never a guess */
@@ -2247,6 +2257,22 @@
   });
   function generated(s) { return !!(s.disclosure || s.overview || s.instructions); }
 
+  /* Two different questions, and conflating them forced a bad choice.
+
+     `generated` asks who renders it: the shell, from the config, with no file
+     behind it. `aboutDoc` asks what it IS: a document about the prototype
+     rather than a screen of it.
+
+     Every generated screen is a document, but not every document is generated.
+     A prototype may already carry its own - an honesty page the author wrote
+     by hand, a README screen - and that page belongs in `About this
+     prototype`, unnumbered and read at desktop width, while still being loaded
+     from its own file. `about: true` on a normal screen says so. Without this
+     the only way to put such a page in the right section was to regenerate it
+     from the config, which produces a near-copy of a page that already exists
+     and is not the page anyone was shown. */
+  function aboutDoc(s) { return generated(s) || !!s.about; }
+
   function screenTime() {
     var s = screens[screenIndex(current.screen)];
     return (s && s.time) || null;
@@ -2383,7 +2409,13 @@
     delete collapsed[id];
     writeStore('collapsed', collapsed);
   }
-  var folded    = readStore('folded', {});
+  /* The prototype-wide notes start folded. They are context - true on every
+     screen, and therefore never the thing the reviewer is looking at right
+     now. Left open they sit above the pinned notes (which are last on purpose,
+     so a new comment does not shove the headers around) and bury the one note
+     that is actually about what is on screen. The header still says how many
+     there are, and unfolding it is remembered from then on. */
+  var folded    = readStore('folded', { prototype: true });
   /* The covering note: what the reviewer wants to say about the whole thing,
      which is not the same as six remarks about six elements and does not
      belong pinned to one of them. */
@@ -2505,20 +2537,20 @@
        same list, in the same styling, it reads as one more thing to click
        through - so the list breaks, and they look like documents. */
     if (!navList.querySelector('.nav__sec')) navList.appendChild(section('screens', 'Screens', false));
-    if (generated(s) && !navList.querySelector('[data-sec="docs"]')) {
+    if (aboutDoc(s) && !navList.querySelector('[data-sec="docs"]')) {
       navList.appendChild(section('docs', 'About this prototype', true));
     }
     var b = document.createElement('button');
-    b.type = 'button'; b.className = 'nav__i' + (generated(s) ? ' nav__i--doc' : '');
+    b.type = 'button'; b.className = 'nav__i' + (aboutDoc(s) ? ' nav__i--doc' : '');
     b.setAttribute('aria-current', String(i === startScreen));
-    b.setAttribute('data-in', generated(s) ? 'docs' : 'screens');
-    if (generated(s) && shut.docs) b.hidden = true;
-    if (!generated(s)) realCount++;
+    b.setAttribute('data-in', aboutDoc(s) ? 'docs' : 'screens');
+    if (aboutDoc(s) && shut.docs) b.hidden = true;
+    if (!aboutDoc(s)) realCount++;
 
     var no = document.createElement('span');
     no.className = 'nav__no';
-    no.textContent = generated(s) ? '' : (realCount < 10 ? '0' + realCount : String(realCount));
-    if (!generated(s)) b.appendChild(no);
+    no.textContent = aboutDoc(s) ? '' : (realCount < 10 ? '0' + realCount : String(realCount));
+    if (!aboutDoc(s)) b.appendChild(no);
 
     var ic = document.createElement('span');
     ic.className = 'nav__ico';
@@ -2611,6 +2643,7 @@
      meaning - one global scale across screens would measure nothing. The hint
      is anchored in the shell bar and never rendered over the artifact. */
   var scrub    = document.querySelector('[data-scrub]');
+  var timeShown = {};   // which screens have already offered their time axis
   var timeOut  = document.querySelector('[data-time]');
   var timeGrp  = document.querySelector('[data-time-grp]');
   var timeLbl  = document.querySelector('[data-time-label]');
@@ -2629,6 +2662,15 @@
     timeGrp.hidden = !t;
     paintChip();
     if (!t) { stopSim(); return; }
+    /* A screen whose whole point is the time axis must not hide its own
+       control behind a closed panel. The reviewer arrives, sees a static
+       screen and concludes the prototype does nothing - which is what
+       happened. Opening it is done once per screen, and closing it sticks:
+       the remembered preference still wins on every later visit. */
+    if (simEl && simEl.hidden && !timeShown[current.screen]) {
+      timeShown[current.screen] = true;
+      openSim(true);
+    }
     current.time = times[current.screen];
     /* The group says "Time" on every prototype; what THIS screen's axis measures
        is the screen's own business and belongs in the line, not in the heading -
@@ -2865,8 +2907,13 @@
        paintDevice runs during setup, a thousand lines above this point, and a
        module-level var is hoisted as undefined until its assignment executes -
        so this threw on the very first paint. Fourth time in this file. */
+    /* `top` differs by app type, and getting it wrong is visible as a gap. A
+       native app draws under the notch, so its safe area is the notch, not the
+       bar. A web page does not: the browser starts it below the status strip,
+       so the safe area is exactly the strip's own height - 9px more and there
+       is a band of background between the clock and the site's header. */
     var SAFE = {
-      mobile: { top: 59, webBottom: 52 },
+      mobile: { top: native ? 59 : 50, webBottom: 52 },
       tablet: { top: 30, webBottom: 42 }
     };
     var doc = null;
@@ -3102,6 +3149,12 @@
   /* ---------- chrome visibility ---------- */
   function bare(on) {
     document.body.classList.toggle('is-bare', on);
+    /* The safe area exists because the phone chrome covers the top of the
+       artifact. With the chrome gone there is nothing to clear, so leaving the
+       padding in place pushed the artifact's own header down from the top edge
+       - the one thing "show it as a user would see it" must not do. Same for
+       the sticky offset that went with it. */
+    paintSafeArea();
     if (!on) requestAnimationFrame(drawAnnots);
   }
   document.querySelector('[data-bare]').addEventListener('click', function () { bare(true); });
@@ -3500,7 +3553,7 @@
       var nb = pr.note.getBoundingClientRect();
       var ny = nb.top + nb.height / 2 - wrapBox.top;
       var visible = nb.bottom > railBox.top + 4 && nb.top < railBox.bottom - 4;
-      if (!visible) { pr.path = null; return; }
+      if (!visible || pr.offscreen) { pr.path = null; return; }
       var railX = railBox.left - wrapBox.left;
       var mid = pr.px + (railX - pr.px) / 2;
       var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -3512,6 +3565,78 @@
       svg.appendChild(path);
       pr.path = path;
     });
+  }
+
+  /* ---------- a pin belongs to its element, not to the canvas ----------
+
+     Pins were positioned once, when the rail was drawn, and then never again.
+     Scroll the artifact and every pin stayed where it was while the thing it
+     pointed at moved out from under it - the line appeared to wander across
+     the screen and the note ended up pointing at whatever had scrolled into
+     that spot, which is worse than pointing at nothing.
+
+     So the anchor is re-measured instead of remembered: the same arithmetic as
+     the first paint, run against the element's current position. Cheap enough
+     to do per frame (a getBoundingClientRect per pin), and it runs off rAF so
+     a fast scroll coalesces into one repaint. The rail is untouched - card
+     order does not change, and a note being typed is not rebuilt under the
+     cursor. */
+  function repositionPins() {
+    if (!pairs.length) return;
+    var doc = null;
+    try { doc = frame.contentDocument; } catch (e) { doc = null; }
+    if (!doc) return;
+    var frameBox = frame.getBoundingClientRect();
+    var wrapBox = wrap.getBoundingClientRect();
+    var de = doc.documentElement;
+    var se = doc.scrollingElement || de;
+
+    pairs.forEach(function (pr) {
+      if (!pr.pin) return;
+      var px, py;
+      if (pr.el && pr.el.isConnected) {
+        var t = pr.el.getBoundingClientRect();
+        var cm = pr.cm;
+        var hasPoint = cm && typeof cm.rx === 'number';
+        px = hasPoint ? t.left + t.width * cm.rx : t.right;
+        py = hasPoint ? t.top + t.height * cm.ry : t.top + t.height / 2;
+        px = Math.min(px + (frameBox.left - wrapBox.left), frameBox.width - 14);
+        py = py + (frameBox.top - wrapBox.top);
+      } else if (pr.cm && typeof pr.cm.fx === 'number') {
+        px = pr.cm.fx * de.scrollWidth - se.scrollLeft;
+        py = pr.cm.fy * de.scrollHeight - se.scrollTop;
+        px = Math.max(14, Math.min(px + (frameBox.left - wrapBox.left), frameBox.width - 14));
+        py = Math.max(14, Math.min(py + (frameBox.top - wrapBox.top), frameBox.height - 14));
+      } else {
+        return;
+      }
+      /* Off the top or bottom of the viewport the pin is hidden rather than
+         clamped to the edge: a pin parked at the rim claims the note is about
+         something on screen when it is not. */
+      var inside = py > 2 && py < frameBox.height - 2;
+      pr.pin.style.display = inside ? '' : 'none';
+      pr.pin.style.left = px + 'px';
+      pr.pin.style.top = py + 'px';
+      pr.px = px; pr.py = py;
+      pr.offscreen = !inside;
+    });
+    drawLines();
+  }
+
+  var pinFrame = null;
+  function repositionIdle() {
+    if (pinFrame) return;
+    pinFrame = requestAnimationFrame(function () { pinFrame = null; repositionPins(); });
+  }
+
+  /* The artifact is a separate document, so its scroll never reaches this one.
+     Re-attached on every load, because each navigation is a new document. */
+  function watchArtifactScroll() {
+    var w = null;
+    try { w = frame.contentWindow; } catch (e) { w = null; }
+    if (!w) return;
+    w.addEventListener('scroll', repositionIdle, { passive: true });
+    w.addEventListener('resize', repositionIdle, { passive: true });
   }
 
   var railSettle = null;
@@ -3634,8 +3759,10 @@
       if (entry.scope !== 'element' && folded[entry.scope]) return;
 
       var target = null;
+      var anchorEl = null;      // the real element, kept so scroll can re-measure it
       if (entry.scope === 'element') {
         if (a.selector) { try { target = doc.querySelector(a.selector); } catch (e) { /* bad selector */ } }
+        anchorEl = target;
         num++;
       }
 
@@ -3692,7 +3819,7 @@
             delete collapsed[id]; writeStore('collapsed', collapsed); drawAnnots();
           });
           annotEl.appendChild(cp);
-          pairs.push({ pin: cp, note: roll, px: px, py: py, active: false, path: null });
+          pairs.push({ pin: cp, note: roll, px: px, py: py, active: false, path: null, el: anchorEl, cm: cm });
         }
         return;
       }
@@ -3783,7 +3910,12 @@
         cm.fresh = false;
         requestAnimationFrame(function () {
           note.scrollIntoView({ block: 'nearest' });
-          var field = note.querySelector('.note__who-in') || note.querySelector('.note__edit');
+          /* The text, never the name field. Focusing the name put the cursor
+             in "Your name", so the first thing typed went into the wrong box,
+             the note stayed empty, and the reviewer concluded a comment could
+             not be submitted. The name is optional and can be filled at any
+             point, including on the way out. */
+          var field = note.querySelector('.note__edit') || note.querySelector('.note__who-in');
           if (field) field.focus();
         });
       }
@@ -3798,7 +3930,7 @@
       pin.style.animationDelay = (n * 45) + 'ms';
       annotEl.appendChild(pin);
 
-      var pr = { pin: pin, note: note, px: px, py: py, active: active, path: null };
+      var pr = { pin: pin, note: note, px: px, py: py, active: active, path: null, el: anchorEl, cm: cm };
       pairs.push(pr);
 
       function lit(on) {
@@ -5006,6 +5138,11 @@
 
   function placeComment(d) {
     setPicking(false);
+    /* The all-notes panel hides the rail, and the rail is where a new note is
+       written - so placing one while that panel was open dropped a pin and
+       then appeared to do nothing at all. Asking to write a note is a clear
+       enough intention to close the list you were reading. */
+    if (notesOpen) openNotes(false);
     if (!commentsOn) {
       commentsOn = true;
       document.querySelector('[data-toggle-comments]').setAttribute('aria-pressed', 'true');
@@ -5760,7 +5897,7 @@
         (m.note ? '<span class="met__n">' + esc(m.note) + '</span>' : '') + '</div>';
     }).join('');
 
-    var flow = screens.filter(function (s) { return !generated(s); }).map(function (s, i) {
+    var flow = screens.filter(function (s) { return !aboutDoc(s); }).map(function (s, i) {
       return '<li><b>' + esc(s.label) + '</b>' + (s.desc ? '<span>' + esc(s.desc) + '</span>' : '') + '</li>';
     }).join('');
 
@@ -5839,14 +5976,32 @@
     return docShell('instructions', inner, 780);
   }
 
+  function bullets(v) {
+    if (!v) return '-';
+    if (!Array.isArray(v)) return esc(v);
+    return '<ul>' + v.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>';
+  }
+
   function disclosureDoc() {
     var d = cfg.disclosure || {};
     var rows = [];
+    /* `effort` is the third question a disclosure invites and the one a
+       reviewer actually acts on: "this is simulated" is only half an answer
+       until someone says what the real one costs. Where it is given it
+       replaces the kind, which is a harness word and means nothing to a
+       reader; where it is not, the kind is still the honest fallback.
+
+       `table: false` keeps a note on its screen but out of this page - for a
+       rule about the product that is not a simulation of anything, which would
+       otherwise arrive in a list of things that are fake. */
     function collect(src, label) {
       (annots[src] || []).forEach(function (a) {
-        if (a.kind === 'convention') return;
-        rows.push('<tr><td class="s" data-l="Screen">' + esc(label) + '</td><td class="k" data-l="Kind">' + esc(kindOf(a).label) +
-                  '</td><td data-l="In this prototype">' + esc(a.text) + '</td><td class="r" data-l="In production">' + esc(a.real || '-') + '</td></tr>');
+        if (a.kind === 'convention' || a.table === false) return;
+        var third = a.effort ? esc(a.effort) : esc(kindOf(a).label);
+        rows.push('<tr><td class="s" data-l="Screen">' + esc(a.of || label) + '</td>' +
+                  '<td data-l="In this prototype">' + esc(a.text) + '</td>' +
+                  '<td class="r" data-l="In production">' + esc(a.real || '-') + '</td>' +
+                  '<td class="k" data-l="Effort">' + third + '</td></tr>');
       });
     }
     screens.forEach(function (s) { collect(s.src, s.label); });
@@ -5855,7 +6010,7 @@
     var conventions = [];
     function collectC(src, label) {
       (annots[src] || []).forEach(function (a) {
-        if (a.kind === 'convention') conventions.push('<li><b>' + esc(label) + '</b> - ' + esc(a.text) + '</li>');
+        if (a.kind === 'convention' && a.table !== false) conventions.push('<li><b>' + esc(label) + '</b> - ' + esc(a.text) + '</li>');
       });
     }
     screens.forEach(function (s) { collectC(s.src, s.label); });
@@ -5870,6 +6025,7 @@
       '.pair{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:20px}' +
       '.pair div{padding:15px 17px;border-radius:14px;background:#f6f7f9}' +
       '.pair b{display:block;margin-bottom:6px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#7c838f}' +
+      '.pair ul{margin:0;padding-left:17px}.pair li{margin:5px 0}' +
       '.pair .yes b{color:#ed6d57}' +
       /* wide content scrolls inside its own box; the page itself never does */
       '.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}' +
@@ -5890,17 +6046,35 @@
         '.s{font-weight:600;color:#14161b}' +
       '}' +
       '</style></head><body>' +
-      '<h1>' + esc(cfg.title || cfg.name || 'Prototype') + ' - what is real</h1>' +
+      /* The prototype may already have a name for this page - an honesty screen
+         the author wrote and the reviewer has seen. Renaming it here would make
+         the two disagree about what the same page is called, so `title` wins
+         where it is given. */
+      '<h1>' + esc(d.title || ((cfg.title || cfg.name || 'Prototype') + ' - what is real')) + '</h1>' +
       (cfg.boundary ? '<p class="n">' + esc(cfg.boundary) + '</p>' : '') +
-      '<div class="pair"><div class="yes"><b>This prototype shows</b>' + esc(d.proves || '-') + '</div>' +
-      '<div><b>It does not show</b>' + esc(d.doesNotProve || '-') + '</div></div>' +
-      (d.classification ? '<h2>Classification</h2><p>' + esc(d.classification) +
-        ' - what it binds is described in the accompanying document, not here.</p>' : '') +
+      /* Written as separate claims, shown as separate claims. Run together in
+         one paragraph they read as a pitch; as a list each one can be
+         disagreed with on its own, which is the point of writing them down. */
+      '<div class="pair"><div class="yes"><b>This prototype shows</b>' + bullets(d.proves) + '</div>' +
+      '<div><b>It does not show</b>' + bullets(d.doesNotProve) + '</div></div>' +
+      (d.classification ? '<h2>Classification</h2><p><b>' + esc(d.classification) + '</b>' +
+        (d.classificationNote ? ' ' + esc(d.classificationNote)
+                              : ' - what it binds is described in the accompanying document, not here.') + '</p>' : '') +
       '<h2>Element by element</h2>' +
       (rows.length
-        ? '<div class="tw"><table><thead><tr><th>Screen</th><th>Kind</th><th>In this prototype</th><th>In production</th></tr></thead><tbody>' + rows.join('') + '</tbody></table></div>'
+        ? '<div class="tw"><table><thead><tr><th>Element</th><th>In this prototype</th><th>In production</th><th>Effort</th></tr></thead><tbody>' + rows.join('') + '</tbody></table></div>'
         : '<p class="n">No simulated elements have been declared. If that is genuinely true, say so out loud when showing it - a prototype with nothing faked is unusual.</p>') +
       (conventions.length ? '<h2>Prototype conventions</h2><ul>' + conventions.join('') + '</ul>' : '') +
+      /* What still has to happen before any of this could ship. "This is
+         simulated" invites "and how hard is the real one" - the effort column
+         answers that per element, and this answers it for the things that
+         belong to nobody's element: a legal review, a retraction policy, an
+         accessibility pass, the measurement contract. They are the difference
+         between a prototype someone trusts and one someone schedules. */
+      (Array.isArray(d.beforeLaunch) && d.beforeLaunch.length
+        ? '<h2>Before any of this could ship</h2><ul>' +
+          d.beforeLaunch.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>'
+        : '') +
       '<p class="n">Generated from the harness annotations, so this page cannot drift from the notes on the screens.</p>' +
       '</body></html>';
   }
@@ -6417,8 +6591,8 @@
     /* A generated screen is a document about the prototype, not a screen of it.
        It is read at a desk, it has no responsive behaviour worth testing, and
        the device switcher would only invite someone to test the wrong thing. */
-    document.body.classList.toggle('is-fixed', generated(s));
-    if (generated(s) && current.device !== 'desktop') { current.device = 'desktop'; paintDevice(); }
+    document.body.classList.toggle('is-fixed', aboutDoc(s));
+    if (aboutDoc(s) && current.device !== 'desktop') { current.device = 'desktop'; paintDevice(); }
     if (generated(s)) {
       frame.removeAttribute('src');
       frame.srcdoc = s.disclosure ? disclosureDoc() : s.overview ? overviewDoc() : instructionsDoc();
@@ -6434,8 +6608,45 @@
     record('harness:screen', current.screen);
   }
 
+  /* ---------- the artifact navigating itself ----------
+
+     A prototype worth reviewing has real links in it. Click one and the iframe
+     changes document on its own, without going through pickScreen - so the
+     shell went on believing it was still showing the first screen. The screen
+     name in the top bar, the activity list, the time axis and the annotations
+     all stayed with the page the reviewer had left, which reads as "the
+     harness only works on the first screen".
+
+     So after every load the shell asks the document where it actually is and
+     adopts the answer. It only follows a navigation the config already
+     declares; anything else (an outbound link, an anchor to a page not listed)
+     leaves the selection alone rather than blanking it. */
+  function adoptScreen() {
+    var here = null;
+    try { here = frame.contentWindow.location.pathname; } catch (e) { return; }
+    if (!here) return;
+    var file = here.split('/').pop();
+    if (!file || file === current.screen) return;
+    /* findIndex, not screenIndex - that one falls back to the first screen for
+       anything it does not know, which here would silently claim an outbound
+       link was the landing page. */
+    var i = screens.findIndex(function (sc) { return sc.src === file; });
+    if (i < 0) return;
+    current.screen = file;
+    cursor = i;
+    navCur.textContent = screens[i].label;
+    navList.querySelectorAll('.nav__i').forEach(function (o, j) { o.setAttribute('aria-current', String(j === i)); });
+    /* everything that is keyed to the screen, minus load() - the document is
+       already here, and reloading it would undo whatever brought us */
+    mountTime();
+    paintActs();
+    record('harness:screen', file);
+  }
+
   frame.addEventListener('load', function () {
     frameLoaded = true;
+    watchArtifactScroll();
+    adoptScreen();
     if (picking) attachShellPick();
     /* An artifact without the client never announces itself, so the work the
        'ready' message would have triggered is done here instead - everything

@@ -81,11 +81,14 @@ A prototype meets two kinds of people, and they need opposite things first. A **
 | Screen | For | From |
 |---|---|---|
 | **Overview** | investor, sponsor, team, steering committee | `overview:` - six blocks: what this is, who for, the job it does, what it should move, what you will see, what is not in it |
+| **What is real** | both | `disclosure:` plus every non-convention note. Carries the pair, the classification, the element table with its **effort** column, and `beforeLaunch` - what still has to happen before any of it could ship |
 | **How to test it** | the tester | `instructions:` - the steps, what to ignore, how to leave a note |
 
 Both exist only if their block is filled in, and **`Invite to review` lets you tick which of them travels with the link** - the overview to the sponsor, the instructions to the tester, neither to someone who has already seen it.
 
 **Every figure on the Overview carries its class** - `observed` · `calculated` · `projected` · `target` · `sample` - printed beside the number. A projection in front of a committee is the most actionable unverifiable number a prototype can contain, and a footnote does not travel with a screenshot.
+
+**A prototype that already has its own document keeps it.** Where the artifact carries an honesty page the author wrote by hand, `about: true` on that screen files it in the same section - unnumbered, read at desktop width, loaded from its own file. The alternative, regenerating it from the config, produces a near-copy of a page that already exists and is not the page anyone was shown. The reverse also works: give the generated page that prototype's own `title` and its content row for row, and it is the same document in the harness's own design.
 
 **Both, and `What is real`, are documents about the prototype rather than screens of it.** The panel puts them in their own **collapsible section**, outlined instead of filled and without a number, and the numbering in the flow counts only the real screens. Mixed into the same list in the same styling they read as two more things to click through, and a tester will dutifully test them.
 
@@ -120,6 +123,20 @@ Each carries a `label` and a one-line `does` saying what it demonstrates - the s
 **`click` is the only kind that reaches into the document.** It is named in the config rather than guessed at runtime, and where the artifact carries `harness-client.js` it travels as a message; without the client the shell performs the same click itself, same-origin. Either way it is a real click on a real element - nothing synthetic is invented, for the same reason presentation mode never fabricates input.
 
 **Never declare an activity that fakes input the prototype does not really take.** Where the point is that something runs on real typing - a journey that would carry no weight if it were pre-baked - use `says` and let the reviewer type. An activity that simulates the very thing under test destroys what it was meant to demonstrate.
+
+## Following the artifact
+
+A prototype worth reviewing has real links in it, and a reviewer uses them. The iframe then changes document on its own, without going through the screen panel - so the shell has to ask the document where it actually is rather than assume it is still showing what it loaded. It does that after every load, and adopts the answer only when the config already declares that screen; an outbound link leaves the selection alone instead of blanking it.
+
+Without this the screen name, the activity list, the time axis and the notes all stay with the page the reviewer left, which reads as "the harness only works on the first screen".
+
+**Pins are re-measured, not remembered.** Scroll the artifact and each pin recomputes from its element's current position, so the line follows the thing it points at instead of wandering across the screen. A pin whose element has scrolled out of view hides rather than clamping to the edge - a pin parked at the rim claims the note is about something on screen when it is not.
+
+## Hiding the chrome
+
+`h` hides everything the harness draws. That has to mean **everything**: the device frame, the notch, the status bar, the address pill, the glare, the side buttons, the safe-area padding the phone chrome needed, and the rounded corners. What is left is the artifact as a browser would show it.
+
+The parts injected at runtime are the ones that keep surviving this, because they are added after the rules that hide them were written. Anything `hardware()` builds has to be in that list.
 
 ## Notes: three kinds, and they are not interchangeable
 
@@ -182,6 +199,16 @@ A note explains; a **mark points**. Some things cannot be said with a pin - *thi
 Both are kept as **fractions of the frame**, so they survive a resize or a device change, and both belong to a screen + state + device exactly as a comment does - a box around a narrow layout means nothing on a wide one. Hover a mark to remove it.
 
 **Spotlight** is the live version of the same instinct - *look here*, while someone is watching. Everything but the pointer steps back. It is deliberately **not saved**: a gesture, not a record.
+
+## Placing a comment
+
+Arm the note button, click the thing, type, save. Two details decide whether that works at all:
+
+**The cursor goes to the text, not to the name.** Focusing the name field first put the first thing typed into "Your name", left the note empty, and made it look as though a comment could not be submitted. The name is optional and can be filled at any point.
+
+**Placing a note closes the all-notes panel**, because that panel hides the rail and the rail is where a new note is written. A pin appearing with no editor is indistinguishable from nothing happening.
+
+Where the artifact carries `harness-client.js` the click is forwarded as a message. Where it does not - a prototype built before the client existed, or one that must not be edited at all - the shell captures the same click itself on the same-origin document. Both produce the same note.
 
 ## Getting feedback back
 
