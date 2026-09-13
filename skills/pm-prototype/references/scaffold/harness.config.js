@@ -295,6 +295,22 @@ window.HARNESS_CONFIG = {
      shared thread contaminates the sample the moment the second person reads
      the first.
      ───────────────────────────────────────────────────────────────────── */
+  /* The mark at the top of the screen panel. Unset shows Pureinn's, which is
+     the honest default: the reviewer is looking at a Pureinn harness.
+
+     Set it when the reviewer is looking at THEIR OWN product and the tool
+     should recede - a client review, a stakeholder showing. `logo` is a path
+     next to this file or a data: URI; `name` alone is enough when there is no
+     mark to hand.
+
+       brand: { logo: 'logo.svg', name: 'Acme Dispatch' }
+       brand: { name: 'Acme Dispatch' }
+       brand: false                      // no mark at all, for a white-label handover
+
+     One mark, never two: the harness replaces its own rather than sitting
+     beside yours, because two logos in one row read as a partnership. */
+  // brand: { logo: '', name: '' },
+
   review: {
     task: 'Try to assign the 08:30 job to a courier, then come back to the list.',
     name: '',        // pre-fills the reviewer's name; they can change it

@@ -188,6 +188,12 @@ That comments are per viewer is not a limitation to work around. An async test w
 
 Whatever picks between screens must carry **a sentence per screen**, not only a name. A reviewer who has to work out what "02 Detail" means navigates by trial, and the first casualty is the order the showing was meant to follow - which `showing.md` treats as the thing that decides how the session goes.
 
+**The screen list is also where a mark belongs.** It is the one surface a reviewer keeps open, and an unbranded tool reads as unfinished. The default is Pureinn's own mark - honest, because that is what the harness is. Set the product's own when the reviewer is looking at **their** product and the tool should recede: a client review, a stakeholder showing.
+
+**Ask, do not guess, and do not ask blind.** Before asking, look: a repo has a favicon, an `svg` in `public/` or `assets/`, an icon referenced from the app's own shell. Offer what you found - *"I found `public/logo.svg` - is that the product's mark?"* - with the option to point somewhere else or keep Pureinn's. A logo inserted silently is one the author discovers when a reviewer already has the link, and the wrong mark on a client's review is worse than no mark.
+
+One mark, never two. The harness replaces its own rather than sitting beside the product's, because two logos in one row read as a partnership nobody agreed to.
+
 ### 6c. Two audiences, two front screens
 
 A prototype is shown to two kinds of people and they need opposite things first.
