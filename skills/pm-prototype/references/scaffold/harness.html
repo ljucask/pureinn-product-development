@@ -1358,14 +1358,26 @@
   .mk__hit { fill: transparent; stroke: transparent; stroke-width: 22; pointer-events: auto; cursor: pointer; }
   .marks g:hover .mk__box { stroke-width: 2.6; }
   .marks g:hover .mk__pen { stroke: rgba(255,201,79,.75); }
+  /* ALWAYS VISIBLE, and that is the point. It was revealed on hover, and hover
+     could not work: the button is appended to the layer as a SIBLING of the
+     svg, not inside the <g> it belongs to, so `.marks g:hover .mk__x` could
+     never match anything - the control was unreachable and a mark could not be
+     removed at all. The earlier `.marks:hover` was no better, because .marks is
+     pointer-events:none outside marking mode.
+
+     A delete control that has to be discovered is the thing that failed here.
+     Marks are few and deliberate; each one carries its own × the way every
+     annotation tool does. */
   .mk__x {
     position: absolute; width: 20px; height: 20px; margin: -10px 0 0 -10px;
     display: grid; place-items: center; border: 0; border-radius: 50%;
-    background: var(--co); color: #fff; cursor: pointer; opacity: 0;
-    box-shadow: 0 2px 8px -2px rgba(237,109,87,.8);
-    transition: opacity var(--fast) var(--ease);
+    background: var(--co); color: #fff; cursor: pointer;
+    opacity: .82;
+    box-shadow: 0 2px 8px -2px rgba(237,109,87,.55), 0 0 0 1.5px rgba(255,255,255,.9);
+    transition: opacity var(--fast) var(--ease), transform var(--fast) var(--ease);
     pointer-events: auto;
   }
+  .mk__x:hover, .mk__x:focus-visible { opacity: 1; transform: scale(1.12); }
   .mk__x { padding: 0; }
   .mk__x svg { width: 10px; height: 10px; }
   .mk__ask {
@@ -1379,10 +1391,6 @@
   }
   .mk__ask svg { width: 13px; height: 13px; }
   .mk__ask.is-out { opacity: 0; transition: opacity var(--med) var(--ease); }
-  /* Hover the MARK, not the layer: .marks is pointer-events:none outside
-     marking mode, so .marks:hover never matches - which left the × invisible
-     while the box it belongs to was lighting up under the same pointer. */
-  .marks g:hover .mk__x, .marks g:focus-within .mk__x { opacity: 1; }
 
   /* ══ the note editor - the rail's second storey ══
      The rail is a notepad: fast to write in, useless once there are twelve
