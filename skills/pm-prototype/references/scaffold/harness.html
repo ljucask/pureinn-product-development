@@ -2727,10 +2727,9 @@
      clock also cannot rot the way a hardcoded 9:41 does the moment anyone looks
      at a screenshot twice. */
   function tickClock() {
-    var el = document.querySelector('[data-status-time]');
-    if (!el) return;
     var d = new Date();
-    el.textContent = d.getHours() + ':' + String(d.getMinutes()).padStart(2, '0');
+    var t = d.getHours() + ':' + String(d.getMinutes()).padStart(2, '0');
+    document.querySelectorAll('[data-status-time]').forEach(function (el) { el.textContent = t; });
   }
   setInterval(tickClock, 20000);
 
@@ -2738,12 +2737,12 @@
      does not. Same reasoning as the clock: a number taken from the machine
      cannot be caught looking wrong, and 84% is a level that reads as "a phone
      someone is using" rather than a staged 100. */
+  var battPct = 84;
   function paintBattery(pct) {
-    var n = document.querySelector('[data-status-pct]');
-    var f = document.querySelector('[data-status-fill]');
-    if (!n || !f) return;
-    n.textContent = pct;
-    f.style.width = Math.max(6, Math.min(100, pct)) + '%';
+    if (pct !== undefined) battPct = pct;
+    var w = Math.max(6, Math.min(100, battPct)) + '%';
+    document.querySelectorAll('[data-status-pct]').forEach(function (n) { n.textContent = battPct; });
+    document.querySelectorAll('[data-status-fill]').forEach(function (f) { f.style.width = w; });
   }
   paintBattery(84);
   if (navigator.getBattery) {
@@ -5747,6 +5746,23 @@
 
   /* Build one scaled copy of the real thing: the same .wrap / .mock / .screen
      the single view uses, at its natural size, scaled as a whole. */
+  /* Everything the single view draws inside the frame, built the same way for
+     a scaled copy. Comparing three widths is only honest if the three are the
+     same device; a copy missing the status bar and the buttons is a different
+     phone standing next to the real one. */
+  function hardware(mockEl2, dev) {
+    if (!current.mockup) return;
+    var add = function (html) { mockEl2.insertAdjacentHTML('beforeend', html); };
+    if (dev === 'mobile') add('<span class="btns" aria-hidden="true"></span>');
+    if (dev === 'mobile' || dev === 'tablet') {
+      add('<div class="barphone" aria-hidden="true"><span>' + esc(location.host) + '</span></div>');
+      /* the hooks are kept, and the painters write to every match - a frozen
+         clock in the copies would drift away from the one beside it */
+      add(document.querySelector('[data-status]').outerHTML);
+    }
+    add('<div class="glare" aria-hidden="true"></div>');
+  }
+
   function mini(dev, src, w, h, scale, srcdoc) {
     var cell = document.createElement('div');
     cell.className = 'mini';
@@ -5773,6 +5789,8 @@
     fr.setAttribute('scrolling', 'no');
     if (srcdoc) fr.srcdoc = srcdoc; else fr.src = src;
     mockEl2.appendChild(bar); mockEl2.appendChild(fr);
+    hardware(mockEl2, dev);
+    requestAnimationFrame(function () { tickClock(); paintBattery(); });
     wrapEl.appendChild(mockEl2);
     cell.appendChild(wrapEl);
 
