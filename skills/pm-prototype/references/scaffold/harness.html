@@ -137,8 +137,12 @@
   .mock__bar { display: none; }
 
   .wrap[data-device="desktop"] { width: 100%; max-width: calc(1440px + var(--bez) * 2); height: 100%; }
-  .wrap[data-device="tablet"]  { width: calc(834px + var(--bez) * 2); height: 100%; max-height: calc(1112px + var(--bez) * 2); }
-  .wrap[data-device="mobile"]  { width: calc(390px + var(--bez) * 2); height: 100%; max-height: calc(844px + var(--bez) * 2); }
+  /* One source for each viewport. They were written into the CSS, the JS
+     constants, the size label and the bare-mode overrides separately, so
+     changing one left the frame arguing with the number printed beside it. */
+  :root { --w-mobile: 390px; --h-mobile: 844px; --w-tablet: 834px; --h-tablet: 1112px; }
+  .wrap[data-device="tablet"]  { width: calc(var(--w-tablet) + var(--bez) * 2); height: 100%; max-height: calc(var(--h-tablet) + var(--bez) * 2); }
+  .wrap[data-device="mobile"]  { width: calc(var(--w-mobile) + var(--bez) * 2); height: 100%; max-height: calc(var(--h-mobile) + var(--bez) * 2); }
 
   /* ══ mockup: device frames modelled on the real hardware ══
      EVERY state class on <body> carries an `is-` prefix. Without one it can
@@ -153,79 +157,110 @@
   body.is-mock:not(.is-fixed) .mock { position: relative; }
   body.is-mock:not(.is-fixed) .screen { box-shadow: none; }
 
-  /* iPhone: thin uniform bezel, deep corner radius, Dynamic Island */
-  body.is-mock:not(.is-fixed) .wrap[data-device="mobile"] { --bez: 11px; }
+  /* ══ the phone ══
+     Built the way the object is built, because that is what makes it read as a
+     photograph rather than a rounded rectangle:
+
+       .mock        the titanium rail - a warm grey, lighter at the edges where
+                    it catches light, with a hairline highlight along the top
+       ::before     a very thin black band just inside the rail, which is the
+                    part almost every drawn phone leaves out and the reason
+                    they look flat
+       .screen      the display, inset within that band
+
+     The radii nest: the rail is the largest, the band a little smaller, the
+     display smaller again - a constant offset, the way a real curve does it. */
+  body.is-mock:not(.is-fixed) .wrap[data-device="mobile"] { --bez: 12px; --rad: 58px; }
   body.is-mock:not(.is-fixed) .wrap[data-device="mobile"] .mock {
     padding: var(--bez);
-    background: #1c1c1e;
-    border-radius: 56px;
+    border-radius: var(--rad);
+    background:
+      linear-gradient(107deg, #6f7278 0%, #a8acb3 7%, #7d8188 17%, #6c7076 50%,
+                              #7d8188 83%, #a8acb3 93%, #6f7278 100%);
     box-shadow:
-      inset 0 0 0 1.5px #3a3a3e,
-      inset 0 1px 0 rgba(255,255,255,.14),
-      0 0 0 1px rgba(0,0,0,.5),
-      0 40px 80px -30px rgba(22,24,29,.55);
+      inset 0 1px 0 rgba(255,255,255,.34),
+      inset 0 -1px 0 rgba(255,255,255,.16),
+      0 0 0 .5px rgba(0,0,0,.55),
+      0 44px 88px -34px rgba(22,24,29,.62),
+      0 12px 24px -12px rgba(22,24,29,.34);
   }
-  body.is-mock:not(.is-fixed) .wrap[data-device="mobile"] .screen { border-radius: 45px; }
-  /* The Dynamic Island. A flat black pill reads as a hole cut in the picture;
-     the real thing is a glossy black capsule with a visibly recessed lens at
-     one end and the depth sensor as a faint spot at the other. Two inset
-     highlights give it the "under glass" look rather than "cut out of it". */
+  /* the thin black band between the rail and the glass */
+  body.is-mock:not(.is-fixed) .wrap[data-device="mobile"] .mock::after {
+    content: ""; position: absolute; z-index: 1; inset: calc(var(--bez) - 3.5px);
+    border-radius: calc(var(--rad) - 8.5px);
+    background: #07080a;
+    pointer-events: none;
+  }
+  body.is-mock:not(.is-fixed) .wrap[data-device="mobile"] .screen {
+    border-radius: calc(var(--rad) - 12px);
+    position: relative; z-index: 2;
+  }
+
+  /* The Dynamic Island. Narrower than it is usually drawn - on a Pro Max it is
+     a small capsule on a large screen, not a band across the top - with the
+     lens recessed at one end and the depth sensor as a faint spot at the other,
+     and two inset highlights so it sits under the glass rather than being cut
+     out of it. */
   body.is-mock:not(.is-fixed) .wrap[data-device="mobile"] .mock::before {
     content: ""; position: absolute; z-index: 6;
     top: calc(var(--bez) + 11px); left: 50%; transform: translateX(-50%);
-    width: 118px; height: 35px; border-radius: 999px;
+    width: 104px; height: 31px; border-radius: 999px;
     background:
-      radial-gradient(circle at 78% 50%, #1b1d22 0 8.5px, rgba(27,29,34,0) 9px),
-      radial-gradient(circle at 78% 50%, #2c3038 0 6.4px, rgba(44,48,56,0) 6.9px),
-      radial-gradient(circle at 76.5% 44%, #4a5566 0 3.1px, rgba(74,85,102,0) 3.5px),
-      radial-gradient(circle at 22% 50%, #17191d 0 2.6px, rgba(23,25,29,0) 3px),
-      linear-gradient(180deg, #0a0b0d 0%, #050506 100%);
+      radial-gradient(circle at 79% 50%, #1a1c21 0 7.6px, rgba(26,28,33,0) 8px),
+      radial-gradient(circle at 79% 50%, #2b2f37 0 5.6px, rgba(43,47,55,0) 6px),
+      radial-gradient(circle at 77.5% 43%, #4b5768 0 2.7px, rgba(75,87,104,0) 3.1px),
+      radial-gradient(circle at 21% 50%, #16181c 0 2.2px, rgba(22,24,28,0) 2.6px),
+      linear-gradient(180deg, #090a0c 0%, #040405 100%);
     box-shadow:
-      inset 0 .5px 0 rgba(255,255,255,.1),
-      inset 0 -.5px 0 rgba(255,255,255,.045);
+      inset 0 .5px 0 rgba(255,255,255,.11),
+      inset 0 -.5px 0 rgba(255,255,255,.05);
   }
-  /* left side: silent switch, then the volume pair */
-  body.is-mock:not(.is-fixed) .wrap[data-device="mobile"] .mock::after {
-    content: ""; position: absolute; z-index: 1; left: -2.5px; top: 118px;
-    width: 3px; height: 26px; border-radius: 2px;
-    background: #2a2a2e;
-    box-shadow: 0 48px 0 3px #2a2a2e, 0 100px 0 3px #2a2a2e;
+
+  /* The side buttons get their own element rather than borrowing .mock__bar,
+     which is the browser's address bar and has to stay available in web mode.
+     Left rail: the action button, then the volume pair. Right: the side button. */
+  .btns { display: none; }
+  body.is-mock:not(.is-fixed) .wrap[data-device="mobile"] .btns {
+    display: block; position: absolute; z-index: 0; left: -2.5px; top: 122px;
+    width: 3px; height: 28px; border-radius: 2px 0 0 2px;
+    background: linear-gradient(90deg, #53565d, #83878e);
+    box-shadow: 0 50px 0 4px #53565d, 0 108px 0 4px #53565d;
+  }
+  body.is-mock:not(.is-fixed) .wrap[data-device="mobile"] .btns::after {
+    content: ""; position: absolute; right: -100%; top: 96px;
+    width: 3px; height: 74px; border-radius: 0 2px 2px 0;
+    background: linear-gradient(270deg, #53565d, #83878e);
+    transform: translateX(calc(var(--w-mobile) + var(--bez) * 2 - 3px));
   }
 
   /* ══ status bar and glass ══
      Both live in the SHELL, over the frame, and neither is ever written into
      the artifact: the artifact has to run on its own without the harness, and
-     a status bar the author drew by hand is a status bar that is wrong on
-     every screen they forget to update.
+     a status bar the author drew by hand is wrong on every screen they forget
+     to update.
 
-     The bar OVERLAYS rather than taking layout space, which matters more than
-     it looks. Giving it a strip of its own would make a 390px phone render
-     the artifact at 390 x (844 - 47), so the viewport would no longer be the
-     viewport the label claims and a media query on height would fire wrong.
-     Content passing under it is what a real phone does anyway. */
+     The bar OVERLAYS rather than taking layout space. A strip of its own would
+     make the phone render its width by (height - 47), so the viewport would no
+     longer be the viewport the label claims and a height media query would
+     fire wrong. Content passing under it is what a real phone does anyway, and
+     paintSafeArea gives the artifact the padding to start below it. */
   .status {
     position: absolute; z-index: 3; left: var(--bez); right: var(--bez); top: var(--bez);
-    height: 46px; padding: 0 30px 0 34px;
+    height: 50px; padding: 0 30px 0 32px;
     display: none; align-items: center; justify-content: space-between;
-    color: #101114; font-size: 14px; font-weight: 620;
+    color: #101114; font-size: 15px; font-weight: 620;
     letter-spacing: -.01em; font-variant-numeric: tabular-nums;
-    border-radius: 45px 45px 0 0;
+    border-radius: calc(var(--rad, 45px) - 12px) calc(var(--rad, 45px) - 12px) 0 0;
     pointer-events: none;
-    /* Content passes under the bar, so the bar has to stay readable over
-       whatever is there. A scrim fading to nothing does that without putting a
-       hard band across the top of the artifact. */
     background: linear-gradient(180deg, rgba(255,255,255,.92) 0%, rgba(255,255,255,.62) 62%, rgba(255,255,255,0) 100%);
   }
   body.is-darkart .status {
     background: linear-gradient(180deg, rgba(14,15,18,.92) 0%, rgba(14,15,18,.6) 62%, rgba(14,15,18,0) 100%);
   }
   /* Shown for web AND native: the clock and the battery belong to the phone,
-     not to whatever is running on it. Gating them on "native" meant a web
-     prototype was shown on a device with no status bar at all, which no phone
-     has ever done. */
+     not to whatever is running on it. */
   body.is-mock:not(.is-fixed) .wrap[data-device="mobile"] .status,
   body.is-mock:not(.is-fixed) .wrap[data-device="tablet"] .status { display: flex; }
-  /* tablet has no notch to clear, so it sits tighter and thinner */
   body.is-mock:not(.is-fixed) .wrap[data-device="tablet"] .status {
     height: 30px; padding: 0 18px; font-size: 12px; border-radius: 20px 20px 0 0;
   }
@@ -242,7 +277,7 @@
     border-radius: 4.2px; box-shadow: inset 0 0 0 1.1px currentColor;
     opacity: .92;
   }
-  .status__bat::after {                       /* the terminal nub */
+  .status__bat::after {
     content: ""; position: absolute; right: -3.2px; top: 50%; transform: translateY(-50%);
     width: 2px; height: 5px; border-radius: 0 2px 2px 0; background: currentColor; opacity: .5;
   }
@@ -253,48 +288,24 @@
   }
   .status__bat i { position: absolute; inset: 2px; border-radius: 2.4px; overflow: hidden; }
   .status__bat u { display: block; height: 100%; background: currentColor; border-radius: 2.4px; }
-  /* a light artifact is the common case; on a dark one the bar inverts so it
-     stays legible rather than disappearing into the content under it */
-  body.is-darkart .status { color: #f2f3f5; }
   .status { --bat-ink: #fff; }
   body.is-darkart .status { --bat-ink: #14161b; }
+  body.is-booting .status { color: #fff; --bat-ink: #14161b; background: none; }
 
-  /* The glass. Two very low-opacity diagonals, no blur and no backdrop-filter:
-     the point is a hint that there is a surface in front of the screen, not a
-     layer between the reviewer and what they came to judge. It is the first
-     thing to turn off in a usability test, so it has its own switch. */
+  /* The glass. No blend mode: `screen` brightens, and most prototypes are
+     white, so a white highlight over white was exactly no change at all and
+     the toggle looked broken. Glass over a bright surface reads as a cool,
+     slightly darker sheet with a bright leading edge. */
   .glare {
     position: absolute; z-index: 4; inset: var(--bez);
     display: none; border-radius: inherit; pointer-events: none;
-    /* No blend mode. `screen` brightens, and most prototypes are white, so a
-       white highlight over white produced exactly nothing - the toggle looked
-       broken because on screen it did nothing at all.
-
-       Glass over a bright surface does not read as a white streak, it reads as
-       a COOL, slightly darker sheet with a bright edge. So: a faint blue-grey
-       wash with a white leading edge, plus a vignette for the curve. Visible on
-       white, and still right on a dark artifact. */
     background:
-      /* the bright leading edge of the reflection */
-      linear-gradient(146deg,
-        rgba(255,255,255,.50) 0%,
-        rgba(255,255,255,.16) 9%,
-        rgba(255,255,255,0)   17%),
-      /* the body of the sheet: cool, and just dark enough to be seen on white */
-      linear-gradient(146deg,
-        rgba(150,170,205,.17) 0%,
-        rgba(150,170,205,.09) 24%,
-        rgba(150,170,205,0)   40%),
-      /* the narrow secondary band further down the glass */
-      linear-gradient(146deg,
-        rgba(170,190,220,0)   54%,
-        rgba(170,190,220,.13) 62%,
-        rgba(255,255,255,.07) 66%,
-        rgba(170,190,220,0)   74%),
-      /* the curve at the edges, so it is a pane and not two stripes */
+      linear-gradient(146deg, rgba(255,255,255,.50) 0%, rgba(255,255,255,.16) 9%, rgba(255,255,255,0) 17%),
+      linear-gradient(146deg, rgba(150,170,205,.17) 0%, rgba(150,170,205,.09) 24%, rgba(150,170,205,0) 40%),
+      linear-gradient(146deg, rgba(170,190,220,0) 54%, rgba(170,190,220,.13) 62%, rgba(255,255,255,.07) 66%, rgba(170,190,220,0) 74%),
       radial-gradient(122% 86% at 50% 40%, rgba(0,0,0,0) 58%, rgba(20,26,40,.13) 100%);
   }
-  body.is-mock:not(.is-fixed).is-glare .wrap[data-device="mobile"] .glare { display: block; border-radius: 45px; }
+  body.is-mock:not(.is-fixed).is-glare .wrap[data-device="mobile"] .glare { display: block; border-radius: calc(var(--rad) - 12px); }
   body.is-mock:not(.is-fixed).is-glare .wrap[data-device="tablet"] .glare { display: block; border-radius: 20px; }
 
   /* Neither belongs in a screenshot of the artifact, nor behind a reviewer
@@ -1722,8 +1733,8 @@
   body.is-bare .wrap[data-device="desktop"] .screen { border-radius: 0; box-shadow: none; }
 
   body.is-bare .stage { padding: 34px 26px; }
-  body.is-bare .wrap[data-device="tablet"]  { width: 834px !important; max-height: 1112px !important; }
-  body.is-bare .wrap[data-device="mobile"]  { width: 390px !important; max-height: 844px !important; }
+  body.is-bare .wrap[data-device="tablet"]  { width: var(--w-tablet) !important; max-height: var(--h-tablet) !important; }
+  body.is-bare .wrap[data-device="mobile"]  { width: var(--w-mobile) !important; max-height: var(--h-mobile) !important; }
   body.is-bare .wrap[data-device="tablet"] .screen,
   body.is-bare .wrap[data-device="mobile"] .screen {
     border-radius: 14px;
@@ -1819,6 +1830,7 @@
 <div class="stage">
   <div class="wrap" data-device="desktop">
     <div class="mock" data-mock>
+      <span class="btns" aria-hidden="true"></span>
       <div class="mock__bar">
         <i class="mock__dot"></i><i class="mock__dot"></i><i class="mock__dot"></i>
         <span class="mock__url" data-mock-url></span>
@@ -2172,6 +2184,33 @@
      during setup, long before the multi-view sections further down. Hoisted
      they were `undefined`, which happens to be falsy and so happened to behave
      - a bug that works by luck is still a bug. */
+  /* The shipped default is a 390 x 844 phone - the smallest common modern
+     iPhone, and the right default because testing on the largest one hides
+     every small-screen problem. `devices` in the config overrides it: a Pro Max
+     is 440 x 956, which is what to set when that is the reference. */
+  var DEVW = { desktop: 1280, tablet: 834, mobile: 390 };
+  /* What the drawn hardware adds to a device's viewport, per device: the bezel
+     on both sides, and the bezel plus the browser bar on top. The scale
+     arithmetic budgets for it AND mini() has to add it to the wrap, or the
+     iframe inside ends up narrower than the width printed above it - and a
+     media query at min-width:390px would then fire in the single view and not
+     in the side-by-side, which is the one comparison the view exists to make. */
+  var HWBOX = { desktop: [20, 46], tablet: [34, 34], mobile: [22, 22] };
+  var DEVH = { desktop: 800,  tablet: 1112, mobile: 844 };
+
+  (function applyDeviceSizes() {
+    var d = cfg.devices || {};
+    ['mobile', 'tablet'].forEach(function (k) {
+      if (!Array.isArray(d[k]) || d[k].length !== 2) return;
+      DEVW[k] = d[k][0]; DEVH[k] = d[k][1];
+    });
+    var r = document.documentElement.style;
+    r.setProperty('--w-mobile', DEVW.mobile + 'px');
+    r.setProperty('--h-mobile', DEVH.mobile + 'px');
+    r.setProperty('--w-tablet', DEVW.tablet + 'px');
+    r.setProperty('--h-tablet', DEVH.tablet + 'px');
+  })();
+
   var compareOn = false, promoOn = false;
 
   var current = {
@@ -2602,7 +2641,8 @@
       o.innerHTML = icon(ICONOF[name]) + (on ? LABELOF[name] : '');
     });
     wrap.setAttribute('data-device', current.device);
-    wrap.setAttribute('data-size', { desktop: '', tablet: '834 x 1112', mobile: '390 x 844' }[current.device]);
+    wrap.setAttribute('data-size', current.device === 'desktop' ? ''
+      : DEVW[current.device] + ' x ' + DEVH[current.device]);
     paintSafeArea();          // the notch is a different size on each device
     slide(deviceSeg);
   }
@@ -5586,15 +5626,6 @@
      frame, so they step aside here and say why rather than pointing at nothing. */
   var compareBtn = deviceSeg.querySelector('[data-device-btn="all"]');
   var cmpEl = document.querySelector('[data-compare]');
-  var DEVW = { desktop: 1280, tablet: 834, mobile: 390 };
-  /* What the drawn hardware adds to a device's viewport, per device: the bezel
-     on both sides, and the bezel plus the browser bar on top. The scale
-     arithmetic budgets for it AND mini() has to add it to the wrap, or the
-     iframe inside ends up narrower than the width printed above it - and a
-     media query at min-width:390px would then fire in the single view and not
-     in the side-by-side, which is the one comparison the view exists to make. */
-  var HWBOX = { desktop: [20, 46], tablet: [34, 34], mobile: [22, 22] };
-  var DEVH = { desktop: 800,  tablet: 1112, mobile: 844 };
 
   function loadCompare() {
     var s = screens[screenIndex(current.screen)];
