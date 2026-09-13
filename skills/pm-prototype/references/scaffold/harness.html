@@ -3884,6 +3884,13 @@
      distinguish three kinds of note. */
   var openMenu = null;
 
+  /* Every menu item reaches its real control through this: the buttons live
+     hidden in the stash so their listeners stay attached, and the menu presses
+     them. Deleting it takes the note menu, the mark menu and the whole Share
+     menu with it - which is exactly what happened when an edit here replaced
+     it instead of adding beside it. */
+  function press(sel) { var b = document.querySelector(sel); if (b) b.click(); }
+
   function paintBrand() {
     /* Inline, and declared HERE rather than as a module-level var, for the
        reason that has now bitten this file three times: init runs more than a
