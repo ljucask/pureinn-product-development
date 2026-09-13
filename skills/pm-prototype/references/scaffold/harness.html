@@ -2253,7 +2253,22 @@
   var toastEl = document.querySelector('[data-toast]');
 
   var events = [];
+  /* Two different facts, and conflating them cost the notes layer entirely.
+
+     frameReady  the artifact carries harness-client.js and has announced
+                 itself. Only this permits the state, variant, time and
+                 latency channels, because only this proves someone is
+                 listening on the other side.
+     frameLoaded the artifact's document is loaded and readable. That is all
+                 the annotation and screenshot layers ever needed - they read
+                 the document directly and never post anything into it.
+
+     A prototype built before the client existed, or one that must not be
+     edited at all, sets the second and never the first. Gating the notes on
+     the first meant the shell drew nothing over such an artifact and said
+     nothing about why. */
   var frameReady = false;
+  var frameLoaded = false;
 
   /* ---------- shared state, deep-linkable ---------- */
   var q = new URLSearchParams(location.search);
@@ -3219,7 +3234,7 @@
   }
 
   async function exportPng() {
-    if (!frameReady) { captureMode('The artifact is not ready yet.'); return; }
+    if (!frameLoaded) { captureMode('The artifact is not ready yet.'); return; }
     /* whatever measures one frame is off in a multi view - here it measured a
        display:none element and wrote a blank file under a "Saved" toast */
     if (document.body.classList.contains('is-compare') || document.body.classList.contains('is-promo')) {
@@ -3463,7 +3478,7 @@
     railEl.innerHTML = '';
     pairs = [];
     svg.innerHTML = '';
-    if ((!labelsOn && !commentsOn) || !frameReady) { document.body.classList.remove('is-railed'); return; }
+    if ((!labelsOn && !commentsOn) || !frameLoaded) { document.body.classList.remove('is-railed'); return; }
     /* Same guard drawMarks carries. In the multi views the single .wrap is
        display:none but still readable, so this would run to completion,
        measure a zero-size frame, and reserve rail padding for a rail that is
@@ -6193,6 +6208,7 @@
   function load() {
     endBoot();          // a half-played opening must not survive a screen change
     frameReady = false;
+    frameLoaded = false;
     svg.innerHTML = '';
     annotEl.querySelectorAll('.pin').forEach(function (n) { n.remove(); });
     railEl.innerHTML = '';
@@ -6217,9 +6233,15 @@
   }
 
   frame.addEventListener('load', function () {
-    // if the artifact does not include harness-client.js it never announces
-    // ready - the shell still works, it just cannot push state or draw lines
-    setTimeout(function () { if (!frameReady) drawAnnots(); }, 120);
+    frameLoaded = true;
+    /* An artifact without the client never announces itself, so the work the
+       'ready' message would have triggered is done here instead - everything
+       in it reads the artifact rather than writing to it. Guarded on
+       frameReady so it is not done twice for an artifact that does announce. */
+    setTimeout(function () {
+      if (!frameReady) { paintArtworkTone(); paintSafeArea(); playOpening(); }
+      drawAnnots();
+    }, 120);
   });
 
   /* The dock wraps to two rows on a narrow window, so nothing may assume its

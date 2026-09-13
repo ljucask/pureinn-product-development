@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.44.0] - 2026-09-13
+
+### pm-prototype harness: the notes layer now works over an artifact that does not carry harness-client.js - drawAnnots and exportPng were gated on frameReady, which only the client's ready message ever sets, so labels, pins and screenshots were silently dead over any prototype the harness could not edit (a retrofit over a delivered artifact, a third-party page); frameLoaded is now tracked separately as 'the document is readable', which is all those layers ever needed, and the artwork tone, safe area and opening sequence are run from the iframe load event when no client announces itself
+
+---
+
+
 ## [5.43.0] - 2026-09-13
 
 ### pm-prototype harness realism pass - the device mockup is rebuilt the way the object is built (matte black anodised rail, a thin black band inside it, then the display, with nesting radii and buttons that sit on the rail rather than beside it), a narrower Dynamic Island with a recessed lens, and a status bar carrying the real clock, signal, wifi and a battery whose fill is its actual level and turns red below a fifth; content now starts below the notch and scrolls under it via an injected safe area that leaves the viewport untouched, so media queries still fire on the real numbers; the scaled copies in the side-by-side build the same hardware as the single view instead of a bare frame; opening the app plays from a real home screen with weather and calendar widgets and recognisable app tiles, web from Safari in the dock and native from its own icon, replayable from the Native/Web menu; state folds into a menu that says what each state is for; the notes panel opens with the same severity-by-device tally the PDF prints; the screen list carries the Pureinn mark, replaced by the product's own when the author names one; the spotlight is removed along with its pointer relay in the client; and check.py ships beside the harness to catch three classes of defect node --check cannot see
