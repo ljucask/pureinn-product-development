@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.45.0] - 2026-09-13
+
+### pm-prototype harness: per-screen activities, and two fixes to what the shell can do over an artifact it may not edit - screens now declare what can be done on them (state, time, scroll, a named click, or a says line) and the shell lists them under Try it, so the demo panel that used to be drawn inside the artifact's own UI comes out of the product surface; comment placement no longer depends on harness-client.js, because the shell captures the pick itself on a same-origin document; and the mockup status bar is a solid strip instead of a gradient smear, with sticky elements inside the artifact nudged clear of it so a sticky header stops sliding under the clock
+
+---
+
+
 ## [5.44.0] - 2026-09-13
 
 ### pm-prototype harness: the notes layer now works over an artifact that does not carry harness-client.js - drawAnnots and exportPng were gated on frameReady, which only the client's ready message ever sets, so labels, pins and screenshots were silently dead over any prototype the harness could not edit (a retrofit over a delivered artifact, a third-party page); frameLoaded is now tracked separately as 'the document is readable', which is all those layers ever needed, and the artwork tone, safe area and opening sequence are run from the iframe load event when no client announces itself

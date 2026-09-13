@@ -1,6 +1,6 @@
 ---
 name: pm-prototype
-description: Cross-phase prototyping engine. Takes a scoped chunk of the product (a feature, a PRD initiative, the whole product, or any slice) and gets a prototype of it built by one of two paths - compiled as a tool-ready spec for an external tool (Lovable, v0/Vercel, Base44, Figma Make), or built in-repo by a coding agent against a harness that carries the states, fixtures, per-screen time and latency, variants, device widths, an honesty layer that labels what is simulated, reviewer comments with a no-backend return path, and a feedback report. Gate-checks whether a prototype is worth it at all, then decides depth and path from who it is for and which uncertainty it resolves. On re-run, captures the result against a precommitted threshold and feeds it back to the Feature Card / hypothesis register. Use anytime you want to validate before real build.
+description: Cross-phase prototyping engine. Takes a scoped chunk of the product (a feature, a PRD initiative, the whole product, or any slice) and gets a prototype of it built by one of two paths - compiled as a tool-ready spec for an external tool (Lovable, v0/Vercel, Base44, Figma Make), or built in-repo by a coding agent against a harness that carries the states, fixtures, per-screen time and latency, per-screen activities that say what can be done on each screen so scaffolding never ships inside the artifact's own UI, variants, device widths, an honesty layer that labels what is simulated, reviewer comments with a no-backend return path, and a feedback report. Gate-checks whether a prototype is worth it at all, then decides depth and path from who it is for and which uncertainty it resolves. On re-run, captures the result against a precommitted threshold and feeds it back to the Feature Card / hypothesis register. Use anytime you want to validate before real build.
 license: MIT
 metadata:
   agent-mode: synthesis
@@ -64,7 +64,7 @@ Takes a scoped chunk of the product and gets a prototype of it built, so you can
 | | |
 |---|---|
 | **External tool** | compiles a tool-ready spec and hands it to Lovable / v0 / Figma Make. One shot out, iteration goes back through the tool |
-| **In-repo** | builds here, with a coding agent, against a harness that carries the four states, fixtures, per-screen time and latency, variants, device widths, the disclosure layer, reviewer comments and the way they get back. A continuous loop with no moment of handoff |
+| **In-repo** | builds here, with a coding agent, against a harness that carries the four states, fixtures, per-screen time and latency, per-screen activities, variants, device widths, the disclosure layer, reviewer comments and the way they get back. A continuous loop with no moment of handoff |
 
 The path is an **output of the flow, not an input**: it follows from who the prototype is for and which uncertainty it resolves. Do not ask the user to pick it up front.
 

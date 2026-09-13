@@ -99,6 +99,28 @@ That sentence is the reason it is a panel and not a dropdown. A reviewer who has
 
 Two sections - **Screens** and **About this prototype** - each headed and counted; the second collapses and stays collapsed. Arrow keys move through the list, Enter opens, Escape closes.
 
+## Activities: what can be done on this screen
+
+A prototype hides its own behaviour. The journey that only starts when someone presses submit; the empty state that only appears if you know it exists. A reviewer who does not think to do it never sees the thing the prototype was built to show, and reports back on the half they found.
+
+The usual fix is a demo panel drawn **inside** the artifact. That is scaffolding shipped in the product's own UI, and it is exactly what this harness exists to take out - it survives into screenshots, into the handover, and sometimes into production.
+
+So a screen declares what can be done on it, in `activities`, and the shell lists them under **`Try it`** in the dock. The group hides itself on a screen that declares none, and the button carries the count.
+
+| Kind | Written as | What it does |
+|---|---|---|
+| state | `{ state: 'empty' }` | switches to a declared state |
+| time | `{ time: 30 }` | moves this screen's clock |
+| scroll | `{ scroll: 1 }` | travels to a fraction of the page |
+| click | `{ click: '#assign' }` | clicks a declared selector |
+| says | `{ says: '...' }` | a line of guidance instead of an action |
+
+Each carries a `label` and a one-line `does` saying what it demonstrates - the same reasoning as `desc` on a screen: a list of unexplained buttons is a puzzle.
+
+**`click` is the only kind that reaches into the document.** It is named in the config rather than guessed at runtime, and where the artifact carries `harness-client.js` it travels as a message; without the client the shell performs the same click itself, same-origin. Either way it is a real click on a real element - nothing synthetic is invented, for the same reason presentation mode never fabricates input.
+
+**Never declare an activity that fakes input the prototype does not really take.** Where the point is that something runs on real typing - a journey that would carry no weight if it were pre-baked - use `says` and let the reviewer type. An activity that simulates the very thing under test destroys what it was meant to demonstrate.
+
 ## Notes: three kinds, and they are not interchangeable
 
 All three share one geometry - a numbered pin on the element, a card on the rail, a curve joining them - and are told apart by colour and by a label on the card.

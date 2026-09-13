@@ -263,11 +263,13 @@
     letter-spacing: -.01em; font-variant-numeric: tabular-nums;
     border-radius: calc(var(--rad, 45px) - 12px) calc(var(--rad, 45px) - 12px) 0 0;
     pointer-events: none;
-    background: linear-gradient(180deg, rgba(255,255,255,.92) 0%, rgba(255,255,255,.62) 62%, rgba(255,255,255,0) 100%);
+    /* Solid, not a fade. A gradient over arbitrary artwork reads as a smear
+       across the top of the screen rather than as part of the phone, and it
+       was the first thing anyone pointed at. A real phone paints this strip
+       in the page's own top colour, which is what the tone sampler gives. */
+    background: #fff;
   }
-  body.is-darkart .status {
-    background: linear-gradient(180deg, rgba(14,15,18,.92) 0%, rgba(14,15,18,.6) 62%, rgba(14,15,18,0) 100%);
-  }
+  body.is-darkart .status { background: #0e0f12; }
   /* Shown for web AND native: the clock and the battery belong to the phone,
      not to whatever is running on it. */
   body.is-mock:not(.is-fixed) .wrap[data-device="mobile"] .status,
@@ -2030,6 +2032,17 @@
   </div>
 
   <span class="sep" data-variants-sep hidden></span>
+  <!-- What this particular screen can be made to do. Declared per screen in the
+       config, so the reviewer is not left guessing that the journey only starts
+       if they think to press submit. -->
+  <span class="sep" data-acts-sep hidden></span>
+  <div class="grp" data-acts-grp hidden>
+    <span class="grp__l">Try it</span>
+    <div class="grp__row">
+      <button class="ib" type="button" data-menu="acts" aria-haspopup="menu" aria-expanded="false" title="What can be done on this screen"><svg><use href="#i-play"/></svg><span data-acts-label>Activities</span><svg class="caret"><use href="#i-chevron"/></svg></button>
+    </div>
+  </div>
+
   <div class="grp" data-variants-grp hidden>
     <span class="grp__l">Variant</span>
     <div class="seg" data-variants-group><div class="seg__thumb" data-thumb></div></div>
@@ -2864,7 +2877,7 @@
     var d = SAFE[current.device];
     var want = current.mockup && d && !document.body.classList.contains('is-bare') &&
                !generated(screens[screenIndex(current.screen)]);
-    if (!want) { if (tag) tag.remove(); return; }
+    if (!want) { if (tag) tag.remove(); clearSticky(doc); return; }
     if (!tag) {
       tag = doc.createElement('style');
       tag.id = id;
@@ -2878,6 +2891,39 @@
     tag.textContent =
       ':root{--harness-safe-top:' + d.top + 'px;--harness-safe-bottom:' + bottom + 'px}' +
       'body{padding-top:var(--harness-safe-top);padding-bottom:var(--harness-safe-bottom)}';
+    offsetSticky(doc, d.top);
+  }
+
+  /* Padding the body moves the document, but not an element that has taken
+     itself out of the flow. A sticky header sits at 59px until the first
+     scroll and then travels to top:0 - straight under the clock. CSS has no
+     selector for "is sticky", so the elements are found by their computed
+     position and nudged by the same safe area, with the original value kept
+     so turning the mockup off puts them back exactly where they were. */
+  function offsetSticky(doc, safeTop) {
+    var all = doc.body ? doc.body.querySelectorAll('*') : [];
+    for (var i = 0; i < all.length; i++) {
+      var el = all[i];
+      var cs = doc.defaultView.getComputedStyle(el);
+      if (cs.position !== 'sticky' && cs.position !== 'fixed') continue;
+      if (cs.top === 'auto') continue;                 // pinned from the bottom
+      var had = el.hasAttribute('data-harness-top');
+      if (!had) el.setAttribute('data-harness-top', el.style.top || '');
+      var base = parseFloat(had ? el.getAttribute('data-harness-base') : cs.top);
+      if (isNaN(base)) continue;
+      if (!had) el.setAttribute('data-harness-base', String(base));
+      if (base >= safeTop) continue;                   // already clears it
+      el.style.top = (base + safeTop) + 'px';
+    }
+  }
+
+  function clearSticky(doc) {
+    if (!doc || !doc.body) return;
+    doc.body.querySelectorAll('[data-harness-top]').forEach(function (el) {
+      el.style.top = el.getAttribute('data-harness-top');
+      el.removeAttribute('data-harness-top');
+      el.removeAttribute('data-harness-base');
+    });
   }
 
   function paintArtworkTone() {
@@ -4111,6 +4157,53 @@
      startup, far above this line - so it would silently do nothing and a link
      carrying ?state=unauth would open showing "full". Twice in one file is
      enough: resolve it where it is used. */
+  function screenActs() {
+    var s = screens[screenIndex(current.screen)];
+    return (s && s.activities) || [];
+  }
+
+  function runAct(a) {
+    if (a.state) {
+      var b = document.querySelector('[data-states-group] button[data-v="' + a.state + '"]');
+      if (b) b.click();
+    }
+    if (a.time !== undefined) {
+      var t = document.querySelector('.scrub[data-scrub]');
+      if (t) { t.value = a.time; t.dispatchEvent(new Event('input', { bubbles: true })); }
+    }
+    if (a.scroll !== undefined) send('scroll', a.scroll);
+    /* A click has to reach into the document. With harness-client.js present it
+       travels as a message; without it the shell clicks the element itself,
+       same-origin, which is the same click either way. */
+    if (a.click) {
+      if (frameReady) { send('click', a.click); }
+      else {
+        var doc = null;
+        try { doc = frame.contentDocument; } catch (e) { doc = null; }
+        var el = null;
+        if (doc) { try { el = doc.querySelector(a.click); } catch (e) { el = null; } }
+        if (el) {
+          el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+          setTimeout(function () { el.click(); }, 320);
+        } else {
+          toast('That element is not on this screen - the selector in the config no longer matches.', 4600);
+        }
+      }
+    }
+    if (a.says) toast(a.says, 4200);
+  }
+
+  function paintActs() {
+    var list = screenActs();
+    var grp = document.querySelector('[data-acts-grp]');
+    var sep = document.querySelector('[data-acts-sep]');
+    if (!grp) return;
+    grp.hidden = !list.length;
+    if (sep) sep.hidden = !list.length;
+    var lab = document.querySelector('[data-acts-label]');
+    if (lab) lab.textContent = list.length ? list.length + ' activities' : 'Activities';
+  }
+
   function paintState() {
     var el = document.querySelector('[data-state-label]');
     if (el) el.textContent = current.state;
@@ -4146,6 +4239,37 @@
         };
       })
     ); },
+    /* ---------- activities ----------
+
+       A prototype hides its own behaviour. The question journey only runs if
+       the reviewer thinks to press submit; the empty state only appears if
+       someone knows it exists. Before this, the answer was a demo panel drawn
+       INSIDE the artifact - scaffolding shipped in the product's own UI, which
+       is exactly what the harness exists to take out.
+
+       So each screen may declare what can be done on it. Four kinds, and every
+       one of them is something the artifact could already do:
+
+         state   switch to a declared state
+         time    move this screen's clock to a value
+         click   click a declared selector (needs harness-client.js)
+         scroll  travel to a fraction of the page
+
+       Nothing is invented: a click is a real click on a real element, named in
+       the config rather than guessed at runtime. */
+    acts: function () {
+      var list = screenActs();
+      if (!list.length) return [{ h: 'Nothing declared for this screen' }];
+      return [{ h: 'What can be done here' }].concat(list.map(function (a) {
+        return {
+          ico: a.state ? 'i-layers' : a.time !== undefined ? 'i-sim' : a.scroll !== undefined ? 'i-down' : 'i-play',
+          t: a.label,
+          d: a.does || '',
+          on: !!(a.state && a.state === current.state),
+          fn: function () { runAct(a); }
+        };
+      }));
+    },
     note: function () { return [
       { h: 'What is the note about?' },
       { ico: 'i-pin',  t: 'Something I click',   d: 'Pins it to that element, where the pointer lands', fn: function () { press('[data-comment]'); } },
@@ -4735,6 +4859,81 @@
   var picking = false;
   var commentBtn = document.querySelector('[data-comment]');
 
+  /* ---------- picking without the client ----------
+
+     Placing a note needs one thing from the artifact: the click, and what it
+     landed on. An artifact carrying harness-client.js forwards it. One that
+     does not - a prototype built before the client existed, or a delivered
+     artifact that must not be edited - has nobody to receive the 'picking'
+     message, so the note button armed and then nothing ever happened.
+
+     The document is same-origin and already readable (the notes layer reads it
+     for every pin), so the shell does the same work itself: one capture-phase
+     listener, attached only while picking and removed the moment it stops.
+     Nothing is added to the artifact and nothing in it is changed. */
+  var pickDoc = null;
+
+  function selectorIn(doc, el) {
+    if (!el || el === doc.body || el === doc.documentElement) return null;
+    if (el.id) return '#' + CSS.escape(el.id);
+    for (var i = 0; i < el.attributes.length; i++) {
+      var a = el.attributes[i];
+      // a data- attribute is the most stable anchor an artifact can offer
+      if (a.name.indexOf('data-') === 0 && doc.querySelectorAll('[' + a.name + ']').length === 1) {
+        return '[' + a.name + ']';
+      }
+    }
+    var path = [];
+    var node = el;
+    while (node && node !== doc.body && path.length < 5) {
+      var part = node.tagName.toLowerCase();
+      var parent = node.parentElement;
+      if (parent) {
+        var same = Array.prototype.filter.call(parent.children, function (c) { return c.tagName === node.tagName; });
+        if (same.length > 1) part += ':nth-of-type(' + (same.indexOf(node) + 1) + ')';
+      }
+      path.unshift(part);
+      node = parent;
+    }
+    return path.length ? path.join(' > ') : null;
+  }
+
+  function onShellPick(e) {
+    if (!picking || !pickDoc) return;
+    e.preventDefault();
+    e.stopPropagation();
+    var doc = pickDoc;
+    var view = doc.defaultView || {};
+    var r = e.target.getBoundingClientRect();
+    var de = doc.documentElement;
+    placeComment({
+      selector: selectorIn(doc, e.target),
+      rx: r.width ? (e.clientX - r.left) / r.width : 0.5,
+      ry: r.height ? (e.clientY - r.top) / r.height : 0.5,
+      fx: de.scrollWidth ? (e.clientX + (view.scrollX || 0)) / de.scrollWidth : 0.5,
+      fy: de.scrollHeight ? (e.clientY + (view.scrollY || 0)) / de.scrollHeight : 0.5,
+      label: (e.target.textContent || '').trim().slice(0, 60)
+    });
+  }
+
+  function detachShellPick() {
+    if (!pickDoc) return;
+    pickDoc.removeEventListener('click', onShellPick, true);
+    try { pickDoc.documentElement.style.cursor = ''; } catch (e) { /* gone */ }
+    pickDoc = null;
+  }
+
+  function attachShellPick() {
+    detachShellPick();
+    if (frameReady) return;          // the client is there and will forward it
+    var doc;
+    try { doc = frame.contentDocument; } catch (e) { doc = null; }
+    if (!doc || !doc.documentElement) return;
+    pickDoc = doc;
+    doc.addEventListener('click', onShellPick, true);
+    doc.documentElement.style.cursor = 'crosshair';
+  }
+
   function setPicking(on) {
     picking = on;
     commentBtn.setAttribute('aria-pressed', String(on));
@@ -4744,6 +4943,7 @@
     mb.setAttribute('aria-pressed', String(on));
     document.querySelector('[data-note-label]').textContent = on ? 'Click an element' : 'Add note';
     send('picking', on);
+    if (on) attachShellPick(); else detachShellPick();
     if (on) toast('Click anything in the prototype to attach a note there. Esc cancels.', 4200);
   }
   /* A pin belongs to one frame. In the multi views there are three or six, and
@@ -6207,6 +6407,7 @@
 
   function load() {
     endBoot();          // a half-played opening must not survive a screen change
+    detachShellPick();
     frameReady = false;
     frameLoaded = false;
     svg.innerHTML = '';
@@ -6226,6 +6427,7 @@
       frame.src = current.screen;
     }
     mountTime();
+    paintActs();
     if (compareOn) loadCompare();
     document.querySelector('[data-mock-url]').textContent =
       location.origin + '/' + (generated(s) ? '' : current.screen);
@@ -6234,6 +6436,7 @@
 
   frame.addEventListener('load', function () {
     frameLoaded = true;
+    if (picking) attachShellPick();
     /* An artifact without the client never announces itself, so the work the
        'ready' message would have triggered is done here instead - everything
        in it reads the artifact rather than writing to it. Guarded on

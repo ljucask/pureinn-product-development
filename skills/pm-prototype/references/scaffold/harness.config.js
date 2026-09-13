@@ -43,6 +43,36 @@ window.HARNESS_CONFIG = {
                it sits beside the scrubber in the shell bar and clamps to two
                small lines. Never rendered over the artifact
        format  turns the raw value into what the reviewer reads
+
+     `activities` - OPTIONAL, per screen, and the answer to a specific failure:
+     a prototype hides its own behaviour. The question journey only runs if the
+     reviewer thinks to press submit; the empty state only appears if someone
+     knows it is there. The usual fix is a demo panel drawn INSIDE the artifact
+     - scaffolding shipped in the product's own UI, which is the thing this
+     harness exists to take out.
+
+     So the screen declares what can be done on it, and the shell lists it under
+     `Try it`. Four kinds, each one something the artifact could already do:
+
+       state   switch to a declared state       { state: 'empty' }
+       time    move this screen's clock         { time: 30 }
+       scroll  travel to a fraction of the page { scroll: 1 }
+       click   click a declared selector        { click: '#assign' }
+       says    a toast instead of an action, for the step only a person can do
+
+     `click` is the only one that reaches into the document, it is named here
+     rather than guessed at runtime, and where the artifact carries
+     harness-client.js it travels as a message - otherwise the shell performs
+     the same click itself, same-origin. Never declare an activity that fakes
+     input the prototype does not really take: when the point is that something
+     runs on real typing, say so with `says` and let the reviewer type.
+
+       activities: [
+         { label: 'Assign the 08:30 job', does: 'the one action under test', click: '#assign' },
+         { label: 'An empty morning',     does: 'nothing waiting yet',       state: 'empty' },
+         { label: 'Write your own',       does: 'this one runs on real input only', scroll: 0,
+           says: 'Type into the box and send it - nothing pre-plays this.' }
+       ]
      ───────────────────────────────────────────────────────────────────── */
   screens: [
     {
@@ -55,7 +85,12 @@ window.HARNESS_CONFIG = {
         label: 'Minutes since order',
         hint: 'Watch the delivery estimate degrade as the courier stalls.',
         format: function (v) { return v + ' min'; }
-      }
+      },
+      activities: [
+        { label: 'A quiet morning',   does: 'nothing in the queue yet',        state: 'empty' },
+        { label: 'The queue fills',   does: 'the ordinary case',               state: 'full'  },
+        { label: 'Twenty minutes in', does: 'the estimate has started to slip', time: 20 }
+      ]
     },
     {
       label: '02 Detail',

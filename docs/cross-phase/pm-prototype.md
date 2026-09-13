@@ -26,7 +26,7 @@ The skill no longer assumes the prototype is built somewhere else. At **Step 3b*
 | Path | What it is | What you get |
 |---|---|---|
 | **External tool** | one-shot handoff - the brief is compiled, sent, and iterated through the tool | tool-ready spec (`prototypes/[scope-slug]-spec.md`), pushed via MCP or paste-ready |
-| **In-repo** | a continuous loop with a coding agent - no brief to compile, no moment of handoff | a prototype folder with a harness carrying the four states, fixtures, a time scrubber, variants, device presets, an annotation layer and a local event log |
+| **In-repo** | a continuous loop with a coding agent - no brief to compile, no moment of handoff | a prototype folder with a harness carrying the four states, fixtures, a time scrubber, per-screen activities, variants, device presets, an annotation layer and a local event log |
 
 **The path is an output of the flow, not a question you answer up front.** It follows from who the prototype is for and which uncertainty it resolves - a flow-comprehension question and a business-rule-correctness question do not belong on the same path.
 
