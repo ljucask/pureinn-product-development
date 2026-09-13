@@ -386,7 +386,7 @@
      on it is the one thing that gives the whole illusion away. */
   .boot {
     position: absolute; z-index: 2; inset: var(--bez); overflow: hidden;
-    border-radius: 45px; pointer-events: auto;
+    border-radius: calc(var(--rad, 45px) - 12px); pointer-events: auto;
   }
   /* and the bar goes white over the wallpaper for as long as it is up */
   body.is-booting .status { color: #fff; --bat-ink: #14161b; }
@@ -403,14 +403,20 @@
       radial-gradient(96% 60% at 50% 104%, rgba(58,120,210,.40) 0%, rgba(58,120,210,0) 64%),
       linear-gradient(168deg, #1b2030 0%, #12141d 52%, #0c0e15 100%);
   }
-  .boot__page { position: absolute; inset: 64px 18px 118px; display: flex; flex-direction: column; gap: 13px; }
+  /* Everything here is expressed against the screen it is drawn on, so the
+     same markup lays out on a phone and on a tablet. Pixel values tuned for a
+     440pt phone made a tablet home screen with hairline margins and enormous
+     icons. */
+  .boot { --cols: 4; --pad: 4.2%; }
+  body.is-mock:not(.is-fixed) .wrap[data-device="tablet"] .boot { --cols: 6; --pad: 5%; border-radius: 20px; }
+  .boot__page { position: absolute; inset: 7% var(--pad) 13%; display: flex; flex-direction: column; gap: 3%; }
 
   /* Widgets. A home screen that is only a grid of grey squares reads as a
      placeholder; the weather and the calendar are what make it read as
      somebody's phone. Both are generic on purpose - a real city and a real
      meeting would be someone's data on a screenshot that gets passed around. */
   .boot__wx, .boot__cal {
-    position: relative; border-radius: 20px; padding: 13px 15px;
+    position: relative; border-radius: 4.6%/9%; padding: 3.2% 3.6%;
     background: rgba(255,255,255,.13);
     box-shadow: inset 0 .5px 0 rgba(255,255,255,.18);
     color: #fff; display: grid;
@@ -431,22 +437,37 @@
   /* straight after the widgets, the way a page of a home screen fills from the
      top - the icons pushed to the bottom left a hole in the middle of it */
   .boot__grid {
-    margin-top: 5px; display: grid;
-    grid-template-columns: repeat(4, 1fr); gap: 26px 16px;
+    margin-top: 1%; display: grid;
+    grid-template-columns: repeat(var(--cols), 1fr); gap: 9% 4.5%;
   }
-  .boot__grid i {
-    display: block; padding-top: 100%; border-radius: 23%;
+  /* Apps, not grey squares. Each is a colour and one shape, which is enough to
+     read as a familiar icon at this size without being anyone's actual mark -
+     these end up in screenshots that travel. */
+  .boot__grid i, .boot__dock i {
+    position: relative; display: block; padding-top: 100%; border-radius: 23%;
     background: rgba(255,255,255,.15);
     box-shadow: inset 0 .5px 0 rgba(255,255,255,.2);
+    overflow: hidden;
   }
-  .boot__grid i.is-app { background: none; box-shadow: none; }
+  .boot__grid i::after, .boot__dock i::after {
+    content: ""; position: absolute; inset: 26%;
+    background: rgba(255,255,255,.9);
+    -webkit-mask: var(--gl) center/contain no-repeat; mask: var(--gl) center/contain no-repeat;
+  }
+  .boot__grid i:not([style*="--bg"])::after { content: none; }
+
+  .boot__grid i.is-app { background: none; box-shadow: none; overflow: visible; }
+  .boot__grid i.is-app::after { content: none; }
 
   .boot__dock {
-    position: absolute; left: 14px; right: 14px; bottom: 26px; height: 76px;
-    border-radius: 28px; background: rgba(255,255,255,.14);
+    position: absolute; left: 3.4%; right: 3.4%; bottom: 2.8%;
+    border-radius: 7%/26%; background: rgba(255,255,255,.14);
     box-shadow: inset 0 .5px 0 rgba(255,255,255,.16);
     display: grid; grid-template-columns: repeat(4, 1fr); align-items: center;
-    gap: 14px; padding: 0 16px;
+    gap: 3.4%; padding: 1.6%;
+  }
+  body.is-mock:not(.is-fixed) .wrap[data-device="tablet"] .boot__dock {
+    left: 26%; right: 26%; border-radius: 5%/22%;
   }
   .boot__dock i { display: block; padding-top: 100%; border-radius: 23%; background: rgba(255,255,255,.17); }
   .boot__bar {
@@ -463,13 +484,24 @@
     background: linear-gradient(150deg, #ed6d57, #ffc94f);
     box-shadow: 0 12px 26px -10px rgba(0,0,0,.6);
     transform-origin: top left;
-    transition: transform 900ms cubic-bezier(.34,0,.16,1),
-                border-radius 900ms var(--ease),
-                opacity 260ms 620ms linear;
+    /* One curve for the whole movement, slow to leave and settling rather than
+       stopping - which is what makes it read as weight rather than a tween. */
+    transition: transform 760ms cubic-bezier(.32,.02,.18,1),
+                border-radius 760ms cubic-bezier(.32,.02,.18,1),
+                box-shadow 400ms linear,
+                opacity 240ms 520ms ease-out;
   }
   /* the artwork is clipped to the tile; the NAME is not, which is why the tile
      itself cannot be overflow:hidden */
-  .boot__tile img, .boot__tile svg { max-width: 56%; max-height: 56%; display: block; border-radius: inherit; }
+  .boot__tile img, .boot__tile svg {
+    max-width: 56%; max-height: 56%; display: block; border-radius: inherit;
+    transition: opacity 180ms ease-out, transform 180ms ease-out;
+  }
+  /* The mark leaves almost immediately. Scaled up with the plate it becomes a
+     logo five times its size crossing the screen, which reads as a zoom rather
+     than as an app opening. */
+  .boot.is-launch .boot__tile img,
+  .boot.is-launch .boot__tile svg { opacity: 0; transform: scale(.7); }
   .boot.is-launch .boot__tile { overflow: hidden; }
   .boot__tile-l {
     position: absolute; left: 0; right: 0; bottom: -19px;
@@ -482,7 +514,7 @@
   .boot__tile.is-tap { transform: scale(.9); transition: transform 170ms var(--ease); }
 
   .boot.is-launch .boot__home { opacity: 0; }
-  .boot.is-launch .boot__tile { border-radius: 0; opacity: 0; }
+  .boot.is-launch .boot__tile { border-radius: 0; opacity: 0; box-shadow: 0 0 0 rgba(0,0,0,0); }
   .boot.is-launch .boot__tile-l { opacity: 0; }
 
   /* the web opening has no home screen - the address arrives and the page does */
@@ -2908,14 +2940,40 @@
       ['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'][d.getDay()];
     b.querySelector('[data-boot-date]').textContent = d.getDate();
 
+    /* A plausible page of apps. Colour plus one glyph each - enough to read as
+       a home screen, never anyone's real mark. */
+    var G = function (d) { return 'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="' + d + '" fill="black"/></svg>\')'; };
+    var APPS = [
+      { bg: 'linear-gradient(160deg,#3ec46d,#1f9f4d)', gl: G('M12 2a9 9 0 019 9c0 5-9 11-9 11S3 16 3 11a9 9 0 019-9zm0 6a3 3 0 100 6 3 3 0 000-6z') },
+      { bg: 'linear-gradient(160deg,#5ac8fa,#0a84ff)', gl: G('M3 5h18v11H8l-5 4z') },
+      { bg: 'linear-gradient(160deg,#ff9f0a,#ff375f)', gl: G('M9 18V5l10-2v13M9 18a3 3 0 11-6 0 3 3 0 016 0zm10-2a3 3 0 11-6 0 3 3 0 016 0z') },
+      { bg: 'linear-gradient(160deg,#8e8e93,#48484a)', gl: G('M4 7h4l2-2h4l2 2h4v12H4zm8 3a3.5 3.5 0 100 7 3.5 3.5 0 000-7z') },
+      { bg: 'linear-gradient(160deg,#ffd60a,#ff9f0a)', gl: G('M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.3 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8z') },
+      { bg: 'linear-gradient(160deg,#bf5af2,#5e5ce6)', gl: G('M4 4h16v16H4zm3 4v8l7-4z') },
+      { bg: 'linear-gradient(160deg,#30d158,#248a3d)', gl: G('M6 3h12v18H6zm3 15h6v2H9z') },
+      { bg: 'linear-gradient(160deg,#64d2ff,#0071e3)', gl: G('M3 12h18M12 3v18M5 6h14v12H5z') }
+    ];
     grid.innerHTML = '';
     var SLOT = native ? 5 : 0;                 // the app mid-grid; Safari first
-    var CELLS = 8;
+    var cols = getComputedStyle(b).getPropertyValue('--cols').trim() === '6' ? 6 : 4;
+    var CELLS = cols === 6 ? 12 : 8;
     for (var k = 0; k < CELLS; k++) {
       var c = document.createElement('i');
-      if (k === SLOT && native) c.className = 'is-app';
+      if (k === SLOT && native) { c.className = 'is-app'; }
+      else {
+        var a = APPS[k % APPS.length];
+        c.style.setProperty('--bg', a.bg);
+        c.style.setProperty('--gl', a.gl);
+        c.style.background = a.bg;
+      }
       grid.appendChild(c);
     }
+    [].forEach.call(dock.children, function (d, i) {
+      var a = APPS[(i + 3) % APPS.length];
+      d.style.setProperty('--bg', a.bg);
+      d.style.setProperty('--gl', a.gl);
+      d.style.background = a.bg;
+    });
     /* a web app is opened from Safari, which lives in the dock */
     var host = native ? grid.children[SLOT] : dock.children[0];
     if (!native) host.style.visibility = 'hidden';
@@ -2943,7 +3001,7 @@
 
       /* Long enough to be noticed, which is the whole point: the home screen
          holds for a beat, the icon is pressed, and only then does it open. */
-      bootTimers.push(setTimeout(function () { tile.classList.add('is-tap'); }, 850));
+      bootTimers.push(setTimeout(function () { tile.classList.add('is-tap'); }, 780));
       bootTimers.push(setTimeout(function () {
         tile.classList.remove('is-tap');
         var sx = box.width / slot.width, sy = box.height / slot.height;
@@ -2951,8 +3009,8 @@
           'translate(' + (box.left - slot.left) + 'px,' + (box.top - slot.top) + 'px) ' +
           'scale(' + sx + ',' + sy + ')';
         b.classList.add('is-launch');
-      }, 1050));
-      bootTimers.push(setTimeout(endBoot, 2150));
+      }, 960));
+      bootTimers.push(setTimeout(endBoot, 1820));
     });
   }
 
