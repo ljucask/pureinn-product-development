@@ -87,12 +87,17 @@ The third state is the one teams skip, and skipping it is how a broken test beco
 /pm-prototype --agent   # autonomous synthesis from available inputs
 ```
 
-**Two modes, detected automatically at Step 0:**
+**Three modes, detected automatically at Step 0:**
 
 | Mode | Trigger | What it does |
 |---|---|---|
 | **Spec mode** | No prototype exists yet | Gate-check → scope intake → ingest inputs → audience, depth and path → build by the path that fits |
+| **Wrap mode** | You already have the app or prototype and want the review layer on it | Straight to the harness - no gate, no path decision, no spec. Needs no workspace and no Pureinn project, so it is reachable from a bare install |
 | **Result mode** | Prototype exists, you have results | Capture what was proved/disproved → decision → cascade to Feature Card / hypotheses |
+
+Wrap mode exists because the gate and the path decision answer *whether and what*
+to build, and someone who turns up with the artifact has already answered both.
+Asking anyway is asking a question the user settled by showing up.
 
 ---
 

@@ -28,7 +28,7 @@ Supports `--agent`: runs autonomously in a subagent, drafts the artifact from ex
 ---
 
 ## Standalone run
-Needs the artifacts listed under **Dependencies** - it synthesizes them, so without them there is nothing to synthesize.
+Needs discovery material - it synthesizes sessions that happened, so with none there is nothing to report on. No single source under **Dependencies** is required (the skill adapts to whatever subset exists), but *some* of them must be: `meetings/` notes, Track A-D artifacts, or discovery notes the user points at from outside the workspace.
 - No workspace, or inputs missing: name which are missing and what each one unlocks, then offer the PREREQ paths - proceed on stated assumptions marked `[ASSUMED - what/why]`, or route to the skill that produces the missing input. Never hard-block, and never invent the input.
 - Writing never depends on `/pureinn` having run: with no workspace, create just the folder this skill writes into, or write to a path the user names, and say where the file went.
 - Read `pureinn-variables.md` / `state.json` where a value is actually used, not at the top of the run. Missing value: continue and name the capability it costs.
