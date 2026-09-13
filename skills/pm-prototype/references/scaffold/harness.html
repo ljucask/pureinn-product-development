@@ -174,6 +174,81 @@
     box-shadow: 0 48px 0 3px #2a2a2e, 0 100px 0 3px #2a2a2e;
   }
 
+  /* ══ status bar and glass ══
+     Both live in the SHELL, over the frame, and neither is ever written into
+     the artifact: the artifact has to run on its own without the harness, and
+     a status bar the author drew by hand is a status bar that is wrong on
+     every screen they forget to update.
+
+     The bar OVERLAYS rather than taking layout space, which matters more than
+     it looks. Giving it a strip of its own would make a 390px phone render
+     the artifact at 390 x (844 - 47), so the viewport would no longer be the
+     viewport the label claims and a media query on height would fire wrong.
+     Content passing under it is what a real phone does anyway. */
+  .status {
+    position: absolute; z-index: 3; left: var(--bez); right: var(--bez); top: var(--bez);
+    height: 46px; padding: 0 30px 0 34px;
+    display: none; align-items: center; justify-content: space-between;
+    color: #101114; font-size: 14px; font-weight: 620;
+    letter-spacing: -.01em; font-variant-numeric: tabular-nums;
+    border-radius: 45px 45px 0 0;
+    pointer-events: none;
+    /* Content passes under the bar, so the bar has to stay readable over
+       whatever is there. A scrim fading to nothing does that without putting a
+       hard band across the top of the artifact. */
+    background: linear-gradient(180deg, rgba(255,255,255,.92) 0%, rgba(255,255,255,.62) 62%, rgba(255,255,255,0) 100%);
+  }
+  body.is-darkart .status {
+    background: linear-gradient(180deg, rgba(14,15,18,.92) 0%, rgba(14,15,18,.6) 62%, rgba(14,15,18,0) 100%);
+  }
+  body.is-mock:not(.is-fixed).is-native .wrap[data-device="mobile"] .status,
+  body.is-mock:not(.is-fixed).is-native .wrap[data-device="tablet"] .status { display: flex; }
+  /* tablet has no notch to clear, so it sits tighter and thinner */
+  body.is-mock:not(.is-fixed).is-native .wrap[data-device="tablet"] .status {
+    height: 30px; padding: 0 18px; font-size: 12px; border-radius: 20px 20px 0 0;
+  }
+  .status__r { display: flex; align-items: center; gap: 5px; }
+  .status__i { width: 16px; height: 11px; }
+  .status__b { width: 25px; height: 11px; }
+  /* a light artifact is the common case; on a dark one the bar inverts so it
+     stays legible rather than disappearing into the content under it */
+  body.is-darkart .status { color: #f2f3f5; }
+
+  /* The glass. Two very low-opacity diagonals, no blur and no backdrop-filter:
+     the point is a hint that there is a surface in front of the screen, not a
+     layer between the reviewer and what they came to judge. It is the first
+     thing to turn off in a usability test, so it has its own switch. */
+  .glare {
+    position: absolute; z-index: 4; inset: var(--bez);
+    display: none; border-radius: inherit; pointer-events: none;
+    background:
+      linear-gradient(148deg, rgba(255,255,255,.16) 0%, rgba(255,255,255,.05) 18%, rgba(255,255,255,0) 34%),
+      linear-gradient(148deg, rgba(255,255,255,0) 56%, rgba(255,255,255,.045) 66%, rgba(255,255,255,0) 78%);
+  }
+  body.is-mock:not(.is-fixed).is-glare .wrap[data-device="mobile"] .glare { display: block; border-radius: 45px; }
+  body.is-mock:not(.is-fixed).is-glare .wrap[data-device="tablet"] .glare { display: block; border-radius: 20px; }
+
+  /* Neither belongs in a screenshot of the artifact, nor behind a reviewer
+     trying to read a form. Hide menu takes them with it. */
+  body.is-bare .status, body.is-bare .glare { display: none !important; }
+
+  /* A web app opens in a browser on every device, not only on a laptop. The
+     phone bar is the compact one: no traffic lights, just the address, because
+     that is what a phone browser shows and the dots would read as a desktop
+     window shrunk down. */
+  body.is-mock:not(.is-fixed):not(.is-native) .wrap[data-device="mobile"] .mock__bar,
+  body.is-mock:not(.is-fixed):not(.is-native) .wrap[data-device="tablet"] .mock__bar { display: flex; }
+  body.is-mock:not(.is-fixed):not(.is-native) .wrap[data-device="mobile"] .mock__bar {
+    margin: 30px 12px 5px; padding: 5px 10px; border-radius: 9px;
+    background: rgba(255,255,255,.1);
+  }
+  body.is-mock:not(.is-fixed):not(.is-native) .wrap[data-device="mobile"] .mock__bar .mock__dot,
+  body.is-mock:not(.is-fixed):not(.is-native) .wrap[data-device="tablet"] .mock__bar .mock__dot { display: none; }
+  body.is-mock:not(.is-fixed):not(.is-native) .wrap[data-device="tablet"] .mock__bar {
+    margin: 4px 14px 6px; padding: 5px 12px; border-radius: 8px;
+    background: rgba(255,255,255,.1);
+  }
+
   /* iPad: even bezel all round, softer radius, a single camera dot */
   body.is-mock:not(.is-fixed) .wrap[data-device="tablet"] { --bez: 17px; }
   body.is-mock:not(.is-fixed) .wrap[data-device="tablet"] .mock {
@@ -957,6 +1032,11 @@
      way to do any of it. Three of those controls - pin, screen note, overall -
      were the SAME action with three targets, and the difference does not fit in
      a button label. In a menu it gets a line. */
+  /* the caret belongs to the button before it, so it tucks in rather than
+     reading as a control of its own */
+  .ib--tuck { margin-left: -7px; padding: 0 5px; }
+  body:not(.is-mock) .ib--tuck { opacity: .35; pointer-events: none; }
+
   .stash { display: none !important; }
   .caret { width: 11px !important; height: 11px !important; opacity: .5; margin-left: -2px; }
   .ib[aria-expanded="true"] .caret { transform: rotate(180deg); }
@@ -1522,6 +1602,14 @@
         <span class="mock__url" data-mock-url></span>
       </div>
       <iframe class="screen" id="frame" title="prototype"></iframe>
+      <div class="status" data-status aria-hidden="true">
+        <span class="status__t" data-status-time>9:41</span>
+        <span class="status__r">
+          <svg viewBox="0 0 18 12" class="status__i"><path d="M1 4.2a11 11 0 0116 0M3.6 7a7.4 7.4 0 0110.8 0M6.4 9.7a3.5 3.5 0 015.2 0" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <svg viewBox="0 0 26 12" class="status__b"><rect x=".75" y=".75" width="21" height="10.5" rx="3.2" fill="none" stroke="currentColor" stroke-width="1.1" opacity=".45"/><rect x="2.4" y="2.4" width="14" height="7.2" rx="1.9" fill="currentColor"/><path d="M23.4 4.3v3.4a2.1 2.1 0 000-3.4z" fill="currentColor" opacity=".45"/></svg>
+        </span>
+      </div>
+      <div class="glare" data-glare aria-hidden="true"></div>
       <div class="grid" data-grid></div>
       <div class="marks" data-marks><svg data-marks-svg></svg></div>
       <div class="spot" data-spot-layer></div>
@@ -1568,6 +1656,7 @@
   </div>
   <!-- bound to whatever device is selected above -->
   <button class="ib ib--icon" type="button" data-mockup aria-pressed="false" title="Draw the device hardware around it"><svg><use href="#i-frame"/></svg></button>
+      <button class="ib ib--icon ib--tuck" type="button" data-menu="mock" aria-haspopup="menu" aria-expanded="false" title="What kind of app, and the finish"><svg class="caret"><use href="#i-chevron"/></svg></button>
   <button class="ib ib--icon" type="button" data-promo-btn aria-pressed="false" title="Every screen at this device's width, side by side"><svg><use href="#i-gallery"/></svg></button>
   <span class="sep"></span>
   <!-- bound to nothing in particular -->
@@ -2272,12 +2361,77 @@
 
   /* ---------- mockup ---------- */
   var mockBtn = document.querySelector('[data-mockup]');
+
+  /* What kind of application is being shown, which decides what hardware is
+     drawn around it. A web app opens in a browser and keeps a URL bar on every
+     device; a native one has no URL anywhere and carries a status bar instead.
+     Drawing a browser chrome around a native app is a small lie that a client
+     will notice before anything else in the prototype. */
+  var native = cfg.appType === 'native';
+  var glare  = cfg.glare !== false;   // on unless the author turns it off
+
   function paintMock() {
     document.body.classList.toggle('is-mock', current.mockup);
+    document.body.classList.toggle('is-native', native);
+    document.body.classList.toggle('is-glare', glare);
     mockBtn.setAttribute('aria-pressed', String(current.mockup));
     document.querySelector('[data-mock-url]').textContent = location.origin + '/' + current.screen;
+    tickClock();
     requestAnimationFrame(drawAnnots);
   }
+
+  /* The real wall clock, not the prototype's simulated time. They are different
+     things: the scrub says how far into the scenario we are, the status bar is
+     device chrome. Showing 25 min there would read as the time of day. A real
+     clock also cannot rot the way a hardcoded 9:41 does the moment anyone looks
+     at a screenshot twice. */
+  function tickClock() {
+    var el = document.querySelector('[data-status-time]');
+    if (!el) return;
+    var d = new Date();
+    el.textContent = d.getHours() + ':' + String(d.getMinutes()).padStart(2, '0');
+  }
+  setInterval(tickClock, 20000);
+
+  /* A status bar in ink on a dark artifact is an invisible status bar. Sample
+     what the artifact actually paints and invert when it is dark. Cross-origin
+     or not-yet-ready simply leaves it light, which is the common case. */
+  function paintArtworkTone() {
+    var doc = null;
+    try { doc = frame.contentDocument; } catch (e) { doc = null; }
+    if (!doc || !doc.body) return;
+
+    /* An artifact that sets no background computes to rgba(0,0,0,0) - fully
+       transparent, and the browser paints white behind it. Read that as black
+       and every ordinary light prototype gets an inverted status bar. So:
+       take the first surface with actual alpha, body then documentElement,
+       and treat "neither says" as light, because that is what is painted. */
+    function opaque(el) {
+      var c = getComputedStyle(el).backgroundColor || '';
+      var m = c.match(/rgba?\(\s*(\d+)[,\s]+(\d+)[,\s]+(\d+)(?:[,\s/]+([\d.]+))?/);
+      if (!m) return null;
+      if (m[4] !== undefined && parseFloat(m[4]) < 0.5) return null;
+      return [+m[1], +m[2], +m[3]];
+    }
+    var rgb = opaque(doc.body) || opaque(doc.documentElement);
+    if (!rgb) { document.body.classList.remove('is-darkart'); return; }
+    var lum = (0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]) / 255;
+    document.body.classList.toggle('is-darkart', lum < 0.5);
+  }
+  function setNative(v) {
+    if (native === v) return;
+    native = v;
+    paintMock();
+    if (compareOn) fitCompare();
+    if (promoOn) buildPromo();
+    record('harness:apptype', v ? 'native' : 'web');
+  }
+  function setGlare(v) {
+    glare = v;
+    paintMock();
+    record('harness:glare', v);
+  }
+
   mockBtn.addEventListener('click', function () {
     current.mockup = !current.mockup;
     paintMock();
@@ -3393,6 +3547,18 @@
       { h: 'Take a copy' },
       { ico: 'i-image', t: 'Screenshot',    d: 'This screen as a PNG, with any marks on it. Notes stay out', fn: function () { press('[data-shot]'); } },
       { ico: 'i-down',  t: 'Event log',     d: 'What was clicked, in order. Local only, never analytics', fn: function () { press('[data-export]'); }, maker: true }
+    ]; },
+    mock: function () { return [
+      { h: 'What is being shown' },
+      { ico: 'i-desktop', t: 'A web app', d: 'Opens in a browser, and keeps a URL bar on every device',
+        on: !native, fn: function () { setNative(false); } },
+      { ico: 'i-mobile',  t: 'A native app', d: 'No URL anywhere, and a status bar instead',
+        on: native, fn: function () { setNative(true); } },
+      { sep: true },
+      { h: 'Finish' },
+      { ico: 'i-frame', t: glare ? 'Glass is on' : 'Glass is off',
+        d: 'A faint reflection across the display. Turn it off for a usability test',
+        on: glare, fn: function () { setGlare(!glare); } }
     ]; },
     notes: function () { return [
       { ico: 'i-list', t: 'View all notes', d: 'Read, filter and edit every note in one place', fn: function () { press('[data-open-notes]'); } }
@@ -5434,6 +5600,7 @@
       send('variant', current.variant);
       if (screenTime()) send('time', current.time);
       if (picking) send('picking', true);
+      paintArtworkTone();
       requestAnimationFrame(drawAnnots);
     }
     /* Everything past this point belongs to the ONE artifact being reviewed.

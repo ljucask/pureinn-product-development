@@ -309,6 +309,23 @@ window.HARNESS_CONFIG = {
 
      One mark, never two: the harness replaces its own rather than sitting
      beside yours, because two logos in one row read as a partnership. */
+  /* What kind of application this is, which decides the hardware drawn around
+     it. 'web' keeps a URL bar on every device; 'native' drops it and draws a
+     status bar instead. Drawing browser chrome around a native app is a small
+     lie a client notices before anything else. Switchable at run time from the
+     caret beside the mockup button - this is only the starting value.
+
+     NATIVE PROTOTYPES: the status bar OVERLAYS the artifact rather than taking
+     a strip of its own, so a 390px phone still renders 390 x 844 and a height
+     media query still fires truthfully. That means the top ~47px of a native
+     screen sits under it - leave that much safe area at the top, as a real app
+     does, or the first line of the screen reads through the clock. */
+  // appType: 'web',            // 'web' | 'native'
+
+  /* A faint reflection across the display in mockup mode. On by default; the
+     first thing to turn off for a usability test, and switchable there too. */
+  // glare: true,
+
   // brand: { logo: '', name: '' },
 
   review: {
