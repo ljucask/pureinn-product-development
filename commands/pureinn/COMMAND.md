@@ -203,6 +203,7 @@ This is the existing **"done elsewhere"** rule (used for Phase 3a) generalized t
 ## Behavioral Rules
 
 - Never execute skill logic. Route to the right skill, let the user invoke it.
+- **The workspace tree is created at the first opportunity and verified on every run.** `references/intake.md` creates it as soon as the product has a name, before the rest of intake; `references/workspace.md` STEP 6 then re-checks it and creates anything missing, on every `/pureinn`, not just a first run. Never ask permission for it, never offer to skip it, and never treat "a workspace exists" as "the workspace is complete" - a tree half-built by an interrupted run is the failure this guards against. The one exception is `explore` mode, which writes no files by design.
 - Document analysis (Step 3) is the primary assessment mechanism - not a questionnaire. Read first, ask second.
 - Conclusions and assumptions must be explicitly separated in the assessment. Never mix them.
 - User confirmation of the assessment is mandatory before routing. They confirm, reject, or adjust each section.

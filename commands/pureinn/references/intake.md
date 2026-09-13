@@ -58,7 +58,29 @@ Here's what I understand so far:
 Is this correct, or do you want to change anything before we continue?
 ```
 
-Wait for confirmation. If corrections needed, update and re-confirm. Then proceed to Group 2.
+Wait for confirmation. If corrections needed, update and re-confirm.
+
+**Then build the workspace, before Group 2.** This is the earliest moment a
+folder can be named, and it is where the tree gets created - not at STEP 6 at
+the end of the run.
+
+1. Derive `project-slug` from what they are building: lowercase, kebab-case, max 30 chars.
+2. Read `references/workspace.md` and create the **full** tree for the playbook
+   (default Greenfield until the playbook is chosen; STEP 6 reconciles it later
+   and adds anything a different playbook needs).
+3. Say one line - `Workspace: pureinn-workspace/[slug]/` - and continue to Group 2.
+
+Do not ask permission and do not offer to skip it. An empty tree costs nothing
+and is thrown away by deleting one folder; a missing tree costs the session.
+
+`state.json`, `pureinn-variables.md` and `assessment.md` are still written at
+STEP 6, once intake and assessment have produced what goes in them. The folders
+exist from here on, so every step in between has somewhere to write.
+
+**In `explore` mode this does not run** - explore writes no files at all, by
+design. The workspace is created when the user picks a route out of it.
+
+Then proceed to Group 2.
 
 ---
 

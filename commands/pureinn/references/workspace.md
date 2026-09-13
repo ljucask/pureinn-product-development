@@ -4,10 +4,27 @@
 
 ## STEP 6 - Workspace Setup
 
-If no state.json exists yet:
+**The tree is built at the FIRST opportunity, not here.** By the time this step
+runs, `pureinn-workspace/[slug]/` already exists - `references/intake.md`
+creates it the moment the product has a name, before the rest of intake. This
+step finishes the job: it fills `state.json`, `pureinn-variables.md` and
+`assessment.md` with what the intake and assessment produced.
+
+Why the split: a workspace that is only created at the end of a long dialogue
+is a workspace that does not exist whenever the dialogue is abandoned, changes
+direction, or errors halfway. Everything downstream then writes into nothing.
+Creating the tree early costs one folder that might go unused; creating it late
+costs the whole session's work.
+
+**This step is idempotent and self-repairing. Run it on EVERY `/pureinn`, not
+only on a first run.** Compare the tree below against what is on disk and
+create whatever is missing, without asking and without touching a file that is
+already there. A tree half-created by an interrupted earlier run is the case
+this exists to fix, so never assume "the workspace exists" means "the workspace
+is complete".
 
 1. Derive `project-slug`: lowercase, kebab-case, max 30 chars.
-2. Create the artifact folder structure (playbook-aware):
+2. Create the artifact folder structure, whatever part of it is missing (playbook-aware):
 
 **Greenfield:**
 ```
