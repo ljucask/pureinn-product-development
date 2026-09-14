@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.54.0] - 2026-09-14
+
+### pm-prototype harness: the phone's address area carries no background of its own - the previous release swapped its white-to-transparent fade for a filled strip, which only turned a smear across the bottom of the screen into a band; it is a position for the address pill rather than a bar, so only the pill is drawn, translucent and blurring what passes under it
+
+---
+
+
 ## [5.53.0] - 2026-09-14
 
 ### pm-prototype harness: the phone's address bar is frosted glass instead of a fade - it carried the same white-to-transparent gradient the status bar used to, and it read the same way, as a smear across the bottom of the screen rather than as part of the device; the strip and the URL pill now blur what passes under them, which is what a real phone browser does and what makes the page visibly keep going behind them
