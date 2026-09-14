@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.53.0] - 2026-09-14
+
+### pm-prototype harness: the phone's address bar is frosted glass instead of a fade - it carried the same white-to-transparent gradient the status bar used to, and it read the same way, as a smear across the bottom of the screen rather than as part of the device; the strip and the URL pill now blur what passes under them, which is what a real phone browser does and what makes the page visibly keep going behind them
+
+---
+
+
 ## [5.52.0] - 2026-09-14
 
 ### pm-prototype harness: the side-by-side copies can actually be scrolled - they carried pointer-events none, so the wheel never reached them and a visible scrollbar did nothing; the copies now take the wheel while a link inside one is held, because following it would take that copy somewhere the others are not and the row would stop comparing the same thing
