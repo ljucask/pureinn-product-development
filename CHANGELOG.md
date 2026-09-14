@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.48.0] - 2026-09-14
+
+### pm-prototype harness: presentation mode paced for an audience rather than a demo reel - the default slot goes from four seconds to six, because someone watching has to see the screen change, read the caption, follow a number moving and form an opinion, and four seconds covers only the first of those; the automatic screen walk now skips documents about the prototype the same way it skips generated ones, so a hand-written honesty page is no longer presented as a step in the flow
+
+---
+
+
 ## [5.47.0] - 2026-09-14
 
 ### pm-prototype harness: one surface at a time - the dropdowns, the situation panel, the notes panel and the screen panel now close each other instead of stacking, and each dismisses on a click away, which a dropdown needs because it has no close button of its own; a click inside the artifact counts as clicking away, since it lands in a separate document and never reached the shell, so a menu stayed open while the reviewer was already working inside the prototype; the situation panel is the one exception, because it drives the artifact and closing it the moment someone clicks what they just changed would fight them

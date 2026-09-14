@@ -6405,7 +6405,10 @@
 
   function steps() {
     if (tour && tour.length) return tour;
-    return screens.filter(function (s) { return !generated(s); })
+    /* aboutDoc, not generated: a page the prototype carries itself is still a
+       document about it, and walking an audience through a document as though
+       it were part of the flow is the thing the section exists to prevent. */
+    return screens.filter(function (s) { return !aboutDoc(s); })
       .map(function (s) { return { screen: s.src, scroll: 1 }; });
   }
 

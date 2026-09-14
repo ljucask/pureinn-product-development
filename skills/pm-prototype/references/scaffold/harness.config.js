@@ -342,7 +342,13 @@ window.HARNESS_CONFIG = {
      that invented input would show an audience behaviour the prototype was
      never claimed to have.
      ───────────────────────────────────────────────────────────────────── */
-  present: { hold: 4000 },
+  /* How long each slot lasts. Four seconds was the old default and it is too
+     fast for the thing it is for: someone watching has to see the screen
+     change, read the caption, follow a number moving, and form an opinion -
+     and a presentation that outruns them reads as a demo reel rather than as a
+     product. Each step may set its own `hold` where it needs longer; this is
+     the floor, not the pace. */
+  present: { hold: 6000 },
 
   tour: null,
   /* tour: [
