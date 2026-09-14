@@ -23,8 +23,8 @@ pureinn-workspace/[project-slug]/prototypes/[prototype-name]/
   findings.md             what held, what broke, what stayed open
   context/                thin Discovery/Define artifacts - ONLY when the global ones do not serve
                           personas.md · jtbd.md · voc.md · segments.md
-  feature-plan-prt.md     PRT-[NAME]-001..N, one sentence of intent each
-  feature-cards/          thin cards, same field names as production cards
+  feature-plan-prt.md     PRT-[NAME]-001..N, each with a state: built | next | cut
+  feature-cards/          one per built feature - buildable, not a stub
   domain.md               ONLY when the prototype deliberately diverges
   rules.md                ONLY when it deliberately diverges
   design/                 ONLY when it has its own visual direction
@@ -34,6 +34,47 @@ pureinn-workspace/[project-slug]/prototypes/[prototype-name]/
 Always at the **workspace root**, never nested under an initiative. A prototype often has no initiative yet - that is frequently why it exists - and moving it later when it acquires one is churn. The relationship is carried by `targets:`, not by the path.
 
 `hypotheses.md` and `findings.md` are a pair. The first states what is to be proven, the second what came of it. **Without the second, a prototype is a demo.**
+
+---
+
+## The feature plan is where a vision became a build
+
+A PRD says what the product could be. It does not decide what gets made. That decision is `feature-plan-prt.md`, and it is usually the most defensible artifact a prototype produces - because it is the only one that records what was *not* built and why.
+
+**Three states, and the production lifecycle is not one of them.** `1_Backlog` → `6_Shipped` describes shipping to production and says nothing about a prototype:
+
+| State | Meaning |
+|---|---|
+| `built` | in the prototype, runs, can be clicked |
+| `next` | would be built, in the phase named. Not present |
+| `cut` | deliberately left out. **Reason required** |
+
+`cut` is not backlog. A backlog item is waiting; a cut is decided. Recording it with its reason is what stops the same argument being had twice, and it is the part of a prototype write-up that survives the most scrutiny - anyone can add features, and the case for leaving one out is where the thinking shows.
+
+Every capability the source document names ends up in one of the three. One that appears in none of them was never considered, and the gap should be visible.
+
+**`next` carries a phase, not a priority.** The useful division is not important-vs-not but *must this be software, or can a person do it by hand the first time* - because you cannot automate a process nobody has run yet. A first release that does the operational work manually and a second that automates only what proved painful is a real plan; a numbered priority list is a wish.
+
+---
+
+## A prototype feature card has to be buildable
+
+Same field names as a production card, but **thin means fewer fields, never less substance.** A card that says only what a feature is called and what it proves cannot be built from, and it raises the question it was meant to answer: if the plan did not drive the build, what did?
+
+Each `built` feature gets a card carrying:
+
+| Section | Why it is not optional |
+|---|---|
+| **What it proves** | one line. If it proves nothing, it should not be in the prototype |
+| **How it behaves** | the mechanism, in enough detail to rebuild it. This is the part that is usually missing |
+| **What is simulated in it** | per feature, not just on the disclosure screen |
+| **What the production version is** | plus the effort. "This is fake" invites "and how hard is the real one" |
+| **Why it is in the prototype at all** | the decision. Often the most interesting line on the card |
+| **Reads from** | the section of the source document it came from, so the two can be checked against each other |
+
+`next` and `cut` entries stay as rows in the plan - they have no behaviour to describe yet. What they must carry is the reason, and for `next`, the phase and what it depends on.
+
+**A JIT spec is still written at build time.** These cards are not that spec: they describe a prototype that exists, not a feature about to be engineered. The point is that someone reading them can tell what was actually made.
 
 ---
 

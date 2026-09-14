@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.60.0] - 2026-09-14
+
+### pm-prototype: prototype features get states, and a prototype feature card has to be buildable - the folder spec said one sentence of intent each and thin cards, which is a recipe for a stub that cannot be built from and invites the question of what drove the build if the plan did not; a card now carries how the feature behaves, what inside it is simulated, what the production version costs and why it is in the prototype at all, and the plan carries built / next / cut with a required reason on a cut, because a cut is decided where a backlog item is only waiting
+
+---
+
+
 ## [5.59.0] - 2026-09-14
 
 ### pm-prototype harness: a share link made on a development server now says it cannot travel - every link is built from wherever the harness is running, since it cannot know where it will be hosted, so one made at localhost points at a machine nobody else can reach while the toast still read link copied; both Copy this view and Invite to review now say what the link actually is, and the README states the order - host it, open that address, share from there
