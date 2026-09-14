@@ -2591,6 +2591,7 @@
     navList.querySelectorAll('.nav__i').forEach(function (o, j) { o.classList.toggle('is-cursor', j === cursor); });
   }
   function openNav() {
+    closeSurfaces('nav');
     nav.classList.add('is-open');
     document.body.classList.add('is-nav');
     navBtn.setAttribute('aria-expanded', 'true');
@@ -2703,6 +2704,7 @@
   }
 
   function openSim(on) {
+    if (on) closeSurfaces('sim');
     simEl.hidden = !on;
     simBtn.setAttribute('aria-pressed', String(on));
     writeStore('simOpen', on);
@@ -4449,9 +4451,24 @@
     openMenu = null;
   }
 
+  /* ---------- one surface at a time ----------
+
+     The dropdowns, the situation panel, the notes panel and the screen panel
+     are all ways of asking the harness something, and two of them open at once
+     is two answers competing for the same corner of the screen. Opening any
+     one closes the rest.
+
+     `except` names the surface being opened, so it does not close itself. */
+  function closeSurfaces(except) {
+    if (except !== 'menu') closeMenu();
+    if (except !== 'sim' && simEl && !simEl.hidden) openSim(false);
+    if (except !== 'notes' && notesOpen) openNotes(false);
+    if (except !== 'nav' && nav.classList.contains('is-open')) closeNav();
+  }
+
   function showMenu(btn, key) {
     if (openMenu && openMenu.key === key) { closeMenu(); return; }
-    closeMenu();
+    closeSurfaces('menu');
     var el = document.createElement('div');
     el.className = 'menu'; el.setAttribute('role', 'menu');
     MENUS[key]().forEach(function (it) {
@@ -4488,8 +4505,26 @@
   });
   document.addEventListener('click', function (e) {
     if (openMenu && !openMenu.el.contains(e.target)) closeMenu();
+    /* A panel with no close button of its own has to be dismissible the way
+       every other floating thing is. The situation panel is the exception: it
+       drives the artifact, so clicking the artifact to watch what it did must
+       not shut the control that did it. */
+    if (notesOpen && !notesEl.contains(e.target) && !e.target.closest('[data-open-notes],[data-menu]')) openNotes(false);
+    if (!simEl.hidden && !simEl.contains(e.target) &&
+        !e.target.closest('[data-sim-btn],[data-menu],.stage')) openSim(false);
   });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeMenu(); });
+
+  /* The artifact is a separate document, so a click in it never reaches the
+     handler above - which is why a menu stayed open while the reviewer was
+     already clicking around inside the prototype. Re-attached on every load,
+     because each navigation is a new document. */
+  function watchArtifactClicks() {
+    var d = null;
+    try { d = frame.contentDocument; } catch (err) { d = null; }
+    if (!d) return;
+    d.addEventListener('click', function () { closeMenu(); }, true);
+  }
 
   /* ---------- marks: box and marker pen ----------
      Kept as fractions of the frame, so a mark drawn on a laptop is still on the
@@ -4975,6 +5010,7 @@
   }
 
   function openNotes(on) {
+    if (on) closeSurfaces('notes');
     notesOpen = on;
     notesEl.classList.toggle('is-open', on);
     document.body.classList.toggle('is-notes', on);
@@ -6646,6 +6682,7 @@
   frame.addEventListener('load', function () {
     frameLoaded = true;
     watchArtifactScroll();
+    watchArtifactClicks();
     adoptScreen();
     if (picking) attachShellPick();
     /* An artifact without the client never announces itself, so the work the

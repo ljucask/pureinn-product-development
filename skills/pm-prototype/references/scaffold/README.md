@@ -124,6 +124,14 @@ Each carries a `label` and a one-line `does` saying what it demonstrates - the s
 
 **Never declare an activity that fakes input the prototype does not really take.** Where the point is that something runs on real typing - a journey that would carry no weight if it were pre-baked - use `says` and let the reviewer type. An activity that simulates the very thing under test destroys what it was meant to demonstrate.
 
+## One surface at a time
+
+The dropdowns, the situation panel, the notes panel and the screen panel are all ways of asking the harness something, and two of them open at once is two answers competing for the same corner of the screen. Opening any one closes the rest.
+
+They also close by clicking away from them, which matters because a dropdown has no close button of its own. **A click inside the artifact counts as clicking away** - it happens in a separate document and never reaches the shell, which is why a menu used to stay open while the reviewer was already clicking around inside the prototype.
+
+One exception: the situation panel stays open when the artifact is clicked. It is the panel that drives the artifact, so shutting it the moment someone clicks the thing they just changed would fight them.
+
 ## Following the artifact
 
 A prototype worth reviewing has real links in it, and a reviewer uses them. The iframe then changes document on its own, without going through the screen panel - so the shell has to ask the document where it actually is rather than assume it is still showing what it loaded. It does that after every load, and adopts the answer only when the config already declares that screen; an outbound link leaves the selection alone instead of blanking it.

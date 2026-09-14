@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.47.0] - 2026-09-14
+
+### pm-prototype harness: one surface at a time - the dropdowns, the situation panel, the notes panel and the screen panel now close each other instead of stacking, and each dismisses on a click away, which a dropdown needs because it has no close button of its own; a click inside the artifact counts as clicking away, since it lands in a separate document and never reached the shell, so a menu stayed open while the reviewer was already working inside the prototype; the situation panel is the one exception, because it drives the artifact and closing it the moment someone clicks what they just changed would fight them
+
+---
+
+
 ## [5.46.0] - 2026-09-14
 
 ### pm-prototype harness: the shell follows the artifact instead of assuming it - a prototype's own links now move the screen selection, the activity list, the time axis and the notes with it, and pins are re-measured against their element on every scroll instead of staying where they were first painted; placing a comment focuses the note rather than the name field and closes the all-notes panel that was hiding the rail it writes into; hiding the chrome now takes the safe area, the runtime-injected hardware and the rounded corners with it, so what is left is the artifact as a browser would show it; the disclosure page gains title, classificationNote, beforeLaunch, list-form proves/doesNotProve and per-note of/effort/table, and about:true files a prototype's own hand-written honesty page in About this prototype rather than regenerating a near-copy of it
