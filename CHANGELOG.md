@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.55.0] - 2026-09-14
+
+### pm-prototype harness: the address pill is lighter again - the fill drops to a quarter and the blur carries the legibility, so what is under it reads through instead of being covered
+
+---
+
+
 ## [5.54.0] - 2026-09-14
 
 ### pm-prototype harness: the phone's address area carries no background of its own - the previous release swapped its white-to-transparent fade for a filled strip, which only turned a smear across the bottom of the screen into a band; it is a position for the address pill rather than a bar, so only the pill is drawn, translucent and blurring what passes under it
