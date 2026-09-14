@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.58.0] - 2026-09-14
+
+### pm-prototype harness: View all notes opens from the rail as well as the dock - the dismiss-on-click-away rule tried to recognise which controls open a panel, and that list is always one short: a menu item has left the document by then, the rail's own button sits inside a rail the open panel hides; the opener is no longer identified at all, a surface simply ignores dismissal until the click that opened it has finished travelling
+
+---
+
+
 ## [5.57.0] - 2026-09-14
 
 ### pm-prototype harness: View all notes opens again - the dismiss-on-click-away handler judged a click by whether its target sat inside the panel, and a menu item is gone from the document by the time that runs, since it opened the panel and closing the menu removed it; the same click then read as a click on nothing and shut the panel it had just opened, so a target no longer in the document is now ignored

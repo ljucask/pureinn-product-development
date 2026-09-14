@@ -2725,7 +2725,7 @@
   }
 
   function openSim(on) {
-    if (on) closeSurfaces('sim');
+    if (on) { closeSurfaces('sim'); armOpened(); }
     simEl.hidden = !on;
     simBtn.setAttribute('aria-pressed', String(on));
     writeStore('simOpen', on);
@@ -4498,6 +4498,15 @@
      one closes the rest.
 
      `except` names the surface being opened, so it does not close itself. */
+  /* Set for the rest of the current click, so the event that opened a surface
+     cannot be mistaken for one dismissing it. */
+  var justOpened = false;
+
+  function armOpened() {
+    justOpened = true;
+    setTimeout(function () { justOpened = false; }, 0);
+  }
+
   function closeSurfaces(except) {
     if (except !== 'menu') closeMenu();
     if (except !== 'sim' && simEl && !simEl.hidden) openSim(false);
@@ -4548,15 +4557,16 @@
        every other floating thing is. The situation panel is the exception: it
        drives the artifact, so clicking the artifact to watch what it did must
        not shut the control that did it. */
-    /* A click whose target has already left the document cannot be judged as
-       inside or outside anything. That is exactly what a menu item is by the
-       time this runs: it opened the panel and closeMenu() removed it, so the
-       same click then arrived here looking like a click on nothing and shut
-       the panel it had just opened. */
-    if (!e.target.isConnected) return;
-    if (notesOpen && !notesEl.contains(e.target) && !e.target.closest('[data-open-notes],[data-menu]')) openNotes(false);
+    /* The click that opened a surface must not also close it. Judging that by
+       what was clicked needs a list of every control that can open one, and
+       the list is always one short - a menu item is gone from the document by
+       then, the rail's own button is inside a rail that the open panel hides.
+       So the opener is not identified at all: a surface simply ignores
+       dismissal until the click that opened it has finished travelling. */
+    if (justOpened) return;
+    if (notesOpen && !notesEl.contains(e.target)) openNotes(false);
     if (!simEl.hidden && !simEl.contains(e.target) &&
-        !e.target.closest('[data-sim-btn],[data-menu],.stage')) openSim(false);
+        !e.target.closest('[data-sim-btn],.stage')) openSim(false);
   });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeMenu(); });
 
@@ -5055,7 +5065,7 @@
   }
 
   function openNotes(on) {
-    if (on) closeSurfaces('notes');
+    if (on) { closeSurfaces('notes'); armOpened(); }
     notesOpen = on;
     notesEl.classList.toggle('is-open', on);
     document.body.classList.toggle('is-notes', on);
