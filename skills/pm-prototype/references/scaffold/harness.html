@@ -1661,7 +1661,14 @@
        or a tall tablet gets clamped and the three stop matching */
     transition: none; max-width: none; max-height: none; padding: 0;
   }
-  .mini .screen { pointer-events: none; }
+  /* The copies take the wheel but not the click. Scrolling is how a
+     side-by-side view is read at all, so it has to reach the document. Clicks
+     do not: pressing a link in one of three scaled copies navigates that copy
+     alone and the row silently stops comparing the same thing, which is the
+     one thing this view exists to guarantee. */
+  .mini .screen { pointer-events: auto; }
+  .mini .mock, .mini .mock__bar, .mini .btns,
+  .mini .barphone, .mini .status, .mini .glare { pointer-events: none; }
 
   /* bottom-aligned, natural heights: a product shot, not three columns */
   /* `safe center` keeps a row that outgrows the stage reachable: plain centring
@@ -6655,10 +6662,24 @@
   }
 
   function watchMiniScroll(fr) {
-    var w = null;
-    try { w = fr.contentWindow; } catch (e) { return; }
-    if (!w) return;
+    var w = null, d = null;
+    try { w = fr.contentWindow; d = fr.contentDocument; } catch (e) { return; }
+    if (!w || !d) return;
     w.addEventListener('scroll', function () { mirrorScroll(fr); }, { passive: true });
+
+    /* A link followed inside one copy takes that copy somewhere the other two
+       are not, and the row stops comparing the same thing - which is the only
+       reason the row exists. Navigation is refused here; everything else the
+       screen does is left alone, because a toggle flipped in one copy is
+       visible in that copy and harms nothing. */
+    d.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('a[href]');
+      if (!a) return;
+      var href = a.getAttribute('href') || '';
+      if (href.charAt(0) === '#' || href.indexOf('javascript:') === 0) return;
+      e.preventDefault();
+      toast('Links are held in the side-by-side view - following one would leave the other copies behind.', 3800);
+    }, true);
   }
 
   function send(kind, value, only) {

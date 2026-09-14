@@ -286,6 +286,8 @@ Position travels as a **fraction of each document's own scrollable height**, not
 
 Without this the copies sat frozen at the top, which made side by side good for comparing a header and useless for anything below it - and most of what a reviewer argues about is below it.
 
+**The copies take the wheel but not a link.** Scrolling has to reach the document or the view cannot be read at all; following a link does not, because it would take one copy somewhere the others are not and the row would stop comparing the same thing. A held link says so rather than doing nothing. Everything else the screen does still works in each copy.
+
 ## The report
 
 The sheet offers **one primary action and one beside it**, with the rest as quiet links - and which is primary follows whose hands it is in: a reviewer wants to send (Copy, then Email), a maker wants the report. Four buttons of equal weight is a menu, not a choice.
