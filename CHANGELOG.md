@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.51.0] - 2026-09-14
+
+### pm-prototype harness: the side-by-side copies scroll, and scroll together - they carried scrolling=no, so both multi views were frozen at the top of their documents, which made them good for comparing a header and useless for anything below it; moving one now carries the rest, as a fraction of each document's own scrollable height rather than as pixels, because the same screen at three widths is three different heights and in the all-screens view they are different documents entirely
+
+---
+
+
 ## [5.50.0] - 2026-09-14
 
 ### pm-prototype harness: hiding the chrome now squares the corners on a phone and a tablet - the bare rule was being outweighed rather than ignored, because the mockup rules carry one class more than it did, so the last piece of the device survived every attempt to hide it

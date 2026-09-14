@@ -278,6 +278,14 @@ Press play and the harness runs the prototype on its own. With no `tour` it walk
 
 **Pace it for someone watching.** The default slot is six seconds, and each step can set its own `hold`. The person in the room has to see the screen change, read the caption, follow a number moving, and form an opinion - four seconds covers only the first of those.
 
+## Side by side, scrolling together
+
+Both multi views - the same screen at three device widths, and every screen at one width - **scroll in step**. Move one copy and the rest follow.
+
+Position travels as a **fraction of each document's own scrollable height**, not as pixels. The same screen at three widths is three different heights, and in the all-screens view they are different documents entirely, so pixel 800 is a different place in each while "a third of the way down" is the same place in all of them.
+
+Without this the copies sat frozen at the top, which made side by side good for comparing a header and useless for anything below it - and most of what a reviewer argues about is below it.
+
 ## The report
 
 The sheet offers **one primary action and one beside it**, with the rest as quiet links - and which is primary follows whose hands it is in: a reviewer wants to send (Copy, then Email), a maker wants the report. Four buttons of equal weight is a menu, not a choice.

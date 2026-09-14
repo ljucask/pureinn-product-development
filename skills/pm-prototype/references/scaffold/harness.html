@@ -6310,8 +6310,12 @@
     bar.querySelector('.mock__url').textContent = location.origin + '/' + (srcdoc ? '' : src);
     var fr = document.createElement('iframe');
     fr.className = 'screen';
-    fr.setAttribute('scrolling', 'no');
+    /* The copies used to be frozen at the top of their documents, which made
+       the side-by-side views good for comparing a header and useless for
+       anything below it - and most of what a reviewer argues about is below
+       it. They scroll now, and they scroll together. */
     if (srcdoc) fr.srcdoc = srcdoc; else fr.src = src;
+    fr.addEventListener('load', function () { watchMiniScroll(fr); });
     mockEl2.appendChild(bar); mockEl2.appendChild(fr);
     hardware(mockEl2, dev);
     requestAnimationFrame(function () { tickClock(); paintBattery(); });
@@ -6610,6 +6614,51 @@
   /* ---------- frame plumbing ---------- */
   function miniFrames() {
     return Array.prototype.slice.call(document.querySelectorAll('.mini .screen'));
+  }
+
+  /* ---------- the copies scroll together ----------
+
+     Side by side exists to compare, and a comparison of three frames all
+     parked at the top compares only the top. Scrolling one carries the rest.
+
+     Position travels as a FRACTION of each document's own scrollable height,
+     not as pixels. The same screen at three widths is three different heights,
+     and in the all-screens view they are different documents entirely - so
+     pixel 800 is a different place in each, while "a third of the way down" is
+     the same place in all of them.
+
+     `syncing` guards the obvious loop: moving the others fires their scroll
+     handlers, which would move this one back. */
+  var syncing = false;
+
+  function mirrorScroll(from) {
+    if (syncing) return;
+    var d = null;
+    try { d = from.contentDocument; } catch (e) { return; }
+    if (!d) return;
+    var se = d.scrollingElement || d.documentElement;
+    var max = se.scrollHeight - se.clientHeight;
+    var f = max > 4 ? se.scrollTop / max : 0;
+
+    syncing = true;
+    miniFrames().forEach(function (o) {
+      if (o === from) return;
+      try {
+        var od = o.contentDocument;
+        if (!od) return;
+        var os = od.scrollingElement || od.documentElement;
+        var om = os.scrollHeight - os.clientHeight;
+        if (om > 4) os.scrollTop = Math.round(om * f);
+      } catch (e) { /* another origin, or gone */ }
+    });
+    requestAnimationFrame(function () { syncing = false; });
+  }
+
+  function watchMiniScroll(fr) {
+    var w = null;
+    try { w = fr.contentWindow; } catch (e) { return; }
+    if (!w) return;
+    w.addEventListener('scroll', function () { mirrorScroll(fr); }, { passive: true });
   }
 
   function send(kind, value, only) {
