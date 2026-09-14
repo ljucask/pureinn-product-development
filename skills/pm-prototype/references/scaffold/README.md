@@ -218,6 +218,14 @@ Arm the note button, click the thing, type, save. Two details decide whether tha
 
 Where the artifact carries `harness-client.js` the click is forwarded as a message. Where it does not - a prototype built before the client existed, or one that must not be edited at all - the shell captures the same click itself on the same-origin document. Both produce the same note.
 
+## Sending it to someone
+
+**Host it first, then share from the hosted address.** Every link the harness makes - `Copy this view`, `Invite to review` - is built from wherever it is running, because the harness cannot know where it will end up. Made on a development server, a link points at a machine nobody else can reach; the toast says so rather than letting a reviewer discover it days later.
+
+The files are static, so anywhere that serves a folder will do. It has to be **served, not opened**: the artifact runs in an iframe and the shell reads that document to place labels, comments and screenshots, and under `file://` every file is a separate origin, so that reading is refused. The screens still appear; the layer over them does not.
+
+`Invite to review` is the link worth sending. It carries the task written for that one person, and a tick for whether the Overview and the instructions travel with it - the overview to a sponsor, the instructions to a tester, neither to someone who has already seen it.
+
 ## Getting feedback back
 
 **`Add note ▾` → `The whole prototype`** writes one covering note about it - no pin, no severity. It leads the rail, leads the sheet, and leads the report. Six remarks about six elements are not the same as what someone thinks of the thing.

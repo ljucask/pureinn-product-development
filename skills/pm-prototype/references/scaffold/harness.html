@@ -3240,7 +3240,9 @@
     function done() {
       btn.classList.add('is-ok');
       setTimeout(function () { btn.classList.remove('is-ok'); }, 1400);
-      toast('Link copied - it opens this screen in this exact state.');
+      toast(localOnly()
+        ? 'Link copied - but it points at this machine, so only you can open it. Put the folder on a host and share from that address.'
+        : 'Link copied - it opens this screen in this exact state.', localOnly() ? 7000 : 3200);
       /* the URL carries the author's own message in ?m=, and the event log is
          posted to submitTo - so log that a link was made, not what was in it */
       record('harness:share', 'link');
@@ -3297,7 +3299,9 @@
       inviteSheet.hidden = true;
       inviteBtn.classList.add('is-ok');
       setTimeout(function () { inviteBtn.classList.remove('is-ok'); }, 1400);
-      toast('Reviewer link copied' + (msg ? ' - with your note attached.' : '.'), 5000);
+      toast(localOnly()
+        ? 'Reviewer link copied - but it points at this machine, so the reviewer cannot open it. Put the folder on a host, open that address, and invite from there.'
+        : 'Reviewer link copied' + (msg ? ' - with your note attached.' : '.'), localOnly() ? 8000 : 5000);
       record('harness:invite', msg ? 'with message' : 'plain');
     }
     if (navigator.clipboard && location.protocol !== 'file:') {
@@ -3509,6 +3513,16 @@
     ctx.arcTo(x, y + h, x, y, r);
     ctx.arcTo(x, y, x + w, y, r);
     ctx.closePath();
+  }
+
+  /* A link is only as shareable as the address it was made at. The harness
+     cannot know where it will end up hosted, so it builds every link from
+     wherever it is running - and on a development server that is a machine
+     nobody else can reach. Saying "copied" and nothing else is how a reviewer
+     ends up with a dead link and the author finds out days later. */
+  function localOnly() {
+    return location.protocol === 'file:' ||
+           /^(localhost|127\.0\.0\.1|\[::1\]|0\.0\.0\.0)$/.test(location.hostname);
   }
 
   /* ---------- annotations ----------

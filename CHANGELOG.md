@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.59.0] - 2026-09-14
+
+### pm-prototype harness: a share link made on a development server now says it cannot travel - every link is built from wherever the harness is running, since it cannot know where it will be hosted, so one made at localhost points at a machine nobody else can reach while the toast still read link copied; both Copy this view and Invite to review now say what the link actually is, and the README states the order - host it, open that address, share from there
+
+---
+
+
 ## [5.58.0] - 2026-09-14
 
 ### pm-prototype harness: View all notes opens from the rail as well as the dock - the dismiss-on-click-away rule tried to recognise which controls open a panel, and that list is always one short: a menu item has left the document by then, the rail's own button sits inside a rail the open panel hides; the opener is no longer identified at all, a surface simply ignores dismissal until the click that opened it has finished travelling
