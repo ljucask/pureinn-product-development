@@ -266,6 +266,18 @@ A **pointer is on screen for the whole run**, resting inside the artifact and tr
 
 **A presentation may drive the artifact; it must not invent input.** With no `tour` it walks the screens in order at `present.hold` ms each. Declare a `tour` when the demo has a story, and each step says exactly what is shown - `screen`, `state`, `variant`, `time`, `scroll`, `click`, `say`, `hold`. `click` is the only thing that touches the artifact, it is declared rather than guessed, and the element is ringed before it fires. Arrow keys step, space pauses, Escape exits.
 
+## Presenting it
+
+Press play and the harness runs the prototype on its own. With no `tour` it walks the screens in order; declare one and each step says exactly what is shown - screen, state, variant, a fixed time, how far to scroll, and one selector to click.
+
+**A tour that only scrolls narrates the prototype. A tour that clicks uses it.** Where a declared click lands on a link, the screen changes because it was pressed, not because the tour jumped there, and the shell follows the artifact the same way it does when a reviewer clicks. Name the screen on the following step anyway: it costs nothing when the click already took you there, and it recovers the walk if a click ever misses.
+
+**The pointer travels at a speed that depends on how far it has to go** - a hand does not take the same time to cross a screen as to nudge to the next button, and a fixed duration for both is the single thing that makes a walkthrough read as an animation. The pause before the click follows the travel, because arriving and clicking in the same instant looks like a script.
+
+**The opening sequence never plays during a presentation.** It is the app being started, which happens once and at the beginning; arriving in the middle of a walkthrough it reads as the prototype crashing and reloading.
+
+**Pace it for someone watching.** The default slot is six seconds, and each step can set its own `hold`. The person in the room has to see the screen change, read the caption, follow a number moving, and form an opinion - four seconds covers only the first of those.
+
 ## The report
 
 The sheet offers **one primary action and one beside it**, with the rest as quiet links - and which is primary follows whose hands it is in: a reviewer wants to send (Copy, then Email), a maker wants the report. Four buttons of equal weight is a menu, not a choice.

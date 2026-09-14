@@ -3017,8 +3017,16 @@
   function playOpening() {
     var b = document.querySelector('[data-boot]');
     if (!b || booted || cfg.opening === false) return;
-    if (!current.mockup) return;                       // hardware off: nothing to open
-    if (generated(screens[screenIndex(current.screen)])) return;  // a document is not an app
+    /* Never mid-presentation. The opening is the app being started, which
+       happens once, at the beginning - arriving in the middle of a walkthrough
+       it reads as the prototype crashing and reloading. */
+    if (presenting) { booted = true; return; }
+    /* Marked spent even when it cannot play. These two used to return without
+       setting the flag, so the opening stayed pending and fired at the first
+       screen that did qualify - which is how an app launch turned up four
+       screens into a tour. */
+    if (!current.mockup) { booted = true; return; }    // hardware off: nothing to open
+    if (aboutDoc(screens[screenIndex(current.screen)])) { booted = true; return; }  // a document is not an app
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     booted = true;
 
@@ -6393,7 +6401,7 @@
      across its own range and the page scrolled through its own height. Clicks
      only ever happen where a tour asks for one: inventing input would show the
      audience something the prototype was never claimed to do. */
-  var presenting = false, playing = false, stepAt = 0, stepTimer = null, sweepTimer = null, aimTimer = null;
+  var presenting = false, playing = false, stepAt = 0, stepTimer = null, sweepTimer = null, aimTimer = null, tapTimer = null;
   var tour = cfg.tour || null;
   var HOLD = (cfg.present && cfg.present.hold) || 4000;
   var showEl   = document.querySelector('[data-show]');
@@ -6473,23 +6481,43 @@
     // it rests just inside the artifact rather than vanishing: a pointer that
     // appears only to click looks like a cut, not like someone using this
     var box = frame.getBoundingClientRect();
+    var x = box.left + box.width * 0.42, y = box.top + box.height * 0.62;
+    ghostAt = { x: x, y: y };
     ghost.classList.add('is-on');
-    ghost.style.transform = 'translate(' + (box.left + box.width * 0.42) + 'px,' + (box.top + box.height * 0.62) + 'px)';
+    ghost.style.transform = 'translate(' + x + 'px,' + y + 'px)';
   }
+
+  var ghostAt = { x: 0, y: 0 };
 
   function aimed(d) {
     if (!presenting || !d.found || d.selector !== pendingClick) { pendingClick = null; return; }
     var box = frame.getBoundingClientRect();
+    var x = box.left + d.x, y = box.top + d.y;
+
+    /* A hand does not take the same time to cross a screen as to nudge to the
+       next button, and a fixed 900ms for both is the single thing that made
+       this read as an animation rather than as someone using it. Duration
+       follows distance, and the pause before the click follows the duration -
+       arriving and clicking in the same instant looks like a script, because
+       it is one. */
+    var dist = Math.hypot(x - ghostAt.x, y - ghostAt.y) || 0;
+    var travel = Math.max(320, Math.min(1150, 260 + dist * 1.15));
+    ghostAt = { x: x, y: y };
+
+    ghost.style.transition = 'transform ' + Math.round(travel) +
+      'ms cubic-bezier(.32,.72,.24,1), opacity var(--med) var(--ease)';
     ghost.classList.add('is-on');
-    ghost.style.transform = 'translate(' + (box.left + d.x) + 'px,' + (box.top + d.y) + 'px)';
-    setTimeout(function () {
+    ghost.style.transform = 'translate(' + x + 'px,' + y + 'px)';
+
+    clearTimeout(tapTimer);
+    tapTimer = setTimeout(function () {
       if (!presenting) return;
       ghost.classList.add('is-tap');
       send('click', pendingClick);
       record('harness:present-click', pendingClick);
       pendingClick = null;
       setTimeout(function () { ghost.classList.remove('is-tap'); }, 700);
-    }, 950);
+    }, travel + 260);
   }
 
   function setPlaying(on) {

@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.49.0] - 2026-09-14
+
+### pm-prototype harness: presentation mode that uses the prototype instead of narrating it - the pointer now travels at a speed that follows the distance it has to cover, with the pause before the click following the travel, because a fixed duration for both is what made a walkthrough read as an animation rather than as someone working; the opening sequence no longer plays mid-tour, and the two early returns that skipped it without marking it spent are fixed, which is how an app launch was turning up several screens into a presentation; a declared click on a link now carries the walk to the next screen the same way a reviewer's click does
+
+---
+
+
 ## [5.48.0] - 2026-09-14
 
 ### pm-prototype harness: presentation mode paced for an audience rather than a demo reel - the default slot goes from four seconds to six, because someone watching has to see the screen change, read the caption, follow a number moving and form an opinion, and four seconds covers only the first of those; the automatic screen walk now skips documents about the prototype the same way it skips generated ones, so a hand-written honesty page is no longer presented as a step in the flow
