@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.57.0] - 2026-09-14
+
+### pm-prototype harness: View all notes opens again - the dismiss-on-click-away handler judged a click by whether its target sat inside the panel, and a menu item is gone from the document by the time that runs, since it opened the panel and closing the menu removed it; the same click then read as a click on nothing and shut the panel it had just opened, so a target no longer in the document is now ignored
+
+---
+
+
 ## [5.56.0] - 2026-09-14
 
 ### pm-prototype harness: typing the letter h into a note no longer hides the chrome - the guard tested for INPUT, TEXTAREA and SELECT, and the note editor is a contenteditable div, so every bare-letter shortcut fired straight through it; the check now covers contenteditable and any bare letter bound as a shortcut goes through it

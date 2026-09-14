@@ -4548,6 +4548,12 @@
        every other floating thing is. The situation panel is the exception: it
        drives the artifact, so clicking the artifact to watch what it did must
        not shut the control that did it. */
+    /* A click whose target has already left the document cannot be judged as
+       inside or outside anything. That is exactly what a menu item is by the
+       time this runs: it opened the panel and closeMenu() removed it, so the
+       same click then arrived here looking like a click on nothing and shut
+       the panel it had just opened. */
+    if (!e.target.isConnected) return;
     if (notesOpen && !notesEl.contains(e.target) && !e.target.closest('[data-open-notes],[data-menu]')) openNotes(false);
     if (!simEl.hidden && !simEl.contains(e.target) &&
         !e.target.closest('[data-sim-btn],[data-menu],.stage')) openSim(false);
