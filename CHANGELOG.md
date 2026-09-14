@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.50.0] - 2026-09-14
+
+### pm-prototype harness: hiding the chrome now squares the corners on a phone and a tablet - the bare rule was being outweighed rather than ignored, because the mockup rules carry one class more than it did, so the last piece of the device survived every attempt to hide it
+
+---
+
+
 ## [5.49.0] - 2026-09-14
 
 ### pm-prototype harness: presentation mode that uses the prototype instead of narrating it - the pointer now travels at a speed that follows the distance it has to cover, with the pause before the click following the travel, because a fixed duration for both is what made a walkthrough read as an animation rather than as someone working; the opening sequence no longer plays mid-tour, and the two early returns that skipped it without marking it spent are fixed, which is how an app launch was turning up several screens into a presentation; a declared click on a link now carries the walk to the next screen the same way a reviewer's click does

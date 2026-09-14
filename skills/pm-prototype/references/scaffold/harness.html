@@ -1824,8 +1824,15 @@
      device is still there - which is exactly what hiding the chrome was for.
      The outline and shadow stay: they say where the artifact ends, which a
      white page on a white canvas otherwise does not. */
+  /* The `.is-mock` variants are not redundant. The phone rules are written as
+     `body.is-mock:not(.is-fixed) .wrap[...] .screen`, which carries one more
+     class than `body.is-bare .wrap[...] .screen` - so without matching that
+     weight the corners stayed rounded no matter where this rule sat, and
+     hiding the chrome left the last piece of the phone behind. */
   body.is-bare .wrap[data-device="tablet"] .screen,
-  body.is-bare .wrap[data-device="mobile"] .screen {
+  body.is-bare .wrap[data-device="mobile"] .screen,
+  body.is-bare.is-mock .wrap[data-device="tablet"] .screen,
+  body.is-bare.is-mock .wrap[data-device="mobile"] .screen {
     border-radius: 0;
     box-shadow: 0 0 0 1px rgba(22,24,29,.12), 0 26px 54px -22px rgba(22,24,29,.34);
   }
