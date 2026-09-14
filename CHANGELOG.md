@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.61.0] - 2026-09-14
+
+### pureinn workspace: the global-versus-initiative split gets its reason written down - the scaffold marked it everywhere (append per initiative, initiative-scoped, Track B outputs for this initiative) and explained it nowhere, and what it protects is that a second initiative can start without inheriting the first one's opinions; context holds what is true whatever you build, the registers are global so the second initiative inherits what the first learned, and an initiative folder holds the interpretation, which must not be inherited - the quiet failure being personas written for one initiative, promoted to context because they looked general, then silently framing every initiative after it
+
+---
+
+
 ## [5.60.0] - 2026-09-14
 
 ### pm-prototype: prototype features get states, and a prototype feature card has to be buildable - the folder spec said one sentence of intent each and thin cards, which is a recipe for a stub that cannot be built from and invites the question of what drove the build if the plan did not; a card now carries how the feature behaves, what inside it is simulated, what the production version costs and why it is in the prototype at all, and the plan carries built / next / cut with a required reason on a cut, because a cut is decided where a backlog item is only waiting

@@ -65,6 +65,22 @@ pureinn-workspace/[slug]/
 
 `team/`, `meetings/`, `prototypes/`, `stress-tests/` and `root-cause/` are cross-cutting operational folders - created on demand by `pm-onboarding` / `pm-meeting` / `pm-prototype` / `pm-stress-test` / `pm-root-cause`, not part of the phase artifact flow.
 
+### Why some artifacts are global and some sit under an initiative
+
+The split is marked everywhere above - `append per initiative`, `initiative-scoped`, `Track B outputs for this initiative` - and the reason is worth stating, because guessing it produces a workspace that looks right and behaves wrong. What it protects is this: **a second initiative must be able to start without inheriting the first one's opinions.**
+
+| Where | What belongs there | Why |
+|---|---|---|
+| `context/` | facts about the business that hold whatever you build - the audience, the economics, the stack, the constraints it operates under | true before the initiative existed and true after it is shut down |
+| `domain/`, `features/` | the live registers: entities, business rules, decision models, the feature list | **global on purpose, and appended to by every initiative.** Two registers become two truths inside a month |
+| `initiatives/[slug]/` | the same people and constraints seen **through what this initiative needs** - its JTBD, its personas, its regulatory view, its PRD, its prioritisation | an interpretation, not a fact. A different product would cut the same audience differently |
+
+So the initiative layer sits **on top of** the global one rather than beside it. `personas.md` under an initiative is not "the company's personas" - it is who matters when the question is the one that initiative is asking.
+
+**The part that is easy to get backwards:** `domain/` is global yet fed from below. It is global so the second initiative inherits what the first one learned; the interpretation stays local so the second one is not born holding the first one's conclusions.
+
+The failure this prevents is quiet: personas written for one initiative, promoted to `context/` because they looked general, and then silently framing every initiative after it.
+
 **Feature Implementation:**
 ```
 pureinn-workspace/[slug]/
