@@ -3190,9 +3190,19 @@
   }
   document.querySelector('[data-bare]').addEventListener('click', function () { bare(true); });
   document.querySelector('[data-bare-off]').addEventListener('click', function () { bare(false); });
+  /* Whether the keystroke belongs to a field rather than to the shell. The
+     note editor is a contenteditable div, not an input, so a tag-name test
+     missed it entirely and typing the letter h into a comment hid the chrome
+     instead. Any bare letter bound as a shortcut has to go through here. */
+  function typing() {
+    var el = document.activeElement;
+    if (!el) return false;
+    if (/^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName)) return true;
+    return !!el.closest('[contenteditable="true"], [contenteditable=""]');
+  }
+
   document.addEventListener('keydown', function (e) {
-    if ((e.key === 'h' || e.key === 'H') && !e.metaKey && !e.ctrlKey && !navOpen() &&
-        !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) {
+    if ((e.key === 'h' || e.key === 'H') && !e.metaKey && !e.ctrlKey && !navOpen() && !typing()) {
       bare(!document.body.classList.contains('is-bare'));
     }
   });

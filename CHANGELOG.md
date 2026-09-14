@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.56.0] - 2026-09-14
+
+### pm-prototype harness: typing the letter h into a note no longer hides the chrome - the guard tested for INPUT, TEXTAREA and SELECT, and the note editor is a contenteditable div, so every bare-letter shortcut fired straight through it; the check now covers contenteditable and any bare letter bound as a shortcut goes through it
+
+---
+
+
 ## [5.55.0] - 2026-09-14
 
 ### pm-prototype harness: the address pill is lighter again - the fill drops to a quarter and the blur carries the legibility, so what is under it reads through instead of being covered
