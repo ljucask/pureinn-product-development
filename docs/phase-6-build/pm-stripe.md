@@ -4,7 +4,7 @@
 
 **Phase:** 6-7 - JIT Delivery (session start point)  
 **Agent mode:** `never` - value is the live interactive session  
-**Version:** 3.8.0  
+**Version:** 3.9.0  
 **Triggers:** stripe, delivery stripe, JIT cycle, build feature, impact analysis, security review, test types, test type matrix, dependency scan, SCA, regression gate, delivery plan, build order, sequence, parallel, Phase 6, next feature, kanban, timeline, delivery visualization, rebuild plan, WIP limit, delivery_plan.html, interactive delivery plan, click-for-detail
 
 ---
@@ -100,16 +100,16 @@ pm-stripe presents a checklist for human review of Sections 1-3:
 - Edge cases covered
 
 **Section 2 - Acceptance Criteria:**
-- ACs are observable (Given/When/Then)
-- Happy path covered
-- Guard failures covered
+- ACs are observable (Given/When/Then, no checkbox lists)
+- Happy path + flag OFF covered
+- Edge Case Coverage table: all 6 categories resolved, no empty or TBD cell
 
 **Section 3 - JIT Technical Design:**
 - Sequence diagram present and logical
 - All actors/services match real codebase
 - Files to modify listed
 
-Approval transitions the feature to `3_Ready_to_Build`.
+Approval transitions the feature to `3_Ready_to_Build`. **The Edge Case Coverage table is a blocking gate:** a card with an incomplete table gets neither `3_Ready_to_Build` nor an owner, and a card with no table at all (designed before 5.62.0) is routed to `/pm-feature-design [FEAT-ID] --edge-cases`.
 
 ---
 
@@ -124,7 +124,7 @@ pm-stripe routes build skills (Step 1C, `3_Ready_to_Build → 4_In_Build`) and r
 | Build (1C) | `fullstack-guardian` | `test-master` (P1/Must-be → required, specialized by `test_types`), a contract-testing tool e.g. Pact (`test_types` includes `contract`), `impeccable-craft` (`layer: frontend`), `playwright-expert` (E2E path), `secure-code-guardian` (`security_review: build`/`both`) |
 | Review (1D) | `code-reviewer` | `impeccable-audit` (`layer: frontend`), `security-reviewer` (`security_review: review`/`both`) |
 
-**Build Skills Coverage check** (before `4_In_Build → 5_In_Review`): pm-stripe reconciles what the triggers required against what actually ran, and surfaces anything skipped-despite-trigger. It is a **visibility check, not a blocking gate** - a Solo Builder may knowingly skip, but the skip is on record rather than silent (which is how `test-master` used to get dropped unnoticed). Additions: (1) a **test-infra capability check** - a frontend feature needs component-test infra (`@testing-library/*` + jsdom/happy-dom); if it's missing, that surfaces as its own row (`component test infra: MISSING`), not silently folded into "test-master ran". (2) a **test-type coverage check** - each `test_types` entry beyond `unit` (integration/contract/visual_regression/performance) needs its own artifact (integration test, Pact contract, visual baseline, load-test script) or an explicit deferral; missing ones surface as their own row, same principle as the test-infra check. (3) Any **conscious skip or deferral is auto-logged** to the Open Questions Register (`/domain/open_questions.md`) as an `OQ-` entry - the decision survives past the session instead of being lost in the chat.
+**Build Skills Coverage check** (before `4_In_Build → 5_In_Review`): pm-stripe reconciles what the triggers required against what actually ran, and surfaces anything skipped-despite-trigger. It is a **visibility check, not a blocking gate** - a Solo Builder may knowingly skip, but the skip is on record rather than silent (which is how `test-master` used to get dropped unnoticed). Additions: (1) a **test-infra capability check** - a frontend feature needs component-test infra (`@testing-library/*` + jsdom/happy-dom); if it's missing, that surfaces as its own row (`component test infra: MISSING`), not silently folded into "test-master ran". (2) a **test-type coverage check** - each `test_types` entry beyond `unit` (integration/contract/visual_regression/performance) needs its own artifact (integration test, Pact contract, visual baseline, load-test script) or an explicit deferral; missing ones surface as their own row, same principle as the test-infra check. (3) an **edge case test check** - every AC-ID in the card's Edge Case Coverage table needs at least one test; a missing test is a visible skip like a skipped skill, and at ship the AC-ID → test file mapping is written into Section 4. (4) Any **conscious skip or deferral is auto-logged** to the Open Questions Register (`/domain/open_questions.md`) as an `OQ-` entry - the decision survives past the session instead of being lost in the chat.
 
 **Review fix policy:** a review skill (code-reviewer, security-reviewer, impeccable-audit) **may fix trivial, unambiguous findings inline** (a clear bug, a wrong constant, a missing touch-target) and note it in its summary; it **must report and wait** on anything larger - behavioral changes, anything touching a business rule / guard / security primitive, or anything affecting an interface other features depend on. When in doubt, report. This keeps the boundary a rule, not a per-run judgment.
 

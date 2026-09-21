@@ -6,7 +6,7 @@ metadata:
   agent-mode: never
   standalone: needs-inputs
   author: https://github.com/ljucask
-  version: "3.8.0"
+  version: "3.9.0"
   domain: product-management
   triggers: stripe, delivery stripe, JIT cycle, feature design, build feature, impact analysis, security review, test types, test type matrix, dependency scan, SCA, regression gate, delivery plan, build order, sequence, parallel, Phase 6, Phase 7, next feature, kanban, timeline, delivery visualization, rebuild plan, WIP limit, delivery_plan.html, interactive delivery plan, click-for-detail
   role: orchestrator
@@ -210,9 +210,9 @@ Review Feature Card /features/cards/FEAT-[ID].md:
     [ ] Edge cases covered
 
   Section 2 - Acceptance Criteria
-    [ ] ACs are observable (Given/When/Then format)
-    [ ] Happy path covered
-    [ ] Guard failures covered (what happens when AC fails)
+    [ ] ACs are observable (Given/When/Then format, no checkbox lists)
+    [ ] Happy path + flag OFF covered
+    [ ] Edge Case Coverage table: all 6 categories resolved (AC / N/A with feature-specific reason / OQ-ID), no empty or TBD cell
 
   Section 3 - JIT Technical Design
     [ ] Sequence diagram present and logical
@@ -230,6 +230,8 @@ Use AskUserQuestion tool with:
 - Option B: "Changes needed - I'll describe what to fix"
 - Option C: "Re-run pm-feature-design - significant rework needed"
 
+**Edge Case Coverage gate (blocking).** A card whose Edge Case Coverage table is missing, has an empty/TBD cell, or has fewer than the 6 canonical rows does not reach `3_Ready_to_Build` and does not get an owner - offer "Approved" only once the table is complete. A card with no table at all was designed before Pureinn 5.62.0: route to `/pm-feature-design [FEAT-ID] --edge-cases` instead of re-running the full design. This is one of the few intentional gates - an edge case discovered during build is the compounding waste JIT design exists to prevent.
+
 If approved: update Feature Card frontmatter `status: 3_Ready_to_Build`.
 
 ```
@@ -238,6 +240,7 @@ If approved: update Feature Card frontmatter `status: 3_Ready_to_Build`.
 Spec gate: PASSED
   Section 1 (Biznis Mantinely): ✓
   Section 2 (Acceptance Criteria): ✓
+  Edge Case Coverage (6/6 resolved): ✓
   Section 3 (JIT Technical Design): ✓
 
 → Next: start build (Step 1C)
@@ -278,7 +281,7 @@ Build instructions - read in this order:
 
 | Skill | Trigger (from frontmatter / criticality) |
 |---|---|
-| `/test-master FEAT-[ID]` | **Always for `priority: P1` or `kano: Must-be`.** P2 → happy path + guard tests. P3 pure CRUD may skip, but the coverage check (Step 1D) will flag it. Test-master is not "optional" - it is the default; skipping is the exception that must be visible. Read the Feature Card's `test_types` (set at JIT design - see Reference: Test Type Matrix below) to brief test-master on *which kinds* of tests to write, not just that it should run - a Feature Card carrying `test_types: [unit, contract]` needs more than a happy-path unit test. |
+| `/test-master FEAT-[ID]` | **Always for `priority: P1` or `kano: Must-be`.** P2 → happy path + every edge case AC in the Edge Case Coverage table. P3 pure CRUD may skip, but the coverage check (Step 1D) will flag it. Test-master is not "optional" - it is the default; skipping is the exception that must be visible. Read the Feature Card's `test_types` (set at JIT design - see Reference: Test Type Matrix below) to brief test-master on *which kinds* of tests to write, not just that it should run - a Feature Card carrying `test_types: [unit, contract]` needs more than a happy-path unit test. |
 | Contract-testing tool (e.g. Pact) | `test_types` includes `contract` - feature is consumed by an external client (mobile app, partner integration, public API). Not test-master's default remit; brief it explicitly if routed, or route a dedicated contract-testing tool. |
 | `/impeccable-craft FEAT-[ID]` | `layer` includes `frontend` (feature has a UI to craft) |
 | `/playwright-expert FEAT-[ID]` | Feature has a user-facing E2E path worth an automated flow (multi-step UI journey, not a single API call) |
@@ -303,6 +306,7 @@ A Solo Builder has the right to knowingly skip a skill - but the skip must be vi
 1. Compute what the triggers required for this feature (from `layer`, `kano`, `priority`, `security_review`).
 2. **Test-infra capability check (not just "did test-master run").** Routing test-master is not the same as the project being *able* to run the test type the feature needs. When `layer` includes `frontend`, the feature needs component tests (jsdom/happy-dom + a testing-library). Detect whether that infra exists: scan `package.json` for `@testing-library/*` and the test config for `jsdom`/`happy-dom`. If a frontend feature has no component-test infra, that is its own coverage row - `component test infra: missing` - NOT silently folded into "test-master ran" (test-master in a Node-only vitest setup writes logic tests and leaves the UI layer untested, or has to add a dependency on its own - a decision that must be explicit).
 2b. **Test-type coverage check (what test-master actually covered, not just that it ran).** Read the Feature Card's `test_types` (Reference: Test Type Matrix). For each type beyond `unit`, confirm the corresponding artifact exists or was explicitly deferred: `integration` → an integration test file, `contract` → a Pact contract (or equivalent), `visual_regression` → a baseline snapshot, `performance` → a load-test script (k6/Artillery). A missing one is its own coverage row - do not fold it into "test-master ran".
+2c. **Edge case test coverage.** Every AC-ID referenced in the Feature Card's Edge Case Coverage table has at least one test. Missing test = visible skip, same as a skipped skill - its own coverage row, handled by steps 5-6 below.
 3. Use the AskUserQuestion tool (multiSelect: true) - "Which build skills actually ran for FEAT-[ID]?" - list fullstack-guardian + every conditional skill whose trigger was met.
 4. Show the reconciliation:
 
@@ -312,6 +316,7 @@ Build Skills Coverage - FEAT-[ID]
   fullstack-guardian       [✓ / ✗]
   test-master              [✓ / ✗]   (P1 → required)
   test_types covered       [unit ✓ / integration ✓ / contract ✗]   (from Feature Card test_types)
+  edge case ACs tested     [N/N ✓ / missing: AC-05, AC-07]         (from Edge Case Coverage table)
   impeccable-craft         [✓ / ✗]   (layer: frontend)
   secure-code-guardian     [✓ / — ]  (security_review: build)
   component test infra     [present / MISSING]   (layer: frontend)
@@ -417,9 +422,10 @@ Please provide (or confirm already recorded):
   2. Test file paths (unit / integration / E2E)
   3. Feature flag OFF verification (if applicable)
   4. Code Inspection result and reviewer name/date
+  5. Edge case test mapping (AC-ID → test file) for every AC in the Edge Case Coverage table
 ```
 
-Fill Feature Card Section 4 (Realizacny Protokol) with the above.
+Fill Feature Card Section 4 (Realizacny Protokol) with the above - the edge case mapping as its own list (`AC-05 → tests/unit/OrderService_FEAT-ORD-001_spec.ts`).
 
 Update Feature Card frontmatter `status: 6_Shipped`.
 Update `features/feature_list.md` - Status column for this feature.
@@ -742,6 +748,9 @@ When multiple stripes run in parallel, register updates can cause merge conflict
 - [ ] Review skills' fix policy honored: trivial/unambiguous findings may be fixed inline (noted in summary); behavioral / rule-touching / interface-affecting changes reported and left to a human
 - [ ] security_review value honored: build → secure-code-guardian, review → security-reviewer, both → both, none → neither
 - [ ] Section 4 complete before 6_Shipped is set
+- [ ] Edge case ACs from coverage table mapped to tests in Section 4 before 6_Shipped
+- [ ] Edge Case Coverage gate enforced at Design Inspection: no `3_Ready_to_Build` / owner with an incomplete table; pre-5.62.0 card routed to `/pm-feature-design [FEAT-ID] --edge-cases`
+- [ ] Edge case test coverage row in Build Skills Coverage (every AC-ID in the table has a test; missing = visible skip)
 
 **Delivery Plan:**
 - [ ] Computed as one RCPSP pass (not per-stripe-first); cycle check before scheduling

@@ -6,7 +6,7 @@ metadata:
   agent-mode: synthesis
   standalone: needs-inputs
   author: https://github.com/ljucask
-  version: "2.3.0"
+  version: "2.3.1"
   domain: product-management
   triggers: reverse extract, existing product, feature inventory, migration path, feature implementation onboarding, sync Notion, dependencies, mutex tags
   role: specialist
@@ -317,6 +317,16 @@ flag_default: off
 ## 2. Acceptance Criteria
 *TBD - populated by /pm-feature-design [FEAT-ID]*
 
+### Edge Case Coverage
+| Category | Coverage |
+|---|---|
+| EC-INPUT | TBD |
+| EC-AUTH | TBD |
+| EC-STATE | TBD |
+| EC-CONC | TBD |
+| EC-EXT | TBD |
+| EC-CLIENT | TBD |
+
 ## Subtasks (helper notes)
 *Granular legacy features folded here as nuance helpers (see Reconciliation Report), or added during /pm-feature-design [FEAT-ID]*
 
@@ -411,6 +421,16 @@ content:
 
   ## 2. Acceptance Criteria
   *TBD - populated by /pm-feature-design [FEAT-ID]*
+
+  ### Edge Case Coverage
+  | Category | Coverage |
+  |---|---|
+  | EC-INPUT | TBD |
+  | EC-AUTH | TBD |
+  | EC-STATE | TBD |
+  | EC-CONC | TBD |
+  | EC-EXT | TBD |
+  | EC-CLIENT | TBD |
 
   ## Subtasks (helper notes)
   *Granular legacy features folded here as nuance helpers, or added during /pm-feature-design [FEAT-ID]*

@@ -6,7 +6,7 @@ metadata:
   agent-mode: decision
   standalone: needs-inputs
   author: https://github.com/ljucask
-  version: "2.4.0"
+  version: "2.4.1"
   domain: product-management
   triggers: features list, FDD format, feature list, KANO analysis, value complexity matrix, feature prioritization, Phase 5, feature hierarchy, dependencies, mutex tags
   role: specialist
@@ -540,6 +540,16 @@ flag_default: off
 ## 2. Acceptance Criteria
 *TBD - populated by /pm-feature-design [FEAT-ID]*
 
+### Edge Case Coverage
+| Category | Coverage |
+|---|---|
+| EC-INPUT | TBD |
+| EC-AUTH | TBD |
+| EC-STATE | TBD |
+| EC-CONC | TBD |
+| EC-EXT | TBD |
+| EC-CLIENT | TBD |
+
 ## Subtasks (helper notes)
 *TBD - nuance helpers added during /pm-feature-design [FEAT-ID] or by the team*
 
@@ -609,6 +619,16 @@ content:
 
   ## 2. Acceptance Criteria
   *TBD - populated by /pm-feature-design [FEAT-ID]*
+
+  ### Edge Case Coverage
+  | Category | Coverage |
+  |---|---|
+  | EC-INPUT | TBD |
+  | EC-AUTH | TBD |
+  | EC-STATE | TBD |
+  | EC-CONC | TBD |
+  | EC-EXT | TBD |
+  | EC-CLIENT | TBD |
 
   ## Subtasks (helper notes)
   *TBD - nuance helpers added during /pm-feature-design [FEAT-ID] or by the team*

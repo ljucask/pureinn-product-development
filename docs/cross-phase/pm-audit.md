@@ -4,7 +4,7 @@
 
 **Phase:** Cross-phase  
 **Agent mode:** `synthesis` - runs fully autonomously  
-**Version:** 1.4.0  
+**Version:** 1.5.0  
 **Triggers:** audit, health check, consistency check, workspace check, framework drift, version migration, fix inconsistencies, sanity check, naming check, anti-pattern, strategic consistency, cross-artifact check, re-check
 
 ---
@@ -52,6 +52,7 @@ Checks include:
 - Feature Set naming convention (FS-NN format)
 - Cross-reference resolution (does every BR-ID reference in a Feature Card resolve in `business_rules.md`?)
 - Framework version drift (artifacts missing fields introduced in newer Pureinn versions)
+- **Edge Case Coverage** - a card at `2_Spec_Done` or later without the table (pre-5.62.0) is reported and routed to `/pm-feature-design [FEAT-ID] --edge-cases`, active cards first; the audit never writes the missing ACs itself. For cards that have the table: exactly the 6 canonical rows, no empty/TBD cell from `3_Ready_to_Build` on, no `N/A` without a feature-specific reason, and every AC-ID / OQ-ID in it resolves (a dangling one is P0, same as a BR-ID)
 - **Open questions hygiene** - open items have exactly one home, `domain/open_questions.md` (Live Register 5). Flags an "Open Questions" section reappearing in PRD/Roadmap/Feature Cards/reconcile reports, duplicated open-item text, or an `OQ-`/`DIV-`/`BLK-` ID that doesn't resolve to a register entry.
 
 **Tier 2 - Substance (strategic - read-only):**

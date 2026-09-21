@@ -4,7 +4,7 @@
 
 **Phase:** 6 - JIT Delivery (and Phase 5 stub creation)  
 **Agent mode:** `synthesis` - runs fully autonomously  
-**Version:** 2.5.0  
+**Version:** 2.6.0  
 **Triggers:** feature card, FEAT-ID, feature spec, feature lifecycle, cards, test types, artifact language, localization
 
 ---
@@ -30,7 +30,7 @@ A Feature Card has four sections with defined ownership:
 |---|---|---|---|
 | Frontmatter | ID, title, status, stripe, KANO, V×C, feature flag, PRD ref | `pm-features-list` + `pm-mvp-scope` | Phase 5 |
 | Section 1 - Business Constraints | Entity IDs, BR-IDs, TBL-IDs, scope exclusions | `pm-feature-design` | JIT before build |
-| Section 2 - Acceptance Criteria | Given/When/Then ACs (happy path, guard failures, flag OFF) | `pm-feature-design` | JIT before build |
+| Section 2 - Acceptance Criteria | Given/When/Then ACs (happy path, flag OFF, edge case ACs tagged `[EC-XXX]`) + Edge Case Coverage table over 6 fixed categories | `pm-feature-design` | JIT before build |
 | Section 3 - JIT Technical Design | Sequence diagram + files to modify | `pm-feature-design` | JIT before build |
 | Section 4 - Build Record | Commits, test files, flag verification, code inspection result | Build team + `pm-stripe` | After build |
 
@@ -73,19 +73,20 @@ A Feature Card has four sections with defined ownership:
 - All frontmatter fields: `id`, `title`, `status`, `stripe`, `layer`, `phase`, `actor`, `priority`, `kano`, `vxc`, `feature_flag`, `flag_default`, `prd_ref`, `security_review` (stub default `none`), `test_types` (stub default `[unit]`), `mutex_tags` (empty at stub), `override` (false at stub)
 
 > **Delivery-plan fields:** `mutex_tags` (shared code the feature touches - drives contention in the pm-stripe delivery plan; set at JIT design or from code in rebuild) and `override` (break-glass P0). `plan_order`/`wave` are NOT stored on the card - they are derived write-back fields the delivery plan computes into `feature_list.md` + Notion.
-- Sections 1-4 present as stubs (placeholder text, not filled)
+- Sections 1-4 present as stubs (placeholder text, not filled); Section 2 carries the Edge Case Coverage table with 6 `TBD` rows
 - Description block (2-3 sentences: what the feature does, who uses it, value delivered)
 
 **After `pm-feature-design` (`2_Spec_Done`) must have:**
 - `security_review` set from the Step 1.5 security assessment (routes `secure-code-guardian` / `security-reviewer` in pm-stripe)
 - `test_types` set from the Step 1.5 test type assessment (specializes `test-master` routing in pm-stripe; `unit` is baseline, others added only when their trigger is met)
 - Section 1: entity state transitions + BR-IDs linked
-- Section 2: at minimum AC-01 (happy path), AC-02 (one guard failure), AC-03 (flag OFF)
+- Section 2: happy path + flag OFF ACs, Edge Case Coverage table with all 6 categories resolved (AC / N/A with a feature-specific reason / OQ-ID); a card at `2_Spec_Done` or later without the table predates 5.62.0 → `/pm-feature-design [FEAT-ID] --edge-cases`
 - Section 3: Mermaid sequence diagram (not empty) + files to modify listed
 
 **After build (`6_Shipped`) must have:**
 - Section 4: at least one commit link, at least one test file path
 - Section 4: feature flag OFF verification
+- Section 4: edge case test mapping (every AC in the coverage table → test file)
 - Section 4: Code Inspection result with date
 
 ---

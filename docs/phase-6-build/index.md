@@ -114,7 +114,7 @@ Reference: [pm-stripe](pm-stripe.md)
 
 | Skill | Trigger |
 |---|---|
-| `/test-master` | **Required** for `priority: P1` or `kano: Must-be`. P2 → happy path + guard tests. Skipping is the visible exception, not the default. |
+| `/test-master` | **Required** for `priority: P1` or `kano: Must-be`. P2 → happy path + every edge case AC from the card's Edge Case Coverage table. Skipping is the visible exception, not the default. |
 | `/impeccable-craft` | `layer` includes `frontend` |
 | `/playwright-expert` | feature has a multi-step user-facing E2E path |
 | `/secure-code-guardian` | `security_review` is `build`/`both` - a **new** security mechanism (see Security Review Trigger Criteria) |

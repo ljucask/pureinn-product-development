@@ -6,9 +6,9 @@ metadata:
   agent-mode: decision
   standalone: needs-inputs
   author: https://github.com/ljucask
-  version: "2.5.0"
+  version: "2.6.0"
   domain: product-management
-  triggers: feature design, JIT design, design by feature, sequence diagram, feature spec, security review, mutex tags, Phase 6
+  triggers: feature design, JIT design, design by feature, sequence diagram, feature spec, security review, mutex tags, edge cases, edge case coverage, edge case backfill, Phase 6
   role: specialist
   scope: specification
   output-format: document
@@ -54,7 +54,7 @@ Produces the Just-In-Time technical design for a single feature immediately befo
 3. Enriches `entities.md` - adds exact guard conditions to state transitions relevant to this feature
 4. Enriches `business_rules.md` and `decision_models.md` - finalizes rules this feature enforces (Draft → Final); adds brand-new rules surfaced in discovery via the single-rule helpers
 5. Populates Feature Card Section 1 (Biznis Mantinely) - links entities, BR-IDs, TBL-IDs
-6. Writes Feature Card Section 2 (Acceptance Criteria) - derived from register state + business rules
+6. Writes Feature Card Section 2 (Acceptance Criteria) - derived from register state + business rules, closed by an Edge Case Coverage table over 6 fixed categories
 7. Writes Feature Card Subtasks - lightweight nuance helpers captured in discovery
 8. Generates Mermaid.js sequence diagram + files to modify - writes to Feature Card Section 3
 9. Pushes description + Sections 1-3 + Subtasks to Notion; sets Feature Card status to `2_Spec_Done` (or `2b_In_Design` if it is a frontend feature whose Figma design still has to be produced - see Step 4d)
@@ -115,7 +115,7 @@ Read the Feature Card at `/features/cards/[FEAT-ID].md`.
 
 **Verdict:** [One sentence - ready to design or what is blocking]
 
-If Feature Card status is already `3_Ready_to_Build` or later: stop. Design is already approved. Do not overwrite.
+If Feature Card status is already `3_Ready_to_Build` or later: stop. Design is already approved. Do not overwrite. **Exception:** invoked with `--edge-cases` → skip the rest of this flow and run **Edge case backfill mode** (below), which has its own per-status rules.
 
 **Interaction:** Group related questions (2-4 per round) and confirm before moving on. For any A/B/C/D choice, use the AskUserQuestion tool with one option marked **(Recommended)** - never print options as plain text. Keep open-ended questions free-text (don't fake options). If the user is unsure, propose 3-4 concrete options plus "Other". Surface an assumption the moment you make one; never fabricate to fill a gap. (Full standard: CLAUDE.md.)
 
@@ -182,10 +182,12 @@ This is the core of JIT design. A Feature is a *detailed* view of functionality 
 
 ```
 Criticality = f(KANO, priority, touches money?, touches PII?, number of state transitions)
-  Low   (CRUD, P3, no money/PII)      → 2-3 targeted questions, move on
-  Medium (P2)                          → happy path + guard conditions + flag-OFF behavior
+  Low   (CRUD, P3, no money/PII)      → 2-3 targeted questions + one scenario per applicable edge case category
+  Medium (P2)                          → happy path + guard conditions + flag-OFF + one scenario per applicable edge case category
   High  (money / PII / P1 / critical)  → full interrogation across all axes below
 ```
+
+**Edge Case Coverage is mandatory at every criticality level.** Criticality decides depth (how many scenarios per category, how hard you probe), never whether a category is considered. Low/Medium still walk all 6 categories below - one scenario per applicable category is enough; High probes each category exhaustively.
 
 **Security dimension - set the `security_review` flag here.** The same signals that drive criticality also decide whether this feature needs a security specialist in build/review. **Think in security areas, not feature types:** the trigger is whether the feature **creates, crosses, or modifies** a vulnerability area, not whether it is a specific feature (an invite code is an *instance* of the Abuse/enumeration + Identity areas, not its own trigger). Assess it now (you have the most context during interrogation) and write the verdict to the Feature Card frontmatter in Step 4d. Set `security_review` above `none` when the feature touches at least one area:
 
@@ -216,6 +218,24 @@ Pre-auth / cross-tenant reachability escalates whatever area it touches - treat 
 
 E2E is decided separately (the `playwright-expert` trigger in `pm-stripe` - multi-step UI journey) and is not part of this field. Write the assessed list to the Feature Card frontmatter in Step 4d, e.g. `test_types: [unit, integration]` - `unit` is the baseline on virtually every feature; add the others only when their trigger condition is genuinely met, don't pad the list for thoroughness. State the verdict inline: `test_types: [...] - because [characteristic(s) matched]`.
 
+**Edge Case Taxonomy - the 6 fixed categories.** Every Feature Card must account for all six. Do not invent new category codes per feature; if something does not fit, it belongs to the closest category.
+
+| Code | Category | Probe for |
+|---|---|---|
+| `EC-INPUT` | Invalid input | missing/wrong fields, wrong types, boundary values, unknown or protected keys |
+| `EC-AUTH` | Authorization / ownership | unauthenticated, wrong role, acting on another user's record (IDOR) |
+| `EC-STATE` | Entity state | entity in the wrong state for the action, entity missing or deleted |
+| `EC-CONC` | Concurrency / idempotency | double submit, two actors racing on the same entity, retried request |
+| `EC-EXT` | Dependency failure | 3rd-party/provider down or slow, DB failure, timeout, failure of another internal feature this one calls |
+| `EC-CLIENT` | Client states | offline, OS permission denied, empty state, flow interrupted mid-way (only when `layer` includes frontend; otherwise N/A) |
+
+Feature flag OFF is NOT an edge case category - it stays its own mandatory AC. Security depth stays with `security_review` and load behavior with `test_types` - neither is a seventh category.
+
+For each category, the outcome is exactly one of:
+- covered by one or more ACs (`AC-NN`)
+- `N/A - <one-line reason>` - the reason must be specific to this feature ("backend-only feature", "read-only, no shared mutable state"), never "not relevant"
+- `OQ-[DOMAIN]-NN` - the correct behavior is undecided; log it in `domain/open_questions.md` (Type: Question) instead of inventing behavior
+
 **Axes to probe** (use the grouped question pattern from CLAUDE.md - batch 2-4 related questions per AskUserQuestion round, confirm, continue):
 
 | Axis | What to actively probe | Feeds |
@@ -223,7 +243,7 @@ E2E is decided separately (the `playwright-expert` trigger in `pm-stripe` - mult
 | Happy path | Propose the step-by-step flow yourself; the user corrects | → sequence diagram (§3) |
 | State transitions | Which entity states does this touch (from `entities.md`)? What triggers each? | → guard conditions |
 | Guard conditions | Under what conditions is each action allowed / blocked? | → BR-IDs or new rules |
-| Edge cases | Systematically: invalid input? concurrency? external-service failure? entity in an unexpected state? | → ACs (§2) + subtasks |
+| Edge cases | Walk all 6 categories of the Edge Case Taxonomy (EC-INPUT, EC-AUTH, EC-STATE, EC-CONC, EC-EXT, EC-CLIENT) - propose the concrete scenario yourself, the user confirms or corrects | → ACs (§2) + Edge Case Coverage table |
 | Hidden concerns | Permissions, idempotency, notifications, audit, data retention - the things the user "has no clue about" | → rules / subtasks |
 | Rule gaps | At every decision point: "is there a rule governing this? what is the value?" | → register enrichment |
 
@@ -240,7 +260,7 @@ E2E is decided separately (the `playwright-expert` trigger in `pm-stripe` - mult
 | Testable condition for this feature | **Acceptance Criterion** (§2) |
 | Lightweight nuance / dev helper | **Subtask** (§Subtasks) - not a rule, not an AC |
 
-Produce a short interrogation summary (new rules to add, ACs identified, subtasks captured, open assumptions, **and the `security_review` verdict with its reason**) before moving to register updates.
+Produce a short interrogation summary (new rules to add, ACs identified, subtasks captured, open assumptions, **the resolution of each of the 6 edge case categories**, **and the `security_review` verdict with its reason**) before moving to register updates.
 
 ---
 
@@ -339,7 +359,7 @@ Populate using table format for rules and entity transitions. Tables are scannab
 
 Derived from: entity state transitions (entities.md) + business rules (business_rules.md) + decision table edge cases (decision_models.md).
 
-Minimum: happy path AC + at least one guard failure AC + feature flag OFF behavior.
+Minimum: happy path AC + feature flag OFF AC + an Edge Case Coverage table where each of the 6 categories is resolved (AC / N/A with reason / OQ). Every AC uses Given/When/Then - no checkbox lists. Edge case ACs carry their category code in the title.
 
 ```markdown
 ## 2. Acceptance Criteria
@@ -350,7 +370,7 @@ Minimum: happy path AC + at least one guard failure AC + feature flag OFF behavi
 - **Then** [observable outcome: entity state change, event emitted, user feedback]
   - **And** [secondary outcome]
 
-### AC-02: [Guard Failure Name] (enforces [BR-ID])
+### AC-02: [EC-XXX] [Edge Case Name] (enforces [BR-ID] if applicable)
 - **Given** [precondition]
 - **When** [invalid or failing condition]
 - **Then** [system blocks, entity state unchanged, error signal]
@@ -360,9 +380,21 @@ Minimum: happy path AC + at least one guard failure AC + feature flag OFF behavi
 - **When** [same trigger as AC-01]
 - **Then** [existing behavior unchanged / feature hidden / graceful degradation]
 
-### AC-0N: [Edge Case from TBL-ID]
+### AC-0N: [EC-XXX] [Edge Case Name] (from [TBL-ID] if derived from a decision table)
 [Cover key rows from the decision table]
+
+### Edge Case Coverage
+| Category | Coverage |
+|---|---|
+| EC-INPUT | AC-NN |
+| EC-AUTH | AC-NN |
+| EC-STATE | AC-NN |
+| EC-CONC | AC-NN / N/A - reason / OQ-[DOMAIN]-NN |
+| EC-EXT | AC-NN / N/A - reason / OQ-[DOMAIN]-NN |
+| EC-CLIENT | AC-NN / N/A - reason |
 ```
+
+The table is an index, not a description - never restate the scenario in it. Multiple ACs per cell are fine (AC-03, AC-05). No empty cells.
 
 **4b-Subtasks. Subtasks (helper notes)**
 
@@ -486,7 +518,8 @@ Design complete for [FEAT-ID]: [title]
 Summary:
 - Register updates: [entities.md] guard condition for [transition], [N] rules finalized
 - Sequence diagram: [N] actors, [N] steps, [N] alt paths
-- Acceptance Criteria: [N] ACs covering happy path + [N] failure cases + flag OFF
+- Acceptance Criteria: [N] ACs covering happy path + [N] edge cases + flag OFF
+- Edge Case Coverage: [6/6 resolved] - [N] by AC, [N] N/A, [N] OQ
 
 Review the sequence diagram in Section 3 of the Feature Card.
 ```
@@ -509,11 +542,38 @@ Design Inspection checklist:
   [ ] Guard conditions in entities.md are accurate
   [ ] Business rules (BR-IDs) correctly referenced
   [ ] All ACs are testable without knowledge of internals
+  [ ] Edge Case Coverage table present, all 6 categories resolved, no empty cell
+  [ ] Every N/A has a feature-specific reason; every OQ-ID exists in open_questions.md
+  [ ] Every AC-ID in the table exists in Section 2 and carries the matching [EC-XXX] tag
+  [ ] Every BR-ID in Section 1 is enforced by at least one AC marked (enforces BR-ID)
   [ ] Edge cases from decision table are covered
 
 After inspection: update Feature Card status to 3_Ready_to_Build
 Then run /pm-stripe to proceed to build.
 ```
+
+---
+
+## Edge case backfill mode (`--edge-cases`)
+
+For Feature Cards designed before Pureinn 5.62.0, which have no Edge Case Coverage table. Run as `/pm-feature-design [FEAT-ID] --edge-cases`. `pm-audit` and `pm-stripe` route here - neither may write edge case ACs itself, because an AC is a behavioral commitment, not a mechanical fix.
+
+**Scope.** Runs only the edge case part of Step 1.5. Reads the existing ACs, the registers and - in Feature Implementation mode - the code the card's Section 3 names, then fills the table, adds the missing ACs and converts checkbox-list ACs to Given/When/Then. Existing ACs keep their numbers; new ACs take the next free number.
+- Section 1 changes only when a new edge case needs a new guard or BR - then the normal Step 3 register update and Commit 1 apply.
+- Section 3 changes only when a new guard adds an alt branch to the sequence diagram.
+- An undecided behavior becomes an `OQ-[DOMAIN]-NN` in the table, never an invented AC.
+
+**Behavior by card status:**
+
+| Status | Action |
+|---|---|
+| `1_Backlog` stub | Nothing - the table is produced by the normal design run |
+| `2_Spec_Done` / `2b_In_Design` / `3_Ready_to_Build` | Full backfill + conversion to Given/When/Then. Status does not change. New ACs go through a short Design Inspection that reviews only the new ACs |
+| `4_In_Build` | Full backfill. Tell the owner the new ACs are a scope extension of the running build |
+| `5_In_Review` | Fill the table. Gaps become ACs marked `(follow-up)` in the title, verified inside the running review |
+| `6_Shipped` | The card is immutable history: only append the table under `### Edge Case Coverage (retro, [date])`. Do not add or change ACs. Every gap goes to `domain/open_questions.md` as a Question stating its impact, and the table cell carries that `OQ-ID` |
+
+Commit: `spec([FEAT-ID]): edge case coverage backfill`
 
 ---
 
@@ -546,8 +606,12 @@ Then run /pm-stripe to proceed to build.
 - [ ] Decision model linked (if applicable)
 
 **Feature Card Section 2:**
-- [ ] At minimum: happy path + one guard failure + flag OFF
-- [ ] Each AC uses Given/When/Then format
+- [ ] Happy path + flag OFF ACs present
+- [ ] All 6 edge case categories walked in Step 1.5 regardless of criticality
+- [ ] Edge Case Coverage table complete (AC / N/A with reason / OQ), no empty cell
+- [ ] Each edge case AC has an [EC-XXX] tag and a test level in test_types scope
+- [ ] Every BR-ID in Section 1 is enforced by at least one AC marked `(enforces BR-ID)` - an N/A category never leaves a rule untested
+- [ ] Each AC uses Given/When/Then format (no checkbox lists)
 - [ ] "Then" is observable without knowledge of internals
 - [ ] Edge cases from decision table covered as ACs
 

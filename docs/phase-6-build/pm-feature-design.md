@@ -4,8 +4,8 @@
 
 **Phase:** 6 - JIT Delivery  
 **Agent mode:** `decision` - drafts, then requires your review before finalizing  
-**Version:** 2.5.0  
-**Triggers:** feature design, JIT design, design by feature, sequence diagram, feature spec, security review, test types, mutex tags, Phase 6
+**Version:** 2.6.0  
+**Triggers:** feature design, JIT design, design by feature, sequence diagram, feature spec, security review, test types, mutex tags, edge cases, edge case coverage, edge case backfill, Phase 6
 
 ---
 
@@ -71,11 +71,11 @@ A genuine judgment call, legacy-vs-code divergence, or concrete build blocker su
 
 1. **Detects mode from `state.json`** - reads `playbook` (Greenfield vs Feature Implementation) and `team_structure`, set once at Phase 1 setup, and states the detected mode rather than re-asking. Only falls back to a question if a value is genuinely missing (e.g. a hand-created workspace).
 2. **Reads the Feature Card** (stub at entry - frontmatter + empty sections)
-3. **Discovery Interrogation** - actively surfaces unknowns and ambiguities; calibrated to feature criticality; sorts findings into: new rules / new guard conditions / new ACs / subtasks. Also assesses the **security dimension** and sets the `security_review` frontmatter flag (`none`/`build`/`review`/`both`) by asking which **security area** the feature touches - 8 domain-neutral vulnerability areas (access control & tenant isolation, authentication & identity, cryptography & secrets, sensitive/regulated data, input & injection, external/server-side integration, abuse & enumeration, financial integrity), not a list of feature types. This is where pm-stripe later reads whether to route `secure-code-guardian` / `security-reviewer`. `build` only when the feature **creates a new** mechanism in an area; merely reusing an existing Final security pattern does not warrant it. Also assesses the **test type dimension** and sets `test_types` (`unit`/`integration`/`contract`/`visual_regression`/`performance`) from the feature's characteristics (baseline `unit`, plus e.g. `contract` if consumed by an external client) - specializes `test-master` routing in `pm-stripe` instead of leaving it a black box.
+3. **Discovery Interrogation** - actively surfaces unknowns and ambiguities; calibrated to feature criticality; sorts findings into: new rules / new guard conditions / new ACs / subtasks. Criticality sets only the **depth** of probing - every feature, P3 CRUD included, walks all 6 **edge case categories** (`EC-INPUT` invalid input, `EC-AUTH` authorization/ownership, `EC-STATE` entity state, `EC-CONC` concurrency/idempotency, `EC-EXT` dependency failure, `EC-CLIENT` client states for frontend features). Each category ends as an AC, `N/A` with a feature-specific reason, or an `OQ-` entry when the right behavior is undecided. Also assesses the **security dimension** and sets the `security_review` frontmatter flag (`none`/`build`/`review`/`both`) by asking which **security area** the feature touches - 8 domain-neutral vulnerability areas (access control & tenant isolation, authentication & identity, cryptography & secrets, sensitive/regulated data, input & injection, external/server-side integration, abuse & enumeration, financial integrity), not a list of feature types. This is where pm-stripe later reads whether to route `secure-code-guardian` / `security-reviewer`. `build` only when the feature **creates a new** mechanism in an area; merely reusing an existing Final security pattern does not warrant it. Also assesses the **test type dimension** and sets `test_types` (`unit`/`integration`/`contract`/`visual_regression`/`performance`) from the feature's characteristics (baseline `unit`, plus e.g. `contract` if consumed by an external client) - specializes `test-master` routing in `pm-stripe` instead of leaving it a black box.
 4. **Enriches `entities.md`** - adds exact guard conditions to state transitions relevant to this feature
 5. **Enriches `business_rules.md` and `decision_models.md`** - finalizes rules this feature enforces (Draft → Final); adds brand-new rules via the single-rule helpers (`pm-business-rule-core/critical/governance`)
 6. **Populates Section 1** (Business Constraints) - links entity IDs, BR-IDs, TBL-IDs; defines explicit scope exclusions
-7. **Writes Section 2** (Acceptance Criteria) - minimum: AC-01 happy path, AC-02 guard failure, AC-03 feature flag OFF
+7. **Writes Section 2** (Acceptance Criteria) - all in Given/When/Then: happy path, feature flag OFF, edge case ACs tagged `[EC-XXX]` in the title, closed by an **Edge Case Coverage** table that resolves all 6 categories. The table is an index (AC-IDs / N/A reason / OQ-ID), never a restatement of the scenario
 8. **Writes Subtasks** - nuance/spec details for the developer (these are helpers, not sub-features)
    - Also sets **`mutex_tags`** in frontmatter from Section 3's "Files to modify" - the shared modules/classes this feature touches. The delivery plan (pm-stripe) uses these to stop two features editing the same code in parallel (critical with AI agents on separate branches). This is the moment the contention footprint is known.
 9. **Generates Section 3** - Mermaid.js sequence diagram with real classes/methods from existing codebase; lists files to modify
@@ -105,7 +105,23 @@ Commit 2: "spec([FEAT-ID]): feature design complete"
 - **Spec gate is hard.** Sections 1-3 must be complete before any feature enters build. No exceptions.
 - **Register updates before code.** Commit 1 (registers) always precedes Commit 2 (Feature Card). This prevents merge conflicts when multiple Stripes run in parallel.
 - **No invented interfaces.** In existing codebase mode, the sequence diagram uses only real classes/methods. Never fabricate a service or method that doesn't exist.
-- **Flag OFF AC is mandatory.** Every feature must have AC-03 verifying the feature flag OFF behavior.
+- **Flag OFF AC is mandatory.** Every feature must have AC-03 verifying the feature flag OFF behavior. Flag OFF is not an edge case category - it stays its own AC.
+- **All 6 edge case categories, at every priority.** Priority changes how many scenarios per category, never whether a category is considered. A missing category cannot be told apart from a deliberately excluded one - that is why each needs an explicit resolution.
+- **Every rule is tested.** Each BR-ID in Section 1 is enforced by at least one AC marked `(enforces BR-ID)`, whatever the coverage table says.
+
+---
+
+## Edge case backfill (`--edge-cases`)
+
+`/pm-feature-design [FEAT-ID] --edge-cases` retrofits the Edge Case Coverage table onto a card designed before Pureinn 5.62.0. It runs only the edge case part of the Discovery Interrogation, and `pm-audit` and `pm-stripe` route to it. Section 1 and Section 3 change only when a new edge case needs a new guard or rule (and so a new diagram branch).
+
+| Card status | What backfill does |
+|---|---|
+| `1_Backlog` | Nothing - the normal design run produces the table |
+| `2_Spec_Done` / `2b_In_Design` / `3_Ready_to_Build` | Full backfill + Given/When/Then conversion; status unchanged; new ACs get a short Design Inspection |
+| `4_In_Build` | Full backfill; new ACs flagged to the owner as a scope extension |
+| `5_In_Review` | Table filled; gaps become ACs marked `(follow-up)`, verified in the running review |
+| `6_Shipped` | Card stays immutable: only a `### Edge Case Coverage (retro, [date])` table is appended; each gap goes to `open_questions.md` |
 
 ---
 

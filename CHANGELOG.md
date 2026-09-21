@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.62.0] - 2026-09-21
+
+### Edge Case Coverage in Feature Cards - every card now resolves six fixed edge case categories (input, authorization, entity state, concurrency, dependency failure, client states) in a coverage table at the end of Section 2, at every priority, because the old P2 minimum of happy path + guard + flag OFF let most cards stop there and a missing category could not be told apart from one deliberately excluded; pm-stripe blocks Ready to Build on an incomplete table and checks every edge case AC has a test, pm-audit reports pre-5.62.0 cards and routes them to the new /pm-feature-design --edge-cases backfill instead of inventing ACs itself
+
+---
+
+
 ## [5.61.0] - 2026-09-14
 
 ### pureinn workspace: the global-versus-initiative split gets its reason written down - the scaffold marked it everywhere (append per initiative, initiative-scoped, Track B outputs for this initiative) and explained it nowhere, and what it protects is that a second initiative can start without inheriting the first one's opinions; context holds what is true whatever you build, the registers are global so the second initiative inherits what the first learned, and an initiative folder holds the interpretation, which must not be inherited - the quiet failure being personas written for one initiative, promoted to context because they looked general, then silently framing every initiative after it

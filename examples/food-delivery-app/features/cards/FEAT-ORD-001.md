@@ -64,7 +64,7 @@ Lets a Boise customer discover an Active restaurant, build a cart from its avail
 - **Then** the Order transitions Cart → Placed, the Payment transitions to Authorized, and the restaurant is notified of a new order
   - **And** the customer sees an order confirmation with estimated prep time
 
-### AC-02: Guard failure - Restaurant not Active
+### AC-02: [EC-STATE] Restaurant not Active (enforces BR-ORD-001)
 - **Given** a Restaurant with `status != Active` (Pending, Paused, or Deactivated)
 - **When** a customer attempts to submit checkout against that restaurant
 - **Then** the system blocks order creation server-side (BR-ORD-001), the Order is never created, and the customer sees "This restaurant is currently unavailable"
@@ -74,16 +74,46 @@ Lets a Boise customer discover an Active restaurant, build a cart from its avail
 - **When** a customer attempts to check out
 - **Then** the checkout button is hidden entirely (browse-only mode) - since this is the MVP entry point, there is no prior "existing behavior" to fall back to
 
-### AC-04: Guard failure - MenuItem became unavailable mid-session
+### AC-04: [EC-STATE] MenuItem became unavailable mid-session (enforces BR-ORD-002)
 - **Given** a MenuItem in the customer's cart was marked unavailable by the restaurant after it was added but before checkout submit
 - **When** the customer submits checkout
 - **Then** the system blocks the transition (BR-ORD-002), returns an itemized error identifying the affected item(s), and the Order is not created
   - **And** the cart is adjusted to remove the unavailable item(s) so the customer can retry immediately
 
-### AC-05: Guard failure - payment authorization declined
+### AC-05: [EC-INPUT] Payment method declined at authorization (enforces BR-PAY-001)
 - **Given** a customer's payment method is declined by the processor at authorization time
 - **When** checkout is submitted
 - **Then** the Order remains uncommitted (no Cart → Placed transition), no state change occurs, and the customer is shown a retry-payment-method prompt
+
+### AC-06: [EC-CONC] Checkout submitted twice
+- **Given** a valid cart and the customer's first checkout request still in flight
+- **When** the same checkout is submitted again (double tap, or the client retries the request)
+- **Then** exactly one Order reaches Placed and exactly one Payment authorization exists - the second request returns the first request's result via the checkout idempotency key
+
+### AC-07: [EC-EXT] Payment processor unavailable or timing out
+- **Given** a valid cart and the payment processor not responding within the authorization timeout
+- **When** the customer submits checkout
+- **Then** the Order is not placed, no authorization is left open (any late authorization is voided), and the customer sees "Payment is temporarily unavailable - your cart is saved"
+
+### AC-08: [EC-AUTH] Checkout without a signed-in customer
+- **Given** a guest with a filled cart and no authenticated session
+- **When** the guest submits checkout
+- **Then** the system rejects the request server-side, no Order or Payment is created, and the guest is sent to sign-in with the cart preserved
+
+### AC-09: [EC-CLIENT] Connection lost during submit
+- **Given** the customer has submitted checkout on a mobile connection
+- **When** the connection drops before the response arrives
+- **Then** the app shows "Checking your order" instead of an error, re-queries the order by idempotency key when back online, and shows either the confirmation or the cart - never a second submit button that could place a duplicate
+
+### Edge Case Coverage
+| Category | Coverage |
+|---|---|
+| EC-INPUT | AC-05 |
+| EC-AUTH | AC-08 |
+| EC-STATE | AC-02, AC-04 |
+| EC-CONC | AC-06 |
+| EC-EXT | AC-07 |
+| EC-CLIENT | AC-09 |
 
 ---
 
@@ -92,6 +122,7 @@ Lets a Boise customer discover an Active restaurant, build a cart from its avail
 - [x] Show itemized error identifying which cart item(s) became unavailable mid-session (AC-04)
 - [x] Debounce/re-check restaurant-active status at submit time to close the race window if a restaurant pauses mid-checkout
 - [x] Display estimated prep time on the order confirmation screen (pulled from restaurant's average prep time, not a hard SLA)
+- [x] Send a client-generated idempotency key with every checkout request and reuse it on retry (AC-06, AC-09)
 - [x] Reuse the existing Stripe tokenization flow already built for restaurant payout onboarding - no new PCI scope introduced
 
 ---
@@ -148,6 +179,15 @@ sequenceDiagram
   - `tests/unit/OrderService_FEAT-ORD-001_spec.ts`
   - `tests/unit/PaymentService_FEAT-ORD-001_spec.ts`
   - `tests/e2e/checkout_flow_FEAT-ORD-001.spec.ts`
+
+- **Edge case test mapping:**
+  - `AC-02 → tests/unit/OrderService_FEAT-ORD-001_spec.ts`
+  - `AC-04 → tests/unit/OrderService_FEAT-ORD-001_spec.ts`
+  - `AC-05 → tests/unit/PaymentService_FEAT-ORD-001_spec.ts`
+  - `AC-06 → tests/unit/OrderService_FEAT-ORD-001_spec.ts`
+  - `AC-07 → tests/unit/PaymentService_FEAT-ORD-001_spec.ts`
+  - `AC-08 → tests/unit/OrderService_FEAT-ORD-001_spec.ts`
+  - `AC-09 → tests/e2e/checkout_flow_FEAT-ORD-001.spec.ts`
 
 - **Feature flag OFF verification:** yes - confirmed checkout entry point is hidden and no draft Order/Payment records are created when `ordering.checkout` is OFF
 

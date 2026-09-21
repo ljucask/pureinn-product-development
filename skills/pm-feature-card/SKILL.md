@@ -6,7 +6,7 @@ metadata:
   agent-mode: synthesis
   standalone: needs-inputs
   author: https://github.com/ljucask
-  version: "2.5.0"
+  version: "2.6.0"
   domain: product-management
   triggers: feature card, FEAT-ID, feature spec, feature lifecycle, cards, in design, figma state, security review, test types, mutex tags, delivery plan, artifact language, localization
   role: specialist
@@ -101,6 +101,7 @@ Check for existing Feature Card at `/features/cards/[FEAT-ID].md`.
 | Feature Card | [status from frontmatter] | [title] |
 | Section 1 (Biznis Mantinely) | [populated / stub] | |
 | Section 2 (Acceptance Criteria) | [populated / stub] | |
+| Edge Case Coverage | [complete / partial / stub] | [missing table on a card at 2_Spec_Done or later = pre-5.62.0 card → `/pm-feature-design [FEAT-ID] --edge-cases`] |
 | Section 3 (JIT Technical Design) | [populated / stub] | |
 | Section 4 (Realizacny Protokol) | [populated / pending] | |
 
@@ -211,7 +212,7 @@ flag_default: off
 - **Then** [observable outcome: state change, event emitted, user signal]
   - **And** [secondary outcome]
 
-### AC-02: [Guard Failure Name]
+### AC-02: [EC-XXX] [Edge Case Name] (enforces [BR-ID] if applicable)
 - **Given** [precondition]
 - **When** [invalid condition]
 - **Then** [system blocks, entity unchanged, error signal]
@@ -220,6 +221,18 @@ flag_default: off
 - **Given** flag `[feature_flag]` is OFF
 - **When** [same trigger as AC-01]
 - **Then** [existing behavior unchanged / feature hidden]
+
+### Edge Case Coverage
+*Resolved by pm-feature-design Step 1.5 - each cell becomes AC-NN, `N/A - <feature-specific reason>`, or `OQ-[DOMAIN]-NN`. An index, not a description. No empty or TBD cell from 3_Ready_to_Build on.*
+
+| Category | Coverage |
+|---|---|
+| EC-INPUT | TBD |
+| EC-AUTH | TBD |
+| EC-STATE | TBD |
+| EC-CONC | TBD |
+| EC-EXT | TBD |
+| EC-CLIENT | TBD |
 
 ---
 
@@ -262,6 +275,9 @@ sequenceDiagram
 
 - **Feature flag OFF verification:** [yes / no]
 
+- **Edge case test mapping:** (every AC in the Edge Case Coverage table)
+  - `AC-NN → [test file path]`
+
 - **Code Inspection:** [Approved by [reviewer] on YYYY-MM-DD / AI guardrail passed on YYYY-MM-DD]
 ```
 
@@ -293,18 +309,19 @@ If Feature Backlog URL is blank in pureinn-variables.md: save locally, remind us
 
 **Stub (1_Backlog) must have:**
 - [ ] All frontmatter fields populated (id, title, status, stripe, owner, priority, prd_ref, feature_flag, flag_default; `security_review: none` placeholder; `test_types: [unit]` placeholder)
-- [ ] Sections 1-4 present as stubs (not filled)
+- [ ] Sections 1-4 present as stubs (not filled); Section 2 carries the Edge Case Coverage table with 6 TBD rows
 
 **After pm-feature-design (2_Spec_Done) must have:**
 - [ ] `security_review` set from the Step 1.5 assessment (no longer the `none` stub default unless genuinely no trigger met)
 - [ ] `test_types` set from the Step 1.5 assessment (beyond the `[unit]` stub default where a trigger was met)
 - [ ] Section 1: entity, state before/after, BR-IDs linked
-- [ ] Section 2: at minimum AC-01 (happy path), AC-02 (one guard failure), AC-03 (flag OFF)
+- [ ] Section 2: happy path AC + flag OFF AC, all in Given/When/Then; Edge Case Coverage table with all 6 categories resolved (AC-NN / N/A with feature-specific reason / OQ-ID), edge case ACs tagged `[EC-XXX]`
 - [ ] Section 3: mermaid sequenceDiagram (not empty), files to modify listed
 
 **After build (6_Shipped) must have:**
 - [ ] Section 4: at least one commit link, at least one test file path
 - [ ] Section 4: flag OFF verification stated
+- [ ] Section 4: every edge case AC from the coverage table mapped to a test file
 - [ ] Section 4: Code Inspection result with date
 - [ ] Status: 6_Shipped
 
