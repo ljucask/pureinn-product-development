@@ -6,7 +6,7 @@ metadata:
   agent-mode: never
   standalone: needs-inputs
   author: https://github.com/ljucask
-  version: "3.9.0"
+  version: "3.10.0"
   domain: product-management
   triggers: stripe, delivery stripe, JIT cycle, feature design, build feature, impact analysis, security review, test types, test type matrix, dependency scan, SCA, regression gate, delivery plan, build order, sequence, parallel, Phase 6, Phase 7, next feature, kanban, timeline, delivery visualization, rebuild plan, WIP limit, delivery_plan.html, interactive delivery plan, click-for-detail
   role: orchestrator
@@ -222,7 +222,13 @@ Review Feature Card /features/cards/FEAT-[ID].md:
   UX/UI context (if UI feature)
     [ ] Placement in app described
     [ ] Design system reference present or Figma link provided
+
+  Open register items (from /domain/open_questions.md - read-only)
+    [ID]  [heading]  [Type]  [Priority]   - or "none"
+    [ ] No open BLK- for this feature
 ```
+
+**Open-items lookup (mandatory).** Read the `## Open` section of `domain/open_questions.md` and list every entry that names this FEAT-ID (Impact, Target or Context) or whose ID appears in the card. Show ID + heading + Type + Priority only - the register stays the single home, nothing is copied into the card. An open `BLK-` blocks approval; open `OQ-` / `DIV-` entries are shown so the reviewer approves knowingly, but do not block. No register → one line saying so.
 
 Use AskUserQuestion tool with:
 - Question: "Design Inspection result for FEAT-[ID]?"
@@ -230,7 +236,7 @@ Use AskUserQuestion tool with:
 - Option B: "Changes needed - I'll describe what to fix"
 - Option C: "Re-run pm-feature-design - significant rework needed"
 
-**Edge Case Coverage gate (blocking).** A card whose Edge Case Coverage table is missing, has an empty/TBD cell, or has fewer than the 6 canonical rows does not reach `3_Ready_to_Build` and does not get an owner - offer "Approved" only once the table is complete. A card with no table at all was designed before Pureinn 5.62.0: route to `/pm-feature-design [FEAT-ID] --edge-cases` instead of re-running the full design. This is one of the few intentional gates - an edge case discovered during build is the compounding waste JIT design exists to prevent.
+**Edge Case Coverage gate (blocking).** A card whose Edge Case Coverage table is missing, has an empty/TBD cell, or has fewer than the 6 canonical rows does not reach `3_Ready_to_Build` and does not get an owner - offer "Approved" only once the table is complete. A card with no table at all was designed before Pureinn 5.62.0: route to `/pm-feature-design [FEAT-ID] --edge-cases` instead of re-running the full design. The same gate holds for an open `BLK-` naming this feature: resolve it in the register (`/pm-open-questions`) first. This is one of the few intentional gates - an edge case discovered during build is the compounding waste JIT design exists to prevent.
 
 If approved: update Feature Card frontmatter `status: 3_Ready_to_Build`.
 
@@ -241,6 +247,7 @@ Spec gate: PASSED
   Section 1 (Biznis Mantinely): ✓
   Section 2 (Acceptance Criteria): ✓
   Edge Case Coverage (6/6 resolved): ✓
+  Open blockers (BLK-): none ✓   Open OQ/DIV: [N - IDs, or none]
   Section 3 (JIT Technical Design): ✓
 
 → Next: start build (Step 1C)
@@ -750,6 +757,7 @@ When multiple stripes run in parallel, register updates can cause merge conflict
 - [ ] Section 4 complete before 6_Shipped is set
 - [ ] Edge case ACs from coverage table mapped to tests in Section 4 before 6_Shipped
 - [ ] Edge Case Coverage gate enforced at Design Inspection: no `3_Ready_to_Build` / owner with an incomplete table; pre-5.62.0 card routed to `/pm-feature-design [FEAT-ID] --edge-cases`
+- [ ] Open-items lookup shown at Design Inspection (ID/heading/Type/Priority from the register, nothing copied into the card); open `BLK-` for the feature blocks `3_Ready_to_Build`
 - [ ] Edge case test coverage row in Build Skills Coverage (every AC-ID in the table has a test; missing = visible skip)
 
 **Delivery Plan:**

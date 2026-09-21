@@ -6,7 +6,7 @@ metadata:
   agent-mode: decision
   standalone: yes
   author: https://github.com/ljucask
-  version: "1.0.1"
+  version: "1.1.0"
   domain: product-management
   triggers: open questions, open question register, decisions log, unresolved question, blocker, divergence, OQ-ID, DIV-ID, BLK-ID, decision tracking, Live Register 5
   role: specialist
@@ -99,7 +99,7 @@ Each of these writes the entry **directly** to `domain/open_questions.md` follow
 **Produces artifacts used by:**
 - Every skill listed above (as a place to route unresolved items instead of embedding them)
 - `pm-audit` - flags any open-question-like content duplicated outside the register as an anti-pattern
-- `pm-stripe` / Phase 6 - Critical/High priority open items blocking a feature are visible before build starts
+- `pm-feature-design` (Step 0 + Step 5) and `pm-stripe` (Design Inspection) - read-only lookup of every Open entry naming the FEAT-ID, shown as ID/heading/Type/Priority; an open `BLK-` blocks `3_Ready_to_Build`, open `OQ-`/`DIV-` are shown but do not block. The card never carries the text
 
 ---
 

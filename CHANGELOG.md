@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.63.0] - 2026-09-21
+
+### Open register items pulled into view at design time - pm-feature-design (start and design review) and pm-stripe Design Inspection now look up every open question, divergence and blocker naming the feature and show it by ID, because the register is the single home and nothing on the card said a feature still had one open, so a blocker could reach build unseen; an open blocker now stops Ready to Build, and the text is never copied into the card, so the two cannot drift apart
+
+---
+
+
 ## [5.62.0] - 2026-09-21
 
 ### Edge Case Coverage in Feature Cards - every card now resolves six fixed edge case categories (input, authorization, entity state, concurrency, dependency failure, client states) in a coverage table at the end of Section 2, at every priority, because the old P2 minimum of happy path + guard + flag OFF let most cards stop there and a missing category could not be told apart from one deliberately excluded; pm-stripe blocks Ready to Build on an incomplete table and checks every edge case AC has a test, pm-audit reports pre-5.62.0 cards and routes them to the new /pm-feature-design --edge-cases backfill instead of inventing ACs itself

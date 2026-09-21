@@ -4,7 +4,7 @@
 
 **Phase:** Any (cross-phase); initializes on first use, at latest Phase 4
 **Agent mode:** `decision` - drafts, then requires your review before closing a question
-**Version:** 1.0.1
+**Version:** 1.1.0
 **Triggers:** open questions, open question register, decisions log, unresolved question, blocker, divergence, OQ-ID, DIV-ID, BLK-ID, decision tracking, Live Register 5
 
 ---

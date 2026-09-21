@@ -6,7 +6,7 @@ metadata:
   agent-mode: decision
   standalone: needs-inputs
   author: https://github.com/ljucask
-  version: "2.6.0"
+  version: "2.7.0"
   domain: product-management
   triggers: feature design, JIT design, design by feature, sequence diagram, feature spec, security review, mutex tags, edge cases, edge case coverage, edge case backfill, Phase 6
   role: specialist
@@ -99,6 +99,19 @@ If the project has an existing codebase, Claude Code MUST scan the relevant serv
 
 Open questions and decisions have exactly one home in the whole project: `domain/open_questions.md` (Live Register 5, owned by `pm-open-questions`). If the Discovery Interrogation surfaces a genuine judgment call (not just a new rule/guard condition to add, which goes into `business_rules.md`/`entities.md` directly), a legacy-vs-code divergence, or a concrete blocker to build - do not park it as a Subtask or a comment in the Feature Card. Append an entry to the register (Type: Question / Divergence / Blocker, `OQ-`/`DIV-`/`BLK-{DOMAIN}-NN` ID; run `pm-open-questions` to initialize it first if it doesn't exist). A Subtask is a nuance for the developer to handle during build; an open question is something nobody has decided yet - keep the two separate.
 
+**Open-items lookup (read-only, mandatory at Step 0 and Step 5).** The register is the single home, so the card never lists its open items - they are pulled into view instead. Read the `## Open` section of `domain/open_questions.md` and collect every entry that names this FEAT-ID (in Impact, Target or Context) or whose ID appears in the card (e.g. an Edge Case Coverage cell). Show them as a block - ID, heading, Type, Priority - never copy their text into the card:
+
+```
+Open register items for [FEAT-ID]:
+  BLK-ORD-02  Payment sandbox credentials missing        Blocker   Critical
+  OQ-ORD-05   Refund on partial restaurant rejection?    Question  High
+  (none) - if nothing matches
+```
+
+- **Open `BLK-`** → the feature cannot reach `3_Ready_to_Build` until it is resolved in the register.
+- **Open `OQ-` / `DIV-`** → does not block, but must be shown; at Step 0 try to resolve it during the interrogation (resolution is recorded in the register by `pm-open-questions`, never in the card).
+- No register yet → say so in one line; nothing to look up.
+
 ---
 
 ## Step 0: Current state check
@@ -112,6 +125,9 @@ Read the Feature Card at `/features/cards/[FEAT-ID].md`.
 | business_rules.md | [exists / not found] | |
 | decision_models.md | [exists / not found] | |
 | Dependencies met | [yes / no] | [list unmet deps] |
+| Open register items | [N open / none / no register] | [IDs - see Open-items lookup] |
+
+Show the Open-items lookup block under the table.
 
 **Verdict:** [One sentence - ready to design or what is blocking]
 
@@ -521,8 +537,12 @@ Summary:
 - Acceptance Criteria: [N] ACs covering happy path + [N] edge cases + flag OFF
 - Edge Case Coverage: [6/6 resolved] - [N] by AC, [N] N/A, [N] OQ
 
+[Open-items lookup block - re-run now, not reused from Step 0]
+
 Review the sequence diagram in Section 3 of the Feature Card.
 ```
+
+If an open `BLK-` is listed, do not offer "start build" - the feature stays at `2_Spec_Done` until the blocker is resolved in the register.
 
 Then use AskUserQuestion tool with:
 - Question: "Any corrections before build starts?"
@@ -546,6 +566,9 @@ Design Inspection checklist:
   [ ] Every N/A has a feature-specific reason; every OQ-ID exists in open_questions.md
   [ ] Every AC-ID in the table exists in Section 2 and carries the matching [EC-XXX] tag
   [ ] Every BR-ID in Section 1 is enforced by at least one AC marked (enforces BR-ID)
+  [ ] Open register items reviewed (lookup block below); no open BLK- for this feature
+
+[Open-items lookup block]
   [ ] Edge cases from decision table are covered
 
 After inspection: update Feature Card status to 3_Ready_to_Build
@@ -583,6 +606,10 @@ Commit: `spec([FEAT-ID]): edge case coverage backfill`
 
 **Delivery-plan inputs:**
 - [ ] `mutex_tags` populated in Step 4d from Section 3 "Files to modify" (shared surfaces, not leaf files); reason where non-obvious
+
+**Open items:**
+- [ ] Open-items lookup shown at Step 0 and re-run at Step 5; register text never copied into the card
+- [ ] Open `BLK-` for this feature → not advanced toward `3_Ready_to_Build`
 
 **Security dimension:**
 - [ ] `security_review` assessed in Step 1.5 against the 8 security areas, verdict stated with the area(s) touched

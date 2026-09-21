@@ -4,7 +4,7 @@
 
 **Phase:** 6-7 - JIT Delivery (session start point)  
 **Agent mode:** `never` - value is the live interactive session  
-**Version:** 3.9.0  
+**Version:** 3.10.0  
 **Triggers:** stripe, delivery stripe, JIT cycle, build feature, impact analysis, security review, test types, test type matrix, dependency scan, SCA, regression gate, delivery plan, build order, sequence, parallel, Phase 6, next feature, kanban, timeline, delivery visualization, rebuild plan, WIP limit, delivery_plan.html, interactive delivery plan, click-for-detail
 
 ---
@@ -108,6 +108,8 @@ pm-stripe presents a checklist for human review of Sections 1-3:
 - Sequence diagram present and logical
 - All actors/services match real codebase
 - Files to modify listed
+
+**Open register items:** Design Inspection lists every Open entry in `domain/open_questions.md` that names the feature (ID, heading, Type, Priority - read-only, never copied into the card). An open `BLK-` blocks approval; open `OQ-`/`DIV-` are shown so the reviewer approves knowingly.
 
 Approval transitions the feature to `3_Ready_to_Build`. **The Edge Case Coverage table is a blocking gate:** a card with an incomplete table gets neither `3_Ready_to_Build` nor an owner, and a card with no table at all (designed before 5.62.0) is routed to `/pm-feature-design [FEAT-ID] --edge-cases`.
 

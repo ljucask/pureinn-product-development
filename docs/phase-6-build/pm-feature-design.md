@@ -4,7 +4,7 @@
 
 **Phase:** 6 - JIT Delivery  
 **Agent mode:** `decision` - drafts, then requires your review before finalizing  
-**Version:** 2.6.0  
+**Version:** 2.7.0  
 **Triggers:** feature design, JIT design, design by feature, sequence diagram, feature spec, security review, test types, mutex tags, edge cases, edge case coverage, edge case backfill, Phase 6
 
 ---
@@ -64,6 +64,8 @@ Sets status to `2_Spec_Done` (or `2b_In_Design` for frontend features awaiting F
 ## Open questions
 
 A genuine judgment call, legacy-vs-code divergence, or concrete build blocker surfaced during Discovery Interrogation is logged directly in `domain/open_questions.md` (Live Register 5, `pm-open-questions`) - Type: Question / Divergence / Blocker. A Subtask is different: it's a nuance for the developer to handle during build, not something nobody has decided yet - keep the two separate.
+
+**Open items are pulled into view, not copied.** At the start of the run (Step 0) and again at the design review (Step 5) the skill looks up every Open entry in the register that names this FEAT-ID and shows it as ID, heading, Type and Priority. An open `BLK-` keeps the feature from `3_Ready_to_Build`; open `OQ-`/`DIV-` entries are shown, and the interrogation tries to resolve them. The card itself never lists them.
 
 ---
 
