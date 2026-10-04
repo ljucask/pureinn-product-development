@@ -52,7 +52,7 @@ window.HARNESS_CONFIG = {
      harness exists to take out.
 
      So the screen declares what can be done on it, and the shell lists it under
-     `Try it`. Four kinds, each one something the artifact could already do:
+     `Try it`. Five kinds, each one something the artifact could already do:
 
        state   switch to a declared state       { state: 'empty' }
        time    move this screen's clock         { time: 30 }
@@ -211,6 +211,86 @@ window.HARNESS_CONFIG = {
      is worse than a state it does not offer. */
   states: ['empty', 'full', 'error', 'unauth'],
   // states: ['empty', 'loading', 'full', 'partial', 'long', 'error', 'unauth', 'forbidden', 'offline'],
+
+  /* ─────────────────────────────────────────────────────────────────────
+     The view - OPTIONAL. Who is looking, how far down the roadmap, which
+     features are in, which version of a thing. Declare none of it and the
+     View control does not exist.
+
+     ALL OF IT IS VISUAL. The shell hides elements; it removes nothing and
+     enforces no access. A role here is "what this person would see", not a
+     permission.
+
+     The artifact marks its own elements, and nothing is rendered for it:
+
+       data-feature="PRT-DSP-002"                belongs to that feature
+       data-role="dispatcher admin"              shown to those roles only
+       data-version-of="hero" data-version="B"   one option of a version group
+
+     Where the artifact may not be edited, name the elements from here instead
+     with `on`. In script, Harness.has('PRT-DSP-002') and Harness.version('hero')
+     answer the same questions for what a stylesheet cannot hide - a total, a
+     menu built at runtime.
+
+     `features` is GENERATED from the prototype folder's feature-plan-prt.md
+     (and from Feature Cards once promoted). Change a phase there, not here.
+
+       id       the PRT- id, or the FEAT- id once promoted
+       phase    one of `phases`. Leave it out while the feature is undecided
+       status   built | next | cut - shown as a tag
+       desc     one line: what it is
+       spec     the specification so far, in whatever form it was said
+       roles    who sees it. Leave out for everyone
+       card     the feature's card file (markdown). Shown beside the screen,
+                rendered as a document, when the feature is opened.
+                The path is relative to harness.html and must be INSIDE the
+                folder being served - a card one level above it cannot be
+                fetched. Serve the prototype folder, or keep cards under build/
+       on       selectors, for an artifact that cannot carry data-feature:
+                { 'index.html': ['#bulk', '.bulk-row'], '*': ['a[href="bulk.html"]'] }
+                - per screen, '*' for every screen. A bare array also means every screen
+
+     A FEATURE IS OFTEN A WHOLE SCREEN. Say so on the screen entry -
+     `feature: 'PRT-DSP-005'`, or an array - and the screen panel dims it and
+     says why whenever every feature it names is out of the view. It is never
+     removed from the list, and a presentation skips it. Use '*' above to hide
+     the links that lead to it.
+       versions ['A', 'B'] - shorthand for a version group with this feature's id
+
+     `view` is what the harness opens on when a link does not say otherwise.
+     ───────────────────────────────────────────────────────────────────── */
+  roles: [],
+  // roles: [
+  //   { id: 'dispatcher', label: 'Dispatcher', desc: 'Runs the morning queue.' },
+  //   { id: 'admin',      label: 'Admin',      desc: 'Sets up couriers and zones.' }
+  // ],
+
+  phases: [],
+  // phases: [
+  //   { id: 'mvp',     label: 'MVP' },
+  //   { id: 'phase-1', label: 'Phase 1', desc: 'Automates what MVP did by hand.' }
+  // ],
+
+  features: [],
+  // features: [
+  //   { id: 'PRT-DSP-001', name: 'Morning queue', phase: 'mvp', status: 'built',
+  //     desc: 'Jobs waiting to be assigned, ordered by deadline.' },
+  //   { id: 'PRT-DSP-002', name: 'Bulk assign', phase: 'phase-1', status: 'built',
+  //     spec: 'Select several jobs, one courier. Said in the 12 Sep review: must show a conflict before confirming.',
+  //     roles: ['dispatcher'], on: { 'index.html': ['#bulk'] } }
+  // ],
+
+  versions: [],
+  // versions: [
+  //   { id: 'hero', label: 'Queue header', options: ['A', 'B', 'C'], screen: 'index.html' }
+  // ],
+
+  // view: { phase: 'mvp' },
+
+  /* Add this to `screens` for the register read as a plan - every feature
+     under its phase. It exists only when `features` is not empty:
+       { label: 'Feature map', featureMap: true, icon: 'board',
+         desc: 'Every feature, by the phase it would ship in.' } */
 
   /* Named directions, shown side by side.
      MANDATORY when the prototype exists to choose between directions: a single
@@ -406,15 +486,6 @@ window.HARNESS_CONFIG = {
   /* A faint reflection across the display in mockup mode. On by default; the
      first thing to turn off for a usability test, and switchable there too. */
   // glare: true,
-
-  /* The app being opened, once, when the harness first shows it with the
-     hardware drawn: a web app arrives at its address, a native one grows out
-     of its icon on a home screen. Costs a second and is the difference between
-     "here is a screen" and "here is the app".
-
-     Any click skips it, it never plays with the mockup off, and it is skipped
-     entirely under prefers-reduced-motion. Set false if even that is too much. */
-  // opening: true,
 
   // brand: { logo: '', name: '' },
 

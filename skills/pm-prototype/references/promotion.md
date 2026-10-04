@@ -56,7 +56,7 @@ A surviving prototype is, in the end, **a proposal to ship functionality into th
 | **Local entities**, if any | into `entities.md` |
 | **Local context** (personas, JTBD) | merged into the global artifacts, or discarded with a reason. Never left in both places |
 | **Code** | Evolutionary is already in the repo - merge it. Reference is reimplemented against the card. Disposable is dropped |
-| **The prototype folder** | freezes as history. It is never edited again |
+| **The prototype folder** | freezes as history. It is never edited again. **Workbench exception:** it is promoted a phase at a time and stays live as the developers' reference until its last phase ships - `workbench.md` § Hand over |
 
 That last row is what keeps two truths out. Once promoted, the prototype folder is a record of how the decision was reached, not a live document. If something needs changing afterwards, it changes in the production artifact.
 

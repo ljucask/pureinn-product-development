@@ -4,11 +4,12 @@
 
 ## Step 4: Select prototyping tool
 
-From the "Prototyping" section of pureinn-variables, present the configured tools. Let the user pick which to target for this run (they may have several). If more than one is configured, use **AskUserQuestion**; recommend the tool that best fits the intent from Step 2:
+From the "Prototyping" section of pureinn-variables, present the configured tools. Let the user pick which to target for this run (they may have several). If more than one is configured, use **AskUserQuestion**. Recommend the tool the uncertainty row in `references/audience-depth.md` § 2 points at; where that row leaves it open, use `prototype_default_tool` from the same variables section, if set:
 
 - **Lovable** - functional full-stack (React + Tailwind + shadcn + Supabase). Best for clickable flows and functional/feasibility prototypes. Deepest prompt-optimization support (see the Lovable rules below).
 - **v0 / Vercel** - fast UI generation, deploy to a live URL. Good for front-heavy UX/concept prototypes.
 - **Figma Make** - design-native, best when the flow already lives in Figma.
+- **Figma / Claude Design** - a canvas rather than a generator: right for flow comprehension and visual direction. Manual paste - the spec's sections 1-5 are the brief, the compiled build prompt is not needed.
 - **Base44 / other** - manual paste (no MCP push here) - the compiled spec is copy-paste ready.
 
 If no tool is configured, default to producing the spec paste-ready and note push is unavailable until an endpoint is added.
@@ -52,7 +53,7 @@ If no tool is configured, default to producing the spec paste-ready and note pus
 
 12. **Precision over vibes.** Specific element placement + consistent styling. Never "make it nice" - say what, where, and how.
 
-13. **Fidelity calibration.** Match tool effort to the intent (Step 2). State it in the prompt: static clickable click-through vs. functional CRUD with real data.
+13. **Fidelity calibration.** Match tool effort to the audience row from Step 3b - it decides what must be real - not to the uncertainty alone. State it in the prompt: static clickable click-through vs. functional CRUD with real data.
 
 14. **The spec IS the Knowledge Base.** Lovable's biggest lever is its project Knowledge Base (PRD, app/user flow, tech stack, frontend guidelines, backend structure). Our spec sections 1-5 map onto exactly those. Load the spec into the project Knowledge Base (`set_project_knowledge` via MCP), not only the first message - it grounds every subsequent prompt and cuts hallucination + credits.
 

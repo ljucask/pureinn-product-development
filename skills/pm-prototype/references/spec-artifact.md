@@ -18,7 +18,7 @@ Generate `[scope]-prototype-spec.md`. It has two layers:
 
 **Scope:** [feature FEAT-ID / initiative / product / slice]
 **User type (if scoped):** [type or "all"]
-**Intent:** [UX-flow / concept / feasibility / stakeholder]
+**Uncertainty:** [the one row named at Step 2 - flow comprehension / visual direction / behaviour with real state / integration feasibility / business-rule correctness / desirability / stakeholder alignment]
 **Audience:** [primary audience from Step 3b - it decides what must be real]
 **Target tool:** [Lovable / v0 / Figma Make / manual]
 **Success criterion:** [the hypothesis from Step 2, in the formulation in `references/hypotheses.md` § 1 - including the ambiguous zone and the rival explanation]

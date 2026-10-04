@@ -1,0 +1,20 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Queue</title></head>
+<body style="font:15px system-ui;padding:24px">
+<h1 data-version-of="header" data-version="A">Header A</h1>
+<h1 data-version-of="header" data-version="B">Header B</h1>
+<section id="queue" data-feature="PRT-T-001">Queue</section>
+<section id="bulk" data-feature="PRT-T-002">Bulk assign</section>
+<section id="map">Map</section>
+<section id="audit" data-feature="PRT-T-004">Audit</section>
+<p id="adminline" data-role="admin">Admin-only line</p>
+<a id="tosettings" href="settings.html">Settings</a>
+<p id="state"></p><p id="has"></p>
+<div style="height:900px"></div>
+<div id="target" style="width:260px;height:90px;margin-left:120px;background:#dde3ee;border-radius:8px">Target, far down the page</div>
+<div style="height:1200px"></div>
+<script src="harness-client.js"></script>
+<script>
+Harness.on('state', function (v) { document.getElementById('state').textContent = v; });
+Harness.on('features', function () { document.getElementById('has').textContent = String(Harness.has('PRT-T-002')); });
+</script>
+</body></html>

@@ -4,7 +4,9 @@
 
 This path has no moment of handoff. There is no brief to compile and send - there is a running thing you iterate against. That difference is why it needs its own reference rather than a variation on the external one.
 
-**Where it lives.** The prototype folder was created at Step 3b, before this path started - `references/prototype-folder.md`. The harness and the artifact go in its `build/`, except for Evolutionary code, which goes on a branch in the real repo (see the last section). Nothing here creates a folder; if there isn't one, Step 3b was skipped and the decisions it records were never made.
+**Where it lives.** The prototype folder was created at Step 3b, before this path started - `references/prototype-folder.md`. The harness and the artifact go in its `build/`, except for Evolutionary code, which goes on a branch in the real repo (see the last section). Nothing here creates a folder; if there isn't one in **Spec mode**, Step 3b was skipped and the decisions it records were never made.
+
+**Wrap mode is the exception.** There the artifact already exists and nothing was decided here, so there is no folder to require: the three harness files go next to what the user already has, and only the harness sections below apply - not the loop rules, the stop conditions or the classification.
 
 ---
 
@@ -108,6 +110,25 @@ Named variants, switchable side by side. **Not optional when the prototype exist
 
 When the prototype is an answer rather than a choice - a commissioned assignment, a decided direction - one variant is correct and the switcher stays empty.
 
+### 4b. The view - role, phase, features, versions
+
+Optional, and present only when the config declares any of it. It answers one question the other controls do not: **what is the artifact being shown as.**
+
+| | |
+|---|---|
+| **User type** | a user type. **Visual only** - it hides what that person would not see and enforces nothing, and the control says so on its face. A prototype that implied its role switch was access control would be making a connection claim it cannot back |
+| **Phase** | cumulative, in roadmap order. The MVP view is the product as it would first ship; each later phase adds to it |
+| **Features** | one switched by hand, against its phase, to argue about it. A hand switch is marked, so nobody mistakes an argument for the plan |
+| **Versions** | options of one screen or one element, one at a time. Different from a variant, which is a direction for the whole prototype |
+
+**The artifact stays a pure product surface.** It marks which elements belong to what - an attribute, nothing rendered - and the shell hides what the view leaves out. Where the artifact cannot be edited, the config names the elements from outside.
+
+**The register is the plan, not a copy of it.** Every feature in the view is a row in `feature-plan-prt.md`; the config is generated from that. A feature map screen reads the same register as a plan and shows all of it whatever the view is set to - a map that changed with the filter would hide exactly what was cut.
+
+**A comment records the view it was made in.** "This is missing" means something different in the MVP view than with everything on.
+
+When and how to use it: `workbench.md`.
+
 ### 5. Device switcher
 
 Viewport presets, at minimum mobile / tablet / desktop. **The change should be a movement, not a cut** - watching the frame travel between widths reads as one artifact at another size, where a jump cut reads as a different screen and the reviewer loses what they were looking at. Not cosmetic: it is the instrument that catches what the research says breaks first - long labels in chips and fixed columns, dense layouts in narrow viewports, and anything that assumes two dimensions at 400% zoom.
@@ -150,7 +171,7 @@ Building three mechanisms would be duplicated work and three inconsistent surfac
 
 **Label the control, not the demo.** A time scrubber is *Time* on every prototype; what this screen's axis measures belongs beside it as content. A toolbar heading that reads "Minutes since order" describes one prototype and makes the tool look like it was built for it.
 
-**A note explains; a mark POINTS.** They are different jobs, and the second one has nothing to work with if the only anchor is an element: "this region", "these three words", "the gap here" cannot be said with a pin. A marker pen and a box, kept as fractions of the frame so they survive every resize, belonging to a screen + state + device exactly as a comment does - a box around a narrow layout means nothing on a wide one.
+**A note explains; a mark POINTS.** They are different jobs, and the second one has nothing to work with if the only anchor is an element: "this region", "these three words", "the gap here" cannot be said with a pin. A marker pen and a box, anchored to the element under them so they stay on it through scroll, resize and reflow, belonging to a screen + state + device exactly as a comment does - a box around a narrow layout means nothing on a wide one.
 
 **A spotlight is the live version of the same instinct** - *look here*, while someone is watching - and it is deliberately not saved. It is a gesture, not a record, and storing gestures is how a tool fills up with things nobody meant to keep.
 
@@ -163,6 +184,10 @@ Building three mechanisms would be duplicated work and three inconsistent surfac
 **A toolbar that only grows stops being usable.** Past a dozen controls a bar is a list of everything the tool can do rather than a way to do any of it - so it has to start **folding by intent**: a few named controls, each opening what belongs to it. The test is whether a row of buttons can carry the distinction: *pin to an element*, *note on this screen* and *note on the whole prototype* are one action with three targets, and no three button labels will ever say that. In a menu each gets a line, and the difference becomes obvious.
 
 **What must never fold is the thing the loop depends on.** The return control stays visible and keeps its count: without a backend nothing reaches the author until it is pressed, and hiding it inside a menu would break the one mechanism it exists to serve.
+
+**One rule for closing, with no exceptions.** Only one surface is open at a time, and a press outside it closes it - the artifact included. Every exception made to that rule ("this one drives the artifact", "this one covers nothing") produced the same thing: a reader who could not clear the screen.
+
+**Chrome that covers the artifact is chrome in the way.** Sidebars push the artifact aside; they do not sit on it. A description opened to be read next to a screen is worthless if it hides the screen.
 
 **Two bars cannot be positioned independently.** Once the shell has more than one bar at the bottom, anchoring each on its own means they overlap on some window nobody tested, and no amount of breakpoint guessing fixes it - they have to lay out *against each other*, in one container that wraps. Everything that floats above them then has to read the container's measured height rather than assume it.
 

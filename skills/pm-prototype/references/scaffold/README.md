@@ -74,7 +74,7 @@ The artifact never depends on the harness. Open a page directly and it still run
 
 It also stays **visibly bounded**: the canvas remains behind it, the artifact keeps an outline and a shadow, and its pixel size is captioned underneath. A white artifact on a white page reads as something that failed to load, not as a phone.
 
-## Two front screens, both optional
+## Two front screens, both optional, and the disclosure screen both audiences share
 
 A prototype meets two kinds of people, and they need opposite things first. A **tester** needs the task and nothing else - framing contaminates them. **Whoever decides** needs the framing; that is the whole reason they are in the room.
 
@@ -124,13 +124,73 @@ Each carries a `label` and a one-line `does` saying what it demonstrates - the s
 
 **Never declare an activity that fakes input the prototype does not really take.** Where the point is that something runs on real typing - a journey that would carry no weight if it were pre-baked - use `says` and let the reviewer type. An activity that simulates the very thing under test destroys what it was meant to demonstrate.
 
+## The view: role, phase, features, versions
+
+Optional. Declare `roles`, `phases`, `features` or `versions` in the config and the **left end of the bottom bar** becomes the view; declare none and it is not there.
+
+That end of the bar is dark, edge to edge and full height - the only dark thing in the chrome. It decides what the prototype is being read *as*, which is a different order of thing from the tools beside it. It is not a card sitting in the bar: an earlier version was, a rounded dark box with its own labels inside a taller white one, and it read as a bar inside a bar.
+
+| In the bar | |
+|---|---|
+| **User type** | one user type, or all of them. A menu, with each type's one-line description. Visual only. The button carries the name, so it has no label |
+| **Phase** | every phase in a row, one press each. The chosen one is lit and those before it are tinted, so "up to and including" is read off the control |
+| **Features** | *Features 8 / 15* - how many are shown out of the total. Opens the list |
+
+| In the list | |
+|---|---|
+| **The meter** | one block per feature, coloured by phase, solid where it is shown - the whole plan in one line |
+| **Search and filter** | by name, id or description; *All*, *Shown*, *Hidden* |
+| **Phases fold** | each phase header folds its features and keeps saying how many are shown. A phase can hold thirty; a search opens every group, because a match inside a folded one is a miss |
+| **A row** | the name, its id, the screen it is on, and a switch. Pressing the name opens the feature's card |
+| **Versions** | the groups that apply to this screen, above the list |
+
+**The feature card opens beside the screen**, in that column, and points at the feature in the prototype as it opens - going to the feature's screen first if it is elsewhere. Reading what something should do and seeing where it is are one act; a description in another tab gets read instead of the prototype.
+
+The card's top comes from the config: phase, user types, name, the one-line description, the notes so far. Under it is the feature's own card file (`card:`), rendered as a document - headings, paragraphs, lists, tables, bold and code, with the frontmatter left out. Everything is escaped before it is marked up, so a card file cannot put HTML on the page. No `card:` and the config half is the whole card; a file that fails to load says so.
+
+**The list and the card share one column on the right**, and that column pushes the prototype rather than covering it. The card replaces the list and *All features* goes back. Floating, the two of them left about 390px of prototype in view.
+
+**Every label says what the control does.** *User type*, *Phase*, *Shown*, *Hidden manually*, *Show in prototype*. A reviewer who has to work out what a control is called has stopped looking at the prototype.
+
+Switches are real switches (`role="switch"`), everything is reachable by keyboard with a visible focus ring, and Escape closes the card or the list.
+
+**How an element is hidden.** The artifact marks it - `data-feature`, `data-role`, `data-version-of` with `data-version` - and the shell writes one stylesheet into the artifact's document. An artifact that cannot be edited is handled from the config with `on`. The scaled copies in both multi views get the same stylesheet, so a comparison never shows a feature the single view hides.
+
+**A feature is often a whole screen.** The screen entry names it - `feature: 'PRT-DSP-005'`, or several - and when every feature it names is out of the view the screen panel dims the row and prints the reason under it (*Hidden · In v1.1*). It stays in the list and can still be opened: a list that quietly lost a row would hide exactly what was cut. A presentation without a `tour` skips it. Hide the links that lead there with `on: { '*': ['a[href="moderation.html"]'] }`.
+
+**Hiding from outside leaves debris.** `on` selectors hide elements, not the reason they were laid out that way. Cut most of a screen and what remains is a heading, a button and a gap - which is a finding about the plan, not a defect in the view: a feature that survives alone on a screen that was cut usually belongs on another screen. Mark elements in the artifact where it can be edited, and treat a ragged remainder as a question for the feature plan.
+
+**A switch by hand is marked *Shown manually***, and a feature the user type hides cannot be switched at all - its switch is disabled and says why. Two presses never stack: the first undoes a hand switch, and only if the feature is then still the wrong way round does it set a new one.
+
+**What travels.** `Copy this view` and `Invite to review` carry role, phase, hand switches and versions. A comment and every logged event record the role and phase they were made in. `Reset` returns to the config's `view`.
+
+**In script** - for what a stylesheet cannot do:
+
+```js
+Harness.on('features', render);          // fires on every change of view
+if (Harness.has('PRT-DSP-002')) total += bulk;
+Harness.version('hero');                 // 'A' | 'B' | ...
+Harness.get('role');                     // 'all' or a role id
+```
+
+Outside the harness `Harness.has()` is true for everything, so the artifact still runs on its own.
+
+**The feature map** is a generated screen - `{ featureMap: true }` - a table per phase: the feature, what it is, who it is for. It shows the whole plan whatever the view is set to.
+
+A tour step may set `role` and `phase`, so a presentation can walk the MVP and then open the next phase.
+
 ## One surface at a time
 
-The dropdowns, the situation panel, the notes panel and the screen panel are all ways of asking the harness something, and two of them open at once is two answers competing for the same corner of the screen. Opening any one closes the rest.
+The dropdowns, the situation panel, the view panel, the notes panel and the screen panel are all ways of asking the harness something, and two of them open at once is two answers competing for the same corner of the screen. Opening any one closes the rest.
 
-They also close by clicking away from them, which matters because a dropdown has no close button of its own. **A click inside the artifact counts as clicking away** - it happens in a separate document and never reaches the shell, which is why a menu used to stay open while the reviewer was already clicking around inside the prototype.
+**Two rules, and they hold for every surface without exception.**
 
-One exception: the situation panel stays open when the artifact is clicked. It is the panel that drives the artifact, so shutting it the moment someone clicks the thing they just changed would fight them.
+1. **Only one is open at a time.** Opening the screen panel, the feature column, time and speed, the note register, a menu or a send sheet closes whatever was open before it. Two things open at once is two things to close, and the second was nearly always opened to replace the first. The one case kept: the *User type* menu, which is a control for the feature list and leaves it open.
+2. **A press outside closes it, and the prototype counts as outside.** The artifact is a separate document, so the shell listens inside it as well as around it.
+
+Escape closes the last thing opened: the feature card goes back to the list, then the list closes. A menu takes focus when it opens, the arrow keys move through it, and Escape returns focus to the button that opened it.
+
+Two earlier versions each made an exception - panels that "drive the artifact" stayed open over it, then a docked column stayed open because it covered nothing. Both times the result was the same: a reader who could not work out how to clear the screen. A rule with exceptions has to be learned; this one does not.
 
 ## Following the artifact
 
@@ -164,24 +224,17 @@ Every disclosure note carries `real:`, what the element would be in production. 
 
 **A note lands where you clicked**, not at the element's edge - the position is kept as a fraction of the element so it survives re-layout. A click that hits nothing selectable still gets a pin, anchored to a fraction of the document: *"there is nothing here"* is a finding, and a layer that only accepts notes on existing elements cannot receive it.
 
-**An author's label can only be minimised; only your own comments can be deleted.** A disclosure the reader can make disappear is not a disclosure.
+**An author's label can only be minimised; only your own notes can be deleted.** A disclosure the reader can make disappear is not a disclosure. A deleted note can be taken back for six seconds - *Undo* in the message that confirms it.
 
 **Minimising rolls a card up to its title, in place.** It keeps its number, its pin and its line, and one click opens it again - it never leaves the rail, because a note pushed out of the way must not vanish with nothing on screen saying it was ever there. Notes without an anchor are grouped at the **top** of the rail under `About this screen` and `About this prototype`, each collapsible: put them last and every comment added shoves them further down, so they never sit still long enough to read as headers.
 
 **Comments take emphasis and one picture** - bold, italic, underline, and an attached reference image, because *"make it look like this"* with a screenshot is worth ten sentences. Pasted markup is stripped to `b/i/u/br/img` and an image is scaled to 1100px before it is kept, or the second note fills the browser's quota.
 
-Both bottom bars live in **one dock** that wraps when the window runs out, so they lay out against each other instead of overlapping on a width nobody tested. The simulation panel, the return sheet and the note rail all read the dock's measured height rather than assuming it.
+**The bottom bar is the top bar's twin**: the same height, the same white, one row. Left to right - the view, then *State*, *Scenarios*, *Time and speed*, *Share*, then *Add note*, *Mark* and *Send notes* at the right.
 
-The bottom folded from fourteen controls to six, grouped by intent rather than listed:
+No control has a label above it; each carries its own word. The one exception is *Phase*, because a row of phase names does not say what it is. When the bar narrows - a smaller window, or a sidebar open - *Scenarios*, *Time and speed*, *Share* and *Mark* fall back to their icons. *State*, *Add note* and *Send notes* never do: a reader has to be able to find those by name.
 
-| | |
-|---|---|
-| **State** | the segmented switch, used constantly, one click |
-| **Simulate** | the chip and its panel |
-| **Share ▾** | *Copy this view* · *Invite to review* · *Screenshot* · *Event log* - one family: taking something out of here |
-| **Add note ▾** | *Something I click* · *This screen* · *The whole prototype* - one action with three targets, and no three button labels can say that. In a menu each gets a line |
-| **Mark ▾** | *Box* · *Marker pen* |
-| **Return notes (n)** | stays visible and keeps its count. Without a backend nothing reaches you until it is pressed, so folding it away would break the one mechanism it serves |
+*Send notes* stays visible and keeps its count. Without a backend nothing reaches you until it is pressed.
 
 Spotlight moved up beside `Present`: it is a way of showing someone something, not a way of recording anything.
 
@@ -199,12 +252,14 @@ A selector that matches nothing renders as an orphan card with a warning instead
 
 A note explains; a **mark points**. Some things cannot be said with a pin - *this region*, *these three words*, *the gap here* - so there are two marking tools beside `Add note`:
 
+**A mark belongs to the thing it was drawn on, not to the window.** It remembers the element under its centre and where it sits relative to that element, so it stays put when the page scrolls, when a side panel changes the prototype's width, when the layout reflows. A note added to a mark is pinned to the same element, so the two cannot drift apart. Where no element can be named, the mark falls back to a fraction of the page.
+
 | | |
 |---|---|
 | **Box** | drag a rectangle around something |
 | **Marker** | drag across it, like a highlighter |
 
-Both are kept as **fractions of the frame**, so they survive a resize or a device change, and both belong to a screen + state + device exactly as a comment does - a box around a narrow layout means nothing on a wide one. Hover a mark to remove it.
+Both belong to a screen + state + device exactly as a comment does - a box around a narrow layout means nothing on a wide one. Hover a mark to remove it.
 
 **Spotlight** is the live version of the same instinct - *look here*, while someone is watching. Everything but the pointer steps back. It is deliberately **not saved**: a gesture, not a record.
 
@@ -282,8 +337,6 @@ Press play and the harness runs the prototype on its own. With no `tour` it walk
 
 **The pointer travels at a speed that depends on how far it has to go** - a hand does not take the same time to cross a screen as to nudge to the next button, and a fixed duration for both is the single thing that makes a walkthrough read as an animation. The pause before the click follows the travel, because arriving and clicking in the same instant looks like a script.
 
-**The opening sequence never plays during a presentation.** It is the app being started, which happens once and at the beginning; arriving in the middle of a walkthrough it reads as the prototype crashing and reloading.
-
 **Pace it for someone watching.** The default slot is six seconds, and each step can set its own `hold`. The person in the room has to see the screen change, read the caption, follow a number moving, and form an opinion - four seconds covers only the first of those.
 
 ## Side by side, scrolling together
@@ -338,94 +391,37 @@ The contract requires them; the kit cannot supply them:
 
 ## Design intent
 
-The top bar carries the `PROTOTYPE` badge and the name, and no boundary sentence: the badge already implies it and the disclosure screen says it properly, so a third statement in the chrome was noise.
+**Floating, opaque, quiet.** The chrome is five objects resting on the canvas - a bar across the top, its twin across the bottom, and three side panels - each rounded, lifted by one soft shadow and inset from the window edge, with the canvas visible all the way round. The panels push the prototype aside instead of covering it: screens on the left, the feature list with its card on the right, the note register on the right. The prototype is the content; the tool is arranged around it, the way a canvas tool is.
 
-The chrome floats over a dotted canvas as translucent glass islands - the language every current prototyping tool speaks - with Pureinn's live coral-to-gold gradient as the accent. Three islands, so the disclosure is never mixed into a toolbar: it is not a control and must not look like one.
+The first version was translucent glass islands floating over a dotted canvas, with a coral gradient on everything pressed. A design review named it accurately as the look of every current AI tool, and it had costs beyond taste: the two top islands slid over each other on any window under 1500px, panels covered the prototype they were about, and white on the gradient measured between 2.1:1 and 3.0:1.
 
-Two things were deliberately avoided. **Warm cream with terracotta**, because this framework's own design research names that exact combination as a generic 2026 AI-default cluster, and a file shipped as a reference should not look generated. And **anything left native** - a stock `<select>` is the loudest "unfinished" signal in a tool like this, so the screen picker is a real menu with keyboard navigation.
+The first correction overshot. Full-bleed white bars with a hairline fixed everything that was broken and read as a web admin from ten years ago: flat is not the same as current. What makes a tool read as current is not translucency but that its chrome is a few distinct objects rather than walls. So the bars and panels float; they are still opaque, and still push.
 
-Annotations: a numbered pin on the element, a card on the rail, a curve joining them, and hovering either end lights all three. The numbering is what makes a rail of several notes legible - without it the reader has to guess which card belongs to which pin. Disclosure keeps the accent and the loudest pin because it carries the honesty contract; a convention recedes to grey; a comment is blue, visibly the reviewer's rather than the author's.
+What the chrome holds to now:
 
-Changing device animates the frame between viewports rather than cutting to it. Seeing it travel reads as one artifact at another width; a jump cut reads as a different screen, and the reviewer loses the thread of what they were looking at. Annotations re-anchor when the movement finishes, not during it.
+- **Coral is flat and reserved** - the PROTOTYPE marker, a note pin, a switch that is on, the one primary action. Selected is ink, not coral. It is `#c2452d`, which clears 4.5:1 both under white text and as text on white.
+- **One dark block**, the view, because it changes what the prototype is being read as. It is the only signature left, on purpose.
+- **Nothing under 11px**, and secondary text at 5.9:1.
+- **A label only where a control does not say what it is.** The view block keeps *User type*, *Phase*, *Features*. The tools beside it do not carry a label over a button that already has the word on it.
+- **The top bar answers to its own width**, not the window's, because a sidebar narrows it as surely as a small screen does. The tools on the right give up their words before the left gives up the name of the open screen.
+- **Motion only answers a press**, and stays small. Nothing animates on its own; the pulsing dot on the PROTOTYPE marker is gone for that reason.
+- **Nothing left native** - a stock `<select>` is the loudest "unfinished" signal in a tool like this.
 
-The bottom bar is a labelled tool bar rather than a strip of icons: every group says what it is, the scrubber carries the current screen's own label and a line explaining what it demonstrates, and the feedback group ends in the one call to action the reviewer has to reach. Nothing animates on its own - motion only ever answers an action, because the prototype is what is being looked at.
+Annotations: a numbered pin on the element, a card on the rail, a curve joining them, and hovering either end lights all three. The numbering is what makes a rail of several notes legible. Disclosure keeps the accent because it carries the honesty contract; a convention recedes to grey; a reviewer's note is blue, visibly theirs rather than the author's.
+
+Changing device animates the frame between viewports rather than cutting to it. Seeing it travel reads as one artifact at another width; a jump cut reads as a different screen.
 
 `prefers-reduced-motion` turns every animation off.
 
 ## Verified
 
-Driven end to end in a real browser before shipping, per the contract's own "test outside the generating agent" rule: all four states reaching the artifact, variants, device presets firing the artifact's own media queries, artifact events arriving in the shell log, chrome hiding and restoring, annotation anchoring, the rail releasing when no note is visible, the screen menu with keyboard navigation, the mockup frame, a real PNG written to disk with no notes in it, and a shared link restoring screen + state + variant + time + device + mockup in one go.
+Driven end to end in a real browser before shipping, per the contract's own "test outside the generating agent" rule, and re-verified on every change. The rounds, and the defects each one caught, are in [`HISTORY.md`](HISTORY.md) - read it before editing `harness.html`.
 
-The second round added: per-screen time appearing, disappearing and keeping each screen's own value across a switch; a comment placed by clicking inside the artifact, with a real selector computed for it; collapse to a pin and reopen; an orphan anchor; the generated disclosure screen; and the review brief.
+After any change, two checks, both required:
 
-The third: the screen panel with its descriptions and keyboard navigation, and the viewport transition - sampled mid-flight at 427px between a 1106px desktop and a 390px phone, with the annotations re-anchoring correctly once it settled.
+```bash
+python3 check.py                       # structure: load order, name clashes, undefined calls
+cd <repo>/tests/harness && npm test    # behaviour: the shipped files driven in a real browser
+```
 
-The twenty-first was a full code and security review of the three files rather than a feature round, run through the framework's own JIT review flow and then re-verified in the browser: the sanitiser rejecting every nested payload that used to pass, a note carrying a remote image scrubbed out of storage on load, a screenshot-only note counted and exported instead of silently deleted, the side-by-side columns measured at exactly the 1280 / 834 / 390 they advertise, Hide menu going white on desktop, the mockup staying off a document screen, a malformed `?m=` leaving a working harness, and an editor surviving a stage scroll with its caret and focus intact.
-
-Three things the review raised were decisions rather than defects, and were settled rather than patched: Send now says, beside the button, that it also carries a record of the session, because the sheet promised notes and the POST sent the browsing log too; the share URL still carries the author's message (without a backend there is nowhere else for it) but the event log records only that a link was made, so the message is not amplified into the POST; and marks now appear in the PNG and the report, verified by reading the exported file's pixels back - a coral box and an amber stroke, the stroke still multiplying over the text under it.
-
-The twentieth: the three note scopes reached from one menu and a screen note written through it, the Share menu carrying all four exports, and the mark menu relabelling its button to "Drag a box" while armed.
-
-The nineteenth: both bottom bars side by side at 1700 with a 12px gap, wrapping to two rows at 1200 and with both panels open, and everything above them following the measured height.
-
-The eighteenth: the spotlight no longer blanking the page, a note written with no anchor, a box offering a note and getting one, editing inside the panel, and a CSV with one row per note.
-
-The seventeenth: a comment written with bold and saved as HTML, the note panel filtering 5 notes down to 1 by text and by kind, a box and a marker stroke drawn, stored and disappearing on another state, and the spotlight following the pointer.
-
-The sixteenth: Present moved beside Hide menu with its own icon, and the note rail anchored to the window - no horizontal scrollbar behind it and the curves still landing after a device change.
-
-The fifteenth: the simulation panel opening from its chip, play running the axis from 0 to 25 min and pausing, reset returning it, and the latency setting arriving in the artifact.
-
-The fourteenth: the multi-device row staying inside the stage at 1440 and at 900 with the mockup on, the time axis changing from minutes to days between two screens, and the mockup no longer drawn around a document screen.
-
-The thirteenth: All three selected from the device switcher and showing a laptop, a tablet and a phone at true relative size on one baseline, Grid and Add note disabled there, a document screen dropping out of it, and the documents section collapsing and staying collapsed.
-
-The twelfth: both multi views composing the single view's own frames at 44%, the mockup toggle reframing either, states reaching all three copies, `Add note` disabled in both, and the panel listing three documents below a divider while the count says two screens.
-
-The eleventh: the Overview rendering its six blocks with three provenance classes and the device switcher locked to desktop, the instructions screen, both screens dropping out of a link when unticked, and the promo view framing every screen at a proportional bezel.
-
-The tenth: a reviewer's link keeping every looking instrument while the event log and the sharing controls stay behind, the sheet reduced to Copy plus Email with two links under it, and the report's tally split into a desktop and a mobile group.
-
-The ninth: a note written on mobile hidden on desktop with the rail offering to switch, the report grouped by screen/state/device with a phone shot held at 390px, and the sheet's roll-out opening below its control rather than beside it.
-
-The eighth: the covering note leading the rail and the sheet, the author's line travelling in the link and reaching the brief, and a report built from two screen/state groups - five numbered pins matching five numbered rows, the shot cropped from a 1059px frame to the 392px the artifact actually draws, and the harness restored to where it started.
-
-The seventh: a card rolled up keeping its number, pin and line while staying in the rail, and opening again on a click.
-
-The sixth: a note placed on the background with nothing selectable under it, the grid measured against the frame in all three devices with and without a mockup, the disclosure screen at 390px with no horizontal overflow, and the presented pointer staying on screen for a whole four-step run.
-
-The fifth: a note landing on the exact spot clicked rather than the element's edge, the name asked inline on the first note, the rail scrolling with its curves redrawn, and the presented pointer travelling to a target and tapping it.
-
-The fourth: note scopes and their rail headers, a comment written and committed with a name and a severity, the return sheet, the grid's three steps, side by side at 53% with all three widths measured, and a four-step tour played to the end - states switching, captions changing, time sweeping and the progress bar filling.
-
-Bugs found that way, none of which a reading of the code would have caught:
-
-- notes overflowed the viewport and forced sideways scrolling
-- turning notes off left the annotation rail reserved
-- the chrome printed "Prototype" twice, once from the markup and once from the config default
-- a connector-curve "improvement" scaled the bezier control points by the vertical gap, putting a control point past its own endpoint and tying the line in a knot
-- the disclosure tag was a `<span>`, so a lower-specificity rule lost to the generic one and it rendered brown-on-coral at 1.9:1
-- the dropdown's tick was an inline `<svg>` with no width, so it rendered at its intrinsic size and spilled across the menu
-- a draft comment survived a reload and held the whole annotation layer in writing mode for ever
-- the side-by-side container and the body-state class were both called `compare`, so `.compare { display: none }` matched `<body>` and blanked the entire document - and the promo view repeated the mistake a week later
-- the promo frames put their iframes at `top: 0`, which measures from the padding box, so each artifact covered the bezel it was supposed to sit inside
-- `.marks svg` was meant for the drawing surface and caught the icon inside the delete button too, absolutely positioning it into the button's top-left corner. Scope a rule to `> svg` when it means *that* svg
-- the note rail positioned itself from the frame's measured width, caught a mid-transition number, and drifted off the right edge - with a horizontal scrollbar behind it, because an absolutely positioned child in the reserved padding counts as overflow. It is anchored to the window now
-- `body.compare .wrap { display: none }` hid the scaled copies too, because they are `.wrap` as well - the third time in this file that a rule meant for one element caught everything sharing its name
-- and the fifth: `body.spot` shared its name with `.spot`, so `.spot { display: none }` matched `<body>` and **the whole page went white**. Every body state now carries an `is-` prefix - `is-spot`, `is-compare`, `is-promo`, `is-mock`, `is-bare`, `is-notes` - and no element class may begin with one. Before that, the fourth: the mockup state was `mock`, the same as the frame element's, so `document.querySelector('.mock')` returned `<body>`. **No state class on `<body>` may share a name with an element class** - they are `is-mock`, `compare`, `promo` now, and the containers are `.mock`, `.cmpset`, `.proset`
-- the multi-device row sized itself from the viewports alone and then drew a bezel around each, pushing the row past the stage - and a centred flex row that overflows loses its left end where no scrollbar can reach it (`justify-content: safe center`)
-- the rail positioned its cards absolutely, so once a few notes existed the newest ran off the bottom of the window - and the one being written was the first to go
-- the annotation layer skipped its redraw while the chrome was hidden, silently dropping every change made in the meantime: toggles flipped there did nothing, and notes could come back missing after Hide
-- a cross-origin artifact reserved the annotation rail and then drew nothing into it, because the document was read only after the rail was measured
-- the `is-` prefix sweep missed two selectors, and both failed silently: `body.bare:has(...)` never matched, so Hide menu on a desktop viewport left the dotted canvas behind a full-bleed artifact, and `:not(.fixed-width)` guarded all seventeen mockup rules against a class nothing sets any more - so a text document was drawn inside an iPhone bezel with the toggle greyed out. A rename is not finished until you grep for the old name in the CSS as well as the JS
-- `clean()` snapshotted `childNodes` before unwrapping, so anything one level inside a `<span>` or `<p>` - the exact shape a paste produces - sailed past the tag allowlist with its attributes intact. It also parsed into a `document.createElement('div')`, which still has this document as its owner, so the input executed while it was being sanitised. It parses into `document.implementation.createHTMLDocument()` now and walks live nodes. **A sanitiser that trusts a snapshot is not one**
-- four code paths disagreed about what makes a note real. A screenshot with no words rendered in the rail, never reached the count or any export, and was deleted by the load filter on the next refresh - silently losing the single highest-value note the layer carries. `plain()` is the only test now, and everything that reads `.text` goes through `noteText()`
-- `writeStore` swallowed every exception, quota included, so past roughly twenty image notes the toast still said "Note added" and the reload found nothing. It reports once, while there is still time to export
-- the storage key was the config `name` alone, and two prototypes on one host are one origin: on the shipped default they shared every key, so Send in one posted the other's notes to the wrong endpoint. The path is part of the key now
-- `fetch` rejects only on a network failure, so a 413 or a 500 from the author's endpoint thanked the reviewer for notes that never arrived
-- `drawAnnots` empties the rail and rebuilds every card, and it was wired straight to the stage's scroll event - so scrolling to look at the thing you were describing tore the editor down mid-sentence. It waits while anyone is writing
-- the side-by-side copies set the wrap to the viewport width and then drew the bezel inside it, so the phone column rendered at 368px under a label reading 390. A media query at `min-width: 390px` fired in the single view and not in the comparison the view exists to make
-- only the `ready` branch of the message listener checked `e.source`, so the three scaled copies tripled every event in the log and answered a presented aim three extra times - up to sixteen clicks for one declared step
-- `annotEl.querySelector('.note--comment')` looked for cards in the layer they do not live in, so the saved-note confirmation flash never played once
-- and one introduced by the review itself, caught only because it was re-run in a browser: `clean()` is called at load on stored notes, so a module-level `var KEEP` was still `undefined` when it ran and the exception took the whole boot with it. `node --check` passed. **Hoisting is not an ordering guarantee, and a syntax check is not a load**
-- `.seg` and `.grp` set their own `display`, which beats the browser's rule for `[hidden]` - hiding the variant group did nothing at all
+The second exists because the first cannot see behaviour, and behaviour is where this file breaks: a panel that closed on its own first click and a selector that silently un-hid every feature both passed `check.py`.

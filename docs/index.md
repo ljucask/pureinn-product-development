@@ -125,7 +125,7 @@ Skills that run at any point in any playbook - not tied to a phase:
 
 | Skill | When to use |
 |---|---|
-| `/pm-prototype` | Before any build commitment - compile a tool-ready prompt for Lovable / v0 / Figma Make |
+| `/pm-prototype` | Before any build commitment - a tool-ready spec for Lovable / v0 / Figma Make, or an in-repo prototype behind a review harness |
 | `/pm-stress-test` | Before exec reviews, investor pitches, board meetings, or any room where you'll be challenged |
 | `/pm-root-cause` | When a live metric drops, churn spikes, or a feature isn't being adopted |
 | `/pm-audit` | After research injection, re-prioritization, or before a build commitment or pitch |

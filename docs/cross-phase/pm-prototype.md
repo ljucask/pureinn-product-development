@@ -3,8 +3,8 @@
 > Cross-phase prototyping engine - compiles a tool-ready spec for an external tool, or builds in-repo against a harness that labels what is simulated and carries the feedback back
 
 **Phase:** Cross-phase (Discovery → Build)  
-**Agent mode:** `synthesis` - runs fully autonomously  
-**Version:** 1.3.0  
+**Agent mode:** `decision` - drafts autonomously, then requires your review before anything is final  
+**Version:** 1.4.0  
 **Triggers:** prototype, prototyping, proof of concept, POC, spike, validate before build, lovable, base44, v0, figma make, clickable prototype, mockup, throwaway, quick validation, in-repo prototype, coding agent prototype, prototype harness
 
 ---
@@ -25,10 +25,36 @@ The skill no longer assumes the prototype is built somewhere else. At **Step 3b*
 
 | Path | What it is | What you get |
 |---|---|---|
-| **External tool** | one-shot handoff - the brief is compiled, sent, and iterated through the tool | tool-ready spec (`prototypes/[scope-slug]-spec.md`), pushed via MCP or paste-ready |
+| **External tool** | one-shot handoff - the brief is compiled, sent, and iterated through the tool | tool-ready spec (`prototypes/[scope-slug]-prototype-spec.md`), pushed via MCP or paste-ready |
 | **In-repo** | a continuous loop with a coding agent - no brief to compile, no moment of handoff | a prototype folder with a harness carrying the four states, fixtures, a time scrubber, per-screen activities, variants, device presets, an annotation layer and a local event log |
 
 **The path is an output of the flow, not a question you answer up front.** It follows from who the prototype is for and which uncertainty it resolves - a flow-comprehension question and a business-rule-correctness question do not belong on the same path.
+
+---
+
+## Two purposes
+
+| Purpose | What it is |
+|---|---|
+| **Test** | one uncertainty, one vertical slice, a hypothesis with a threshold, a verdict |
+| **Workbench** | the product thought out loud - built wider than the MVP on purpose, then cut down by roadmap phase and handed to whoever builds it |
+
+The skill asks which one at the start, because the rules that protect one damage the other: "one vertical slice" is right for a test and wrong for a workbench.
+
+In a workbench the harness gains a **View** control:
+
+| | |
+|---|---|
+| **User type** | the prototype as one user type sees it. Visual only - nothing is enforced |
+| **Phase** | cumulative, in roadmap order. *MVP* shows the product as it would first ship |
+| **Features** | switch one on or off by hand; each carries its description and the specification so far |
+| **Versions** | options of one screen or one element, one at a time |
+
+Pressing a feature's name opens its card beside the screen - what it should do, who it is for, the notes so far - and takes you to the screen it is on. A generated **feature map** lists every feature under its phase.
+
+The shell itself is docked and opaque: a bar across the top, its twin across the bottom, and sidebars that push the prototype aside rather than cover it. Only one panel is open at a time, and a press outside closes it. Phases come from the roadmap, and no feature goes into the first one without its production cost stated - divergence ignores implementation on purpose, so convergence may not.
+
+A room agreeing over a workbench is stakeholder alignment, not user evidence. A belief about users that a phase decision rests on still gets its own test.
 
 ---
 
@@ -84,7 +110,7 @@ The third state is the one teams skip, and skipping it is how a broken test beco
 
 ```bash
 /pm-prototype           # interactive - Step 0 detects spec mode vs. result mode
-/pm-prototype --agent   # autonomous synthesis from available inputs
+/pm-prototype --agent   # drafts from available inputs, decisions wait for your review
 ```
 
 **Three modes, detected automatically at Step 0:**
@@ -118,7 +144,7 @@ The skill reads the `Prototyping` section of `pureinn-variables.md` to find conf
 
 If no endpoint is configured, the skill outputs a paste-ready build prompt block and reminds the user to add an endpoint to `pureinn-variables.md` for future push.
 
-Supported tools: Lovable, v0/Vercel, Base44, Figma Make.
+Supported tools: Lovable, v0/Vercel, Figma Make via endpoint or paste; Figma, Claude Design and Base44 by paste. When several are configured the skill recommends the one the uncertainty points at, falling back to `prototype_default_tool`.
 
 **On the in-repo path no endpoint is needed** - the prototype is built here, against a harness copied from the skill's own `references/scaffold/`. The harness must be served rather than opened as a file, because the artifact runs in an iframe so the device switcher triggers its real media queries.
 
@@ -139,7 +165,7 @@ The prototype spec is only as good as its inputs. The skill never fabricates scr
 - Feature Card (if feature-scoped) - spec pulls from it and writes a prototype reference back into it
 
 **Produces for:**
-- Feature Card `prototypes` section (if feature-scoped)
+- Feature Card - a prototype reference note (path, URL, audience, expected outcome, result), if feature-scoped
 - `pm-hypotheses` - prototype results become experiment evidence in Results mode
 
 **Related skills:** `pm-hypotheses`, `pm-problem-validation`, `pm-feature-design`, `pm-feature-card`, `pm-process-flows`

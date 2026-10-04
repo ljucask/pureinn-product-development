@@ -28,21 +28,18 @@ Unlike the phase pages, this is **not a sequence** - there's no "Step 1, Step 2"
 
 ## pm-prototype
 
-**When to use:** before committing to build - to validate a feature, a PRD initiative, or a product slice with real users.
+**When to use:** before committing to build - to validate a feature, a PRD initiative, a product slice, or a raw idea.
 
-Runs an intent gate first: is a prototype worth it, or go straight to build? If yes, it ingests ACs / flows / process maps / Feature Card / persona / brain dump and compiles a **tool-ready build prompt** with the Lovable Prompting Bible baked in:
-- Front-load + book-end structure
-- Mandatory in/out-of-scope fence
-- Explicit stack declaration
-- Flow narrative
-- Plan-first instruction
-- Fidelity calibration
+Runs an intent gate first: is a prototype worth it, or go straight to build? If yes, it ingests ACs / flows / process maps / Feature Card / persona / brain dump, then decides **depth from who it is for** and **the path from which uncertainty it resolves**:
 
-Targets **Lovable / v0 / Figma Make** via MCP (user picks per run; multiple endpoints configurable in `pureinn-variables.md`) or produces a paste-ready block.
+- **External tool** - a tool-ready build prompt with the Lovable Prompting Bible baked in (front-load + book-end, mandatory in/out-of-scope fence, explicit stack, flow narrative, plan-first, fidelity calibration). Targets Lovable / v0 / Figma Make via MCP, or produces a paste-ready block.
+- **In-repo** - built here by a coding agent, in its own prototype folder, against a harness carrying states, fixtures, time and latency, variants, device widths, a disclosure layer and reviewer comments.
 
-Writes a prototype reference back into the Feature Card. On re-run (result mode) captures the verdict and cascades to the hypothesis register.
+**Wrap mode** puts the harness over an app or prototype you already have - no gate, no workspace needed.
 
-**Agent mode:** `never` - the value is the live dialogue.
+Writes a prototype reference back into the Feature Card. On re-run (result mode) records the verdict as one of four states and cascades to the hypothesis register.
+
+**Agent mode:** `decision` - drafts autonomously, decisions wait for your review.
 
 ---
 

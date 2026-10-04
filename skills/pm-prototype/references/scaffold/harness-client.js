@@ -9,14 +9,23 @@
 
   Copy byte-for-byte. Do not re-author per prototype.
 
-  Channels: state · variant · time · latency. Plus Harness.wait(), which is how
-  a simulated delay actually reaches the artifact.
+  Channels: state · variant · time · latency, and the view - role · phase ·
+  features · versions. Plus Harness.wait(), which is how a simulated delay
+  actually reaches the artifact.
+
+  The view is applied by the shell as a stylesheet, so an artifact that only
+  marks its elements (data-feature, data-role, data-version-of) needs none of
+  the view channels. They are for what a stylesheet cannot do: a total that
+  must leave out a hidden feature, a menu built in script.
 */
 (function (global) {
   'use strict';
 
-  var handlers = { state: [], time: [], variant: [], latency: [] };
-  var current = { state: 'full', time: 0, variant: 'default', latency: 'none' };
+  var handlers = { state: [], time: [], variant: [], latency: [], role: [], phase: [], features: [], versions: [] };
+  /* `features` is null until the shell says otherwise: outside the harness, or
+     under a config that declares none, every feature counts as present. */
+  var current = { state: 'full', time: 0, variant: 'default', latency: 'none',
+                  role: 'all', phase: 'all', features: null, versions: {} };
   var embedded = global.parent !== global;
 
   function on(kind, fn) {
@@ -185,7 +194,7 @@
   global.addEventListener('message', function (e) {
     var d = e.data;
     if (!d || !d.__harness) return;
-    if (d.type === 'state' || d.type === 'time' || d.type === 'variant' || d.type === 'latency') apply(d.type, d.value);
+    if (handlers[d.type]) apply(d.type, d.value);
     if (d.type === 'picking') setPicking(d.value);
     if (d.type === 'scroll') scrollTo(d.value);
     if (d.type === 'aim') aimAt(d.value);
@@ -211,6 +220,10 @@
     log: log,
     embedded: embedded,
     get: function (kind) { return current[kind]; },
+    /* Is this feature in the current view? True outside the harness. */
+    has: function (id) { return !current.features || current.features.indexOf(id) > -1; },
+    /* Which option of a version group is showing, or undefined outside it. */
+    version: function (group) { return current.versions[group]; },
     nextWeekday: nextWeekday,
     ago: ago,
     wait: wait

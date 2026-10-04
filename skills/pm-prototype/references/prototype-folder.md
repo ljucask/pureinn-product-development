@@ -53,6 +53,8 @@ A PRD says what the product could be. It does not decide what gets made. That de
 
 Every capability the source document names ends up in one of the three. One that appears in none of them was never considered, and the gap should be visible.
 
+**In a workbench, `built` carries a phase too.** There the prototype is wider than what ships first on purpose, so a feature that runs is not thereby in the MVP: each `built` row gets the roadmap phase it belongs to once the prototype converges, and until then it has none. That column is what the harness reads - `references/workbench.md`.
+
 **`next` carries a phase, not a priority.** The useful division is not important-vs-not but *must this be software, or can a person do it by hand the first time* - because you cannot automate a process nobody has run yet. A first release that does the operational work manually and a second that automates only what proved painful is a real plan; a numbered priority list is a wish.
 
 ---
@@ -119,6 +121,7 @@ A researched persona is `EVIDENCE-BASED INFERENCE`. An agent-generated one is `S
 **Created:** [YYYY-MM-DD]
 **Uncertainty:** [the one thing this exists to resolve]
 **Audience:** [primary from Step 3b] · secondary: [others, whose needs yield]
+**Purpose:** [test | workbench]
 **Path:** [in-repo | external tool]
 **Classification:** [Disposable | Reference | Evolutionary]
 **Decision:** open
@@ -156,7 +159,7 @@ the screen is the artifact the reviewer actually sees.]
 
 ## Decision state
 
-`open` → one of `kill` · `persevere` · `partial`.
+`open` → one of `kill` · `promote` · `partial` - the same three Step 8 acts on (`references/promotion.md`).
 
 **Open is not a resting state.** A prototype that has been open for a long time with no decision is the failure mode this whole structure exists to prevent - a folder where nothing is dead and nothing is alive. When a run finds one, say so and ask for the decision.
 

@@ -1,0 +1,8 @@
+{
+  "name": "pureinn-harness-tests",
+  "private": true,
+  "type": "module",
+  "description": "Browser tests for the pm-prototype harness. Run before any change to scaffold/harness.html ships.",
+  "scripts": { "test": "node --test harness.test.mjs" },
+  "devDependencies": { "playwright": "^1.50.0" }
+}

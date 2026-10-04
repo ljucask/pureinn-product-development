@@ -18,3 +18,5 @@ backlog/
 # content-hygiene check - never shipped, so the public repo never contains
 # a real name even as blocklist data. See scripts/validate.py.
 scripts/.project-blocklist
+# Browser driver for the harness tests - installed locally, never shipped
+tests/harness/node_modules/

@@ -1,14 +1,14 @@
 ---
 name: pm-prototype
-description: Cross-phase prototyping engine. Takes a scoped chunk of the product (a feature, a PRD initiative, the whole product, or any slice) and gets a prototype of it built by one of two paths - compiled as a tool-ready spec for an external tool (Lovable, v0/Vercel, Base44, Figma Make), or built in-repo by a coding agent against a harness that carries the states, fixtures, per-screen time and latency, per-screen activities that say what can be done on each screen so scaffolding never ships inside the artifact's own UI, variants, device widths, an honesty layer that labels what is simulated, reviewer comments with a no-backend return path, and a feedback report. Gate-checks whether a prototype is worth it at all, then decides depth and path from who it is for and which uncertainty it resolves. On re-run, captures the result against a precommitted threshold and feeds it back to the Feature Card / hypothesis register. Use anytime you want to validate before real build.
+description: Cross-phase prototyping engine. Takes a scoped chunk of the product (a feature, a PRD initiative, the whole product, or any slice) and gets a prototype of it built by one of two paths - compiled as a tool-ready spec for an external tool (Lovable, v0/Vercel, Base44, Figma Make), or built in-repo by a coding agent against a harness that carries the states, fixtures, per-screen time and latency, per-screen activities that say what can be done on each screen so scaffolding never ships inside the artifact's own UI, variants, device widths, an honesty layer that labels what is simulated, reviewer comments with a no-backend return path, and a feedback report. Gate-checks whether a prototype is worth it at all, then decides depth and path from who it is for and which uncertainty it resolves. On re-run, captures the result against a precommitted threshold and feeds it back to the Feature Card / hypothesis register. Also serves as a workbench: a prototype built wider than the MVP, then cut down by roadmap phase in the harness (seen as each user type, version groups per screen or element, features switched on and off, a view limited to one phase) and handed to developers as a clickable reference. Use anytime you want to validate, shape or scope before real build.
 license: MIT
 metadata:
-  agent-mode: synthesis
+  agent-mode: decision
   standalone: yes
   author: https://github.com/ljucask
-  version: "1.3.0"
+  version: "1.4.0"
   domain: product-management
-  triggers: prototype, prototyping, proof of concept, POC, spike, validate before build, lovable, base44, v0, figma make, clickable prototype, mockup, throwaway, quick validation, in-repo prototype, coding agent prototype, prototype harness
+  triggers: prototype, prototyping, workbench, scope the MVP in a prototype, feature phases in prototype, role view, proof of concept, POC, spike, validate before build, lovable, base44, v0, figma make, clickable prototype, mockup, throwaway, quick validation, in-repo prototype, coding agent prototype, prototype harness
   role: specialist
   scope: validation
   output-format: document
@@ -24,6 +24,7 @@ Supports `--agent`: runs autonomously in a subagent, drafts the artifact from ex
 
 - **No flag** → interactive (default); if inputs are heavy, offer agent mode.
 - **`--agent`** → obey. First check inputs are complete. Anything missing: do NOT invent it - mark `[ASSUMED - what/why]` in the output and summary. Never hallucinate to fill a gap.
+- **Review required:** a run contains commitments - whether to prototype at all, the audience, the path, the classification, and at Step 8 the verdict and the kill / promote decision. A subagent drafts each as a proposal; none is final until the user has reviewed it. Wrap mode makes none of these decisions and runs fully.
 
 ---
 
@@ -31,6 +32,14 @@ Supports `--agent`: runs autonomously in a subagent, drafts the artifact from ex
 Runs with or without a Pureinn workspace - it needs no other skill's artifact, so it works as a single tool from an install that never ran `/pureinn`.
 - No workspace: create just the folder this skill writes into, or write to a path the user names, and say where the file went. Do not scaffold a project, do not invent a `state.json`, and do not send the user to `/pureinn` first.
 - Read `pureinn-variables.md` / `state.json` where a value is actually used, not at the top of the run. Missing value: continue and name the capability it costs.
+
+---
+
+## Artifact language
+Checks `state.json` → `artifact_language`. Default (unset, "English", or no workspace): no change in behavior.
+- If set to a non-English language: write prose content in that language - `meta.md`, `hypotheses.md`, `findings.md`, the feature plan and cards, the spec's descriptive sections.
+- Never translate: IDs (`PRT-`, `FEAT-`, `OQ-`), field labels a later run reads and their values (`Decision:`, `Classification:`, `Path:`, the four verdict states, `built` / `next` / `cut`), file names - these stay English always, regardless of the setting.
+- This is **not** the language the prototype itself speaks. That is asked separately at Step 3b (`references/content-and-copy.md`), and the two can differ.
 
 ---
 
@@ -51,7 +60,8 @@ This file is the flow. Detail that only one path needs lives in `references/` ne
 | `in-repo-loop.md` | The harness shell contract, the rules of the iteration loop, stop and restart signals | the prototype is built here, by a coding agent |
 | `prototype-folder.md` | The folder an in-repo prototype lives in, `targets:`, provenance for `context/`, the decision state | **Step 3b - created before the build**, updated at 7, closed at 8 |
 | `promotion.md` | Classification before the first line of code; kill and promotion once there is a decision | Step 3b, then Step 8 |
-| `scaffold/` | The harness itself - copy `harness.html` and `harness-client.js` byte-for-byte, edit only `harness.config.js` | on the in-repo path |
+| `workbench.md` | The second purpose - build wide, cut down by roadmap phase, hand over. Roles, phases, features and versions in the harness | Step 2 finds the purpose is shaping and scoping, not testing |
+| `scaffold/` | The harness itself - copy `harness.html` and `harness-client.js` byte-for-byte, edit only `harness.config.js`. `HISTORY.md` is for changing the harness, not for using it | on the in-repo path, and in Wrap mode |
 
 ---
 
@@ -76,13 +86,20 @@ The scope is whatever you point at, with **no limit**:
 
 **Cross-phase.** Like adding a hypothesis or running a validation, this skill has no fixed home in the sequence. Run it whenever there is genuine uncertainty worth de-risking cheaply - during discovery (concept desirability), before a PRD initiative (flow/scope), or inside Phase 6 before a feature enters build (UX/interaction).
 
-**Two modes (same skill, same file):**
+**Three modes (same skill, same file):**
 
 | Mode | When | What it does |
 |---|---|---|
 | **Spec mode** (default) | You want to build a prototype | Gate-check → ingest inputs → audience, depth and path → build it, by whichever path fits |
 | **Wrap mode** | You already have the app or prototype and want the review layer on it | Straight to the harness - no gate, no path decision, no spec. Needs no workspace |
 | **Result mode** (re-run) | The prototype exists, you have a result | Capture what the prototype proved/disproved → decision → cascade to Feature Card / hypotheses |
+
+**Two purposes, told apart at Step 2:**
+
+| Purpose | What it is | Governed by |
+|---|---|---|
+| **Test** | one uncertainty, one vertical slice, a hypothesis with a threshold, a verdict | Steps 2-8 as written |
+| **Workbench** | the product thought out loud - wider than the MVP on purpose, then cut down by roadmap phase and handed to whoever builds it | `references/workbench.md`, which changes what Step 2 asks and what Step 8 records |
 
 **What the skill is NOT:** it does not replace `pm-feature-design` (JIT production spec) and it does not build the prototype's production version. A prototype is a throwaway or a reference, not the build.
 
@@ -127,7 +144,7 @@ the backlog key only when the scope is a feature, the design context only in
 `references/design-direction.md`. Reading them here made a workspace file a
 hard dependency for runs that need nothing from it.
 
-**Detect mode - four, not three:**
+**Detect mode - three modes, plus one check that applies to all of them:**
 
 - **Wrap mode** - the user already has the thing. A built prototype, a running
   app, a set of HTML screens, a deployed URL, and what they want is the review
@@ -140,7 +157,7 @@ hard dependency for runs that need nothing from it.
 - **Result mode** (Step 8) - the user references an existing prototype in
   `/prototypes/` - a spec file **or** a prototype folder - and talks about an
   outcome or result.
-- If a prototype folder exists whose `meta.md` still says `Decision: open`, say
+- **The check:** if a prototype folder exists whose `meta.md` still says `Decision: open`, say
   so before anything else. An open prototype with no decision is the state this
   whole structure exists to prevent.
 - Otherwise → **Spec mode**: Steps 1 → 2 → 3 → 3b → the chosen path (Steps 4-6
@@ -176,6 +193,12 @@ That sequence can legitimately end with *"the cheapest test of your riskiest bel
 ## Step 2: Intent gate (Impact over Activity)
 
 **Do not generate a spec before answering: what does the prototype earn us, and is it the cheapest way to earn it?** A prototype costs credits and time - it must de-risk something real. This gate is mandatory.
+
+**First, which purpose.** If it is not already plain from the request, ask with AskUserQuestion: is this prototype here to **test** one thing, or to be the **workbench** where the product is shaped and then cut down to an MVP? Recommend from what the user said - a named hypothesis or a single flow means test; "let's see what this could be", several features at once, or a prototype meant to be shown in meetings and handed to developers means workbench.
+
+**Workbench:** read `references/workbench.md` and let it govern. The gate still runs, with different questions - who decides over it, where the phases come from, and what stops it (the phases are decided and the first is handed over). Points 1-3 below do not apply as written: there is no single hypothesis, and the result is a set of decisions, not a verdict. A belief about users that a phase decision rests on is still a hypothesis, and gets its own **test**.
+
+**Test:** continue with points 1-3.
 
 1. **What are we validating?** Name the uncertainty in the same vocabulary Step 3b uses, so it can be carried forward rather than re-elicited:
 
@@ -285,7 +308,7 @@ This makes the Feature Card show that a prototype was used and that a result is 
 
 **If initiative/product-scoped:** log the prototype as a validation instrument against the relevant hypothesis in the hypothesis register (or note it for `pm-hypotheses`).
 
-External path: save the spec to `/prototypes/` (Step: Save to). In-repo path: the folder is already the artifact - do not also write a spec file for it, or the same prototype exists twice and the two will drift.
+External path: save the spec under `prototypes/` (see **Save to**). In-repo path: the folder is already the artifact - do not also write a spec file for it, or the same prototype exists twice and the two will drift.
 
 ---
 
@@ -303,7 +326,14 @@ If the maker is also the moderator - the normal case here - apply the demand-eff
 
 ## Step 8: Result mode (re-run after the prototype exists)
 
-When the user comes back with an outcome, operate in **delta mode** - do not rewrite the spec, append to its `## Result` section:
+When the user comes back with an outcome, operate in **delta mode** - add the result, never rewrite what was decided before it. Where it is recorded depends on the path, because only one of them has a spec file:
+
+| Path | The result goes into |
+|---|---|
+| External tool | the spec file's `## Result` section |
+| In-repo | `findings.md` in the prototype folder, and `Decision:` in `meta.md` moves off `open` (`references/prototype-folder.md`) |
+
+The block under point 2 is the shape of the record on both paths.
 
 1. **Capture what happened:** what was built, what was tested, with whom (if users saw it).
 2. **Verdict against the success criterion:**
@@ -340,6 +370,8 @@ When the user comes back with an outcome, operate in **delta mode** - do not rew
 
 4. **Before a kill is recorded, check it is defensible** - all five conditions in `references/hypotheses.md` § 4. Before that bar is met, "iterate the representation" is usually the more accurate conclusion than "the idea is wrong".
 
+**Workbench:** none of points 1-4 apply - there is no verdict to give. Record the decisions instead: who decided, which feature went into which phase and why, what was cut and why. Then promote phase by phase per `references/workbench.md` § Hand over.
+
 5. **Act on the decision** - `references/promotion.md`. The verdict is what the evidence says; the decision is what you do about it, and they are not the same field.
 
    | Decision | What happens |
@@ -354,7 +386,7 @@ When the user comes back with an outcome, operate in **delta mode** - do not rew
 
 <!-- Claude reference only -->
 
-**Every prototype spec must have:**
+**Every prototype must have (both paths unless marked):**
 - [ ] Scope + intent + a success criterion written as a hypothesis that can fail, with its ambiguous zone, before anyone sees a result
 - [ ] In-scope / out-of-scope (out-of-scope fence is non-negotiable)
 - [ ] Primary screen named + build-first
@@ -371,12 +403,14 @@ When the user comes back with an outcome, operate in **delta mode** - do not rew
 - [ ] Classification decided **before** the first line of code, and Evolutionary code on a real branch rather than in the prototype folder
 - [ ] In-repo path only: the prototype folder was created at Step 3b **before the build**, per `references/prototype-folder.md`, with `targets:` and a declared stop condition
 - [ ] Local `domain.md` / `rules.md` / `context/` exist only where the prototype deliberately diverges, and say in what way
+- [ ] Purpose stated - test or workbench - and written into `meta.md`
+- [ ] Workbench only: every built feature is registered and marked in the artifact; phases come from the roadmap, not invented; no feature placed in the first phase without its production cost stated; harness config generated from the plan, never the origin of a phase
 
 **Never skipped:**
 - [ ] Intent gate ran (prototype justified, or user chose to proceed anyway)
-- [ ] MCP warning shown before any live call
+- [ ] External path with an MCP endpoint: warning shown before any live call
 - [ ] Feature Card prototype reference written (if feature-scoped) - reference only, spec sections untouched
-- [ ] Lovable target: Knowledge Base loaded (`set_project_knowledge`) + confirm-understanding gate passed before any code
+- [ ] External path, Lovable target: Knowledge Base loaded (`set_project_knowledge`) + confirm-understanding gate passed before any code
 
 **Before showing:**
 - [ ] Alternatives shown, or the unresolved dimensions explicitly marked

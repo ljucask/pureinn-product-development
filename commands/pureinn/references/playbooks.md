@@ -242,9 +242,9 @@ State "Phase 3b partially done elsewhere" and list which artifacts exist.
                           notes or a transcript
                          [Run after any meeting where notes or a transcript exist]
 
-/pm-prototype          → Tool-ready prototype spec (Lovable / v0 / Figma Make) to validate a flow, UX
-                          hypothesis, or concept before real build; result mode feeds back to the
-                          Feature Card / hypothesis register
+/pm-prototype          → A prototype to validate a flow, UX hypothesis, or concept before real build -
+                          a tool-ready spec (Lovable / v0 / Figma Make) or built in-repo behind a
+                          review harness; result mode feeds back to the Feature Card / hypothesis register
                          [Cross-phase - use anytime there is genuine uncertainty worth de-risking cheaply]
 
 /pm-stress-test        → Adversarial stakeholder pushback simulator (investor / CFO / board / CTO / DPO...)

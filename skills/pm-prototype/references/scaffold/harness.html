@@ -304,7 +304,7 @@
      faint outline in the bar's own ink rather than a flat colour that is
      invisible on one side of the line. */
   .status__bat b {
-    position: relative; z-index: 2; font-size: 8.5px; font-weight: 700;
+    position: relative; z-index: 2; font-size: 11px; font-weight: 700;
     letter-spacing: -.02em; line-height: 1; font-variant-numeric: tabular-nums;
     color: var(--bat-ink, #fff);
     text-shadow: 0 0 1.5px var(--bat-halo, rgba(0,0,0,.45));
@@ -321,7 +321,6 @@
   .status__bat.is-low { box-shadow: inset 0 0 0 1px currentColor; }
   .status { --bat-ink: #fff; }
   body.is-darkart .status { --bat-ink: #14161b; }
-  body.is-booting .status { color: #fff; --bat-ink: #14161b; background: none; }
 
   /* The glass. No blend mode: `screen` brightens, and most prototypes are
      white, so a white highlight over white was exactly no change at all and
@@ -382,158 +381,6 @@
   body.is-mock:not(.is-fixed):not(.is-native) .wrap[data-device="mobile"] .barphone { display: flex; }
   body.is-mock:not(.is-fixed):not(.is-native) .wrap[data-device="tablet"] .barphone { display: flex; border-radius: 0 0 20px 20px; height: 42px; padding-bottom: 6px; }
   body.is-bare .barphone { display: none !important; }
-
-  /* ══ opening ══
-     A prototype that is simply THERE when the page loads skips the one moment
-     every real product has: being opened. Showing it costs a second and is the
-     difference between "here is a screen" and "here is the app" - which is the
-     whole job in a stakeholder showing.
-
-     It plays once, only with the hardware drawn, and any click skips it. It is
-     never in the way of a usability test, because there the mockup is off. */
-  /* Below the status bar, above everything else. A home screen with no clock
-     on it is the one thing that gives the whole illusion away. */
-  .boot {
-    position: absolute; z-index: 2; inset: var(--bez); overflow: hidden;
-    border-radius: calc(var(--rad, 45px) - 12px); pointer-events: auto;
-  }
-  /* and the bar goes white over the wallpaper for as long as it is up */
-  body.is-booting .status { color: #fff; --bat-ink: #14161b; }
-  body.is-booting .status { background: none; }
-  body.is-mock:not(.is-fixed) .wrap[data-device="tablet"] .boot { border-radius: 20px; }
-  body.is-mock:not(.is-fixed) .wrap[data-device="desktop"] .boot { border-radius: 5px; inset: var(--bez); top: calc(var(--bez) + 26px); }
-
-  .boot__home { position: absolute; inset: 0; opacity: 1; transition: opacity 420ms var(--ease); }
-  .boot__wall {
-    position: absolute; inset: 0;
-    background:
-      radial-gradient(78% 52% at 22% 8%,  rgba(255,146,92,.50) 0%, rgba(255,146,92,0) 62%),
-      radial-gradient(70% 46% at 86% 26%, rgba(150,110,230,.45) 0%, rgba(150,110,230,0) 60%),
-      radial-gradient(96% 60% at 50% 104%, rgba(58,120,210,.40) 0%, rgba(58,120,210,0) 64%),
-      linear-gradient(168deg, #1b2030 0%, #12141d 52%, #0c0e15 100%);
-  }
-  /* Everything here is expressed against the screen it is drawn on, so the
-     same markup lays out on a phone and on a tablet. Pixel values tuned for a
-     440pt phone made a tablet home screen with hairline margins and enormous
-     icons. */
-  .boot { --cols: 4; --pad: 4.2%; }
-  body.is-mock:not(.is-fixed) .wrap[data-device="tablet"] .boot { --cols: 6; --pad: 5%; border-radius: 20px; }
-  .boot__page { position: absolute; inset: 7% var(--pad) 13%; display: flex; flex-direction: column; gap: 3%; }
-
-  /* Widgets. A home screen that is only a grid of grey squares reads as a
-     placeholder; the weather and the calendar are what make it read as
-     somebody's phone. Both are generic on purpose - a real city and a real
-     meeting would be someone's data on a screenshot that gets passed around. */
-  .boot__wx, .boot__cal {
-    position: relative; border-radius: 4.6%/9%; padding: 3.2% 3.6%;
-    background: rgba(255,255,255,.13);
-    box-shadow: inset 0 .5px 0 rgba(255,255,255,.18);
-    color: #fff; display: grid;
-  }
-  .boot__wx { grid-template-columns: 1fr auto; align-items: start; }
-  .boot__wx-c { font-size: 12.5px; font-weight: 600; opacity: .95; }
-  .boot__wx-t { grid-row: 1 / 3; font-size: 34px; font-weight: 300; line-height: .9; letter-spacing: -.02em; }
-  .boot__wx-s { font-size: 11px; opacity: .72; margin-top: 2px; }
-  .boot__wx-r { grid-column: 1 / -1; font-size: 11px; opacity: .72; margin-top: 6px; }
-
-  .boot__cal { gap: 1px; }
-  .boot__cal-d { font-size: 10px; font-weight: 700; letter-spacing: .06em; color: #ff6b5e; }
-  .boot__cal-n { font-size: 27px; font-weight: 600; line-height: 1.05; letter-spacing: -.02em; }
-  .boot__cal-e { display: flex; align-items: center; gap: 7px; margin-top: 5px; font-size: 10.5px; opacity: .8; }
-  .boot__cal-e i { width: 2.5px; height: 12px; border-radius: 2px; background: #5aa9ff; flex: 0 0 auto; }
-  .boot__cal-e i.alt { background: #ffb454; }
-
-  /* straight after the widgets, the way a page of a home screen fills from the
-     top - the icons pushed to the bottom left a hole in the middle of it */
-  .boot__grid {
-    margin-top: 1%; display: grid;
-    grid-template-columns: repeat(var(--cols), 1fr); gap: 9% 4.5%;
-  }
-  /* Apps, not grey squares. Each is a colour and one shape, which is enough to
-     read as a familiar icon at this size without being anyone's actual mark -
-     these end up in screenshots that travel. */
-  .boot__grid i, .boot__dock i {
-    position: relative; display: block; padding-top: 100%; border-radius: 23%;
-    background: rgba(255,255,255,.15);
-    box-shadow: inset 0 .5px 0 rgba(255,255,255,.2);
-    overflow: hidden;
-  }
-  .boot__grid i::after, .boot__dock i::after {
-    content: ""; position: absolute; inset: 26%;
-    background: rgba(255,255,255,.9);
-    -webkit-mask: var(--gl) center/contain no-repeat; mask: var(--gl) center/contain no-repeat;
-  }
-  .boot__grid i:not([style*="--bg"])::after { content: none; }
-
-  .boot__grid i.is-app { background: none; box-shadow: none; overflow: visible; }
-  .boot__grid i.is-app::after { content: none; }
-
-  .boot__dock {
-    position: absolute; left: 3.4%; right: 3.4%; bottom: 2.8%;
-    border-radius: 7%/26%; background: rgba(255,255,255,.14);
-    box-shadow: inset 0 .5px 0 rgba(255,255,255,.16);
-    display: grid; grid-template-columns: repeat(4, 1fr); align-items: center;
-    gap: 3.4%; padding: 1.6%;
-  }
-  body.is-mock:not(.is-fixed) .wrap[data-device="tablet"] .boot__dock {
-    left: 26%; right: 26%; border-radius: 5%/22%;
-  }
-  .boot__dock i { display: block; padding-top: 100%; border-radius: 23%; background: rgba(255,255,255,.17); }
-  .boot__bar {
-    position: absolute; left: 50%; transform: translateX(-50%); bottom: 9px;
-    width: 134px; height: 5px; border-radius: 99px; background: rgba(255,255,255,.55);
-  }
-
-  /* The app's own tile, which is what grows into the screen. Slower than a
-     normal transition on purpose: the point is that someone SEES the app being
-     opened, and at 300ms it is over before it registers. */
-  .boot__tile {
-    position: absolute; border-radius: 23%;
-    display: grid; place-items: center;
-    background: linear-gradient(150deg, #ed6d57, #ffc94f);
-    box-shadow: 0 12px 26px -10px rgba(0,0,0,.6);
-    transform-origin: top left;
-    /* One curve for the whole movement, slow to leave and settling rather than
-       stopping - which is what makes it read as weight rather than a tween. */
-    transition: transform 760ms cubic-bezier(.32,.02,.18,1),
-                border-radius 760ms cubic-bezier(.32,.02,.18,1),
-                box-shadow 400ms linear,
-                opacity 240ms 520ms ease-out;
-  }
-  /* the artwork is clipped to the tile; the NAME is not, which is why the tile
-     itself cannot be overflow:hidden */
-  .boot__tile img, .boot__tile svg {
-    max-width: 56%; max-height: 56%; display: block; border-radius: inherit;
-    transition: opacity 180ms ease-out, transform 180ms ease-out;
-  }
-  /* The mark leaves almost immediately. Scaled up with the plate it becomes a
-     logo five times its size crossing the screen, which reads as a zoom rather
-     than as an app opening. */
-  .boot.is-launch .boot__tile img,
-  .boot.is-launch .boot__tile svg { opacity: 0; transform: scale(.7); }
-  .boot.is-launch .boot__tile { overflow: hidden; }
-  .boot__tile-l {
-    position: absolute; left: 0; right: 0; bottom: -19px;
-    text-align: center; font-size: 10.5px; color: #fff;
-    text-shadow: 0 1px 3px rgba(0,0,0,.55);
-    transition: opacity 200ms linear;
-  }
-  /* the press. A tile that grows with no touch first reads as a zoom, not as
-     someone opening an app. */
-  .boot__tile.is-tap { transform: scale(.9); transition: transform 170ms var(--ease); }
-
-  .boot.is-launch .boot__home { opacity: 0; }
-  .boot.is-launch .boot__tile { border-radius: 0; opacity: 0; box-shadow: 0 0 0 rgba(0,0,0,0); }
-  .boot.is-launch .boot__tile-l { opacity: 0; }
-
-  /* the web opening has no home screen - the address arrives and the page does */
-  .boot--web .boot__home,
-  .boot--web .boot__tile { display: none; }
-  .boot--web { background: #fff; transition: opacity 260ms var(--ease); }
-  body.is-darkart .boot--web { background: #14161b; }
-  .boot--web.is-launch { opacity: 0; }
-
-  @media (prefers-reduced-motion: reduce) { .boot { display: none !important; } }
 
   /* iPad: even bezel all round, softer radius, a single camera dot */
   body.is-mock:not(.is-fixed) .wrap[data-device="tablet"] { --bez: 17px; }
@@ -597,7 +444,7 @@
     flex: 1 1 auto; margin-left: 8px; height: 18px;
     border-radius: 999px; background: rgba(255,255,255,.09);
     display: flex; align-items: center; padding: 0 10px;
-    color: rgba(255,255,255,.5); font: 500 10px/1 var(--mono);
+    color: rgba(255,255,255,.5); font: 500 11px/1 var(--mono);
     overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
   }
 
@@ -662,10 +509,6 @@
   @media (max-width: 1400px) { body.is-notes .isle--tl .badge { display: none; } }
   @media (max-width: 1260px) { body.is-notes .isle--tl .cur { display: none; } }
 
-  @media (max-width: 1420px) { .isle--tl .title { display: none; } }
-  @media (max-width: 1260px) { .isle--tl .badge__t { display: none; } .isle--tl .badge { padding: 7px; } }
-  @media (max-width: 1160px) { .isle--tl .cur__k { display: none; } }
-  @media (max-width: 1060px) { .isle--tl .badge { display: none; } }
 
   /* ══ disclosure - its own island, never mixed with controls ══ */
   .badge {
@@ -680,7 +523,7 @@
     animation: pulse 2.6s var(--ease) infinite;
   }
   @keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: .4 } }
-  .badge__t { font: 700 10px/1 var(--mono); letter-spacing: .11em; text-transform: uppercase; }
+  .badge__t { font: 700 11px/1 var(--mono); letter-spacing: .11em; text-transform: uppercase; }
   .title {
     color: var(--co); font-size: 13px; font-weight: 680; letter-spacing: -.01em;
     max-width: 26ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
@@ -714,7 +557,7 @@
     box-shadow: 0 2px 10px -3px rgba(237,109,87,.6);
   }
   .ib[aria-pressed="true"] kbd { background: rgba(255,255,255,.25); color: #fff; }
-  .ib kbd { font: 700 9.5px/1 var(--mono); padding: 3px 5px; border-radius: 5px; background: rgba(22,24,29,.06); color: var(--ink-3); }
+  .ib kbd { font: 700 11px/1 var(--mono); padding: 3px 5px; border-radius: 5px; background: rgba(22,24,29,.06); color: var(--ink-3); }
   .ib--icon { padding: 0; width: 34px; justify-content: center; }
   .ib.is-ok { background: #17a76b; color: #fff; }
   .ib[disabled] { opacity: .38; pointer-events: none; }
@@ -742,7 +585,7 @@
   .seg button[aria-pressed="true"] { color: var(--ink); font-weight: 600; }
 
   .label {
-    color: var(--ink-3); font: 700 9px/1 var(--mono);
+    color: var(--ink-3); font: 700 11px/1 var(--mono);
     letter-spacing: .14em; text-transform: uppercase;
     padding-left: 8px; user-select: none;
   }
@@ -761,7 +604,7 @@
   }
   .navbtn:hover { box-shadow: 0 0 0 1px rgba(22,24,29,.16), 0 2px 6px rgba(22,24,29,.09); }
   .navbtn[aria-expanded="true"] { background: var(--grad-45); color: #fff; box-shadow: 0 2px 10px -3px rgba(237,109,87,.6); }
-  .navbtn__n { font: 600 10px/1 var(--mono); color: var(--ink-3); }
+  .navbtn__n { font: 600 11px/1 var(--mono); color: var(--ink-3); }
   .navbtn[aria-expanded="true"] .navbtn__n { color: rgba(255,255,255,.75); }
   .bars { display: grid; gap: 3px; width: 14px; }
   .bars i { display: block; height: 1.8px; border-radius: 2px; background: currentColor; }
@@ -769,7 +612,7 @@
 
   /* which screen is open, stated rather than implied by a control's label */
   .cur { display: inline-flex; align-items: baseline; gap: 7px; padding: 0 4px 0 2px; }
-  .cur__k { font: 700 8.5px/1 var(--mono); letter-spacing: .13em; text-transform: uppercase; color: var(--ink-3); }
+  .cur__k { font: 700 11px/1 var(--mono); letter-spacing: .13em; text-transform: uppercase; color: var(--ink-3); }
   .cur__v { font-size: 12.5px; font-weight: 650; color: var(--ink); letter-spacing: -.01em; }
 
   .nav {
@@ -802,7 +645,7 @@
   .brand--none { display: none; }
 
   .nav__top { display: flex; align-items: center; justify-content: space-between; padding: 4px 6px 14px; }
-  .nav__k { font: 700 9px/1 var(--mono); letter-spacing: .15em; text-transform: uppercase; color: #6d7482; }
+  .nav__k { font: 700 11px/1 var(--mono); letter-spacing: .15em; text-transform: uppercase; color: #6d7482; }
   .nav__x {
     width: 26px; height: 26px; display: grid; place-items: center;
     background: none; border: 0; border-radius: 8px;
@@ -826,7 +669,7 @@
   }
   .nav__no {
     position: absolute; top: 13px; right: 13px;
-    font: 600 10px/1 var(--mono); color: #6d7482;
+    font: 600 11px/1 var(--mono); color: #6d7482;
   }
   .nav__i[aria-current="true"] .nav__no { color: rgba(255,255,255,.8); }
   .nav__ico {
@@ -841,10 +684,16 @@
   .nav__i[aria-current="true"] .nav__d { color: rgba(255,255,255,.82); }
   .nav__i[aria-current="true"] .nav__tag { background: rgba(255,255,255,.22); color: #fff; }
   .nav__d { display: block; margin-top: 4px; font-size: 11.5px; line-height: 1.5; color: #868e9c; }
+  /* A screen the current view leaves out. Dimmed and labelled, never removed:
+     a list that silently lost a row would hide exactly what was cut. */
+  .nav__i.is-out { opacity: .42; }
+  .nav__i.is-out:hover { opacity: .8; }
+  .nav__out { display: none; margin-top: 5px; font: 700 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: #ffb199; }
+  .nav__i.is-out .nav__out { display: block; }
   .nav__tag {
     display: inline-block; justify-self: start; margin-top: 7px; padding: 3px 7px; border-radius: 6px;
     background: rgba(237,109,87,.16); color: #ff9d81;
-    font: 700 8.5px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase;
+    font: 700 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase;
   }
   /* the sections carry the panel: a faint rule between two lists is not a
      heading, and the reader has to work out what changed */
@@ -852,12 +701,12 @@
     display: flex; align-items: center; gap: 8px; width: 100%;
     margin: 4px 0 8px; padding: 9px 11px;
     background: rgba(255,255,255,.05); border: 0; border-radius: 10px;
-    font: 700 9px/1 var(--mono); letter-spacing: .16em; text-transform: uppercase;
+    font: 700 11px/1 var(--mono); letter-spacing: .16em; text-transform: uppercase;
     color: #aab1bd; text-align: left;
   }
   .nav__sec + .nav__i { margin-top: 0; }
   .nav__sec span { flex: 1 1 auto; }
-  .nav__sec b { font: 700 10px/1 var(--mono); letter-spacing: 0; color: #6d7482; }
+  .nav__sec b { font: 700 11px/1 var(--mono); letter-spacing: 0; color: #6d7482; }
   .nav__sec:not(:first-child) { margin-top: 18px; }
   .nav__sec--btn { cursor: pointer; transition: background var(--fast) var(--ease), color var(--fast) var(--ease); }
   .nav__sec--btn:hover { background: rgba(255,255,255,.09); color: #fff; }
@@ -1012,14 +861,14 @@
     display: flex; align-items: center; gap: 8px;
     padding: 5px 6px 5px 5px; border: 0; border-radius: 9px;
     background: none; cursor: pointer;
-    font: 700 8.5px/1 var(--mono); letter-spacing: .13em; text-transform: uppercase;
+    font: 700 11px/1 var(--mono); letter-spacing: .13em; text-transform: uppercase;
     color: var(--ink-3); text-align: left;
     animation: slide var(--med) var(--ease) backwards;
     transition: background var(--fast) var(--ease), color var(--fast) var(--ease);
   }
   .rail__h:hover { background: rgba(22,24,29,.05); color: var(--ink-2); }
   .rail__h span { flex: 1 1 auto; }
-  .rail__h b { font: 600 9px/1 var(--mono); opacity: .75; }
+  .rail__h b { font: 600 11px/1 var(--mono); opacity: .75; }
   .rail__h svg { width: 12px; height: 12px; opacity: .7; }
   .rail__h svg:last-child { width: 10px; height: 10px; transition: transform var(--fast) var(--ease); }
   .rail__h.is-shut svg:last-child { transform: rotate(-90deg); }
@@ -1051,7 +900,7 @@
     width: 9px; height: 9px; border-radius: 50%; background: currentColor;
     flex: 0 0 auto; box-shadow: 0 0 0 2.5px rgba(255,255,255,.75);
   }
-  .note__foot { display: flex; align-items: center; gap: 8px; margin-top: 9px; font-size: 10.5px; color: var(--ink-3); }
+  .note__foot { display: flex; align-items: center; gap: 8px; margin-top: 9px; font-size: 11px; color: var(--ink-3); }
   .note__who { font-weight: 600; color: var(--ink-2); }
   .note__act {
     margin-left: auto; padding: 4px 9px; border: 0; border-radius: 7px;
@@ -1068,7 +917,7 @@
     box-shadow: 0 2px 9px -3px rgba(237,109,87,.7);
   }
   .note__save[disabled] { background: rgba(22,24,29,.08); color: var(--ink-3); box-shadow: none; cursor: default; }
-  .note__kbd { font: 700 8.5px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); flex: 0 0 auto; }
+  .note__kbd { font: 700 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); flex: 0 0 auto; }
   .note__grow {
     flex: 0 0 auto; width: 22px; height: 22px; margin: -2px 0 0 0;
     display: grid; place-items: center;
@@ -1132,11 +981,11 @@
   .sheet__p { margin: 8px 0 0; font-size: 12px; line-height: 1.55; color: var(--ink-2); }
   .sheet__list { margin: 14px 0 0; padding: 0 4px 0 0; list-style: none; overflow-y: auto; display: grid; gap: 8px; }
   .sheet__list li { display: flex; gap: 8px; align-items: flex-start; font-size: 12px; line-height: 1.5; color: var(--ink-2); }
-  .sheet__where { display: block; font-size: 10.5px; color: var(--ink-3); }
+  .sheet__where { display: block; font-size: 11px; color: var(--ink-3); }
   /* the one place in the sheet that tells the reviewer something rather than
      asking them for something - quiet, but not hidden */
   .sheet__fine {
-    display: block; margin-top: 7px; font-size: 10.5px; line-height: 1.45;
+    display: block; margin-top: 7px; font-size: 11px; line-height: 1.45;
     color: var(--ink-3); max-width: 46ch;
   }
   .sheet__acts { display: grid; gap: 14px; margin-top: 16px; }
@@ -1184,14 +1033,14 @@
     background: rgba(237,109,87,.1);
     font-size: 12.5px; line-height: 1.55; color: var(--ink-2);
   }
-  .brief__ask b { display: block; margin-bottom: 4px; font: 700 8.5px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--co); }
+  .brief__ask b { display: block; margin-bottom: 4px; font: 700 11px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--co); }
   .brief__ask[hidden] { display: none; }
 
   .note--orphan { box-shadow: inset 0 1px 0 var(--glass-edge), 0 0 0 1.5px #f0b429, 0 14px 30px -14px rgba(22,24,29,.3); }
   .note--orphan .note__n { background: linear-gradient(135deg,#f0b429,#ffc94f); }
   .note--orphan .note__body::after {
     content: "anchor not found"; display: block; margin-top: 7px;
-    font: 700 9px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: #9a6c0a;
+    font: 700 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: #9a6c0a;
   }
 
   /* ══ note kinds - three intents, and they must not look alike ══
@@ -1200,7 +1049,7 @@
      came from a reviewer and is visibly theirs, not the author's. */
   .note__kind {
     display: block; margin-bottom: 5px;
-    font: 700 8.5px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase;
+    font: 700 11px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase;
     color: var(--co);
   }
   .note--convention { background: rgba(255,255,255,.8); }
@@ -1262,7 +1111,7 @@
     font: 600 11.5px/1 var(--font); color: var(--ink);
   }
   .note__who-in:focus { outline: 0; box-shadow: 0 0 0 1.5px #3d7dd8; background: #fff; }
-  .note__meta { display: block; margin-top: 7px; font-size: 10.5px; color: var(--ink-3); }
+  .note__meta { display: block; margin-top: 7px; font-size: 11px; color: var(--ink-3); }
 
   /* a collapsed note keeps its pin: nothing on a shared link can lose its
      label, only the whole layer can be switched off, and that is a toggle */
@@ -1274,7 +1123,7 @@
   .grp { display: flex; flex-direction: column; justify-content: space-between; gap: 7px; }
   .grp__l {
     display: flex; align-items: center; gap: 6px; padding-left: 3px;
-    font: 700 8.5px/1 var(--mono); letter-spacing: .13em; text-transform: uppercase;
+    font: 700 11px/1 var(--mono); letter-spacing: .13em; text-transform: uppercase;
     color: #b4553f; user-select: none; white-space: nowrap;
   }
   .grp__l::before {
@@ -1289,7 +1138,7 @@
   .grp__hint b:empty::after { content: none; }
   .grp__hint {
     flex: 0 0 auto; width: 26ch; padding-left: 2px;
-    font-size: 10.5px; line-height: 1.32; color: var(--ink-3);
+    font-size: 11px; line-height: 1.32; color: var(--ink-3);
     display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
   }
   .isle--b .sep { align-self: stretch; margin: 2px 1px; }
@@ -1387,13 +1236,13 @@
   .tal__d { display: flex; align-items: center; gap: 5px; margin-top: 6px; }
   .tal__dev {
     flex: 1 1 auto; display: flex; align-items: baseline; gap: 6px;
-    font: 700 8px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: #6d7482;
+    font: 700 11px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: #6d7482;
   }
   .tal__dev b { font-family: inherit; font-size: 11px; font-weight: 620; letter-spacing: 0; color: #c3cad4; }
   .tal__p {
     display: inline-flex; align-items: center; gap: 4px;
     padding: 2px 7px; border-radius: 99px; background: rgba(255,255,255,.06);
-    font-size: 10.5px; font-variant-numeric: tabular-nums; color: #c3cad4;
+    font-size: 11px; font-variant-numeric: tabular-nums; color: #c3cad4;
   }
   .tal__p i { width: 6px; height: 6px; border-radius: 50%; flex: 0 0 auto; }
   .tal__p.is-nil { opacity: .3; }
@@ -1402,7 +1251,7 @@
   .menu__sep { height: 1px; margin: 5px 9px; background: var(--glass-ring); }
   .menu__h {
     display: block; padding: 7px 11px 5px;
-    font: 700 8px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3);
+    font: 700 11px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3);
   }
 
   /* ══ marks ══
@@ -1519,7 +1368,7 @@
     width: 18px; height: 18px; border-radius: 50%; flex: 0 0 auto;
     font: 700 10px/18px var(--mono); text-align: center; color: #fff; background: rgba(255,255,255,.2);
   }
-  .nrow__where { flex: 1 1 auto; font: 700 8px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: #6d7482; }
+  .nrow__where { flex: 1 1 auto; font: 700 11px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: #6d7482; }
   .nrow__t { display: block; font-size: 12.5px; line-height: 1.5; color: #dde1e7; word-break: break-word; }
   .nrow__t img { max-width: 100%; border-radius: 6px; margin-top: 6px; display: block; }
   .nrow__act { display: flex; gap: 4px; margin-top: 9px; }
@@ -1570,7 +1419,7 @@
   }
   body.is-nav .sim { transform: translateX(calc(-50% + var(--nav) / 2)); }
   .sim__top { display: flex; align-items: center; gap: 10px; }
-  .sim__top .lab { flex: 1 1 auto; font: 700 8.5px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); }
+  .sim__top .lab { flex: 1 1 auto; font: 700 11px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); }
   .sim__play { display: flex; gap: 2px; }
   .sim__row { margin-top: 15px; }
   .sim__row + .sim__row { padding-top: 15px; border-top: 1px solid var(--glass-ring); }
@@ -1583,6 +1432,197 @@
   .sim__foot { margin: 13px 0 0; font-size: 11.5px; color: var(--ink-3); }
   .sim .seg { width: 100%; }
   .sim .seg button { flex: 1 1 0; justify-content: center; }
+
+  /* ══ the view ══
+     Who is looking, how far down the roadmap, which features are in. It is the
+     one control that changes WHAT the prototype is being read as, so it does
+     not sit among the tools: it has its own island, and the island is dark -
+     the only dark thing in the dock, the same ink as the screen panel, which
+     is the other place that says where you are. */
+  .isle--view {
+    align-items: stretch; padding: 9px 13px; gap: 13px; flex: 0 1 auto; flex-wrap: wrap; row-gap: 10px;
+    background: rgba(18,20,25,.94); color: #fff;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 0 0 1px rgba(18,20,25,.6),
+                0 14px 34px -12px rgba(18,20,25,.6), 0 2px 6px -2px rgba(18,20,25,.3);
+  }
+  .isle--view[hidden] { display: none; }
+  .isle--view .grp__l { color: rgba(255,255,255,.52); }
+  .isle--view .sep { background: rgba(255,255,255,.13); align-self: stretch; margin: 2px 1px; }
+  .isle--view .ib { color: #eef0f4; font-weight: 560; }
+  .isle--view .ib:hover { background: rgba(255,255,255,.1); color: #fff; }
+  .isle--view .ib[aria-pressed="true"], .isle--view .ib[aria-expanded="true"] { background: rgba(255,255,255,.16); color: #fff; box-shadow: none; }
+  .isle--view .ib b { font: 650 11px var(--mono); color: rgba(255,255,255,.6); font-weight: 600; }
+  .isle--view .ib.is-set { background: var(--grad-45); color: #fff; }
+  .isle--view :focus-visible, .vw :focus-visible { outline: 2px solid var(--or); outline-offset: 2px; }
+  /* Phases as one row. The chosen one is lit, and everything before it is
+     tinted - "up to and including" is read off the control rather than
+     explained beside it. */
+  .vseg { display: inline-flex; gap: 2px; padding: 3px; border-radius: 12px; background: rgba(255,255,255,.08); }
+  .vseg button {
+    height: 28px; padding: 0 11px; border: 0; border-radius: 9px; cursor: pointer; white-space: nowrap;
+    background: transparent; color: rgba(255,255,255,.6); font: 600 12px var(--font);
+    transition: background var(--fast) var(--ease), color var(--fast) var(--ease);
+  }
+  .vseg button:hover { color: #fff; background: rgba(255,255,255,.08); }
+  .vseg button.is-in { background: rgba(237,109,87,.26); color: #fff; }
+  .vseg button[aria-pressed="true"] { background: var(--grad-45); color: #fff; }
+
+  .vw {
+    position: fixed; left: 16px; bottom: calc(var(--dockh, 108px) + 26px); z-index: 27;
+    width: min(440px, calc(100vw - 32px)); max-height: calc(100vh - var(--dockh, 108px) - 110px);
+    display: flex; flex-direction: column; overflow: hidden;
+    background: var(--glass-lit);
+    backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+    border-radius: var(--r-xl);
+    box-shadow: inset 0 1px 0 var(--glass-edge), 0 0 0 1px var(--glass-ring), 0 30px 70px -24px rgba(22,24,29,.5);
+    animation: rise var(--med) var(--spring);
+  }
+  .vw[hidden] { display: none; }
+  body.is-bare .vw { display: none; }
+  .vw__top { display: flex; align-items: flex-start; gap: 10px; padding: 18px 18px 0 20px; }
+  .vw__ttl { flex: 1 1 auto; min-width: 0; }
+  .vw__ttl h2 { margin: 0; font-size: 16px; font-weight: 680; letter-spacing: -.02em; color: var(--ink); }
+  .vw__sum { display: block; margin-top: 3px; font-size: 12px; color: var(--ink-3); }
+  .vw__sum b { color: var(--ink); font-weight: 650; }
+  .vw__reset { border: 0; background: none; padding: 6px 8px; border-radius: 8px; cursor: pointer; font: 600 11.5px var(--font); color: var(--co); }
+  .vw__reset:hover { background: rgba(237,109,87,.09); }
+  /* The whole plan in one bar: a block per phase as wide as its share of the
+     features, solid where the view includes it. */
+  .vw__meter { display: flex; gap: 3px; height: 6px; margin: 14px 20px 0; }
+  .vw__meter i { display: block; border-radius: 3px; background: var(--c); opacity: .2; transition: opacity var(--med) var(--ease); }
+  .vw__meter i.is-in { opacity: 1; }
+  .vw__tools { display: flex; gap: 8px; align-items: center; padding: 14px 20px 12px; border-bottom: 1px solid var(--glass-ring); }
+  .vw__find {
+    flex: 1 1 auto; min-width: 0; height: 32px; padding: 0 11px; border: 0; border-radius: 10px;
+    background: rgba(22,24,29,.055); color: var(--ink); font: 500 12.5px var(--font);
+  }
+  .vw__find::placeholder { color: var(--ink-3); }
+  .vw__flt { display: inline-flex; gap: 2px; padding: 3px; border-radius: 10px; background: rgba(22,24,29,.055); }
+  .vw__flt button { height: 26px; padding: 0 9px; border: 0; border-radius: 8px; background: transparent; cursor: pointer; font: 560 11.5px var(--font); color: var(--ink-3); }
+  .vw__flt button[aria-pressed="true"] { background: #fff; color: var(--ink); box-shadow: 0 1px 3px rgba(22,24,29,.14); }
+  .vw__body { overflow: auto; padding: 4px 12px 14px; }
+  .vw__vers { padding: 12px 8px 4px; }
+  .vw__vers p { margin: 0 0 6px; font-size: 11.5px; color: var(--ink-3); }
+  .vw__chips { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+  .vw__chip { border: 0; cursor: pointer; padding: 6px 12px; border-radius: 9px; background: rgba(22,24,29,.055); color: var(--ink-2); font: 560 12px var(--font); }
+  .vw__chip:hover { background: rgba(22,24,29,.1); color: var(--ink); }
+  .vw__chip[aria-pressed="true"] { background: var(--ink); color: #fff; }
+  .vw__grp {
+    display: flex; align-items: center; gap: 8px; margin: 14px 8px 4px;
+    font: 700 11px/1 var(--mono); letter-spacing: .13em; text-transform: uppercase; color: var(--ink-3);
+  }
+  .vw__grp i { width: 8px; height: 8px; border-radius: 3px; background: var(--c); }
+  .vw__grp span { flex: 1 1 auto; color: var(--ink-2); text-align: left; }
+  /* A phase can hold thirty features. Its header folds it, and the count on
+     the header still says how many of them are shown. */
+  button.vw__grp {
+    width: calc(100% - 4px); margin: 10px 2px 2px; padding: 9px 8px; border: 0; border-radius: 10px;
+    background: none; cursor: pointer;
+  }
+  button.vw__grp:hover { background: rgba(22,24,29,.05); }
+  button.vw__grp svg { width: 11px; height: 11px; transition: transform var(--fast) var(--ease); }
+  button.vw__grp[aria-expanded="false"] svg { transform: rotate(-90deg); }
+
+  /* ══ the feature card ══
+     What one feature is supposed to do, read BESIDE the screen it is on. A
+     description that opens in another tab is read instead of the prototype;
+     here the two are looked at together. */
+  .fc {
+    position: fixed; right: 16px; top: 84px; bottom: calc(var(--dockh, 108px) + 26px); z-index: 27;
+    width: min(420px, calc(100vw - 32px)); display: flex; flex-direction: column; overflow: hidden;
+    background: var(--glass-lit);
+    backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+    border-radius: var(--r-xl);
+    box-shadow: inset 0 1px 0 var(--glass-edge), 0 0 0 1px var(--glass-ring), 0 30px 70px -24px rgba(22,24,29,.5);
+    animation: rise var(--med) var(--spring);
+  }
+  .fc[hidden] { display: none; }
+  body.is-bare .fc { display: none; }
+  .fc :focus-visible { outline: 2px solid var(--or); outline-offset: 2px; }
+  .fc__top { padding: 18px 18px 14px 22px; border-bottom: 1px solid var(--glass-ring); }
+  .fc__bar { display: flex; align-items: center; gap: 6px; }
+  .fc__bar span { flex: 0 0 auto; padding: 4px 8px; border-radius: 7px; background: rgba(22,24,29,.06); font: 600 10.5px/1 var(--font); color: var(--ink-2); }
+  .fc__bar .ph { background: var(--c); color: #fff; }
+  .fc__bar .off { background: rgba(22,24,29,.82); color: #fff; }
+  .fc__bar .gap { flex: 1 1 auto; background: none; padding: 0; }
+  .fc__top h2 { margin: 12px 0 0; font-size: 18px; font-weight: 680; letter-spacing: -.02em; line-height: 1.25; color: var(--ink); }
+  .fc__id { display: block; margin-top: 5px; font: 500 11px var(--mono); color: var(--ink-3); }
+  .fc__acts { display: flex; gap: 6px; margin-top: 13px; }
+  .fc__body { overflow: auto; padding: 4px 22px 22px; font-size: 13.5px; line-height: 1.6; color: var(--ink-2); }
+  .fc__body h3 { margin: 20px 0 6px; font: 700 11px/1 var(--mono); letter-spacing: .13em; text-transform: uppercase; color: var(--ink-3); }
+  .fc__body p { margin: 0 0 10px; }
+  .fc__body .lead { margin-top: 16px; font-size: 14.5px; color: var(--ink); }
+  .fc__body ul { margin: 0 0 10px; padding-left: 18px; }
+  .fc__body li { margin: 4px 0; }
+  .fc__body b { color: var(--ink); font-weight: 650; }
+  .fc__body code { padding: 1px 5px; border-radius: 5px; background: rgba(22,24,29,.07); font: 500 12px var(--mono); color: var(--ink); }
+  .fc__body table { width: 100%; border-collapse: collapse; margin: 0 0 12px; font-size: 12.5px; }
+  .fc__body th, .fc__body td { padding: 7px 8px; border-bottom: 1px solid var(--glass-ring); text-align: left; vertical-align: top; }
+  .fc__body th { font-weight: 650; color: var(--ink); }
+  .fc__note { padding: 11px 13px; border-radius: 11px; background: #fff; box-shadow: 0 0 0 1px var(--glass-ring); white-space: pre-wrap; }
+  .fc__miss { margin-top: 18px; font-size: 12.5px; color: var(--ink-3); }
+
+  /* ══ motion in the view ══
+     Small, and only ever in answer to a press: a switch that travels instead
+     of jumping, a phase that folds instead of vanishing, a card whose content
+     arrives instead of being swapped. Each one says what just changed. All of
+     it runs on the shared duration tokens, so prefers-reduced-motion turns it
+     off with everything else. */
+  .vw__eye { transition: background var(--med) var(--ease); }
+  .vw__eye:after { transition: transform var(--med) var(--spring), width var(--fast) var(--ease); }
+  .vw__eye:not(:disabled):active:after { width: 20px; }
+  .vw__eye[aria-checked="true"]:not(:disabled):active:after { transform: translateX(10px); }
+  .vseg button, .vw__chip, .vw__flt button, .vw__act {
+    transition: background var(--fast) var(--ease), color var(--fast) var(--ease), transform var(--fast) var(--ease);
+  }
+  .vseg button:active, .vw__chip:active, .vw__flt button:active, .vw__act:active { transform: scale(.95); }
+  .vw__rows { display: grid; grid-template-rows: 1fr; }
+  .vw__rows > div { overflow: hidden; min-height: 0; }
+  .vw__rows.is-opening { animation: vw-unfold var(--med) var(--ease); }
+  .vw__rows.is-closing { animation: vw-fold var(--fast) var(--ease) forwards; }
+  @keyframes vw-unfold { from { grid-template-rows: 0fr; opacity: 0; } }
+  @keyframes vw-fold { to { grid-template-rows: 0fr; opacity: 0; } }
+  .vw__f .vw__name b { transition: color var(--med) var(--ease); }
+  .fc.is-swap .fc__top > *, .fc.is-swap .fc__body { animation: fc-in var(--med) var(--ease) both; }
+  .fc.is-swap .fc__body { animation-delay: 40ms; }
+  @keyframes fc-in { from { opacity: 0; transform: translateY(7px); } }
+  [data-vw-chip] { display: inline-block; }
+  [data-vw-chip].is-bump { animation: vw-bump var(--med) var(--spring); }
+  @keyframes vw-bump { 45% { transform: scale(1.16); } }
+  .nav__i { transition: opacity var(--med) var(--ease), background var(--fast) var(--ease); }
+  .vw__f { border-radius: 12px; transition: background var(--fast) var(--ease); }
+  .vw__f:hover { background: rgba(22,24,29,.04); }
+  .vw__f.is-open { background: rgba(237,109,87,.1); }
+  .vw__fr { display: flex; align-items: center; gap: 10px; padding: 7px 8px 7px 12px; }
+  .vw__name {
+    flex: 1 1 auto; min-width: 0; border: 0; background: none; padding: 0; cursor: pointer; text-align: left;
+    display: flex; align-items: center; gap: 8px; color: var(--ink);
+  }
+  .vw__name span { min-width: 0; }
+  .vw__name b { display: block; font: 600 13px/1.3 var(--font); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .vw__name small { display: block; margin-top: 2px; font: 500 11px/1.3 var(--mono); color: var(--ink-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .vw__f.is-off .vw__name b { color: var(--ink-3); font-weight: 520; }
+  .vw__tag { flex: 0 0 auto; padding: 4px 7px; border-radius: 7px; background: rgba(22,24,29,.06); font: 600 10px/1 var(--font); color: var(--ink-3); white-space: nowrap; }
+  .vw__tag--forced { background: rgba(237,109,87,.13); color: var(--co); }
+  .vw__eye {
+    flex: 0 0 auto; width: 34px; height: 20px; border: 0; padding: 0; border-radius: 10px; cursor: pointer;
+    background: rgba(22,24,29,.16); position: relative; transition: background var(--fast) var(--ease);
+  }
+  .vw__eye:after {
+    content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%;
+    background: #fff; transition: transform var(--fast) var(--ease); box-shadow: 0 1px 2px rgba(22,24,29,.3);
+  }
+  .vw__eye[aria-checked="true"] { background: var(--co); }
+  .vw__eye[aria-checked="true"]:after { transform: translateX(14px); }
+  .vw__eye:disabled { opacity: .4; cursor: not-allowed; }
+  .vw__det { padding: 0 12px 12px 27px; font-size: 12.5px; line-height: 1.55; color: var(--ink-2); }
+  .vw__det p { margin: 0 0 8px; }
+  .vw__det .spec { white-space: pre-wrap; padding: 10px 12px; border-radius: 10px; background: #fff; box-shadow: 0 0 0 1px var(--glass-ring); }
+  .vw__det .spec:before { content: 'Specification so far'; display: block; margin-bottom: 5px; font: 700 11px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
+  .vw__acts { display: flex; gap: 6px; flex-wrap: wrap; }
+  .vw__act { display: inline-flex; align-items: center; height: 28px; padding: 0 11px; border: 0; border-radius: 9px; cursor: pointer; background: rgba(22,24,29,.07); color: var(--ink); font: 600 11.5px var(--font); text-decoration: none; }
+  .vw__act:hover { background: rgba(22,24,29,.12); }
+  .vw__none { margin: 22px 8px; font-size: 12.5px; color: var(--ink-3); text-align: center; }
 
   /* ══ review mode - the task first, and what to do at the end ══ */
   .brief {
@@ -1603,7 +1643,7 @@
     animation: rise var(--med) var(--spring);
   }
   @keyframes rise { from { opacity: 0; transform: translateY(14px) scale(.97); } }
-  .brief__k { font: 700 9px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--co); }
+  .brief__k { font: 700 11px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--co); }
   .brief__h { margin: 11px 0 0; font-size: 19px; font-weight: 680; letter-spacing: -.02em; line-height: 1.3; }
   .brief__p { margin: 12px 0 0; font-size: 13px; line-height: 1.6; color: var(--ink-2); }
   .brief__steps { margin: 16px 0 0; padding: 0; list-style: none; display: grid; gap: 9px; }
@@ -1614,7 +1654,7 @@
     font: 700 10px/19px var(--font); text-align: center;
   }
   .brief__name { display: block; margin-top: 18px; }
-  .brief__name span { display: block; margin-bottom: 6px; font: 700 8.5px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
+  .brief__name span { display: block; margin-bottom: 6px; font: 700 11px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
   .brief__name input {
     width: 100%; height: 38px; padding: 0 13px;
     background: #fff; border: 0; border-radius: var(--r-md);
@@ -1703,7 +1743,7 @@
   .cmp { display: flex; flex-direction: column; gap: 18px; flex: 0 0 auto; }
   .cmp__h {
     display: flex; align-items: baseline; gap: 7px; padding-left: 2px;
-    font: 700 8.5px/1 var(--mono); letter-spacing: .13em; text-transform: uppercase; color: var(--ink-3);
+    font: 700 11px/1 var(--mono); letter-spacing: .13em; text-transform: uppercase; color: var(--ink-3);
   }
   .cmp__px { font-weight: 500; letter-spacing: .04em; opacity: .8; }
   /* Each frame renders at its real width and is then scaled down to fit, so
@@ -1724,7 +1764,7 @@
   body.is-promo .stage > .wrap, body.is-promo .cmpset { display: none; }
   body.is-promo .stage { align-items: center; }
   .pro { display: flex; flex-direction: column; gap: 18px; align-items: center; }
-  .pro__l { font: 700 8.5px/1 var(--mono); letter-spacing: .13em; text-transform: uppercase; color: var(--ink-3); }
+  .pro__l { font: 700 11px/1 var(--mono); letter-spacing: .13em; text-transform: uppercase; color: var(--ink-3); }
 
   /* ══ presentation - the artifact, and only what is needed to move ══ */
   body.is-present .isle, body.is-present .annots, body.is-present .rail, body.is-present .nav, body.is-present .sheet { opacity: 0; pointer-events: none; }
@@ -1873,8 +1913,302 @@
     transition: opacity var(--fast) var(--ease), transform var(--fast) var(--spring);
   }
   .restore:hover { opacity: 1; transform: translateY(-2px); }
-  .restore kbd { font: 700 9.5px/1 var(--mono); padding: 3px 5px; border-radius: 5px; background: rgba(255,255,255,.26); }
+  .restore kbd { font: 700 11px/1 var(--mono); padding: 3px 5px; border-radius: 5px; background: rgba(255,255,255,.26); }
   body.is-bare .restore { display: inline-flex; }
+
+  /* ══════════════════════════════════════════════════════════════════════
+     DOCKED CHROME
+
+     The shell used to be glass islands floating over a dotted canvas with a
+     coral gradient on everything pressed. A design review named it for what
+     it was - the look of every current AI tool - and it had real costs
+     besides: islands overlapped on ordinary windows, panels covered the
+     prototype they were about, and white on the gradient failed AA.
+
+     So the chrome is docked and opaque. A bar across the top, a bar across
+     the bottom, sidebars that PUSH the prototype instead of covering it.
+     Coral is flat and reserved: the prototype marker, a note pin, a switch
+     that is on, the one primary action. Selected is ink, not coral.
+
+     The dark view block is the one deliberate signature left.
+
+     Written as a layer over the earlier rules rather than woven through two
+     thousand lines of them, so the whole decision can be read in one place.
+     ══════════════════════════════════════════════════════════════════════ */
+  :root {
+    --co: #c2452d;                                  /* 4.9:1 under white, 4.9:1 as text on white */
+    --grad-45: linear-gradient(#c2452d, #c2452d);   /* flat; kept as a gradient so old rules stay valid */
+    --ink-3: #5f6672;                               /* 5.9:1 on white - was 3.8:1 */
+    --line: #e3e5e9;
+    --glass: #fff; --glass-lit: #fff; --glass-edge: transparent; --blur: none;
+    --r-sm: 6px; --r-md: 8px; --r-lg: 10px; --r-xl: 12px;
+    --top: 52px; --insp: 400px;
+  }
+  body {
+    background: radial-gradient(circle at 1px 1px, var(--dot) 1px, transparent 0) 0 0 / 22px 22px, var(--canvas);
+  }
+  :focus-visible { outline-color: #14161b; outline-offset: 2px; border-radius: 6px; }
+
+  .top {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 6; height: var(--top);
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    padding: 0 12px; background: #fff; border-bottom: 1px solid var(--line);
+    transition: left var(--med) var(--ease), right var(--med) var(--ease), opacity var(--med) var(--ease);
+  }
+  .top > .isle {
+    position: static; padding: 0; gap: 6px; border-radius: 0;
+    background: none; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none;
+  }
+  .top { container-type: inline-size; }
+  .top > .isle--tl { flex: 0 0 auto; white-space: nowrap; }
+  .top > .isle--tr { flex: 0 1 auto; min-width: 0; }
+  /* The bar narrows whenever a sidebar opens, not only when the window does,
+     so it answers to its OWN width. The tools on the right give up their
+     words before the left gives up the screen name: an icon with a tooltip is
+     still a control, and a bar that no longer says which screen is open is
+     not doing its job. */
+  @container (max-width: 1320px) {
+    .isle--tr .ib { font-size: 0; gap: 0; padding: 0; width: 34px; justify-content: center; }
+    .isle--tr .ib kbd, .isle--tr .ib .caret, .isle--tr .ib span { display: none; }
+    .isle--tr [data-device] { font-size: 0; }
+  }
+  @container (max-width: 900px) {
+    .isle--tl .badge, .isle--tl .title, .isle--tl .cur__k { display: none; }
+  }
+  body.is-nav .top   { left: var(--nav); }
+  body.is-notes .top { right: var(--npanel); }
+  body.is-insp .top  { right: var(--insp); }
+
+  .dock {
+    left: 0; right: 0; bottom: 0; padding: 8px 12px; gap: 8px 12px;
+    flex-wrap: wrap; align-items: stretch; justify-content: space-between;
+    background: #fff; border-top: 1px solid var(--line); pointer-events: auto;
+    transition: left var(--med) var(--ease), right var(--med) var(--ease), opacity var(--med) var(--ease);
+  }
+  body.is-nav .dock   { left: var(--nav); }
+  body.is-notes .dock { right: var(--npanel); }
+  body.is-insp .dock  { right: var(--insp); }
+  .dock > .isle {
+    padding: 4px 6px; border-radius: var(--r-lg);
+    background: none; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none;
+  }
+  .dock > .isle--view { padding: 8px 12px; background: #14161b; box-shadow: none; }
+  .dock > .isle--notes { background: none; box-shadow: none; }
+  /* ── the bottom bar is the top bar's twin ──
+     Same height, same white, same buttons, one row. It used to be a taller
+     box holding three boxes, one of them a dark rounded card with its own
+     labels - a bar inside a bar, and nothing like the one above it.
+
+     The view is told apart by colour alone: the left end of the bar IS dark,
+     edge to edge and full height, not a card sitting in it. Then the tools,
+     then notes at the right.
+
+     One label survives, "Phase", because a row of phase names does not say
+     what it is. Every other control carries its own word. */
+  .dock {
+    height: var(--top); padding: 0 12px 0 0; gap: 0 10px;
+    flex-wrap: nowrap; align-items: center; justify-content: flex-start;
+    container-type: inline-size;
+  }
+  .dock > .isle { padding: 0; border-radius: 0; gap: 2px; flex-wrap: nowrap; align-items: center; }
+  .dock > .isle--view {
+    align-self: stretch; padding: 0 14px; gap: 10px; border-radius: 0; background: #14161b;
+  }
+  .dock > .isle--notes { margin-left: auto; }
+  .dock .grp { flex-direction: row; align-items: center; gap: 8px; }
+  .dock .grp__l { display: none; }
+  .dock [data-vw-phase-grp] .grp__l { display: flex; padding: 0; letter-spacing: .06em; }
+  .dock .grp__l::before { content: none; }
+  .dock .sep { align-self: center; height: 20px; margin: 0 6px; }
+  .isle--view .sep { background: rgba(255,255,255,.16); }
+  .dock .ib { padding: 0 10px; }
+  .dock .ib--icon { padding: 0; }
+  .vseg { padding: 2px; border-radius: var(--r-md); }
+  .vseg button { height: 28px; border-radius: var(--r-sm); }
+  /* Narrower, the secondary tools give up their words - never State, Add
+     note or Send notes, which a reader has to be able to find by name. */
+  @container (max-width: 1640px) {
+    .dock [data-menu="share"], .dock [data-sim-btn], .dock [data-menu="acts"], .dock [data-menu="mark"] {
+      font-size: 0; gap: 0; padding: 0; width: 34px; justify-content: center;
+    }
+    .dock [data-menu="share"] .caret, .dock [data-menu="acts"] .caret, .dock [data-menu="mark"] .caret,
+    .dock [data-sim-btn] span, .dock [data-menu="acts"] span { display: none; }
+  }
+  @container (max-width: 1300px) {
+    .dock [data-menu="note"], .dock [data-menu="role"] { font-size: 0; gap: 0; padding: 0; width: 34px; justify-content: center; }
+    .dock [data-menu="note"] .caret, .dock [data-menu="note"] span,
+    .dock [data-menu="role"] .caret, .dock [data-menu="role"] span { display: none; }
+    .dock [data-vw-phase-grp] .grp__l { display: none; }
+  }
+  .toast { bottom: calc(var(--top) + 16px); }
+  .toast.has-act { pointer-events: auto; display: flex; align-items: center; gap: 12px; }
+  .toast button { border: 0; border-radius: 6px; padding: 5px 10px; background: rgba(255,255,255,.16); color: #fff; font: 600 12px var(--font); cursor: pointer; }
+  .toast button:hover { background: rgba(255,255,255,.26); }
+  /* 24px is the floor for anything pressed (WCAG 2.2, 2.5.8) */
+  .note__x, .note__grow { width: 24px; height: 24px; }
+  .rail button, .notes button, .sheet button, .note button { min-height: 24px; }
+  .sev button { min-width: 24px; justify-content: center; }
+  body.is-bare .top, body.is-bare .dock,
+  body.is-present .top, body.is-present .dock { opacity: 0; pointer-events: none; }
+
+  .stage { padding: calc(var(--top) + 22px) 24px calc(var(--dockh, 76px) + 22px); }
+  body.is-nav .stage   { padding-left: calc(24px + var(--nav)); }
+  body.is-notes .stage { padding-right: calc(24px + var(--npanel)); }
+  body.is-railed .stage { padding-right: calc(24px + var(--rail)); }
+  body.is-insp .stage  { padding-right: calc(24px + var(--insp)); }
+  body.is-insp .rail   { display: none; }
+  .rail { top: calc(var(--top) + 22px); bottom: calc(var(--dockh, 76px) + 22px); right: 24px; }
+  .screen { border-radius: var(--r-lg); box-shadow: 0 0 0 1px rgba(22,24,29,.08), 0 12px 28px -18px rgba(22,24,29,.3); }
+
+  /* selected is ink; coral is not a state */
+  .ib[aria-pressed="true"], .navbtn[aria-expanded="true"] { background: #14161b; color: #fff; box-shadow: none; }
+  .navbtn[aria-expanded="true"] .navbtn__n { color: rgba(255,255,255,.72); }
+  .navbtn { box-shadow: 0 0 0 1px var(--line); }
+  .navbtn:hover { box-shadow: 0 0 0 1px rgba(22,24,29,.22); }
+  .badge, .cta { box-shadow: none; }
+  .badge__dot { animation: none; }                  /* nothing moves unless something was pressed */
+  .isle--view .ib.is-set, .vseg button[aria-pressed="true"] { background: #fff; color: #14161b; }
+  .vseg button.is-in { background: rgba(255,255,255,.2); color: #fff; }
+  .isle--view .grp__l { color: rgba(255,255,255,.72); }
+  .isle--view .ib b { color: rgba(255,255,255,.72); }
+  .vseg button { color: rgba(255,255,255,.78); }
+  .grp__l, .cur__k { letter-spacing: .06em; }
+
+  /* what still floats is plain: white, a hairline, one quiet shadow */
+  .menu, .sim, .sheet, .brief__card {
+    background: #fff; backdrop-filter: none; -webkit-backdrop-filter: none;
+    box-shadow: 0 0 0 1px var(--line), 0 16px 40px -18px rgba(22,24,29,.35);
+  }
+
+  /* ══ the inspector ══
+     The feature list and the feature card, in ONE column on the right that
+     pushes the prototype aside - the same thing the screen panel does on the
+     left. Floating, the two of them left about 390px of prototype visible,
+     which defeated the reason a developer opens a card at all: to read what a
+     feature should do while looking at it.
+
+     Because it covers nothing, it does not close on a press elsewhere. It is
+     closed by its own button, by Escape, or by the Features button. */
+  .vw, .fc {
+    top: 0; right: 0; bottom: 0; left: auto !important; z-index: 26;
+    width: var(--insp); max-height: none; border-radius: 0; transform: none;
+    background: #fff; backdrop-filter: none; -webkit-backdrop-filter: none;
+    box-shadow: -1px 0 0 var(--line); animation: none;
+  }
+  .fc { z-index: 27; }
+  body.is-nav .vw, body.is-notes .vw { transform: none; }
+  .vw__top, .fc__top { padding-top: 16px; }
+  .fc__back {
+    display: inline-flex; align-items: center; gap: 5px; height: 28px; margin: 0 0 12px -8px; padding: 0 10px 0 6px;
+    border: 0; border-radius: var(--r-md); background: none; cursor: pointer;
+    font: 600 12px var(--font); color: var(--ink-2);
+  }
+  .fc__back:hover { background: rgba(22,24,29,.06); color: var(--ink); }
+  .fc__back svg { width: 12px; height: 12px; }
+  .vw__f.is-open { background: rgba(22,24,29,.07); }
+  .vw__eye { width: 40px; height: 24px; border-radius: 12px; }
+  .vw__eye:after { width: 20px; height: 20px; }
+  .vw__eye[aria-checked="true"]:after { transform: translateX(16px); }
+  .vw__eye:not(:disabled):active:after { width: 24px; }
+  .vw__eye[aria-checked="true"]:not(:disabled):active:after { transform: translateX(12px); }
+  .vw__reset { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+  .vw__reset:hover { background: rgba(22,24,29,.06); }
+
+  /* ══════════════════════════════════════════════════════════════════════
+     FLOATING TOOLBARS
+
+     The docked pass fixed what was wrong - nothing overlaps, nothing covers
+     the prototype, the contrast holds - and overshot: full-bleed white bars
+     with a hairline read as a web admin from ten years ago. Flat is not the
+     same as current.
+
+     What makes a tool read as current is not translucency. It is that the
+     chrome is a small number of OBJECTS resting on the canvas - rounded,
+     lifted by a soft shadow, inset from the window edge - with the canvas
+     visible all the way round them. So: the two bars and the three side
+     panels each become one such object. They are still opaque, they still
+     push the prototype rather than cover it, and every rule about closing
+     and contrast above still holds.
+     ══════════════════════════════════════════════════════════════════════ */
+  :root {
+    --top: 48px; --edge: 10px; --rr: 14px;
+    --lift: 0 0 0 1px rgba(20,22,27,.07), 0 1px 2px rgba(20,22,27,.05), 0 12px 32px -14px rgba(20,22,27,.28);
+    --canvas: #f1f2f5; --dot: rgba(20,22,27,.07);
+  }
+  .top, .dock {
+    left: var(--edge); right: var(--edge); border: 0; border-radius: var(--rr); box-shadow: var(--lift);
+  }
+  .top { top: var(--edge); padding: 0 8px 0 10px; }
+  .dock { bottom: var(--edge); padding: 0 8px 0 0; }
+  body.is-nav .top, body.is-nav .dock     { left: calc(var(--nav) + var(--edge) * 2); }
+  body.is-notes .top, body.is-notes .dock { right: calc(var(--npanel) + var(--edge) * 2); }
+  body.is-insp .top, body.is-insp .dock   { right: calc(var(--insp) + var(--edge) * 2); }
+  .dock > .isle--view { border-radius: var(--rr) 0 0 var(--rr); padding: 0 12px 0 14px; }
+
+  .stage {
+    padding: calc(var(--top) + var(--edge) + 16px) 22px calc(var(--top) + var(--edge) + 16px);
+  }
+  body.is-nav .stage    { padding-left: calc(22px + var(--nav) + var(--edge)); }
+  body.is-notes .stage  { padding-right: calc(22px + var(--npanel) + var(--edge)); }
+  body.is-railed .stage { padding-right: calc(22px + var(--rail)); }
+  body.is-insp .stage   { padding-right: calc(22px + var(--insp) + var(--edge)); }
+  .rail { top: calc(var(--top) + var(--edge) + 16px); bottom: calc(var(--top) + var(--edge) + 16px); right: 22px; }
+  .screen { border-radius: 12px; box-shadow: 0 0 0 1px rgba(20,22,27,.07), 0 18px 40px -22px rgba(20,22,27,.35); }
+
+  /* the three side panels are objects too, not walls */
+  .nav {
+    top: var(--edge); left: var(--edge); bottom: var(--edge); border-radius: var(--rr);
+    background: #16181d; box-shadow: var(--lift);
+    transform: translateX(calc(-100% - var(--edge) * 2));
+  }
+  .nav.is-open { transform: none; }
+  .notes {
+    top: var(--edge); right: var(--edge); bottom: var(--edge); border-radius: var(--rr);
+    background: #16181d; box-shadow: var(--lift);
+    transform: translateX(calc(100% + var(--edge) * 2));
+  }
+  .notes.is-open { transform: none; }
+  .vw, .fc {
+    top: var(--edge); right: var(--edge); bottom: var(--edge);
+    border-radius: var(--rr); box-shadow: var(--lift);
+  }
+
+  /* controls: one size, one radius, a quiet hover, ink when selected */
+  .ib, .navbtn {
+    height: 32px; border-radius: 9px; font-size: 12.5px; font-weight: 520; letter-spacing: -.005em;
+  }
+  .ib svg { width: 16px; height: 16px; }
+  .ib:hover { background: rgba(20,22,27,.06); }
+  .ib:active { transform: scale(.97); }
+  .navbtn { box-shadow: none; background: rgba(20,22,27,.05); }
+  .navbtn:hover { box-shadow: none; background: rgba(20,22,27,.09); }
+  .top .sep, .dock .sep { background: rgba(20,22,27,.1); }
+  .isle--view .sep { background: rgba(255,255,255,.16); }
+  .isle--view .ib:hover { background: rgba(255,255,255,.12); }
+  .isle--view .ib[aria-pressed="true"], .isle--view .ib[aria-expanded="true"] { background: rgba(255,255,255,.18); color: #fff; }
+  .seg { padding: 3px; border-radius: 10px; background: rgba(20,22,27,.055); }
+  .seg__thumb { border-radius: 8px; box-shadow: 0 0 0 1px rgba(20,22,27,.06), 0 1px 3px rgba(20,22,27,.14); }
+  .vseg { padding: 3px; border-radius: 10px; background: rgba(255,255,255,.1); }
+  .vseg button { height: 26px; border-radius: 7px; font-size: 12.5px; }
+  .vseg button[aria-pressed="true"] { box-shadow: 0 1px 3px rgba(0,0,0,.35); }
+  .badge { border-radius: 8px; }
+  .cta { border-radius: 9px; }
+  .cur__v { font-size: 13px; }
+
+  /* what floats above the bars takes the same shape as they do */
+  .menu, .sim, .sheet, .brief__card { border-radius: var(--rr); box-shadow: var(--lift), 0 24px 60px -24px rgba(20,22,27,.4); }
+  .menu__i { border-radius: 9px; }
+  .sim { bottom: calc(var(--top) + var(--edge) * 2 + 4px); }
+  .toast { bottom: calc(var(--top) + var(--edge) * 2 + 8px); border-radius: 10px; backdrop-filter: none; -webkit-backdrop-filter: none; background: #16181d; }
+  /* The narrowest the bar gets in ordinary use: a 1440 window with a side
+     panel open. Nothing else gives up its word here - the spacing does. */
+  @container (max-width: 1060px) {
+    .dock .ib { padding: 0 7px; gap: 5px; }
+    .dock .sep { margin: 0 2px; }
+    .dock > .isle--view { gap: 6px; padding: 0 8px 0 10px; }
+    .dock .cta { padding: 0 9px; }
+    .vseg button { padding: 0 8px; }
+  }
 </style>
 </head>
 <body>
@@ -1971,29 +2305,6 @@
           </span>
         </span>
       </div>
-      <div class="boot" data-boot hidden>
-        <div class="boot__home" data-boot-home>
-          <div class="boot__wall"></div>
-          <div class="boot__page">
-            <div class="boot__wx">
-              <span class="boot__wx-c" data-boot-city>Bratislava</span>
-              <span class="boot__wx-t">18°</span>
-              <span class="boot__wx-s">Mostly Clear</span>
-              <span class="boot__wx-r">23° / 11°</span>
-            </div>
-            <div class="boot__cal">
-              <span class="boot__cal-d" data-boot-day>FRIDAY</span>
-              <span class="boot__cal-n" data-boot-date>13</span>
-              <span class="boot__cal-e"><i></i>Standup · 9:30</span>
-              <span class="boot__cal-e"><i class="alt"></i>Review · 14:00</span>
-            </div>
-            <div class="boot__grid" data-boot-grid></div>
-          </div>
-          <div class="boot__dock"><i></i><i></i><i></i><i></i></div>
-          <span class="boot__bar"></span>
-        </div>
-        <div class="boot__tile" data-boot-tile><span class="boot__tile-l" data-boot-tile-l></span></div>
-      </div>
       <div class="glare" data-glare aria-hidden="true"></div>
       <div class="grid" data-grid></div>
       <div class="marks" data-marks><svg data-marks-svg></svg></div>
@@ -2006,6 +2317,10 @@
   <div class="cmpset" data-compare></div>
 </div>
 
+<!-- One bar across the top. The two clusters used to be separate floating
+     islands anchored to opposite corners, and on any window under 1500px they
+     slid over each other - the screen name and the PROTOTYPE marker went first. -->
+<header class="top" data-top>
 <div class="isle isle--tl">
   <span class="pitile" data-toolbar-mark aria-hidden="true"></span>
   <button class="navbtn" type="button" data-nav-btn aria-expanded="false" aria-controls="nav" title="Open the list of screens">
@@ -2017,20 +2332,6 @@
   <span class="badge"><i class="badge__dot"></i><span class="badge__t">Prototype</span></span>
   <span class="title" data-title hidden></span>
 </div>
-
-<aside class="nav" id="nav" data-nav aria-label="Screens in this prototype">
-  <div class="brand" data-brand>
-    <span class="brand__mark" data-brand-mark></span>
-    <span class="brand__t" data-brand-t></span>
-  </div>
-  <div class="nav__top">
-    <span class="nav__k">Screens</span>
-    <button class="nav__x" type="button" data-nav-close aria-label="Close the screen list"><svg><use href="#i-x"/></svg></button>
-  </div>
-  <div data-nav-list></div>
-  <p class="nav__foot">The numbered ones are the prototype. The rest are documents about it.</p>
-</aside>
-
 <div class="isle isle--tr">
   <div class="seg" data-device-seg>
     <div class="seg__thumb" data-thumb></div>
@@ -2048,14 +2349,52 @@
   <button class="ib" type="button" data-grid-btn aria-pressed="false" title="Alignment grid - 8px, then 64px"><svg><use href="#i-grid"/></svg><span data-grid-label>Grid</span></button>
   <span class="sep"></span>
   <button class="ib" type="button" data-toggle-labels aria-pressed="true" title="The author's disclosure and prototype notes"><svg><use href="#i-tag"/></svg>Labels</button>
-  <button class="ib" type="button" data-toggle-comments aria-pressed="true" title="Comments left in this browser"><svg><use href="#i-note"/></svg>Comments<span class="count" data-comment-count>0</span></button>
+  <button class="ib" type="button" data-toggle-comments aria-pressed="true" title="Notes written in this browser"><svg><use href="#i-note"/></svg>Notes<span class="count" data-comment-count>0</span></button>
   <span class="sep"></span>
   <!-- modes: they take the whole surface over, rather than changing one thing on it -->
   <button class="ib" type="button" data-present title="Full screen, screens playing through on their own"><svg><use href="#i-present"/></svg>Present</button>
   <button class="ib" type="button" data-bare title="Hide every control and see the artifact exactly as a user would"><svg><use href="#i-eye-off"/></svg>Hide menu <kbd>H</kbd></button>
 </div>
+</header>
+
+<aside class="nav" id="nav" data-nav aria-label="Screens in this prototype" inert>
+  <div class="brand" data-brand>
+    <span class="brand__mark" data-brand-mark></span>
+    <span class="brand__t" data-brand-t></span>
+  </div>
+  <div class="nav__top">
+    <span class="nav__k">Screens</span>
+    <button class="nav__x" type="button" data-nav-close aria-label="Close the screen list"><svg><use href="#i-x"/></svg></button>
+  </div>
+  <div data-nav-list></div>
+  <p class="nav__foot">The numbered ones are the prototype. The rest are documents about it.</p>
+</aside>
 
 <div class="dock" data-dock>
+<!-- The view has its own island, and it is the dark one. It decides what the
+     prototype is being read AS - whose eyes, how far down the roadmap - which
+     is a different order of thing from the tools beside it. Present only when
+     the config declares roles, phases, features or versions. -->
+<div class="isle isle--view" data-vw-isle role="group" aria-label="What the prototype is shown as" hidden>
+  <div class="grp" data-vw-role-grp hidden>
+    <span class="grp__l">User type</span>
+    <div class="grp__row">
+      <button class="ib" type="button" data-menu="role" aria-haspopup="menu" aria-expanded="false" title="Show the prototype as one user type. Visual only - no access is enforced"><svg><use href="#i-user"/></svg><span data-vw-role-label>All user types</span><svg class="caret"><use href="#i-chevron"/></svg></button>
+    </div>
+  </div>
+  <span class="sep" data-vw-role-sep hidden></span>
+  <div class="grp" data-vw-phase-grp hidden>
+    <span class="grp__l">Phase</span>
+    <div class="vseg" data-vw-phases role="group" aria-label="Show features up to and including this phase"></div>
+  </div>
+  <span class="sep" data-vw-phase-sep hidden></span>
+  <div class="grp">
+    <span class="grp__l">Features</span>
+    <div class="grp__row">
+      <button class="ib" type="button" data-vw-btn aria-pressed="false" aria-controls="vw" title="List of features: show, hide, read the description"><svg><use href="#i-cube"/></svg><span data-vw-chip></span></button>
+    </div>
+  </div>
+</div>
 <div class="isle isle--b">
   <div class="grp">
     <span class="grp__l">State</span>
@@ -2068,7 +2407,7 @@
        if they think to press submit. -->
   <span class="sep" data-acts-sep hidden></span>
   <div class="grp" data-acts-grp hidden>
-    <span class="grp__l">Try it</span>
+    <span class="grp__l">Scenarios</span>
     <div class="grp__row">
       <button class="ib" type="button" data-menu="acts" aria-haspopup="menu" aria-expanded="false" title="What can be done on this screen"><svg><use href="#i-play"/></svg><span data-acts-label>Activities</span><svg class="caret"><use href="#i-chevron"/></svg></button>
     </div>
@@ -2083,13 +2422,13 @@
   <div class="grp">
     <span class="grp__l">Simulate</span>
     <div class="grp__row">
-      <button class="ib" type="button" data-sim-btn aria-pressed="false" aria-controls="sim" title="Time, latency, and anything else this prototype pretends about the situation"><svg><use href="#i-sim"/></svg><span data-sim-chip>Situation</span></button>
+      <button class="ib" type="button" data-sim-btn aria-pressed="false" aria-controls="sim" title="Time, latency, and anything else this prototype pretends about the situation"><svg><use href="#i-sim"/></svg><span data-sim-chip>Time and speed</span></button>
     </div>
   </div>
 
   <span class="sep"></span>
   <div class="grp">
-    <span class="grp__l">Take it out</span>
+    <span class="grp__l">Share</span>
     <div class="grp__row">
       <button class="ib" type="button" data-menu="share" aria-haspopup="menu" aria-expanded="false"><svg><use href="#i-share"/></svg>Share<svg class="caret"><use href="#i-chevron"/></svg></button>
     </div>
@@ -2101,7 +2440,7 @@
      enough controls to stop being a group in someone else's bar. -->
 <div class="isle isle--notes">
   <div class="grp">
-    <span class="grp__l">Say something</span>
+    <span class="grp__l">Notes</span>
     <div class="grp__row">
       <button class="ib" type="button" data-menu="note" aria-haspopup="menu" aria-expanded="false"><svg><use href="#i-note"/></svg><span data-note-label>Add note</span><svg class="caret"><use href="#i-chevron"/></svg></button>
       <button class="ib" type="button" data-menu="mark" aria-haspopup="menu" aria-expanded="false"><svg><use href="#i-pen"/></svg><span data-mark-label>Mark</span><svg class="caret"><use href="#i-chevron"/></svg></button>
@@ -2110,9 +2449,9 @@
 
   <span class="sep"></span>
   <div class="grp">
-    <span class="grp__l">When you finish</span>
+    <span class="grp__l">Send</span>
     <div class="grp__row">
-      <button class="cta" type="button" data-send data-idle="1" title="Review your notes and choose how to return them"><svg><use href="#i-send"/></svg>Return notes<span class="cta__n" data-send-n>0</span></button>
+      <button class="cta" type="button" data-send data-idle="1" title="Review your notes and send them to the author"><svg><use href="#i-send"/></svg>Send notes<span class="cta__n" data-send-n>0</span></button>
       <button class="ib ib--icon" type="button" data-menu="notes" aria-haspopup="menu" aria-expanded="false" title="More"><svg class="caret"><use href="#i-chevron"/></svg></button>
     </div>
   </div>
@@ -2185,13 +2524,39 @@
   </div>
 
   <div class="sim__row">
-    <div class="sim__head"><b>Latency</b></div>
+    <div class="sim__head"><b>Response speed</b></div>
     <div class="seg" data-lag-seg><div class="seg__thumb" data-thumb></div></div>
-    <p class="sim__note">A prototype that answers instantly teaches the wrong expectation. The artifact decides what to do with this - <code>Harness.wait()</code> is the hook.</p>
+    <p class="sim__note">How fast the prototype answers. Real products are not instant.</p>
   </div>
 
-  <p class="sim__foot" data-sim-empty hidden>This screen declares no time axis. Latency still applies.</p>
+  <p class="sim__foot" data-sim-empty hidden>This screen has no time axis. Response speed still applies.</p>
 </div>
+
+<div class="vw" id="vw" data-vw role="dialog" aria-labelledby="vw-h" hidden>
+  <div class="vw__top">
+    <div class="vw__ttl">
+      <h2 id="vw-h">Features</h2>
+      <span class="vw__sum" data-vw-sum></span>
+    </div>
+    <button class="vw__reset" type="button" data-vw-reset hidden>Reset view</button>
+    <button class="nav__x" type="button" data-vw-close aria-label="Close"><svg><use href="#i-x"/></svg></button>
+  </div>
+  <div class="vw__meter" data-vw-meter aria-hidden="true"></div>
+  <div class="vw__tools">
+    <input class="vw__find" type="search" data-vw-find placeholder="Search features" aria-label="Search features">
+    <div class="vw__flt" data-vw-flt role="group" aria-label="Which features to list">
+      <button type="button" data-flt="all" aria-pressed="true">All</button>
+      <button type="button" data-flt="in" aria-pressed="false">Shown</button>
+      <button type="button" data-flt="out" aria-pressed="false">Hidden</button>
+    </div>
+  </div>
+  <div class="vw__body" data-vw-body></div>
+</div>
+
+<aside class="fc" data-fc role="complementary" aria-labelledby="fc-h" hidden>
+  <div class="fc__top" data-fc-top></div>
+  <div class="fc__body" data-fc-body></div>
+</aside>
 
 <div class="brief" data-brief hidden>
   <div class="brief__card" role="dialog" aria-modal="true" aria-labelledby="brief-h">
@@ -2200,9 +2565,9 @@
     <p class="brief__p" data-brief-task></p>
     <p class="brief__ask" data-brief-ask hidden><b>From the author</b><span data-brief-ask-t></span></p>
     <ul class="brief__steps">
-      <li><span class="brief__i">1</span><span>Use it the way you normally would. Some data is simulated - the coral notes say which.</span></li>
-      <li><span class="brief__i">2</span><span><strong>Add note</strong> at the bottom, then click anything on screen, to leave a remark where it happened.</span></li>
-      <li><span class="brief__i">3</span><span>When you are done press <strong>Send</strong>. Nothing reaches us until you do.</span></li>
+      <li><span class="brief__i">1</span><span>Use it the way you normally would. Some data is simulated. The labels on the right say which.</span></li>
+      <li><span class="brief__i">2</span><span>Press <strong>Add note</strong> at the bottom and choose what the note is about.</span></li>
+      <li><span class="brief__i">3</span><span>When you are done press <strong>Send notes</strong>. Nothing reaches us until you do.</span></li>
     </ul>
     <label class="brief__name">
       <span>Your name - it goes on the notes you leave</span>
@@ -2214,7 +2579,7 @@
 
 <div class="rail" data-rail></div>
 
-<aside class="notes" id="notes" data-notes aria-label="All notes on this prototype">
+<aside class="notes" id="notes" data-notes aria-label="All notes on this prototype" inert>
   <div class="nav__top">
     <span class="nav__k">Notes</span>
     <button class="nav__x" type="button" data-notes-close aria-label="Close the note editor"><svg><use href="#i-x"/></svg></button>
@@ -2248,7 +2613,7 @@
 </div>
 
 <button class="restore" type="button" data-bare-off>Show menu <kbd>H</kbd></button>
-<div class="toast" data-toast></div>
+<div class="toast" data-toast role="status" aria-live="polite"></div>
 
 <script src="harness.config.js"></script>
 <script>
@@ -2269,14 +2634,15 @@
   screens = screens.filter(function (s) {
     if (s.overview)     return !!cfg.overview     && dropped.indexOf('overview') < 0;
     if (s.instructions) return !!cfg.instructions && dropped.indexOf('instructions') < 0;
+    if (s.featureMap)   return !!(cfg.features && cfg.features.length);
     return true;
   });
   if (!screens.length) screens = [{ label: 'Prototype', src: 'index.html' }];
   // a generated screen has no file of its own; the shell renders it
   screens.forEach(function (s, i) {
-    if (!s.src) s.src = '__' + (s.disclosure ? 'disclosure' : s.overview ? 'overview' : s.instructions ? 'instructions' : 'screen' + i);
+    if (!s.src) s.src = '__' + (s.disclosure ? 'disclosure' : s.overview ? 'overview' : s.instructions ? 'instructions' : s.featureMap ? 'features' : 'screen' + i);
   });
-  function generated(s) { return !!(s.disclosure || s.overview || s.instructions); }
+  function generated(s) { return !!(s.disclosure || s.overview || s.instructions || s.featureMap); }
 
   /* Two different questions, and conflating them forced a bad choice.
 
@@ -2376,6 +2742,48 @@
     device:  ['desktop','tablet','mobile'].indexOf(q.get('device')) > -1 ? q.get('device') : 'desktop',
     mockup:  q.get('mockup') === '1'
   };
+
+  /* ---------- the view: role, phase, versions, features ----------
+
+     Four things the config may declare, all optional, and all answering one
+     question: what is the artifact being shown AS. Declared this high because
+     paintView and applyView run during setup.
+
+       role     who is looking. VISUAL ONLY - it hides what that person would
+                not see and enforces nothing
+       phase    how far down the roadmap. Cumulative: picking one shows every
+                feature up to and including it
+       force    a feature switched by hand, against what its phase says
+       ver      which option of a version group is showing */
+  var roles    = cfg.roles    || [];
+  var phases   = cfg.phases   || [];
+  var features = cfg.features || [];
+  var vgroups  = (cfg.versions || []).concat(features.filter(function (f) {
+    return f.versions && f.versions.length;
+  }).map(function (f) {
+    return { id: f.id, label: f.name || f.id, options: f.versions };
+  })).filter(function (g) { return g && g.id && g.options && g.options.length; });
+  var hasView = !!(roles.length || phases.length || features.length || vgroups.length);
+  var view = (function () {
+    var saved = q.has('role') || q.has('phase') || q.has('fx') || q.has('ver') ? {} : null;
+    var d = cfg.view || {};
+    var v = { role: d.role || 'all', phase: d.phase || 'all', force: {}, ver: {} };
+    if (saved) {
+      if (q.get('role'))  v.role  = q.get('role');
+      if (q.get('phase')) v.phase = q.get('phase');
+      (q.get('fx') || '').split(',').forEach(function (p) {
+        var i = p.lastIndexOf(':');
+        if (i > 0) v.force[p.slice(0, i)] = p.slice(i + 1) === '1' ? 1 : 0;
+      });
+      (q.get('ver') || '').split(',').forEach(function (p) {
+        var i = p.lastIndexOf(':');
+        if (i > 0) v.ver[p.slice(0, i)] = p.slice(i + 1);
+      });
+    }
+    return v;
+  })();
+  var viewFromLink = q.has('role') || q.has('phase') || q.has('fx') || q.has('ver');
+  var vwFlash = '';         // a temporary outline rule, while a feature is being pointed at
 
   /* Time is per screen, so the shared value belongs to the screen the link
      opened on. Carrying one number across scales - minutes here, days there -
@@ -2480,8 +2888,15 @@
      literal from our own sprite. */
   function icon(id) { return '<svg><use href="#' + String(id).replace(/[^\w-]/g, '') + '"/></svg>'; }
 
-  function toast(msg, ms) {
+  function toast(msg, ms, act, fn) {
     toastEl.textContent = msg;
+    toastEl.classList.toggle('has-act', !!act);
+    if (act) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.textContent = act;
+      b.addEventListener('click', function () { toastEl.classList.remove('is-on'); fn(); });
+      toastEl.appendChild(b);
+    }
     toastEl.classList.add('is-on');
     clearTimeout(toast._t);
     toast._t = setTimeout(function () { toastEl.classList.remove('is-on'); }, ms || 2600);
@@ -2496,11 +2911,21 @@
     thumb.style.width = on.offsetWidth + 'px';
     thumb.style.transform = 'translateX(' + (on.offsetLeft - 3) + 'px)';
   }
+  /* What a reader sees for a value the config and the artifact know by a
+     short key. The key still travels - only the label is plain. */
+  function nameOf(v) {
+    var NAMES = {
+      empty: 'Empty', full: 'With data', error: 'Error', unauth: 'Signed out', loading: 'Loading',
+      partial: 'Partial data', long: 'Long content', forbidden: 'No access', offline: 'Offline',
+      none: 'Instant', realistic: 'Normal', slow: 'Slow'
+    };
+    return NAMES[v] || v;
+  }
   function segment(seg, values, key, onPick) {
     values.forEach(function (v) {
       var b = document.createElement('button');
       b.type = 'button';
-      b.textContent = v;
+      b.textContent = key === 'variant' ? v : nameOf(v);
       b.setAttribute('data-v', v);
       b.setAttribute('aria-pressed', String(current[key] === v));
       b.addEventListener('click', function () {
@@ -2588,6 +3013,10 @@
       b.appendChild(d);
     }
 
+    var out = document.createElement('span');
+    out.className = 'nav__out';
+    b.appendChild(out);
+
     b.addEventListener('click', function () { pickScreen(i); closeNav(); });
     navList.appendChild(b);
   });
@@ -2613,6 +3042,7 @@
   }
   function openNav() {
     closeSurfaces('nav');
+    nav.inert = false;
     nav.classList.add('is-open');
     document.body.classList.add('is-nav');
     navBtn.setAttribute('aria-expanded', 'true');
@@ -2621,6 +3051,9 @@
     if (on) on.focus();
   }
   function closeNav() {
+    /* closed, it is only moved off screen - without this every row in it is
+       still a tab stop, thirteen of them, between two visible controls */
+    nav.inert = true;
     nav.classList.remove('is-open');
     document.body.classList.remove('is-nav');
     navBtn.setAttribute('aria-expanded', 'false');
@@ -2705,6 +3138,26 @@
     paintScrub();
   }
 
+  (function restoreView() {
+    if (!hasView) return;
+    if (!viewFromLink) {
+      var sv = readStore('view', null);
+      if (sv) { view.role = sv.role || view.role; view.phase = sv.phase || view.phase;
+                view.force = sv.force || {}; view.ver = sv.ver || {}; }
+    }
+    // a value the config no longer declares must not survive as an invisible filter
+    if (view.role !== 'all' && !roles.some(function (r) { return r.id === view.role; })) view.role = 'all';
+    if (view.phase !== 'all' && !phases.some(function (p) { return p.id === view.phase; })) view.phase = 'all';
+    Object.keys(view.force).forEach(function (id) {
+      if (!features.some(function (f) { return f.id === id; })) delete view.force[id];
+    });
+    vgroups.forEach(function (g) { if (g.options.indexOf(view.ver[g.id]) < 0) delete view.ver[g.id]; });
+  })();
+  var vwEl   = document.querySelector('[data-vw]');
+  var vwBtn  = document.querySelector('[data-vw-btn]');
+  var vwBody = document.querySelector('[data-vw-body]');
+  var fcEl   = document.querySelector('[data-fc]');
+
   /* ---------- the simulation panel ----------
      Open/closed is remembered: during a demo it wants to stay up, while
      reviewing a layout it is in the way. */
@@ -2719,7 +3172,7 @@
     var t = screenTime();
     simChip.textContent = t
       ? (t.format ? t.format(current.time) : String(current.time))
-      : 'Situation';
+      : 'Time and speed';
     simRun.hidden = !t;
     simEmpty.hidden = !!t;
   }
@@ -3018,141 +3471,6 @@
     var lum = (0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]) / 255;
     document.body.classList.toggle('is-darkart', lum < 0.5);
   }
-  /* Opening the app. Once per session, only with the hardware on, and any
-     click ends it - a reviewer who wants to get on with the task must never
-     have to sit through it twice. */
-  var booted = false, bootTimers = [];
-  function endBoot() {
-    var b = document.querySelector('[data-boot]');
-    bootTimers.forEach(clearTimeout); bootTimers = [];
-    document.body.classList.remove('is-booting');
-    if (b) { b.hidden = true; b.classList.remove('is-launch', 'boot--web'); }
-  }
-
-  var SAFARI_MARK =
-    '<svg viewBox="0 0 44 44" width="30" height="30" aria-hidden="true">' +
-    '<circle cx="22" cy="22" r="19" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="2.4"/>' +
-    '<path d="M30 14L18.5 18.5 14 30l11.5-4.5z" fill="#fff"/>' +
-    '<path d="M30 14L25.5 25.5 14 30z" fill="#ff5a4e"/></svg>';
-
-  function playOpening() {
-    var b = document.querySelector('[data-boot]');
-    if (!b || booted || cfg.opening === false) return;
-    /* Never mid-presentation. The opening is the app being started, which
-       happens once, at the beginning - arriving in the middle of a walkthrough
-       it reads as the prototype crashing and reloading. */
-    if (presenting) { booted = true; return; }
-    /* Marked spent even when it cannot play. These two used to return without
-       setting the flag, so the opening stayed pending and fired at the first
-       screen that did qualify - which is how an app launch turned up four
-       screens into a tour. */
-    if (!current.mockup) { booted = true; return; }    // hardware off: nothing to open
-    if (aboutDoc(screens[screenIndex(current.screen)])) { booted = true; return; }  // a document is not an app
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    booted = true;
-
-    b.hidden = false;
-    b.classList.remove('is-launch', 'boot--web');
-    document.body.classList.add('is-booting');
-    b.onclick = endBoot;
-
-    /* A home screen is a phone and a tablet thing. On a desktop there is no
-       springboard to open anything from, so the page simply arrives. */
-    if (current.device === 'desktop') {
-      b.classList.add('boot--web');
-      bootTimers.push(setTimeout(function () { b.classList.add('is-launch'); }, 700));
-      bootTimers.push(setTimeout(endBoot, 1050));
-      return;
-    }
-
-    /* Both kinds start on the home screen, because both are opened from one.
-       What differs is which icon is tapped: the product's own for a native app,
-       Safari for a web one - which is the honest picture, since a web prototype
-       IS reached through a browser. */
-    var grid = b.querySelector('[data-boot-grid]');
-    var dock = b.querySelector('.boot__dock');
-    var tile = b.querySelector('[data-boot-tile]');
-    var lab  = b.querySelector('[data-boot-tile-l]');
-
-    var d = new Date();
-    b.querySelector('[data-boot-day]').textContent =
-      ['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'][d.getDay()];
-    b.querySelector('[data-boot-date]').textContent = d.getDate();
-
-    /* A plausible page of apps. Colour plus one glyph each - enough to read as
-       a home screen, never anyone's real mark. */
-    var G = function (d) { return 'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="' + d + '" fill="black"/></svg>\')'; };
-    var APPS = [
-      { bg: 'linear-gradient(160deg,#3ec46d,#1f9f4d)', gl: G('M12 2a9 9 0 019 9c0 5-9 11-9 11S3 16 3 11a9 9 0 019-9zm0 6a3 3 0 100 6 3 3 0 000-6z') },
-      { bg: 'linear-gradient(160deg,#5ac8fa,#0a84ff)', gl: G('M3 5h18v11H8l-5 4z') },
-      { bg: 'linear-gradient(160deg,#ff9f0a,#ff375f)', gl: G('M9 18V5l10-2v13M9 18a3 3 0 11-6 0 3 3 0 016 0zm10-2a3 3 0 11-6 0 3 3 0 016 0z') },
-      { bg: 'linear-gradient(160deg,#8e8e93,#48484a)', gl: G('M4 7h4l2-2h4l2 2h4v12H4zm8 3a3.5 3.5 0 100 7 3.5 3.5 0 000-7z') },
-      { bg: 'linear-gradient(160deg,#ffd60a,#ff9f0a)', gl: G('M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.3 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8z') },
-      { bg: 'linear-gradient(160deg,#bf5af2,#5e5ce6)', gl: G('M4 4h16v16H4zm3 4v8l7-4z') },
-      { bg: 'linear-gradient(160deg,#30d158,#248a3d)', gl: G('M6 3h12v18H6zm3 15h6v2H9z') },
-      { bg: 'linear-gradient(160deg,#64d2ff,#0071e3)', gl: G('M3 12h18M12 3v18M5 6h14v12H5z') }
-    ];
-    grid.innerHTML = '';
-    var SLOT = native ? 5 : 0;                 // the app mid-grid; Safari first
-    var cols = getComputedStyle(b).getPropertyValue('--cols').trim() === '6' ? 6 : 4;
-    var CELLS = cols === 6 ? 12 : 8;
-    for (var k = 0; k < CELLS; k++) {
-      var c = document.createElement('i');
-      if (k === SLOT && native) { c.className = 'is-app'; }
-      else {
-        var a = APPS[k % APPS.length];
-        c.style.setProperty('--bg', a.bg);
-        c.style.setProperty('--gl', a.gl);
-        c.style.background = a.bg;
-      }
-      grid.appendChild(c);
-    }
-    [].forEach.call(dock.children, function (d, i) {
-      var a = APPS[(i + 3) % APPS.length];
-      d.style.setProperty('--bg', a.bg);
-      d.style.setProperty('--gl', a.gl);
-      d.style.background = a.bg;
-    });
-    /* a web app is opened from Safari, which lives in the dock */
-    var host = native ? grid.children[SLOT] : dock.children[0];
-    if (!native) host.style.visibility = 'hidden';
-
-    var mark = document.querySelector('[data-brand-mark]');
-    if (native) {
-      tile.innerHTML = mark ? mark.innerHTML : '';
-      tile.style.background = 'linear-gradient(150deg,#ed6d57,#ffc94f)';
-      lab.textContent = (cfg.brand && cfg.brand.name) || cfg.title || cfg.name || 'App';
-    } else {
-      tile.innerHTML = SAFARI_MARK;
-      tile.style.background = 'linear-gradient(160deg,#f2f4f7 0%,#cfd6e0 100%)';
-      lab.textContent = 'Safari';
-    }
-    tile.appendChild(lab);
-
-    requestAnimationFrame(function () {
-      var slot = host.getBoundingClientRect();
-      var box  = b.getBoundingClientRect();
-      tile.style.transform = '';
-      tile.style.left   = (slot.left - box.left) + 'px';
-      tile.style.top    = (slot.top - box.top) + 'px';
-      tile.style.width  = slot.width + 'px';
-      tile.style.height = slot.height + 'px';
-
-      /* Long enough to be noticed, which is the whole point: the home screen
-         holds for a beat, the icon is pressed, and only then does it open. */
-      bootTimers.push(setTimeout(function () { tile.classList.add('is-tap'); }, 780));
-      bootTimers.push(setTimeout(function () {
-        tile.classList.remove('is-tap');
-        var sx = box.width / slot.width, sy = box.height / slot.height;
-        tile.style.transform =
-          'translate(' + (box.left - slot.left) + 'px,' + (box.top - slot.top) + 'px) ' +
-          'scale(' + sx + ',' + sy + ')';
-        b.classList.add('is-launch');
-      }, 960));
-      bootTimers.push(setTimeout(endBoot, 1820));
-    });
-  }
-
   function setNative(v) {
     if (native === v) return;
     native = v;
@@ -3235,6 +3553,7 @@
     if (current.mockup) p.set('mockup', '1');
     if (reviewMode) p.set('review', '1');
     if (dropped.length && dropped[0]) p.set('x', dropped.join(','));
+    viewParams(p);
     var url = location.origin + location.pathname + '?' + p.toString();
 
     function done() {
@@ -3266,7 +3585,9 @@
   function pickRow(k) { return picksWrap.querySelector('[data-pick="' + k + '"]'); }
 
   inviteBtn.addEventListener('click', function () {
-    inviteSheet.hidden = !inviteSheet.hidden;
+    var opening = inviteSheet.hidden;
+    if (opening) { closeSurfaces('sheet'); armOpened(); }
+    inviteSheet.hidden = !opening;
     if (inviteSheet.hidden) return;
     // only offer what this prototype actually has
     var any = false;
@@ -3287,6 +3608,7 @@
     var p = new URLSearchParams();
     p.set('screen', screens[0].src);
     p.set('review', '1');
+    viewParams(p);
     // the message travels in the link itself - there is no backend to keep it in
     if (msg) p.set('m', encodeURIComponent(msg));
     var out = ['overview', 'instructions'].filter(function (k) {
@@ -3474,8 +3796,8 @@
      reader of a PDF cannot hover it back into existence. So the box and the
      pen are painted onto the same canvas as the artifact, at the same scale,
      in the same colours the screen uses. The note rail stays out of both. */
-  function paintMarks(ctx, x0, y0, w, h) {
-    var here = mineHere();
+  function paintMarks(ctx, x0, y0, w, h, fromTop) {
+    var here = mineHere().map(function (m) { return fromTop ? markAt(m, 0, 0) : markInFrame(m); });
     if (!here.length) return;
     ctx.save();
     ctx.beginPath(); ctx.rect(x0, y0, w, h); ctx.clip();
@@ -3542,7 +3864,7 @@
     system:     { label: 'System result',     cls: '' },
     connection: { label: 'Connection claim',  cls: '' },
     convention: { label: 'Prototype note',    cls: 'convention' },
-    comment:    { label: 'Comment',           cls: 'comment' },
+    comment:    { label: 'Note',              cls: 'comment' },
     summary:    { label: 'Overall note',      cls: 'comment note--sum' }
   };
   var SEV = { low: 'Low', normal: 'Normal', high: 'High' };
@@ -3692,6 +4014,9 @@
     if (!w) return;
     w.addEventListener('scroll', repositionIdle, { passive: true });
     w.addEventListener('resize', repositionIdle, { passive: true });
+    /* marks belong to the page, so they travel with it */
+    w.addEventListener('scroll', drawMarks, { passive: true });
+    w.addEventListener('resize', drawMarks, { passive: true });
   }
 
   var railSettle = null;
@@ -3927,17 +4252,26 @@
          throw away, and a disclosure that could be deleted is a label that can
          be made to disappear. Only a comment, which the reviewer wrote, gets a
          real delete. */
-      x.setAttribute('aria-label', cm ? 'Delete this comment' : 'Minimise this note');
+      x.setAttribute('aria-label', cm ? 'Delete this note' : 'Minimise this note');
       x.title = cm ? 'Delete' : (target ? 'Minimise to its pin' : 'Minimise');
       x.innerHTML = icon(cm ? 'i-x' : 'i-minus');
       x.addEventListener('click', function () {
         note.classList.add('is-out');
         setTimeout(function () {
           if (cm) {
+            /* Deleting was instant and final. A note is someone's sentence;
+               it gets a few seconds in which it can be taken back. */
+            var gone = comments.filter(function (o) { return o.id === id; })[0];
             comments = comments.filter(function (o) { return o.id !== id; });
             forget(id);
             writeStore('comments', comments);
             paintSend();
+            if (gone && !gone.draft) toast('Note deleted', 6000, 'Undo', function () {
+              comments.push(gone);
+              writeStore('comments', comments);
+              paintSend();
+              drawAnnots();
+            });
           } else {
             collapsed[id] = true;
             writeStore('collapsed', collapsed);
@@ -4388,12 +4722,12 @@
     grp.hidden = !list.length;
     if (sep) sep.hidden = !list.length;
     var lab = document.querySelector('[data-acts-label]');
-    if (lab) lab.textContent = list.length ? list.length + ' activities' : 'Activities';
+    if (lab) lab.textContent = list.length + (list.length === 1 ? ' scenario' : ' scenarios');
   }
 
   function paintState() {
     var el = document.querySelector('[data-state-label]');
-    if (el) el.textContent = current.state;
+    if (el) el.textContent = 'State: ' + nameOf(current.state);
   }
 
   /* A segmented control shows every option at once and says what none of them
@@ -4414,10 +4748,17 @@
   };
 
   var MENUS = {
+    role: function () {
+      return [{ h: 'Show the prototype as one user type' }].concat(
+        [{ id: 'all', label: 'All user types', desc: 'Nothing hidden by user type' }].concat(roles).map(function (r) {
+          return { ico: 'i-user', t: r.label || r.id, d: r.desc || '', on: view.role === r.id,
+                   fn: function () { view.role = r.id; changeView('role'); } };
+        }));
+    },
     state: function () { return [{ h: 'What situation is the screen in?' }].concat(
       states.map(function (v) {
         return {
-          ico: 'i-layers', t: v, d: STATE_DESC[v] || 'A state this prototype declares',
+          ico: 'i-layers', t: nameOf(v), d: STATE_DESC[v] || 'A state this prototype declares',
           on: v === current.state,
           fn: function () {
             var b = document.querySelector('[data-states-group] button[data-v="' + v + '"]');
@@ -4485,12 +4826,9 @@
         on: native, fn: function () { setNative(true); } },
       { sep: true },
       { h: 'Finish' },
-      { ico: 'i-frame', t: glare ? 'Glass is on' : 'Glass is off',
+      { ico: 'i-frame', t: glare ? 'Screen reflection: on' : 'Screen reflection: off',
         d: 'A faint reflection across the display. Turn it off for a usability test',
-        on: glare, fn: function () { setGlare(!glare); } },
-      { ico: 'i-play', t: 'Open the app',
-        d: native ? 'Play it again from the home screen' : 'Play the page arriving at its address',
-        fn: function () { booted = false; playOpening(); } }
+        on: glare, fn: function () { setGlare(!glare); } }
     ]; },
     notes: function () { return [
       { ico: 'i-list', t: 'View all notes', d: 'Read, filter and edit every note in one place', fn: function () { press('[data-open-notes]'); } }
@@ -4514,23 +4852,40 @@
      `except` names the surface being opened, so it does not close itself. */
   /* Set for the rest of the current click, so the event that opened a surface
      cannot be mistaken for one dismissing it. */
-  var justOpened = false;
+  /* The guard is the click itself, not a timer. It used to be a flag cleared by
+     setTimeout(0), and a browser runs input ahead of timers: a second press
+     that followed quickly arrived while the flag was still up and was ignored,
+     so the panel it should have closed stayed open. Remembering WHICH event
+     opened the surface cannot be outrun. */
+  var openedBy = null;
 
-  function armOpened() {
-    justOpened = true;
-    setTimeout(function () { justOpened = false; }, 0);
-  }
+  function armOpened() { openedBy = window.event || null; }
+  function sameClick() { return !!openedBy && window.event === openedBy; }
 
-  function closeSurfaces(except) {
+  function closeSurfaces(except, keepView) {
     if (except !== 'menu') closeMenu();
     if (except !== 'sim' && simEl && !simEl.hidden) openSim(false);
     if (except !== 'notes' && notesOpen) openNotes(false);
     if (except !== 'nav' && nav.classList.contains('is-open')) closeNav();
+    /* Strict, and no exceptions for "they do not overlap": two things open at
+       once is two things to close, and the second was usually opened to
+       replace the first. The one case kept is a menu on the view block, which
+       is a control FOR the feature list rather than a rival to it. */
+    if (except !== 'view' && !keepView && vwEl && fcEl && (!vwEl.hidden || !fcEl.hidden)) dismissView();
+    if (except !== 'sheet') {
+      document.querySelectorAll('[data-sheet], [data-invite-sheet]').forEach(function (el) { el.hidden = true; });
+    }
   }
 
   function showMenu(btn, key) {
     if (openMenu && openMenu.key === key) { closeMenu(); return; }
-    closeSurfaces('menu');
+    /* A second menu must close the first. closeSurfaces('menu') deliberately
+       leaves menus alone, and a menu button stops its click from reaching the
+       document - so without this line the first menu was neither closed nor
+       remembered: it stayed on screen for good, under everything opened after
+       it, with no control left that could remove it. */
+    closeMenu();
+    closeSurfaces('menu', key === 'role');
     var el = document.createElement('div');
     el.className = 'menu'; el.setAttribute('role', 'menu');
     MENUS[key]().forEach(function (it) {
@@ -4557,6 +4912,16 @@
     el.style.top = Math.max(12, r.top - h2 - 10) + 'px';
     btn.setAttribute('aria-expanded', 'true');
     openMenu = { el: el, btn: btn, key: key };
+    /* A menu opened from the keyboard has to be usable from the keyboard:
+       focus goes into it, the arrows move through it. */
+    var items = Array.prototype.slice.call(el.querySelectorAll('.menu__i'));
+    if (items[0]) items[0].focus({ preventScroll: true });
+    el.addEventListener('keydown', function (e) {
+      var i = items.indexOf(document.activeElement);
+      if (e.key === 'ArrowDown') { e.preventDefault(); items[(i + 1) % items.length].focus(); }
+      if (e.key === 'ArrowUp')   { e.preventDefault(); items[(i - 1 + items.length) % items.length].focus(); }
+      if (e.key === 'Escape')    { closeMenu(); btn.focus(); }
+    });
   }
 
   document.querySelectorAll('[data-menu]').forEach(function (btn) {
@@ -4577,10 +4942,16 @@
        then, the rail's own button is inside a rail that the open panel hides.
        So the opener is not identified at all: a surface simply ignores
        dismissal until the click that opened it has finished travelling. */
-    if (justOpened) return;
+    if (sameClick()) return;
     if (notesOpen && !notesEl.contains(e.target)) openNotes(false);
     if (!simEl.hidden && !simEl.contains(e.target) &&
-        !e.target.closest('[data-sim-btn],.stage')) openSim(false);
+        !e.target.closest('[data-sim-btn]')) openSim(false);
+    /* A press outside closes whatever is open - the feature column and the
+       sheets included. One rule, so nobody has to learn which panels obey it. */
+    if (!e.target.closest('[data-vw],[data-fc],[data-vw-isle],.menu')) dismissView();
+    if (!e.target.closest('.sheet,[data-send],.menu')) {
+      document.querySelectorAll('[data-sheet], [data-invite-sheet]').forEach(function (el) { el.hidden = true; });
+    }
   });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeMenu(); });
 
@@ -4592,7 +4963,17 @@
     var d = null;
     try { d = frame.contentDocument; } catch (err) { d = null; }
     if (!d) return;
-    d.addEventListener('click', function () { closeMenu(); }, true);
+    /* One rule for every floating surface: a press outside it closes it, and
+       the artifact is outside. Leaving a panel open "because it drives the
+       artifact" meant three of them stacked up with no way to clear the
+       screen short of finding each close button. */
+    d.addEventListener('click', function () {
+      closeMenu();
+      if (sameClick()) return;
+      if (!simEl.hidden) openSim(false);
+      dismissView();
+      document.querySelectorAll('[data-sheet], [data-invite-sheet]').forEach(function (el) { el.hidden = true; });
+    }, true);
   }
 
   /* ---------- marks: box and marker pen ----------
@@ -4627,6 +5008,96 @@
     b.addEventListener('click', function () { setMarking(b.getAttribute('data-mark')); });
   });
 
+  /* ---------- where a mark is ----------
+
+     A mark used to be kept as a fraction of the FRAME - the visible window
+     onto the artifact. That is a place on the glass, not a place on the page:
+     scroll, and the box stayed where it was while the thing it was drawn
+     around moved out from under it. A note attached to it then took those
+     window fractions as if they were page fractions, so its pin landed
+     somewhere else again.
+
+     So a mark is kept as a fraction of the artifact's DOCUMENT, which is what
+     a comment's own position has always been. `markAt` turns it back into
+     frame fractions for a given scroll position; drawing asks for the current
+     one, the report - which photographs the page from the top - asks for 0,0.
+
+     A mark saved before this has no `doc` flag and is read as drawn at the
+     top of the page, which is where most of them were. */
+  function docMetrics() {
+    try {
+      var w = frame.contentWindow, de = frame.contentDocument.documentElement;
+      if (!w.innerWidth || !de.scrollWidth) return null;
+      return { W: de.scrollWidth, H: de.scrollHeight, sx: w.scrollX || 0, sy: w.scrollY || 0,
+               vw: w.innerWidth, vh: w.innerHeight };
+    } catch (e) { return null; }
+  }
+  function markAt(m, sx, sy) {
+    var d = docMetrics();
+    if (!m.doc || !d) return m;
+    if (m.sel && m.rel) {
+      var el = null;
+      try { el = frame.contentDocument.querySelector(m.sel); } catch (e) { el = null; }
+      var r = el && el.getBoundingClientRect();
+      if (r && r.width && r.height) {
+        /* the element's rect is at the CURRENT scroll; shift it to the asked one */
+        var L = r.left + d.sx - sx, T = r.top + d.sy - sy;
+        var abs = function (p) { return [(L + p[0] * r.width) / d.vw, (T + p[1] * r.height) / d.vh]; };
+        if (m.kind === 'box') {
+          var o = abs(m.rel.at);
+          return { kind: 'box', x: o[0], y: o[1], w: m.rel.w * r.width / d.vw, h: m.rel.h * r.height / d.vh };
+        }
+        return { kind: 'pen', pts: m.rel.pts.map(abs) };
+      }
+    }
+    function c(x, y) { return [(x * d.W - sx) / d.vw, (y * d.H - sy) / d.vh]; }
+    if (m.kind === 'box') {
+      var a = c(m.x, m.y);
+      return { kind: 'box', x: a[0], y: a[1], w: m.w * d.W / d.vw, h: m.h * d.H / d.vh };
+    }
+    return { kind: 'pen', pts: m.pts.map(function (p) { return c(p[0], p[1]); }) };
+  }
+  function markInFrame(m) {
+    var d = docMetrics();
+    return d ? markAt(m, d.sx, d.sy) : m;
+  }
+  /* frame fractions, as drawn, into document fractions, as kept */
+  function markToDoc(m) {
+    var d = docMetrics();
+    if (!d) return m;
+    function c(p) { return [(p[0] * d.vw + d.sx) / d.W, (p[1] * d.vh + d.sy) / d.H]; }
+    /* Better than a place on the page is a place on a THING. A fraction of the
+       document is right until the document's width changes - a sidebar opens,
+       the note rail appears - and a centred layout then slides out from under
+       it. So the mark also remembers the element beneath its centre and where
+       it sits relative to that element; drawing uses that whenever the element
+       can still be found, and the page fraction only when it cannot. */
+    try {
+      var doc = frame.contentDocument;
+      var mid = m.kind === 'box' ? [m.x + m.w / 2, m.y + m.h / 2] : m.pts[Math.floor(m.pts.length / 2)];
+      var el = doc.elementFromPoint(mid[0] * d.vw, mid[1] * d.vh);
+      var sel = el && selectorIn(doc, el);
+      if (sel) {
+        var r = el.getBoundingClientRect();
+        if (r.width && r.height) {
+          var rel = function (p) { return [(p[0] * d.vw - r.left) / r.width, (p[1] * d.vh - r.top) / r.height]; };
+          m.sel = sel;
+          m.rel = m.kind === 'box'
+            ? { at: rel([m.x, m.y]), w: m.w * d.vw / r.width, h: m.h * d.vh / r.height, mid: rel(mid) }
+            : { pts: m.pts.map(rel), mid: rel(mid) };
+        }
+      }
+    } catch (e) { /* no anchor: the page fraction below still holds */ }
+    if (m.kind === 'box') {
+      var a = c([m.x, m.y]);
+      m.w = m.w * d.vw / d.W; m.h = m.h * d.vh / d.H; m.x = a[0]; m.y = a[1];
+    } else {
+      m.pts = m.pts.map(c);
+    }
+    m.doc = true;
+    return m;
+  }
+
   function mineHere() {
     return marks.filter(function (m) {
       return m.screen === current.screen && m.state === current.state && m.device === current.device;
@@ -4642,20 +5113,21 @@
     var ox = box.left - wrapBox.left, oy = box.top - wrapBox.top;
 
     mineHere().forEach(function (m) {
+      var v = markInFrame(m);
       var g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
       var shape;
-      if (m.kind === 'box') {
+      if (v.kind === 'box') {
         shape = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
         shape.setAttribute('class', 'mk__box');
-        shape.setAttribute('x', ox + m.x * box.width);
-        shape.setAttribute('y', oy + m.y * box.height);
-        shape.setAttribute('width', m.w * box.width);
-        shape.setAttribute('height', m.h * box.height);
+        shape.setAttribute('x', ox + v.x * box.width);
+        shape.setAttribute('y', oy + v.y * box.height);
+        shape.setAttribute('width', v.w * box.width);
+        shape.setAttribute('height', v.h * box.height);
         var hit = shape.cloneNode();
         hit.setAttribute('class', 'mk__hit');
         g.appendChild(shape); g.appendChild(hit);
       } else {
-        var d = m.pts.map(function (p, i) {
+        var d = v.pts.map(function (p, i) {
           return (i ? 'L' : 'M') + (ox + p[0] * box.width) + ' ' + (oy + p[1] * box.height);
         }).join(' ');
         shape = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -4671,9 +5143,12 @@
       del.className = 'mk__x'; del.type = 'button';
       del.title = 'Remove this mark';
       del.innerHTML = icon('i-x');
-      var cx = m.kind === 'box' ? ox + (m.x + m.w) * box.width : ox + m.pts[0][0] * box.width;
-      var cy = m.kind === 'box' ? oy + m.y * box.height : oy + m.pts[0][1] * box.height;
+      var cx = v.kind === 'box' ? ox + (v.x + v.w) * box.width : ox + v.pts[0][0] * box.width;
+      var cy = v.kind === 'box' ? oy + v.y * box.height : oy + v.pts[0][1] * box.height;
       del.style.left = cx + 'px'; del.style.top = cy + 'px';
+      /* its handle goes with it: one left hanging over the bar would delete a
+         mark nobody can see */
+      if (cx < ox - 4 || cy < oy - 4 || cx > ox + box.width + 4 || cy > oy + box.height + 4) del.hidden = true;
       del.addEventListener('click', function () {
         marks = marks.filter(function (o) { return o !== m; });
         writeStore('marks', marks);
@@ -4728,6 +5203,7 @@
         : live.pts.length > 3;
       if (keep) {
         delete live.from;
+        markToDoc(live);
         live.screen = current.screen; live.state = current.state; live.device = current.device;
         live.id = 'm' + Date.now();
         marks.push(live);
@@ -4756,16 +5232,20 @@
     marksEl.querySelectorAll('.mk__ask').forEach(function (n) { n.remove(); });
     var box = frame.getBoundingClientRect();
     var wrapBox = wrap.getBoundingClientRect();
-    var c0 = markCentre(m);
+    var c0 = markCentre(m);            // document fractions - what a note's pin is measured in
+    var seen = markInFrame(m), cv0 = markCentre(seen);
     var ask = document.createElement('button');
     ask.className = 'mk__ask'; ask.type = 'button';
     ask.innerHTML = icon('i-note') + '<span>Add a note here</span>';
-    ask.style.left = (box.left - wrapBox.left + c0[0] * box.width) + 'px';
-    ask.style.top  = (box.top - wrapBox.top + (m.kind === 'box' ? m.y : c0[1]) * box.height) + 'px';
+    ask.style.left = (box.left - wrapBox.left + cv0[0] * box.width) + 'px';
+    ask.style.top  = (box.top - wrapBox.top + (seen.kind === 'box' ? seen.y : cv0[1]) * box.height) + 'px';
     ask.addEventListener('click', function () {
       var cm = looseNote(m.kind === 'box' ? 'the boxed area' : 'the marked text');
       cm.mark = m.id;
       cm.fx = c0[0]; cm.fy = c0[1];
+      /* the note is pinned to the same element its mark is, so the two cannot
+         drift apart; the page fraction is only the fallback */
+      if (m.sel && m.rel) { cm.selector = m.sel; cm.rx = m.rel.mid[0]; cm.ry = m.rel.mid[1]; }
       writeStore('comments', comments);
       ask.remove();
       drawAnnots();
@@ -4794,7 +5274,7 @@
   var panelEdit = null;
 
   var CHIPS = [
-    { k: 'kind', v: 'comment', t: 'My comments' },
+    { k: 'kind', v: 'comment', t: 'My notes' },
     { k: 'kind', v: 'label',   t: "Author's labels" },
     { k: 'kind', v: null,      t: 'Everything' },
     { k: 'sev',  v: 'high',    t: 'High' },
@@ -5081,6 +5561,7 @@
   function openNotes(on) {
     if (on) { closeSurfaces('notes'); armOpened(); }
     notesOpen = on;
+    notesEl.inert = !on;
     notesEl.classList.toggle('is-open', on);
     document.body.classList.toggle('is-notes', on);
     if (on) { paintNotes(); if (!panelEdit) notesQ.focus(); } else { focusNote = null; panelEdit = null; }
@@ -5224,7 +5705,7 @@
     var cm = {
       id: 'c' + Date.now(),
       screen: current.screen, state: current.state, variant: current.variant,
-      device: current.device,
+      device: current.device, role: view.role, phase: view.phase,
       selector: null, anchor: about || '',
       who: reviewerName, severity: 'normal', text: '', html: '',
       at: new Date().toISOString(), draft: true, fresh: true
@@ -5257,7 +5738,7 @@
       screen: current.screen,
       state: current.state,
       variant: current.variant,
-      device: current.device,
+      device: current.device, role: view.role, phase: view.phase,
       selector: d.selector || null,
       rx: typeof d.rx === 'number' ? d.rx : undefined,
       ry: typeof d.ry === 'number' ? d.ry : undefined,
@@ -5356,6 +5837,8 @@
   }
 
   function openSheet() {
+    closeSurfaces('sheet');
+    armOpened();
     var list = written();
     sheetList.innerHTML = '';
     sheetActs.innerHTML = '';
@@ -5404,7 +5887,7 @@
       var pb = document.createElement('button');
       pb.type = 'button'; pb.className = 'ib';
       pb.innerHTML = icon('i-note') + '<span></span>' + icon('i-chevron');
-      pb.querySelector('span').textContent = 'Look over ' + list.length + ' note' + (list.length === 1 ? '' : 's');
+      pb.querySelector('span').textContent = 'Review ' + list.length + ' note' + (list.length === 1 ? '' : 's');
       var roll = document.createElement('ol');
       roll.className = 'sheet__roll'; roll.hidden = true;
       list.forEach(function (cm, i) {
@@ -5438,7 +5921,7 @@
     if (total()) {
       var send = [
         { k: 'send', ico: 'i-send', label: 'Send to the author', fn: submitEndpoint, on: !!review.submitTo },
-        { k: 'copy', ico: 'i-copy', label: 'Copy',               fn: copyOut,        on: true },
+        { k: 'copy', ico: 'i-copy', label: 'Copy notes',         fn: copyOut,        on: true },
         { k: 'mail', ico: 'i-mail', label: 'Email',              fn: mailOut,        on: !!review.to }
       ].filter(function (a) { return a.on; });
 
@@ -5451,7 +5934,7 @@
 
       var primary = review.submitTo ? 'send' : (reviewMode ? 'copy' : null);
 
-      var sendGrp = group('Send it back', send.map(function (a) {
+      var sendGrp = group('Send your notes', send.map(function (a) {
         return actionBtn(a.k === primary ? 'cta' : 'ib', a.ico, a.label, a.fn);
       }), send.length);
       /* "Send to the author" posts the notes AND the event log - which screens
@@ -5473,6 +5956,8 @@
       }), 2));
     }
     sheet.hidden = false;
+    var firstBtn = sheet.querySelector('button');
+    if (firstBtn) firstBtn.focus({ preventScroll: true });
   }
   function closeSheet() { sheet.hidden = true; }
 
@@ -5642,7 +6127,7 @@
       if (pp && pp.y + 28 > content) content = pp.y + 28;
     });
     // nor cut a mark in half
-    mineHere().forEach(function (m) {
+    mineHere().map(function (m) { return markAt(m, 0, 0); }).forEach(function (m) {
       var bottom = m.kind === 'box'
         ? (m.y + m.h) * full
         : m.pts.reduce(function (lo, pt) { return Math.max(lo, pt[1]); }, 0) * full + 12;
@@ -5661,7 +6146,7 @@
     ctx.drawImage(img, 0, 0, w, h);
     // under the pins, never over them - and measured against the FULL frame,
     // because that is what a mark's fractions are relative to
-    paintMarks(ctx, 0, 0, w, full);
+    paintMarks(ctx, 0, 0, w, full, true);
 
     var COL = { low: '#3d7dd8', normal: '#f0913a', high: '#e0483d' };
     list.forEach(function (cm, i) {
@@ -6075,9 +6560,9 @@
       '<div class="sec"><span class="lab">Leaving a note</span><ol class="steps">' +
         '<li><span>Press <b>Add note</b> at the bottom, then click the thing you mean. Type, pick how serious it is, press <b>Add note</b>.</span></li>' +
         '<li><span><b>Overall</b> is for anything about the whole thing rather than one element.</span></li>' +
-        '<li><span>When you are done press <b>Return notes</b>. Nothing reaches us until you do.</span></li>' +
+        '<li><span>When you are done press <b>Send notes</b>. Nothing reaches us until you do.</span></li>' +
       '</ol></div>' +
-      '<p class="foot">Some of what you see is simulated - the coral labels say which, and the <b>What is real</b> screen lists all of it.</p>';
+      '<p class="foot">Some of what you see is simulated. The labels on the right say which, and the <b>What is real</b> screen lists all of it.</p>';
     return docShell('instructions', inner, 780);
   }
 
@@ -6233,7 +6718,7 @@
 
   function loadCompare() {
     var s = screens[screenIndex(current.screen)];
-    var doc = generated(s) ? (s.disclosure ? disclosureDoc() : s.overview ? overviewDoc() : instructionsDoc()) : null;
+    var doc = generated(s) ? (s.disclosure ? disclosureDoc() : s.overview ? overviewDoc() : s.featureMap ? featureMapDoc() : instructionsDoc()) : null;
     var box = stage.getBoundingClientRect();
     var devs = ['desktop', 'tablet', 'mobile'];
     /* Each keeps its OWN height, and all three share one scale - that is what
@@ -6369,7 +6854,7 @@
        anything below it - and most of what a reviewer argues about is below
        it. They scroll now, and they scroll together. */
     if (srcdoc) fr.srcdoc = srcdoc; else fr.src = src;
-    fr.addEventListener('load', function () { watchMiniScroll(fr); });
+    fr.addEventListener('load', function () { watchMiniScroll(fr); viewInto(fr); });
     mockEl2.appendChild(bar); mockEl2.appendChild(fr);
     hardware(mockEl2, dev);
     requestAnimationFrame(function () { tickClock(); paintBattery(); });
@@ -6481,7 +6966,7 @@
     /* aboutDoc, not generated: a page the prototype carries itself is still a
        document about it, and walking an audience through a document as though
        it were part of the flow is the thing the section exists to prevent. */
-    return screens.filter(function (s) { return !aboutDoc(s); })
+    return screens.filter(function (s) { return !aboutDoc(s) && !screenOff(s); })
       .map(function (s) { return { screen: s.src, scroll: 1 }; });
   }
 
@@ -6491,11 +6976,16 @@
     var st = all[stepAt];
 
     if (st.screen && st.screen !== current.screen) pickScreen(screenIndex(st.screen));
+    if (st.role || st.phase) {
+      if (st.role)  view.role  = st.role;
+      if (st.phase) view.phase = st.phase;
+      applyView();
+    }
     if (st.state && states.indexOf(st.state) > -1) {
       current.state = st.state;
       paintState();
       var seg = document.querySelector('[data-states-group]');
-      seg.querySelectorAll('button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.textContent === st.state)); });
+      seg.querySelectorAll('button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-v') === st.state)); });
       slide(seg);
       send('state', st.state);
     }
@@ -6648,7 +7138,8 @@
   }
   function record(name, detail) {
     events.push({ t: Date.now(), name: name, detail: detail === undefined ? null : detail,
-                  screen: current.screen, state: current.state, variant: current.variant });
+                  screen: current.screen, state: current.state, variant: current.variant,
+                  role: view.role, phase: view.phase });
     countEvents();
   }
   document.querySelector('[data-export]').addEventListener('click', function () {
@@ -6664,6 +7155,611 @@
     a.click();
     URL.revokeObjectURL(a.href);
   });
+
+  /* ---------- the view: role, phase, versions, features ----------
+
+     A prototype built to be cut down carries more than will ship first. This
+     is what lets one artifact be read as "the MVP", "the MVP plus phase 1",
+     "what a courier sees" or "option B of the hero" without a second build.
+
+     All of it is VISUAL. The shell writes one stylesheet into the artifact's
+     document that hides what the current view leaves out, and tells the
+     artifact the same thing over the channel for anything a stylesheet cannot
+     do. Nothing is removed, no access is enforced, and a hidden feature is
+     still in the page source - which is the honest description of a role
+     switch in a prototype.
+
+     The artifact marks its own elements:
+
+       data-feature="PRT-ORD-003"                 belongs to that feature
+       data-role="dispatcher admin"               shown to those roles only
+       data-version-of="hero" data-version="B"    one option of a version group
+
+     Where the artifact may not be edited, a feature names its elements from
+     the outside instead - `on: { 'index.html': ['#assign'] }`. */
+  function phaseIdx(id) {
+    for (var i = 0; i < phases.length; i++) if (phases[i].id === id) return i;
+    return -1;
+  }
+  function phaseLabel(id) {
+    var i = phaseIdx(id);
+    return i < 0 ? (id || '') : (phases[i].label || phases[i].id);
+  }
+  function roleLabel(id) {
+    var r = roles.filter(function (x) { return x.id === id; })[0];
+    return r ? (r.label || r.id) : id;
+  }
+  /* Why a feature is out, or '' when it is in. One function answers both
+     questions so the list and the stylesheet can never disagree. */
+  function featureOff(f) {
+    if (view.force[f.id] === 0) return 'Hidden manually';
+    if (view.role !== 'all' && f.roles && f.roles.length && f.roles.indexOf(view.role) < 0)
+      return 'Not for ' + roleLabel(view.role);
+    if (view.force[f.id] === 1) return '';
+    if (view.phase !== 'all' && f.phase && phaseIdx(f.phase) > phaseIdx(view.phase))
+      return 'In ' + phaseLabel(f.phase);
+    return '';
+  }
+  function featureSelectors(f, src) {
+    var out = ['[data-feature~="' + cssq(f.id) + '"]'];
+    var on = f.on;
+    if (Array.isArray(on)) out = out.concat(on);
+    else if (on) out = out.concat(on['*'] || [], on[src] || []);
+    return out;
+  }
+  function versionOf(g) { return view.ver[g.id] || g.options[0]; }
+  /* An id goes inside a quoted attribute selector, so a quote in it would end
+     the selector early. split/join rather than a regex: check.py reads a quote
+     inside a regex literal as the start of a string. */
+  function cssq(v) { return String(v).split('"').join(''); }
+
+  /* One rule per selector, never a comma list: a single selector the browser
+     cannot parse voids the whole rule it sits in, and one typo in the config
+     would then silently show every hidden feature. */
+  function viewCss(src, doc) {
+    var hide = [];
+    features.forEach(function (f) {
+      if (featureOff(f)) hide = hide.concat(featureSelectors(f, src));
+    });
+    if (view.role !== 'all')
+      hide.push('[data-role]:not([data-role~="' + cssq(view.role) + '"])');
+    vgroups.forEach(function (g) {
+      hide.push('[data-version-of="' + g.id + '"]:not([data-version="' + versionOf(g) + '"])');
+    });
+    /* And one rule per selector is still not enough. A selector with an
+       unclosed bracket does not just void its own rule: the parser keeps
+       reading for the closing one and swallows every rule after it. So each
+       is tried against the document first, and one that throws is dropped. */
+    hide = hide.filter(function (h) {
+      try { doc.querySelector(h); return true; } catch (e) { return false; }
+    });
+    return hide.map(function (h) { return h + '{display:none !important}'; }).join('\n') + '\n' + vwFlash;
+  }
+  function fileOf(fr) {
+    try { return (fr.contentWindow.location.pathname || '').split('/').pop(); } catch (e) { return ''; }
+  }
+  function viewInto(fr) {
+    if (!hasView) return;
+    var d = null;
+    try { d = fr.contentDocument; } catch (e) { return; }
+    if (!d || !d.head) return;
+    var st = d.getElementById('harness-view');
+    if (!st) { st = d.createElement('style'); st.id = 'harness-view'; d.head.appendChild(st); }
+    st.textContent = viewCss(fr === frame ? current.screen : fileOf(fr), d);
+  }
+  function pushView(only) {
+    if (!hasView) return;
+    var vers = {};
+    vgroups.forEach(function (g) { vers[g.id] = versionOf(g); });
+    send('role', view.role, only);
+    send('phase', view.phase, only);
+    send('features', features.filter(function (f) { return !featureOff(f); }).map(function (f) { return f.id; }), only);
+    send('versions', vers, only);
+  }
+  function viewParams(p) {
+    if (!hasView) return;
+    if (view.role !== 'all')  p.set('role', view.role);
+    if (view.phase !== 'all') p.set('phase', view.phase);
+    var fx = Object.keys(view.force).map(function (id) { return id + ':' + view.force[id]; });
+    if (fx.length) p.set('fx', fx.join(','));
+    var ver = Object.keys(view.ver).map(function (id) { return id + ':' + view.ver[id]; });
+    if (ver.length) p.set('ver', ver.join(','));
+  }
+  function applyView() {
+    if (!hasView) return;
+    viewInto(frame);
+    miniFrames().forEach(viewInto);
+    pushView();
+    writeStore('view', view);
+    paintView();
+    paintCard();
+    /* a pin whose element has just been hidden must go with it */
+    requestAnimationFrame(redrawIdle);
+  }
+  function changeView(what) {
+    applyView();
+    record('harness:view', { change: what, role: view.role, phase: view.phase });
+  }
+
+  /* Point at a feature in the artifact. An outline for a moment, in the
+     artifact's own document, and the first match scrolled into sight. */
+  var flashTimer = null;
+  function showFeature(f, jumped) {
+    var d = null, hit = null;
+    try { d = frame.contentDocument; } catch (e) {}
+    if (!d) return;
+    var sels = featureSelectors(f, current.screen);
+    sels.some(function (s) { try { hit = d.querySelector(s); } catch (e) {} return !!hit; });
+    if (featureOff(f)) { toast('This feature is hidden. Switch it on to see it.'); return; }
+    /* A feature that IS a screen is shown by going there. Without this, a link
+       to that screen on the current page counted as "the feature is here" and
+       got outlined instead - the reader asked for a screen and was shown a
+       link to it. */
+    var own = screens.findIndex(function (sc) { return sc.feature && [].concat(sc.feature).indexOf(f.id) > -1; });
+    if (own > -1 && screens[own].src !== current.screen && !jumped) {
+      pickScreen(own);
+      setTimeout(function () { showFeature(f, true); }, 650);
+      return;
+    }
+    if (!hit) {
+      /* Not here - go to where it is. A feature that IS a screen has nothing
+         to outline, so arriving is the whole answer. */
+      var at = screenOfFeature(f);
+      if (at < 0) { toast('This feature is not on this screen.'); return; }
+      if (screens[at].src !== current.screen) {
+        pickScreen(at);
+        if (!jumped) setTimeout(function () { showFeature(f, true); }, 650);
+      }
+      return;
+    }
+    hit.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    vwFlash = sels.map(function (s) {
+      return s + '{outline:2px solid #ed6d57 !important;outline-offset:3px !important}';
+    }).join('\n');
+    viewInto(frame);
+    clearTimeout(flashTimer);
+    flashTimer = setTimeout(function () { vwFlash = ''; viewInto(frame); }, 1900);
+  }
+
+  /* A feature is often a whole screen, not an element on one. The screen says
+     so - `feature: 'PRT-..'`, or several - and is out of the view when every
+     feature it names is out. Returns the reason, or '' when it is in. */
+  function screenOff(sc) {
+    var ids = sc.feature ? [].concat(sc.feature) : [];
+    if (!ids.length) return '';
+    var why = '';
+    var allOff = ids.every(function (id) {
+      var f = features.filter(function (x) { return x.id === id; })[0];
+      var off = f ? featureOff(f) : '';
+      if (off) why = why || off;
+      return !!off;
+    });
+    return allOff ? why : '';
+  }
+  function paintNavView() {
+    navList.querySelectorAll('.nav__i').forEach(function (b, i) {
+      var why = screens[i] ? screenOff(screens[i]) : '';
+      b.classList.toggle('is-out', !!why);
+      var o = b.querySelector('.nav__out');
+      if (o) o.textContent = why ? 'Hidden · ' + why : '';
+    });
+  }
+  /* Where a feature lives, for a jump from the panel: a screen that names it,
+     or a screen its `on` map names. */
+  function screenOfFeature(f) {
+    var i = screens.findIndex(function (sc) { return sc.feature && [].concat(sc.feature).indexOf(f.id) > -1; });
+    if (i < 0 && f.on && !Array.isArray(f.on)) {
+      i = screens.findIndex(function (sc) { return !!f.on[sc.src]; });
+    }
+    return i;
+  }
+
+  var PHC = ['#ed6d57', '#f0913a', '#6c5ce0', '#3d7dd8', '#17a76b', '#b0457f'];
+  function phaseColor(id) { var i = phaseIdx(id); return i < 0 ? '#9aa1ad' : PHC[i % PHC.length]; }
+  var vwFilter = 'all', vwQuery = '';
+  var vwShut = readStore('vwShut', {});   // which phases are folded
+  var fcId = null;                         // the feature whose card is open
+  var vwUnfold = null;                     // the phase that was just unfolded, for one paint
+  var vwFlip = null;                       // { id, was } - the switch that was just pressed
+  var vwLastShown = -1;
+
+  function chips(list, picked, attr) {
+    return '<div class="vw__chips">' + list.map(function (c) {
+      return '<button class="vw__chip" type="button" ' + attr + '="' + esc(c.id) + '" aria-pressed="' +
+        String(c.id === picked) + '">' + esc(c.label) + '</button>';
+    }).join('') + '</div>';
+  }
+
+  /* The island: built once, then only its pressed states change. */
+  (function buildIsle() {
+    var seg = document.querySelector('[data-vw-phases]');
+    phases.concat([{ id: 'all', label: 'All', desc: 'Every phase' }]).forEach(function (p) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.setAttribute('data-vw-phase', p.id);
+      b.textContent = p.label || p.id;
+      if (p.desc) b.title = p.desc;
+      b.addEventListener('click', function () { view.phase = p.id; changeView('phase'); });
+      seg.appendChild(b);
+    });
+  })();
+
+  function paintView() {
+    var isle = document.querySelector('[data-vw-isle]');
+    isle.hidden = !hasView;
+    if (!hasView) return;
+    paintNavView();
+
+    document.querySelector('[data-vw-role-grp]').hidden = !roles.length;
+    document.querySelector('[data-vw-role-sep]').hidden = !roles.length;
+    document.querySelector('[data-vw-phase-grp]').hidden = !phases.length;
+    document.querySelector('[data-vw-phase-sep]').hidden = !phases.length;
+    document.querySelector('[data-vw-role-label]').textContent = view.role === 'all' ? 'All user types' : roleLabel(view.role);
+    document.querySelector('[data-menu="role"]').classList.toggle('is-set', view.role !== 'all');
+    var cut = view.phase === 'all' ? phases.length : phaseIdx(view.phase);
+    document.querySelectorAll('[data-vw-phases] button').forEach(function (b, i) {
+      var id = b.getAttribute('data-vw-phase');
+      b.setAttribute('aria-pressed', String(id === view.phase));
+      b.classList.toggle('is-in', id !== view.phase && i < cut);
+    });
+
+    var shown = features.filter(function (f) { return !featureOff(f); }).length;
+    var chipEl = document.querySelector('[data-vw-chip]');
+    chipEl.innerHTML = features.length ? 'Features ' + shown + ' <b>/ ' + features.length + '</b>' : 'Versions';
+    if (vwLastShown > -1 && vwLastShown !== shown) {
+      chipEl.classList.remove('is-bump'); void chipEl.offsetWidth; chipEl.classList.add('is-bump');
+    }
+    vwLastShown = shown;
+    var bits = [];
+    if (view.phase !== 'all') bits.push('up to ' + phaseLabel(view.phase));
+    if (view.role !== 'all')  bits.push('for ' + roleLabel(view.role));
+    document.querySelector('[data-vw-sum]').innerHTML = '<b>' + shown + ' of ' + features.length + '</b> shown' +
+      (bits.length ? ' - ' + esc(bits.join(', ')) : '');
+    var dirty = view.role !== 'all' || view.phase !== ((cfg.view || {}).phase || 'all') ||
+      Object.keys(view.force).length || Object.keys(view.ver).length;
+    document.querySelector('[data-vw-reset]').hidden = !dirty;
+    if (vwEl.hidden) return;
+
+    var order = phases.map(function (p) { return p.id; }).concat(['']);
+    function inPhase(pid) {
+      return features.filter(function (f) { return pid ? f.phase === pid : phaseIdx(f.phase) < 0; });
+    }
+    /* The meter is updated in place where it can be. Rebuilt, every block
+       would be a new element and the change of view would cut instead of
+       fading - which is the one moment the meter exists to show. */
+    var meter = document.querySelector('[data-vw-meter]');
+    var blocks = [];
+    order.forEach(function (pid) {
+      inPhase(pid).forEach(function (f) { blocks.push({ on: !featureOff(f), c: phaseColor(pid) }); });
+    });
+    if (meter.children.length === blocks.length) {
+      blocks.forEach(function (b, i) { meter.children[i].classList.toggle('is-in', b.on); });
+    } else {
+      meter.innerHTML = blocks.map(function (b) {
+        return '<i class="' + (b.on ? 'is-in' : '') + '" style="flex:1 1 0;--c:' + b.c + '"></i>';
+      }).join('');
+    }
+
+    var h = '';
+    var here = vgroups.filter(function (g) { return !g.screen || g.screen === current.screen; });
+    if (here.length && !vwQuery) {
+      h += '<div class="vw__vers"><div class="vw__grp" style="margin:0 0 9px"><span>Versions on this screen</span></div>' +
+        here.map(function (g) {
+          return '<p>' + esc(g.label || g.id) + '</p><div data-vw-group="' + esc(g.id) + '">' +
+            chips(g.options.map(function (o) { return { id: o, label: o }; }), versionOf(g), 'data-vw-ver') + '</div>';
+        }).join('') + '</div>';
+    }
+    var any = false;
+    var needle = vwQuery.toLowerCase();
+    order.forEach(function (pid) {
+      var all = inPhase(pid);
+      var list = all.filter(function (f) {
+        var off = !!featureOff(f);
+        if (vwFilter === 'in' && off) return false;
+        if (vwFilter === 'out' && !off) return false;
+        return !needle || ((f.name || '') + ' ' + f.id + ' ' + (f.desc || '')).toLowerCase().indexOf(needle) > -1;
+      });
+      if (!list.length) return;
+      any = true;
+      var on = all.filter(function (f) { return !featureOff(f); }).length;
+      /* a search opens every group: a match inside a folded one is a miss */
+      var shut = !!vwShut[pid || '-'] && !needle;
+      var key = pid || '-';
+      var fresh = vwUnfold === key;
+      h += '<button class="vw__grp" type="button" data-vw-fold="' + esc(key) + '" aria-expanded="' + String(!shut && !fresh) + '"' +
+        (fresh ? ' data-flip="aria-expanded:true"' : '') + '>' +
+        '<i style="--c:' + phaseColor(pid) + '"></i><span>' + esc(pid ? phaseLabel(pid) : 'No phase') + '</span>' +
+        on + ' of ' + all.length + ' shown' + icon('i-chevron') + '</button>';
+      if (shut) return;
+      h += '<div class="vw__rows' + (fresh ? ' is-opening' : '') + '" data-vw-rows="' + esc(key) + '"><div>';
+      list.forEach(function (f) {
+        var off = featureOff(f), forced = view.force[f.id] === 1;
+        var byRole = off && off.indexOf('Not for ') === 0;
+        var at = screenOfFeature(f);
+        h += '<div class="vw__f' + (off ? ' is-off' : '') + (fcId === f.id ? ' is-open' : '') + '" data-vw-f="' + esc(f.id) + '">' +
+          '<div class="vw__fr">' +
+            '<button class="vw__name" type="button" data-vw-name title="Open the description">' +
+              '<span><b>' + esc(f.name || f.id) + '</b><small>' + esc(f.id) +
+              (at > -1 ? ' · ' + esc(screens[at].label) : '') + '</small></span></button>' +
+            (forced ? '<span class="vw__tag vw__tag--forced">Shown manually</span>'
+                    : off ? '<span class="vw__tag">' + esc(off) + '</span>' : '') +
+            '<button class="vw__eye" type="button" role="switch" data-vw-eye aria-checked="' +
+              String(vwFlip && vwFlip.id === f.id ? !vwFlip.was : !off) + '"' +
+              (vwFlip && vwFlip.id === f.id ? ' data-flip="aria-checked:' + String(!off) + '"' : '') + ' aria-label="' +
+              esc('Show ' + (f.name || f.id)) + '"' + (byRole ? ' disabled title="Hidden for this user type"' : '') + '></button>' +
+          '</div></div>';
+      });
+      h += '</div></div>';
+    });
+    if (features.length && !any) h += '<p class="vw__none">Nothing matches.</p>';
+    var top = vwBody.scrollTop;
+    vwBody.innerHTML = h;
+    vwBody.scrollTop = top;
+    /* The list is rebuilt on every paint, so nothing in it could ever
+       transition - a new element has no previous state to move from. The one
+       control that was just pressed is therefore drawn in its OLD state and
+       flipped a frame later, which is all a transition needs. */
+    vwBody.querySelectorAll('[data-flip]').forEach(function (el) {
+      var p = el.getAttribute('data-flip').split(':');
+      el.removeAttribute('data-flip');
+      void el.offsetWidth;
+      el.setAttribute(p[0], p[1]);
+    });
+  }
+
+  /* The panel grows out of the island that opened it, not out of the middle
+     of the screen. Centred it sat on top of the artifact, so switching a
+     feature hid the very thing the switch had just changed. */
+  /* The inspector pushes the stage, so everything measured against the frame
+     - pins, the grid, the side-by-side fit - has to be measured again once the
+     stage has finished moving. */
+  function placeView() {
+    var on = !vwEl.hidden || !fcEl.hidden;
+    if (document.body.classList.contains('is-insp') === on) return;
+    document.body.classList.toggle('is-insp', on);
+    setTimeout(function () { fitCompare(); fitGrid(); redrawIdle(); }, 340);
+  }
+  function openView(on) {
+    if (on) { closeSurfaces('view'); armOpened(); }
+    vwEl.hidden = !on;
+    vwBtn.setAttribute('aria-pressed', String(on));
+    paintView();
+    placeView();
+  }
+  vwBtn.addEventListener('click', function () { openView(vwEl.hidden); });
+  document.querySelector('[data-vw-close]').addEventListener('click', function () { openView(false); });
+  document.addEventListener('keydown', function (e) {
+    /* Escape closes the last thing opened: the card first, then the list. */
+    if (e.key === 'Escape' && !vwEl.hidden && fcEl.hidden) { openView(false); vwBtn.focus(); }
+  });
+  document.querySelector('[data-vw-reset]').addEventListener('click', function () {
+    var d = cfg.view || {};
+    view.role = 'all'; view.phase = d.phase || 'all'; view.force = {}; view.ver = {};
+    armOpened();
+    changeView('reset');
+  });
+  document.querySelector('[data-vw-find]').addEventListener('input', function () { vwQuery = this.value.trim(); paintView(); });
+  document.querySelector('[data-vw-flt]').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-flt]');
+    if (!b) return;
+    vwFilter = b.getAttribute('data-flt');
+    this.querySelectorAll('[data-flt]').forEach(function (o) { o.setAttribute('aria-pressed', String(o === b)); });
+    paintView();
+  });
+  vwBody.addEventListener('click', function (e) {
+    var t = e.target.closest('button');
+    if (!t) return;
+    /* Every press here repaints the list, so the button that was pressed has
+       left the document by the time the dismiss handler asks whether the click
+       was inside the panel. Same guard an opening click uses. */
+    armOpened();
+    var row = t.closest('[data-vw-f]');
+    var f = row && features.filter(function (x) { return x.id === row.getAttribute('data-vw-f'); })[0];
+    if (t.hasAttribute('data-vw-ver')) {
+      view.ver[t.closest('[data-vw-group]').getAttribute('data-vw-group')] = t.getAttribute('data-vw-ver');
+      changeView('version');
+    }
+    else if (f && t.hasAttribute('data-vw-eye')) {
+      /* Two presses never stack. Undo a hand switch first; only if the
+         feature is then still the wrong way round does it need a new one. */
+      var wasOff = !!featureOff(f);
+      delete view.force[f.id];
+      if (!!featureOff(f) === wasOff) view.force[f.id] = wasOff ? 1 : 0;
+      vwFlip = { id: f.id, was: wasOff };
+      changeView('feature');
+      vwFlip = null;
+    }
+    else if (t.hasAttribute('data-vw-fold')) {
+      var k = t.getAttribute('data-vw-fold');
+      if (!vwShut[k]) {
+        /* folding: let the rows leave first, then repaint without them */
+        vwShut[k] = true;
+        t.setAttribute('aria-expanded', 'false');
+        vwBody.querySelectorAll('[data-vw-rows]').forEach(function (r) {
+          if (r.getAttribute('data-vw-rows') === k) r.classList.add('is-closing');
+        });
+        setTimeout(paintView, 160);
+      } else {
+        vwShut[k] = false;
+        vwUnfold = k;
+        paintView();
+        vwUnfold = null;
+      }
+      writeStore('vwShut', vwShut);
+    }
+    else if (f && t.hasAttribute('data-vw-name')) { if (fcId === f.id) closeCard(); else openCard(f); }
+  });
+
+  /* ---------- the feature card ----------
+
+     One feature, described beside the screen it is on. The top comes from the
+     config - name, phase, user types, the one-line description, the notes
+     gathered so far. Below it, the feature's own card file, if it has one,
+     rendered as a document.
+
+     Opening a card also points at the feature in the prototype, going to its
+     screen first if it is elsewhere. Reading what something should do and
+     seeing where it is are one act. */
+  var fcCache = {};
+
+  /* A small, deliberately limited markdown reader: headings, paragraphs,
+     lists, tables, bold and code. Everything is escaped FIRST and only then
+     marked up, so nothing in a card file can reach the page as HTML. */
+  function mdInline(t) {
+    t = esc(t);
+    t = t.split('`').map(function (p, i) { return i % 2 ? '<code>' + p + '</code>' : p; }).join('');
+    var parts = t.split('**');
+    if (parts.length % 2) t = parts.map(function (p, i) { return i % 2 ? '<b>' + p + '</b>' : p; }).join('');
+    return t;
+  }
+  function mdCells(line) {
+    var c = line.trim().split('|');
+    if (c.length && !c[0].trim()) c.shift();
+    if (c.length && !c[c.length - 1].trim()) c.pop();
+    return c.map(function (x) { return x.trim(); });
+  }
+  function mdToHtml(src) {
+    var lines = String(src).split('\r').join('').split('\n');
+    /* frontmatter is the machine's half of the card; the reader gets the rest */
+    if (lines[0] && lines[0].trim() === '---') {
+      var end = lines.indexOf('---', 1);
+      if (end > 0) lines = lines.slice(end + 1);
+    }
+    var out = [], para = [], list = [], table = [];
+    function flush() {
+      if (para.length)  { out.push('<p>' + mdInline(para.join(' ')) + '</p>'); para = []; }
+      if (list.length)  { out.push('<ul>' + list.map(function (l) { return '<li>' + mdInline(l) + '</li>'; }).join('') + '</ul>'); list = []; }
+      if (table.length) {
+        var rows = table.filter(function (r) { return !/^[\s|:-]+$/.test(r); }).map(mdCells);
+        out.push('<table>' + rows.map(function (r, i) {
+          return '<tr>' + r.map(function (c) { return (i ? '<td>' : '<th>') + mdInline(c) + (i ? '</td>' : '</th>'); }).join('') + '</tr>';
+        }).join('') + '</table>');
+        table = [];
+      }
+    }
+    lines.forEach(function (ln) {
+      var t = ln.trim();
+      if (!t) { flush(); return; }
+      if (t.charAt(0) === '#') {
+        flush();
+        var lvl = t.length - t.replace(/^#+/, '').length;
+        /* the title is already at the top of the card */
+        if (lvl > 1) out.push('<h3>' + mdInline(t.replace(/^#+\s*/, '')) + '</h3>');
+        return;
+      }
+      if (t.charAt(0) === '|') { if (para.length || list.length) flush(); table.push(t); return; }
+      if (t.indexOf('- ') === 0 || t.indexOf('* ') === 0) { if (para.length || table.length) flush(); list.push(t.slice(2)); return; }
+      if (list.length && !para.length) { list[list.length - 1] += ' ' + t; return; }
+      if (table.length) flush();
+      para.push(t);
+    });
+    flush();
+    return out.join('');
+  }
+
+  function paintCard() {
+    if (fcEl.hidden || !fcId) return;
+    var f = features.filter(function (x) { return x.id === fcId; })[0];
+    if (!f) { closeCard(); return; }
+    var off = featureOff(f);
+    document.querySelector('[data-fc-top]').innerHTML =
+      '<button class="fc__back" type="button" data-fc-back>' + icon('i-prev') + 'All features</button>' +
+      '<div class="fc__bar">' +
+        (f.phase ? '<span class="ph" style="--c:' + phaseColor(f.phase) + '">' + esc(phaseLabel(f.phase)) + '</span>' : '<span>No phase</span>') +
+        (f.roles && f.roles.length ? '<span>' + esc(f.roles.map(roleLabel).join(', ')) + '</span>' : '') +
+        (f.status && f.status !== 'built' ? '<span>' + esc(f.status === 'next' ? 'Planned' : f.status) + '</span>' : '') +
+        (off ? '<span class="off">Hidden · ' + esc(off) + '</span>' : '') +
+        '<span class="gap"></span>' +
+        '<button class="nav__x" type="button" data-fc-close aria-label="Close features">' + icon('i-x') + '</button>' +
+      '</div>' +
+      '<h2 id="fc-h">' + esc(f.name || f.id) + '</h2>' +
+      '<span class="fc__id">' + esc(f.id) + '</span>' +
+      '<div class="fc__acts"><button class="vw__act" type="button" data-fc-show>Show in prototype</button></div>';
+    var doc = fcCache[f.id];
+    document.querySelector('[data-fc-body]').innerHTML =
+      (f.desc ? '<p class="lead">' + esc(f.desc) + '</p>' : '') +
+      (f.spec ? '<h3>Notes so far</h3><div class="fc__note">' + esc(f.spec) + '</div>' : '') +
+      (doc === undefined ? (f.card ? '<p class="fc__miss">Loading the description…</p>' : '')
+        : doc === null ? '<p class="fc__miss">The full description could not be loaded.</p>' : doc) +
+      (!f.desc && !f.spec && !f.card ? '<p class="fc__miss">No description yet.</p>' : '');
+  }
+  function openCard(f) {
+    var swap = fcId !== f.id;
+    fcId = f.id;
+    if (notesOpen) openNotes(false);
+    fcEl.hidden = false;
+    placeView();
+    if (swap) { fcEl.classList.remove('is-swap'); void fcEl.offsetWidth; fcEl.classList.add('is-swap'); }
+    paintCard();
+    paintView();
+    if (!featureOff(f)) showFeature(f);
+    if (f.card && fcCache[f.id] === undefined) {
+      fetch(f.card).then(function (r) { if (!r.ok) throw new Error(String(r.status)); return r.text(); })
+        .then(function (t) { fcCache[f.id] = mdToHtml(t); })
+        .catch(function () { fcCache[f.id] = null; })
+        .then(paintCard);
+    }
+  }
+  function closeCard() {
+    fcId = null;
+    fcEl.hidden = true;
+    paintView();
+    placeView();
+  }
+  function dismissView() {
+    if (!fcEl.hidden) closeCard();
+    if (!vwEl.hidden) openView(false);
+  }
+  fcEl.addEventListener('click', function (e) {
+    var t = e.target.closest('button');
+    if (!t) return;
+    armOpened();
+    if (t.hasAttribute('data-fc-close')) dismissView();
+    else if (t.hasAttribute('data-fc-back')) { closeCard(); if (vwEl.hidden) openView(true); }
+    else if (t.hasAttribute('data-fc-show')) {
+      var f = features.filter(function (x) { return x.id === fcId; })[0];
+      if (f) showFeature(f);
+    }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !fcEl.hidden) { e.stopImmediatePropagation(); closeCard(); }
+  });
+
+  /* ---------- the feature map ----------
+     The same register, read as a plan: every feature under its phase, with
+     what it is and who it is for. Generated from the config so it cannot drift
+     from what the panel switches. It shows the whole plan, not the current
+     view - a map that changed with the filter would hide what was cut. */
+  function featureMapDoc() {
+    var order = phases.map(function (p) { return p.id; }).concat(['']);
+    var secs = order.map(function (pid) {
+      var list = features.filter(function (f) { return pid ? f.phase === pid : phaseIdx(f.phase) < 0; });
+      if (!list.length) return '';
+      var p = phases[phaseIdx(pid)];
+      return '<div class="sec"><span class="lab">' + esc(pid ? phaseLabel(pid) : 'No phase') + ' · ' + list.length + '</span>' +
+        (p && p.desc ? '<p class="lead" style="margin:0 0 12px;font-size:13.5px">' + esc(p.desc) + '</p>' : '') +
+        '<table style="width:100%;border-collapse:collapse;font-size:13.5px">' + list.map(function (f) {
+          var td = '<td style="padding:11px 12px 11px 0;border-top:1px solid var(--line);vertical-align:top';
+          return '<tr data-f="' + esc(f.id) + '">' +
+            td + ';width:34%"><b style="font-weight:650">' + esc(f.name || f.id) + '</b>' +
+              '<div style="margin-top:3px;font:500 11px var(--mono);color:var(--ink3)">' + esc(f.id) +
+              (f.status && f.status !== 'built' ? ' · ' + esc(f.status === 'next' ? 'planned' : f.status) : '') + '</div></td>' +
+            td + ';color:var(--ink2)">' + esc(f.desc || '') +
+              (f.spec ? '<div style="margin-top:6px;white-space:pre-wrap;font-size:12.5px">' + esc(f.spec) + '</div>' : '') + '</td>' +
+            td + ';width:20%;color:var(--ink2)">' + (f.roles && f.roles.length ? esc(f.roles.map(roleLabel).join(', ')) : 'All user types') + '</td>' +
+          '</tr>';
+        }).join('') + '</table></div>';
+    }).join('');
+    var inner =
+      '<span class="lab">' + esc(cfg.title || cfg.name || 'Prototype') + ' · feature map</span>' +
+      '<h1>Features by phase</h1>' +
+      '<p class="lead">' + features.length + ' features across ' + (phases.length || 1) +
+        (phases.length === 1 ? ' phase' : ' phases') + '. Pick a phase in the bar at the bottom to see the prototype with only the features up to that phase.</p>' +
+      secs +
+      '<p class="foot">A phase here is a plan. It becomes a commitment when the feature is promoted to a Feature Card.</p>';
+    return docShell('features', inner, 980);
+  }
+
+  paintView();
 
   /* ---------- frame plumbing ---------- */
   function miniFrames() {
@@ -6747,6 +7843,7 @@
       send('state', current.state, f);
       send('variant', current.variant, f);
       if (screenTime()) send('time', current.time, f);
+      pushView(f);
       return;
     }
     if (d.type === 'ready') {
@@ -6754,10 +7851,10 @@
       send('state', current.state);
       send('variant', current.variant);
       if (screenTime()) send('time', current.time);
+      pushView();
       if (picking) send('picking', true);
       paintArtworkTone();
       paintSafeArea();
-      playOpening();
       requestAnimationFrame(drawAnnots);
     }
     /* Everything past this point belongs to the ONE artifact being reviewed.
@@ -6771,7 +7868,6 @@
   });
 
   function load() {
-    endBoot();          // a half-played opening must not survive a screen change
     detachShellPick();
     frameReady = false;
     frameLoaded = false;
@@ -6786,13 +7882,14 @@
     if (aboutDoc(s) && current.device !== 'desktop') { current.device = 'desktop'; paintDevice(); }
     if (generated(s)) {
       frame.removeAttribute('src');
-      frame.srcdoc = s.disclosure ? disclosureDoc() : s.overview ? overviewDoc() : instructionsDoc();
+      frame.srcdoc = s.disclosure ? disclosureDoc() : s.overview ? overviewDoc() : s.featureMap ? featureMapDoc() : instructionsDoc();
     } else {
       frame.removeAttribute('srcdoc');
       frame.src = current.screen;
     }
     mountTime();
     paintActs();
+    paintView();
     if (compareOn) loadCompare();
     document.querySelector('[data-mock-url]').textContent =
       location.origin + '/' + (generated(s) ? '' : current.screen);
@@ -6831,11 +7928,13 @@
        already here, and reloading it would undo whatever brought us */
     mountTime();
     paintActs();
+    paintView();
     record('harness:screen', file);
   }
 
   frame.addEventListener('load', function () {
     frameLoaded = true;
+    viewInto(frame);
     watchArtifactScroll();
     watchArtifactClicks();
     adoptScreen();
@@ -6845,7 +7944,7 @@
        in it reads the artifact rather than writing to it. Guarded on
        frameReady so it is not done twice for an artifact that does announce. */
     setTimeout(function () {
-      if (!frameReady) { paintArtworkTone(); paintSafeArea(); playOpening(); }
+      if (!frameReady) { paintArtworkTone(); paintSafeArea(); }
       drawAnnots();
     }, 120);
   });
@@ -6858,6 +7957,7 @@
       Math.round(dockEl.getBoundingClientRect().height) + 'px');
   }
   if (window.ResizeObserver) new ResizeObserver(measureDock).observe(dockEl);
+  if (window.ResizeObserver) new ResizeObserver(function () { drawMarks(); }).observe(frame);
   measureDock();
 
   window.addEventListener('resize', function () {
