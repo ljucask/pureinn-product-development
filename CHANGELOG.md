@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.64.0] - 2026-10-05
+
+### pm-prototype becomes a workbench with a harness wired to the repo - a prototype can now be built wider than the MVP and cut down by roadmap phase in the harness (user types, phases, features switched on and off, versions, a feature card beside the screen), then handed over; the bundled serve.py saves review notes and proposed description edits into the project and reloads the prototype as files change, sync.py generates the feature list from the cards; the harness chrome is rebuilt as opaque floating toolbars to AA contrast with plain control names; pm-mvp-scope, pm-feature-card, pm-feature-design, pm-stripe, pm-audit and pm-hypotheses now read what a prototype produces; 49 browser tests
+
+---
+
+
 ## [5.63.0] - 2026-09-21
 
 ### Open register items pulled into view at design time - pm-feature-design (start and design review) and pm-stripe Design Inspection now look up every open question, divergence and blocker naming the feature and show it by ID, because the register is the single home and nothing on the card said a feature still had one open, so a blocker could reach build unseen; an open blocker now stops Ready to Build, and the text is never copied into the card, so the two cannot drift apart
