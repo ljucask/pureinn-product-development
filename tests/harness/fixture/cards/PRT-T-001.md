@@ -9,6 +9,10 @@ title: "Queue"
 
 That a dispatcher finds the next job **without being told**.
 
+## Notes so far
+
+Said in review: order by deadline.
+
 ## How it behaves
 
 - Ordered by deadline

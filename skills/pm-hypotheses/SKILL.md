@@ -6,13 +6,13 @@ metadata:
   agent-mode: never
   standalone: yes
   author: https://github.com/ljucask
-  version: "1.0.0"
+  version: "1.1.1"
   domain: product-management
-  triggers: hypotheses, hypothesis validation, go no go, experiment plan, ICP, assumption map, validation results
+  triggers: hypotheses, hypothesis validation, go no go, experiment plan, ICP, assumption map, validation results, prototype result, prototype verdict
   role: specialist
   scope: validation
   output-format: document
-  related-skills: design-thinking, pm-personas, pm-problem-validation, pm-lean-canvas
+  related-skills: design-thinking, pm-personas, pm-problem-validation, pm-lean-canvas, pm-prototype
 ---
 
 # PM - Hypothesis Validation
@@ -23,6 +23,11 @@ metadata:
 This skill's value is the live dialogue - `--agent` is not supported. If invoked with `--agent`, warn once ("this skill needs interactive back-and-forth; agent mode would hollow it out") and proceed interactively.
 
 ---
+
+## Artifact language
+Checks `state.json` → `artifact_language`. Default (unset or "English"): no change in behavior.
+- If set to a non-English language: write prose content (descriptions, rationale, rule text) in that language.
+- Never translate: IDs, frontmatter keys and enum values, section headers other skills parse, file names - these stay English always, regardless of the setting.
 
 ## Standalone run
 Runs with or without a Pureinn workspace - it needs no other skill's artifact, so it works as a single tool from an install that never ran `/pureinn`.
@@ -81,6 +86,7 @@ Stage 2 (Qualitative) feeds from Phase 2 outputs - `pm-personas`, `jtbd-building
 - `pm-problem-validation` - Phase 2 evidence available as input
 
 **Produces artifacts used by:**
+- `pm-prototype` - builds the prototype for a hypothesis whose experiment is a no-code / clickable prototype, and returns a four-state verdict to this register
 - `pm-lean-canvas` - validated problem, customer, and solution feed into Lean Canvas inputs
 - `pm-product-roadmap` - hypotheses and risks section (v1)
 - `pm-prd` - validation evidence and Go/No-Go verdict are PRD inputs
@@ -169,12 +175,14 @@ For each completed experiment, provide:
   - What you measured (metric, volume, time period)
   - Result (number or observation)
   - Pre-defined success criteria (from the register)
-  - Did it pass? (Yes / No / Unclear)
+  - Did it pass? (Yes / No / Inconclusive)
   - Key quotes or evidence worth recording
 
 Paste results below or describe what happened:
 [free text]
 ```
+
+If a completed experiment was a prototype, take its result from `/pm-prototype` - the `## Result` block in the prototype's `findings.md` (or spec file) - rather than re-judging it here: the verdict is one of the four states under "Experiment types", and only `Supported within scope` / `Refuted within scope` change a hypothesis. A prototype with no recorded verdict yet (`Result: pending`, or `Decision: open` in its `meta.md`) has no result to record - route to `/pm-prototype` first.
 
 ---
 
@@ -216,6 +224,24 @@ Generate in English.
 - Solution hypothesis → Smoke Test (fake door click rate) or Concierge MVP (payment + retention).
 - Market hypothesis → Pre-order or Waitlist. Only strong signal: credit card pulled or explicit commitment.
 
+**No-code / clickable prototype → route to `/pm-prototype`.** When the experiment assigned to a hypothesis is a No-code Prototype (or any clickable prototype, including the prototype side of a Wizard of Oz test), this skill does not design or build it. Record the hypothesis and its success criteria here as usual, then hand over: `/pm-prototype` runs its own intent gate (is a prototype the cheapest test of this belief at all), decides audience, depth and path, builds it, and records the result. Carry the `HYP-ID` across so the prototype's `meta.md` lists it under `targets` and the result can find its way back. The success criterion written in this register is the one the prototype is judged against - do not let a second, different one be written there.
+
+**A prototype result comes back as one of four verdict states, and only two of them update a hypothesis:**
+
+| Verdict from `/pm-prototype` | What it means | Effect on the register |
+|---|---|---|
+| `Supported within scope` | cleared the precommitted bar, for the population and the dimension the prototype represented | Decision → Confirmed, **with the scope written into Result**. It confirms nothing wider than that scope |
+| `Refuted within scope` | crossed the negative threshold, rival explanations checked | Decision → Rejected, scope written into Result |
+| `Prototype or study failure` | the instrument did not expose the hypothesis | **No update.** Belief in the hypothesis is unchanged. Fix the prototype or the study and re-run; never record it as Rejected |
+| `Inconclusive` | fell in the ambiguous zone, or too weak for the decision | **No update.** Schedule another round or a different method; never round it up to Confirmed |
+
+For the last two, leave Status and Decision as they were and add a dated note in Result that the attempt happened and why it carried no evidence - an attempt nobody can see gets repeated.
+
+Three limits on what a prototype result can carry:
+- It is behaviour on a prototype, not commitment. It never satisfies a **Market** hypothesis on its own - the commitment levels below still apply.
+- Desirability is not settled by a prototype alone; it supplies the stimulus, target-user behaviour supplies the evidence.
+- A **workbench** prototype (built wide, cut down by roadmap phase) produces decisions, not a verdict. A room agreeing over it is stakeholder alignment and updates no hypothesis.
+
 **What counts as commitment (in order of strength):**
 1. Credit card / pre-payment - strongest
 2. Letter of intent (B2B) or signed pilot agreement
@@ -224,7 +250,7 @@ Generate in English.
 5. Verbal agreement - weakest, do not count as validation
 
 **Signal validity rules (apply in both modes):**
-- A conversion metric needs a **minimum denominator** before it means anything: ≥100 visitors from targeted (not friends/family) traffic for a landing-page rate, ≥10 ICP interviews for a qualitative pass, a full natural decision cycle (or ≥2 weeks) for pre-order tests. Below the floor, record the result as **Unclear** - never Pass or Fail. "5% conversion" from 20 visitors is one person; it is noise.
+- A conversion metric needs a **minimum denominator** before it means anything: ≥100 visitors from targeted (not friends/family) traffic for a landing-page rate, ≥10 ICP interviews for a qualitative pass, a full natural decision cycle (or ≥2 weeks) for pre-order tests. Below the floor, record the result as **Inconclusive** - never Pass or Fail. "5% conversion" from 20 visitors is one person; it is noise.
 - **No moving the goalposts:** the Results-mode verdict is judged against the success criteria recorded in Plan mode. If a criterion was genuinely mis-set, revise it explicitly as a new register version (`HYP-00X v2`, with the reason) - never silently reinterpret a miss as a pass.
 - **Watch the substitution error:** engagement (clicks, likes, "sounds great") substituting for commitment. Only commitment levels 1-3 above count toward a Market or Solution pass.
 
@@ -270,7 +296,7 @@ Before hypotheses: the core beliefs that must be true for this business to work.
 
 | ID | Type | Hypothesis | Riskiest | Experiment | Success Criteria | Status | Result | Decision |
 |---|---|---|---|---|---|---|---|---|
-| HYP-001 | Problem | We believe [specific pain] exists for [ICP] at [frequency/intensity] | Yes / No | [Experiment type] | [Pre-defined measurable target] | Not started / Running / Complete | [Evidence] | Confirmed / Rejected / Unclear |
+| HYP-001 | Problem | We believe [specific pain] exists for [ICP] at [frequency/intensity] | Yes / No | [Experiment type] | [Pre-defined measurable target] | Not started / Running / Complete | [Evidence] | Confirmed / Rejected / Inconclusive |
 | HYP-002 | Customer | | | | | | | |
 | HYP-003 | Solution | | | | | | | |
 | HYP-004 | Market | | | | | | | |
@@ -322,7 +348,7 @@ Generate after results are in. Do not generate in Plan mode.
 
 > **Date:** [date]
 > **Phase:** 3 - Define & Validation exit
-> **Hypotheses tested:** [X total / X confirmed / X rejected / X unclear]
+> **Hypotheses tested:** [X total / X confirmed / X rejected / X inconclusive]
 
 ---
 
@@ -427,6 +453,7 @@ This is not failure. It is a successful experiment that prevented years of waste
 - [ ] If PIVOT: specific assumption named and new experiment defined
 - [ ] If STOP: learnings recorded (what was discovered, not just what failed)
 - [ ] Evidence includes at least one concrete signal (a number, a quote, or a payment)
+- [ ] Prototype results recorded by their four-state verdict; `Prototype or study failure` and `Inconclusive` changed no hypothesis; a `Supported` result carries its scope
 
 ## Notion
 
@@ -452,7 +479,7 @@ pureinn-workspace/[project-slug]/artifacts/phase-3-define/go-no-go.md
 ---
 **Čo si teraz má:** Štruktúrovaný experiment plán s pre-definovanými success criteria. Hypotézy sú pripravené na testovanie - nezačínaj experimenty bez tohto registra.
 
-**Ďalší krok:** 👤 Spusti experimenty podľa plánu (landing page / smoke test / pre-order / concierge MVP). Po dokončení experimentov: `/pm-hypotheses` [Results mode] pre Go/No-Go verdikt.
+**Ďalší krok:** 👤 Spusti experimenty podľa plánu (landing page / smoke test / pre-order / concierge MVP). Ak je experimentom no-code alebo klikateľný prototyp: `/pm-prototype` - postaví ho a vráti verdikt v jednom zo štyroch stavov. Po dokončení experimentov: `/pm-hypotheses` [Results mode] pre Go/No-Go verdikt.
 
 **Môžeš preskočiť experimenty a ísť priamo na Results mode ak:** Máš už výsledky z predchádzajúcej validácie (externý workshop, Miro, iný nástroj) - povedz `/pureinn` "Phase 3a done elsewhere" a dodaj verdikt + kľúčové evidencie.
 

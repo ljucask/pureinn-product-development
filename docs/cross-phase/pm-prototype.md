@@ -41,7 +41,7 @@ The skill no longer assumes the prototype is built somewhere else. At **Step 3b*
 
 The skill asks which one at the start, because the rules that protect one damage the other: "one vertical slice" is right for a test and wrong for a workbench.
 
-In a workbench the harness gains a **View** control:
+In a workbench the left end of the harness's bottom bar becomes the view:
 
 | | |
 |---|---|
@@ -52,7 +52,9 @@ In a workbench the harness gains a **View** control:
 
 Pressing a feature's name opens its card beside the screen - what it should do, who it is for, the notes so far - and takes you to the screen it is on. A generated **feature map** lists every feature under its phase.
 
-The shell itself is docked and opaque: a bar across the top, its twin across the bottom, and sidebars that push the prototype aside rather than cover it. Only one panel is open at a time, and a press outside closes it. Phases come from the roadmap, and no feature goes into the first one without its production cost stated - divergence ignores implementation on purpose, so convergence may not.
+Served with the bundled `serve.py`, the harness is wired to the repo: *Save to project* writes a reviewer's notes into `review/`, an edited feature description is saved as a proposal that the author accepts with `sync.py --apply`, and a change to the prototype's files reloads it in place. `sync.py` generates the harness's feature list from the feature cards, so a phase is typed once, and `sync.py --check` says whether the two still agree. The bridge exists only on your own machine; `review/` holds reviewers' names and notes and is not published with the prototype.
+
+The shell itself is floating and opaque: a bar across the top, its twin across the bottom, and side panels that push the prototype aside rather than cover it. Only one panel is open at a time, and a press outside closes it. Phases come from the roadmap, and no feature goes into the first one without its production cost stated - divergence ignores implementation on purpose, so convergence may not.
 
 A room agreeing over a workbench is stakeholder alignment, not user evidence. A belief about users that a phase decision rests on still gets its own test.
 
@@ -91,7 +93,7 @@ More than two audiences triggers a warning and a request for the primary one - a
 
 **Prototypes stay out of the production registers.** Most prototypes die - that is what they are for - so a killed one should cost a deleted folder, not a clean-up of dead FEAT-IDs, speculative entities and rows in the delivery plan. Prototype feature IDs are `PRT-` rather than `FEAT-`, so one can never be mistaken for a committed feature.
 
-**Promotion is layer by layer, not a rewrite:** the thin card becomes a Feature Card with a real FEAT-ID and `promoted_from:`, local rules and entities move into the global registers, and the prototype folder freezes as history.
+**Promotion is layer by layer, not a rewrite:** the thin card becomes a Feature Card with a real FEAT-ID and `promoted_from:`, local rules and entities move into the global registers, and the prototype folder freezes as history. A workbench is the exception: it is promoted a phase at a time and stays live, as the developers' reference, until its last phase ships.
 
 **Result mode (re-run after prototype exists):** records the verdict as one of four states - **never "validated"**:
 
@@ -109,7 +111,7 @@ The third state is the one teams skip, and skipping it is how a broken test beco
 ## How to invoke
 
 ```bash
-/pm-prototype           # interactive - Step 0 detects spec mode vs. result mode
+/pm-prototype           # interactive - Step 0 detects spec, wrap or result mode
 /pm-prototype --agent   # drafts from available inputs, decisions wait for your review
 ```
 

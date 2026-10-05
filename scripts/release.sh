@@ -44,6 +44,7 @@ RELEASE_PATHS=(
   "examples"
   "scripts"
   "skills"
+  "tests"
 )
 
 if [[ -z "$MESSAGE" ]]; then

@@ -52,6 +52,7 @@ A surviving prototype is, in the end, **a proposal to ship functionality into th
 | Layer | What happens |
 |---|---|
 | **Thin card** | becomes a production Feature Card, gets a real `FEAT-ID`, and records `promoted_from: PRT-[NAME]-00N` |
+| **Feature list** | the new `FEAT-ID` is added to `feature_list.md` with its phase, by this skill, in the same step - `pm-mvp-scope` and `pm-stripe` only see what is listed there |
 | **Local rules**, if any | into the global register as proper `BR-` IDs |
 | **Local entities**, if any | into `entities.md` |
 | **Local context** (personas, JTBD) | merged into the global artifacts, or discarded with a reason. Never left in both places |

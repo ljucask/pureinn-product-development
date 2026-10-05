@@ -6,13 +6,13 @@ metadata:
   agent-mode: synthesis
   standalone: needs-inputs
   author: https://github.com/ljucask
-  version: "1.5.0"
+  version: "1.6.0"
   domain: product-management
-  triggers: audit, health check, consistency check, workspace check, framework drift, version migration, fix inconsistencies, sanity check, naming check, anti-pattern, strategic consistency, cross-artifact check, re-check
+  triggers: audit, health check, consistency check, workspace check, framework drift, version migration, fix inconsistencies, sanity check, naming check, anti-pattern, strategic consistency, cross-artifact check, re-check, prototype check, open prototype, PRT id leak
   role: specialist
   scope: validation
   output-format: document
-  related-skills: pm-reconcile, pm-reverse-extract, pm-feature-card, pm-features-list, pm-stripe, pm-open-questions
+  related-skills: pm-reconcile, pm-reverse-extract, pm-feature-card, pm-features-list, pm-stripe, pm-open-questions, pm-prototype
 ---
 
 # PM - Audit (Workspace Health Check)
@@ -26,6 +26,11 @@ Supports `--agent`: runs autonomously in a subagent, drafts the artifact from ex
 - **`--agent`** → obey. First check inputs are complete. Anything missing: do NOT invent it - mark `[ASSUMED - what/why]` in the output and summary. Never hallucinate to fill a gap.
 
 ---
+
+## Artifact language
+Checks `state.json` → `artifact_language`. Default (unset or "English"): no change in behavior.
+- If set to a non-English language: write prose content (descriptions, rationale, rule text) in that language.
+- Never translate: IDs, frontmatter keys and enum values, section headers other skills parse, file names - these stay English always, regardless of the setting.
 
 ## Standalone run
 Needs the artifacts listed under **Dependencies** - it synthesizes them, so without them there is nothing to synthesize.
@@ -117,6 +122,7 @@ Determine the **scope** first (from the argument or the user's request - default
 | features/feature_list.md + features/cards/ | |
 | product/PRD_master.md | |
 | roadmap, glossary | |
+| prototypes/*/meta.md (prototype folders, if any) | |
 
 **Version-drift signals** (detect an older-framework workspace). This is the concrete migration checklist - an artifact produced by an older Pureinn version will carry one or more of these; scan for each literally, not just "convention drift" in the abstract:
 - Old lifecycle state names (`1_Walkthrough`, `2_Design`, `3_Design_Inspection_Passed`, `4_Build`, `5_Code_Inspection`, `6_Promoted_to_Build`)
@@ -149,6 +155,7 @@ Read every artifact **in scope** (Step 0) and run the checks below - for an area
 | **Feature metadata complete** | Every feature carries the full property set in frontmatter + feature_list + Notion: `layer` (frontend/backend/system), `phase` (MVP/MVP+/Phase 1... or the project's P0/P1…), `kano`, `vxc`, `stripe` (Dev Stripe), `has_subtasks`. Also check **value consistency**: `has_subtasks` matches whether the card's Subtasks section actually has items; values are from the allowed sets. **`layer` is one or more of `{frontend, backend, system}`** (a cross-layer feature lists several, e.g. `frontend, backend`) - flag any value outside the set, especially **`fullstack`** (not a layer → replace with the actual layers), P2. Missing or inconsistent = P2. **Canonical-field check:** `phase` is the **single axis for MVP membership** - flag and consolidate any duplicate/non-canonical field that encodes the same thing (`mvp: true/false`, `roadmap_phase`, an "MVP" column) into `phase` (IN-MVP = the first/`MVP`/`P0` phase). Two fields on one axis drift apart - a stray `mvp`/`roadmap_phase` is a P2 finding, migrate it to `phase`. |
 | **Notion sync** (if configured) | Local `status` vs Notion `Status` mismatch surfaced (drift log, like pm-stripe). |
 | **Open questions hygiene** | Open items have exactly one home: `domain/open_questions.md` (Live Register 5). Flag as P1/P2 anti-pattern: an "Open Questions" section or table reappearing in the PRD, Roadmap, a Feature Card, or a reconcile report instead of (or in addition to) a register entry; open-question text duplicated verbatim in two places; an `OQ-`/`DIV-`/`BLK-` ID referenced somewhere that does not resolve to an entry in the register. Also check ID hygiene within the register itself: no ID reused across different entries (Open or Resolved), Type field matches its prefix (`OQ-`→Question, `DIV-`→Divergence, `BLK-`→Blocker). If the register doesn't exist yet but scattered open-item patterns are found elsewhere, route to `/pm-open-questions migrate` rather than fixing in place. |
+| **Prototype hygiene** | Runs on a whole-workspace run and on `/pm-audit features`; skipped (stated as "no prototypes - check skipped") when `prototypes/` does not exist. Four checks, all **report-and-route to `/pm-prototype` - never auto-fixed**: (a) **Open prototype** - a folder `prototypes/[prototype-name]/` whose `meta.md` says `**Decision:** open`. Report it with its `Purpose` and its age computed from `**Created:**`; no Created date → report without an age, never estimate one. Open is not a resting state (P2). A workbench is promoted a phase at a time, so state its purpose next to the finding rather than calling it abandoned. (b) **`PRT-` ID in a production register** - a `PRT-[NAME]-NNN` ID used as a feature in `features/feature_list.md`, as a card `id:` or file name in `features/cards/`, in a card's dependencies or stripe, or in `business_rules.md` / `decision_models.md` / `entities.md` (e.g. "Applies to features"). A prototype ID must never be there - it marks an uncommitted feature (P1). **The only legitimate occurrences** are the `promoted_from:` value on a Feature Card and the prototype reference block's `Prototype:` path - do not flag those. (c) **Dangling `promoted_from:`** - a Feature Card whose `promoted_from: PRT-...` names an ID that is in no `prototypes/*/feature-plan-prt.md`, or whose prototype folder no longer exists (P1 - `pm-feature-design` reads the prototype's findings through it). Same for a prototype reference block whose `Prototype:` path does not resolve. (d) **Workbench feature with no phase** - in a folder whose `meta.md` says `**Purpose:** workbench`, a `built` row in `feature-plan-prt.md` with no phase **while other `built` rows have one** (P2 - the prototype has converged and this feature is undecided). If no `built` row has a phase yet the prototype is still diverging: note it, not a finding. Read `meta.md` and `feature-plan-prt.md` only - the audit does not judge the prototype's content, findings or verdict. External-tool prototypes are single spec files with no `meta.md`; they carry no decision state and are not checked. |
 
 The table above is **Tier 1 (form)**. For a whole-workspace run or `/pm-audit strategy`, also run Tier 2 below.
 
@@ -181,8 +188,8 @@ Score and group every finding by severity:
 | Severity | Meaning | Examples |
 |---|---|---|
 | **P0** | Broken - blocks work | Dangling BR-ID reference, invalid status value, feature_list entry with no card |
-| **P1** | Drift that causes errors | Old lifecycle state names, inconsistent FS-NN, naming anti-pattern on an active feature |
-| **P2** | Missing newer structure | No `feature_set`/`estimate` field, no `## Subtasks` section, incomplete card |
+| **P1** | Drift that causes errors | Old lifecycle state names, inconsistent FS-NN, naming anti-pattern on an active feature, a `PRT-` ID in a production register, a `promoted_from:` that resolves to nothing |
+| **P2** | Missing newer structure | No `feature_set`/`estimate` field, no `## Subtasks` section, incomplete card, a prototype folder left at `Decision: open`, a converged workbench feature with no phase |
 | **P3** | Cosmetic | Formatting, path-slash convention, optional field gaps, a prose block (e.g. a handoff/routing note) wrapped in a stray ` ``` ` code fence that suppresses its own markdown rendering |
 
 ```markdown
@@ -200,6 +207,15 @@ Score and group every finding by severity:
 
 ## Version migration (if drift detected)
 [what older-version patterns were found and the migration applied/proposed]
+
+## Prototypes (report-and-route - not auto-fixed)
+[If none: "No prototype folders" or "Prototype hygiene clean."]
+| Prototype / card | Finding | Detail | Route |
+|---|---|---|---|
+| prototypes/[name]/ | Decision: open | Purpose: [test / workbench] · open [N] days since [Created] / no Created date | `/pm-prototype` |
+| [location] | PRT- ID in production register | [PRT-ID] at [file + line/field] | `/pm-prototype` |
+| [FEAT-ID] | promoted_from does not resolve | [PRT-ID] - not in any feature-plan-prt.md / folder missing | `/pm-prototype` |
+| prototypes/[name]/ | workbench feature with no phase | [PRT-ID] built, no phase | `/pm-prototype` |
 
 ## Strategic consistency (Tier 2 - read-only, not auto-fixed)
 [If clean: "No strategic conflicts - the strategic layer is coherent."]
@@ -229,6 +245,8 @@ Present the score, P0/P1 summary, **and any Tier 2 conflicts** to the user befor
 
 Never silently change a rule value, an acceptance criterion, or a business decision - those are out of scope (route to `pm-feature-design` / `pm-business-rules-library`). This includes the Edge Case Coverage table: a missing table, a TBD cell or a missing edge case AC is routed to `/pm-feature-design [FEAT-ID] --edge-cases`, never filled here. Only the tag mismatch is mechanical - an AC referenced for `EC-CONC` whose title lacks `[EC-CONC]` gets the tag added.
 
+**Prototype hygiene findings are report-and-route - fix nothing, invent nothing.** Every one of them is a decision that belongs to `/pm-prototype`: an open prototype needs its kill / promote / partial decision; a `PRT-` ID in a production register is either a promotion that was never run (it needs a real `FEAT-ID` through promotion) or a leak to remove; a dangling `promoted_from:` needs the owner to say what happened to the prototype; a workbench feature with no phase needs a phase or a cut with its reason. Never close a prototype's `Decision`, never rename a `PRT-` ID to an invented `FEAT-ID`, never delete a `promoted_from:` line to make the reference "resolve", never assign a phase, and never edit anything inside a prototype folder. List the finding with its route and stop.
+
 **Tier 2 (strategic consistency) is report-only.** Never auto-edit PRD / roadmap / personas / market / business-model content to resolve a strategic conflict - choosing between two strategic claims is a business decision. List each `[CONFLICT]` with its route and stop. The user runs the routed authoring skill (which re-runs in delta mode) to resolve it against real evidence. Auditing must not silently pick a winner.
 
 For version migration: show the old→new mapping, confirm once, then apply across all affected artifacts in one pass.
@@ -245,6 +263,7 @@ AUDIT COMPLETE
 Before:  P0:[x] P1:[x] P2:[x] P3:[x]
 Fixed:   [N] mechanical, [N] confirmed via questions
 Remaining: [N] (listed in audit_report.md with reason)
+Prototypes: [N] findings routed to /pm-prototype / clean / none
 Version:  [migrated from vX / already current]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
@@ -267,6 +286,7 @@ Plus in-place fixes to the affected artifacts (registers, feature_list, Feature 
 
 **Ďalší krok:**
 - Ak Tier 2 našiel `[CONFLICT]`: spusti routovaný authoring skill (`/pm-prd`, `/pm-product-roadmap`, `/pm-business-model`...) - opraví to v delta mode voči reálnym dátam. Audit ich nerieši.
+- Ak audit našiel nález pri prototypoch (otvorený prototyp, `PRT-` ID v produkčnom registri, neplatné `promoted_from:`, workbench feature bez fázy): `/pm-prototype` - rozhodnutie patrí tam, audit ho nerobí.
 - Ak je čisto: `/pm-stripe` — pokračuj v JIT delivery. Alebo `/pureinn` pre phase gate check.
 
 **Môžeš preskočiť ak:** Workspace práve vznikol aktuálnou verziou frameworku a strategická vrstva sa od poslednej validácie nezmenila - drift ani strategický konflikt neexistuje.

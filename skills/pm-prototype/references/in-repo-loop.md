@@ -6,7 +6,7 @@ This path has no moment of handoff. There is no brief to compile and send - ther
 
 **Where it lives.** The prototype folder was created at Step 3b, before this path started - `references/prototype-folder.md`. The harness and the artifact go in its `build/`, except for Evolutionary code, which goes on a branch in the real repo (see the last section). Nothing here creates a folder; if there isn't one in **Spec mode**, Step 3b was skipped and the decisions it records were never made.
 
-**Wrap mode is the exception.** There the artifact already exists and nothing was decided here, so there is no folder to require: the three harness files go next to what the user already has, and only the harness sections below apply - not the loop rules, the stop conditions or the classification.
+**Wrap mode is the exception.** There the artifact already exists and nothing was decided here, so there is no folder to require: the harness files (`harness.html`, `harness-client.js`, `harness.config.js`, `serve.py`, `sync.py`) go next to what the user already has - `scaffold/README.md` § Around something that already exists says what works on untouched pages and what needs the client, and only the harness sections below apply - not the loop rules, the stop conditions or the classification.
 
 ---
 
@@ -18,7 +18,7 @@ Anything added inside the product UI changes the experience being tested - and a
 
 ```
 ┌─ harness shell - never part of the product ────────────────┐
-│  Prototype - not a live service     [desktop│tablet│mobile] │
+│  PROTOTYPE                          [desktop│tablet│mobile] │
 │                                                             │
 │   ┌──────────────────────┐                                  │
 │   │                      │╌╌╌╌╌ "state shown is after 14    │
@@ -42,7 +42,7 @@ The shell is what gets shared, so the boundary travels with the artifact without
 
 Any harness must provide these, whatever the stack. A kit satisfies the contract for standalone HTML/CSS/JS; inside an existing repo or a published artifact the agent builds to the same contract in that stack.
 
-**The reference implementation is in `scaffold/`** - copy `harness.html` and `harness-client.js` byte-for-byte, edit only `harness.config.js`. See `scaffold/README.md`. It must be served, not opened as `file://`.
+**The reference implementation is in `scaffold/`** - copy `harness.html`, `harness-client.js`, `serve.py` and `sync.py` byte-for-byte into `build/`, and `harness.config.js` as the one file you edit. Do it as soon as `build/` exists, before the first screen is written, so the artifact is built against the harness from the start. Start it with `python3 build/serve.py`. See `scaffold/README.md`; `check.py` and `HISTORY.md` stay behind - they are for changing the harness, not for using it.
 
 It also carries a handful of things the contract does not require but a reviewer expects: a **device mockup** (off by default - it is presentation, and a usability test does not want it), a **share link** that restores screen, state, variant, time, device and mockup in one go, a **PNG export** of the current screen that carries any marks drawn on it but never the notes - a note explains and travels as text, a mark only says "this bit" and is worthless outside the picture, an **alignment grid**, a **side-by-side** view of the same screen at three widths, and a **presentation mode**. Treat them as conveniences, not contract items: a harness built in another stack is complete without them.
 
@@ -123,7 +123,7 @@ Optional, and present only when the config declares any of it. It answers one qu
 
 **The artifact stays a pure product surface.** It marks which elements belong to what - an attribute, nothing rendered - and the shell hides what the view leaves out. Where the artifact cannot be edited, the config names the elements from outside.
 
-**The register is the plan, not a copy of it.** Every feature in the view is a row in `feature-plan-prt.md`; the config is generated from that. A feature map screen reads the same register as a plan and shows all of it whatever the view is set to - a map that changed with the filter would hide exactly what was cut.
+**The register is the plan, not a copy of it.** Every feature in the view has a card in `feature-cards/`, and the config's list is generated from the cards' frontmatter by `sync.py`. The plan row carries the same phase and is kept in step by hand - `sync.py` does not read the plan. A feature map screen reads the same register as a plan and shows all of it whatever the view is set to - a map that changed with the filter would hide exactly what was left for later, and what was cut is listed there with its reason.
 
 **A comment records the view it was made in.** "This is missing" means something different in the MVP view than with everything on.
 
@@ -173,7 +173,7 @@ Building three mechanisms would be duplicated work and three inconsistent surfac
 
 **A note explains; a mark POINTS.** They are different jobs, and the second one has nothing to work with if the only anchor is an element: "this region", "these three words", "the gap here" cannot be said with a pin. A marker pen and a box, anchored to the element under them so they stay on it through scroll, resize and reflow, belonging to a screen + state + device exactly as a comment does - a box around a narrow layout means nothing on a wide one.
 
-**A spotlight is the live version of the same instinct** - *look here*, while someone is watching - and it is deliberately not saved. It is a gesture, not a record, and storing gestures is how a tool fills up with things nobody meant to keep.
+
 
 **A note has to be writable, and a picture is often the note.** Emphasis and one attached image: *"make it look like this"* with a reference is worth ten sentences, and nothing else in the loop carries it. Strip pasted markup to the few tags you actually render, and scale the image down before keeping it, or the second note fills the browser's storage.
 
@@ -185,11 +185,11 @@ Building three mechanisms would be duplicated work and three inconsistent surfac
 
 **What must never fold is the thing the loop depends on.** The return control stays visible and keeps its count: without a backend nothing reaches the author until it is pressed, and hiding it inside a menu would break the one mechanism it exists to serve.
 
-**One rule for closing, with no exceptions.** Only one surface is open at a time, and a press outside it closes it - the artifact included. Every exception made to that rule ("this one drives the artifact", "this one covers nothing") produced the same thing: a reader who could not clear the screen.
+**One rule for closing.** Only one surface is open at a time, and a press outside it closes it - the artifact included. The single case kept is a menu that is a control for the surface it sits beside. Every exception made to that rule ("this one drives the artifact", "this one covers nothing") produced the same thing: a reader who could not clear the screen.
 
 **Chrome that covers the artifact is chrome in the way.** Sidebars push the artifact aside; they do not sit on it. A description opened to be read next to a screen is worthless if it hides the screen.
 
-**Two bars cannot be positioned independently.** Once the shell has more than one bar at the bottom, anchoring each on its own means they overlap on some window nobody tested, and no amount of breakpoint guessing fixes it - they have to lay out *against each other*, in one container that wraps. Everything that floats above them then has to read the container's measured height rather than assume it.
+**Two bars cannot be positioned independently.** Once the shell has more than one bar at the bottom, anchoring each on its own means they overlap on some window nobody tested, and no amount of breakpoint guessing fixes it - they have to lay out *against each other*, in one container. Everything that floats above them then has to read the container's measured height rather than assume it.
 
 **Edit where the reader is looking.** A register that throws you back to the artifact to change a word loses the list you were working through. The same is true in reverse: a note being written beside the prototype should be able to carry on in the register without starting again.
 
@@ -258,7 +258,7 @@ Do not generalise this decision. A framework rule that pushes every prototype to
 
 ### 9. Disclosure
 
-The shell carries the boundary line. Depth belongs in a **dedicated screen** - not scattered labels:
+The shell carries the PROTOTYPE marker and nothing more; the boundary sentence and all the depth belong in a **dedicated screen** - not scattered labels:
 
 - **what the prototype proves / what it does not** - as a pair, both stated
 - **element by element**: what it is in the prototype, what it would be in production
@@ -267,6 +267,44 @@ The shell carries the boundary line. Depth belongs in a **dedicated screen** - n
 **Assembled from the disclosure notes, not written separately.** Every one of them already states what the element is here and what it would be in production, which is exactly this screen's table. Maintaining the two by hand guarantees they diverge, and the version the reviewer reads is the one that will be out of date.
 
 The effort answer to *"and how hard is it really"* belongs in the accompanying document, not on a product surface: it is the author's estimate, not a property of the product. Carry its basis (*"author's estimate, based on X"*) or a coarse band. When the basis cannot be written, "cannot estimate" is more honest than a grade someone will plan against.
+
+---
+
+## Working between the code and the harness
+
+The loop has two sides and it has to be cheap to cross between them, or it stops being a loop. On one side the agent edits files in the repo. On the other a person looks at the result in the harness, switches what it is shown as, and says what is wrong. Three small pieces in `scaffold/` carry everything across; none of them needs a build step or a dependency.
+
+| Piece | Direction | What it does |
+|---|---|---|
+| `serve.py` | both | serves the prototype folder on `127.0.0.1`; reloads the prototype in the harness when a file changes; saves what a reviewer sends into `review/` |
+| `sync.py` | code -> harness | regenerates the config's `features` from the feature cards, so phase, user types and description are typed once |
+| `review/` | harness -> code | `notes.md` and `notes/*.json` (what was said), `proposals.json` (edits proposed to a feature's description) |
+
+**Start of a session - every time, in this order:**
+
+1. `python3 build/serve.py` in the background, and give the user the URL it prints.
+2. Read `review/notes.md` from the last unread entry down, and `review/proposals.json` for anything `open`. A note that is read and not routed is lost: fix it, or record it as an `OQ-`, a `PRT-` item, or a known limitation (`showing.md` § 4), and say which.
+3. Show the user the open proposals and ask which to accept. `python3 build/sync.py --apply` writes the accepted ones into the cards. **Never apply on your own** - a proposal is someone's suggested wording for the source of truth, and accepting it is the author's decision.
+
+**During the session - what each kind of change touches:**
+
+| The user wants to | Change | Then |
+|---|---|---|
+| add or change a feature | its card in `feature-cards/` (frontmatter: `id`, `title`, `state`, `phase`, `roles`, `summary`, `screen` - all keys in `prototype-folder.md`) and the elements in the artifact (`data-feature="..."`) | `python3 build/sync.py` |
+| move a feature to another phase | `phase:` in its card, and the row in `feature-plan-prt.md` | `python3 build/sync.py` |
+| add a phase or a user type | `phases` / `roles` in `harness.config.js` - asked once per project, kept by hand | nothing; the harness reloads |
+| add a scenario | `activities` on that screen in the config: a state, a time, a scroll, a declared click, or a `says` line | nothing |
+| add a time simulation | a `time` block on that screen (min, max, label, hint) and a `Harness.on('time', ...)` handler in the artifact | nothing |
+| compare versions of a screen or element | a `versions` group in the config, and `data-version-of` / `data-version` in the artifact | nothing |
+| see it as one user type | `roles` on the card, or `data-role` on an element | `sync.py` if a card changed |
+
+The harness reloads by itself after each of these: a change under the artifact reloads the frame and keeps the screen, the state and the view; a change to the config reloads the page onto the same place. So the user keeps the harness open beside the conversation and watches it change.
+
+**Say what to look at.** After a change, name the screen and the view that shows it - *"Editorial view, phase v1.1, as Editorial"* - or, better, a link that opens it, such as `…/build/harness.html?screen=detail.html&phase=mvp&role=admin&state=empty` (every parameter is in `scaffold/README.md` § Addresses). A change the user has to hunt for is a change they will not review.
+
+**End of a session:** `python3 build/sync.py --check` exits non-zero if the config no longer matches the cards. Leave it passing.
+
+**In Wrap mode** there are no cards and no `meta.md`; `serve.py` then serves its own folder, notes still land in `review/` beside it, and `sync.py` finds no cards and leaves the hand-written feature list alone.
 
 ---
 

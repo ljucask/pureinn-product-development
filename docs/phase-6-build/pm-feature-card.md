@@ -4,8 +4,8 @@
 
 **Phase:** 6 - JIT Delivery (and Phase 5 stub creation)  
 **Agent mode:** `synthesis` - runs fully autonomously  
-**Version:** 2.6.0  
-**Triggers:** feature card, FEAT-ID, feature spec, feature lifecycle, cards, test types, artifact language, localization
+**Version:** 2.7.0  
+**Triggers:** feature card, FEAT-ID, feature spec, feature lifecycle, cards, test types, promoted_from, prototype reference, artifact language, localization
 
 ---
 
@@ -91,6 +91,22 @@ A Feature Card has four sections with defined ownership:
 
 ---
 
+## Prototype provenance
+
+Two optional elements can appear on a card. Both are written only by `pm-prototype`; `pm-feature-card` preserves them unchanged and never adds, edits or removes them.
+
+| Element | Where | Written when | Meaning |
+|---|---|---|---|
+| `promoted_from: PRT-[NAME]-NNN` | frontmatter | `pm-prototype` promotion | The prototype feature this card was promoted from. The only place a `PRT-` ID is legitimate on a production card - the card's `id` is always a real `FEAT-ID` |
+| Prototype reference block (`Prototype` / `Prototype URL` / `Audience` / `Expected outcome` / `Result`) | lightweight note outside Sections 1-4 | `pm-prototype` Step 7, when a planned feature gets a prototype | A prototype was used and a result is expected before build. `Result` starts as `pending` and becomes one of four verdict states: `Supported within scope`, `Refuted within scope`, `Prototype or study failure`, `Inconclusive` |
+
+- A manually created card has neither - no empty field, no empty block.
+- `Result:` is never filled here; the verdict comes from `/pm-prototype` against the threshold in `Expected outcome`.
+- The state check reports them: `Result: pending` or `Refuted within scope` on a card heading to design or build is surfaced and routed to `/pm-prototype`.
+- Whether the reference still resolves is checked by `pm-audit`; what the prototype resolved and what production changes against it is recorded by `pm-feature-design`.
+
+---
+
 ## Artifact language
 
 Checks `state.json` → `artifact_language` (set once at workspace setup, default English). If set to another language, the card's prose - feature description, acceptance criteria narrative, rationale in Sections 1-4 - is written in that language. `FEAT-ID`/`BR-ID`/`TBL-ID` references, frontmatter keys and enum values (`status:`, `layer:`, `priority:`...), section headers, and file names always stay English - other skills parse them literally.
@@ -102,4 +118,4 @@ Checks `state.json` → `artifact_language` (set once at workspace setup, defaul
 **Required before creating a stub:**
 - Feature must exist in `features/feature_list.md`
 
-**Related skills:** `pm-feature-design`, `pm-features-list`, `pm-stripe`, `pm-entity-registry`
+**Related skills:** `pm-feature-design`, `pm-features-list`, `pm-stripe`, `pm-entity-registry`, `pm-prototype`

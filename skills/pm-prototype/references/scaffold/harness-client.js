@@ -28,6 +28,32 @@
                   role: 'all', phase: 'all', features: null, versions: {} };
   var embedded = global.parent !== global;
 
+  /* Who this page takes orders from. A page can be framed by anyone, and the
+     shell's messages can click things, scroll, and switch on a mode that
+     forwards every click - so they are accepted only from the parent window,
+     and only when the parent is this origin or one the page has named:
+
+         <script>window.HARNESS_ORIGINS = ['https://review.example.com'];</script>
+
+     before this file, for a prototype served from somewhere other than its
+     harness. Replies go to that origin and nowhere else. */
+  var allowed = [global.location.origin].concat(global.HARNESS_ORIGINS || []);
+  var shell = null;
+  function trusted(origin) {
+    return global.location.protocol === 'file:' || allowed.indexOf(origin) > -1;
+  }
+  function tell(msg) {
+    if (!embedded) return;
+    var to = shell;
+    if (!to) {
+      try { to = global.parent.location.origin; } catch (e) { to = null; }   // readable only when same-origin
+      if (to && !trusted(to)) to = null;
+      if (!to && allowed.length === 2) to = allowed[1];
+    }
+    if (global.location.protocol === 'file:') to = '*';
+    if (to) global.parent.postMessage(msg, to);
+  }
+
   function on(kind, fn) {
     if (!handlers[kind]) throw new Error('unknown harness channel: ' + kind);
     handlers[kind].push(fn);
@@ -55,7 +81,7 @@
       state: current.state,
       variant: current.variant
     };
-    if (embedded) global.parent.postMessage({ __harness: true, type: 'event', entry: entry }, '*');
+    if (embedded) tell({ __harness: true, type: 'event', entry: entry });
     else (global.__harnessEvents = global.__harnessEvents || []).push(entry);
   }
 
@@ -134,7 +160,7 @@
        pin parked at the element's edge points at the right thing and the wrong
        place; a reviewer aims at a word, not at a bounding box. The fraction
        survives re-layout, which a raw pixel offset would not. */
-    global.parent.postMessage({
+    tell({
       __harness: true, type: 'pick',
       selector: sel,
       rx: r.width ? (e.clientX - r.left) / r.width : 0.5,
@@ -145,7 +171,7 @@
       fx: de.scrollWidth ? (e.clientX + (global.scrollX || 0)) / de.scrollWidth : 0.5,
       fy: de.scrollHeight ? (e.clientY + (global.scrollY || 0)) / de.scrollHeight : 0.5,
       label: (e.target.textContent || '').trim().slice(0, 60)
-    }, '*');
+    });
   }
 
   function setPicking(on) {
@@ -171,14 +197,14 @@
   function aimAt(selector) {
     var el = null;
     try { el = document.querySelector(selector); } catch (e) { /* bad selector */ }
-    if (!el) { global.parent.postMessage({ __harness: true, type: 'point', selector: selector, found: false }, '*'); return; }
+    if (!el) { tell({ __harness: true, type: 'point', selector: selector, found: false }); return; }
     el.scrollIntoView({ block: 'center', behavior: 'smooth' });
     setTimeout(function () {
       var r = el.getBoundingClientRect();
-      global.parent.postMessage({
+      tell({
         __harness: true, type: 'point', selector: selector, found: true,
         x: r.left + r.width / 2, y: r.top + r.height / 2
-      }, '*');
+      });
     }, 340);
   }
 
@@ -194,6 +220,8 @@
   global.addEventListener('message', function (e) {
     var d = e.data;
     if (!d || !d.__harness) return;
+    if (e.source !== global.parent || !trusted(e.origin)) return;
+    shell = e.origin === 'null' ? '*' : e.origin;
     if (handlers[d.type]) apply(d.type, d.value);
     if (d.type === 'picking') setPicking(d.value);
     if (d.type === 'scroll') scrollTo(d.value);

@@ -29,6 +29,9 @@ pureinn-workspace/[project-slug]/prototypes/[prototype-name]/
   rules.md                ONLY when it deliberately diverges
   design/                 ONLY when it has its own visual direction
   build/                  the prototype itself, or a pointer to the branch
+                          + harness.html, harness-client.js, harness.config.js, serve.py, sync.py
+  review/                 written by the harness through serve.py - never by hand
+                          notes.md · notes/*.json · proposals.json
 ```
 
 Always at the **workspace root**, never nested under an initiative. A prototype often has no initiative yet - that is frequently why it exists - and moving it later when it acquires one is churn. The relationship is carried by `targets:`, not by the path.
@@ -53,11 +56,34 @@ A PRD says what the product could be. It does not decide what gets made. That de
 
 Every capability the source document names ends up in one of the three. One that appears in none of them was never considered, and the gap should be visible.
 
-**In a workbench, `built` carries a phase too.** There the prototype is wider than what ships first on purpose, so a feature that runs is not thereby in the MVP: each `built` row gets the roadmap phase it belongs to once the prototype converges, and until then it has none. That column is what the harness reads - `references/workbench.md`.
+**In a workbench, `built` carries a phase too.** There the prototype is wider than what ships first on purpose, so a feature that runs is not thereby in the MVP: each `built` row gets the roadmap phase it belongs to once the prototype converges, and until then it has none. The harness reads the phase from the feature's **card** (`phase:` in its frontmatter), so the row and the card carry the same value and are changed together - `references/workbench.md`.
 
 **`next` carries a phase, not a priority.** The useful division is not important-vs-not but *must this be software, or can a person do it by hand the first time* - because you cannot automate a process nobody has run yet. A first release that does the operational work manually and a second that automates only what proved painful is a real plan; a numbered priority list is a wish.
 
 ---
+
+### The plan file
+
+`feature-plan-prt.md` is a document for people; nothing reads it by machine. A shape that works:
+
+```markdown
+# Prototype feature plan - [name]
+
+## built
+| ID | Feature | Phase | Where | Proves |
+|---|---|---|---|---|
+| PRT-ORD-001 | Morning queue | mvp | `index.html` | the next job is found without help |
+
+## next
+| ID | Feature | Phase | Why here, and not earlier or later |
+|---|---|---|---|
+
+## cut
+| ID | Cut | Reason |
+|---|---|---|
+```
+
+The harness takes each feature's phase from its **card**, so a phase changed here is changed in the card in the same edit, and `python3 build/sync.py` is run.
 
 ## A prototype feature card has to be buildable
 
@@ -73,6 +99,28 @@ Each `built` feature gets a card carrying:
 | **What the production version is** | plus the effort. "This is fake" invites "and how hard is the real one" |
 | **Why it is in the prototype at all** | the decision. Often the most interesting line on the card |
 | **Reads from** | the section of the source document it came from, so the two can be checked against each other |
+
+**The frontmatter is what the harness reads.** `build/sync.py` generates the config's feature list from it, so these keys are a contract, not decoration:
+
+```yaml
+---
+id: PRT-ORD-003            # required
+title: "Bulk assign"       # the name shown in the harness
+state: built               # built | next | cut
+phase: mvp                 # one of the phases in harness.config.js; absent while undecided
+roles: [dispatcher]        # who sees it; leave out for everyone
+summary: "One line."       # the description; else the first paragraph under "What it proves"
+screen: index.html         # where it is, so its card can go there - unless it IS a screen
+reason: "Why it was cut."  # for state: cut - shown on the feature map
+versions: [A, B]           # optional: a version group named after this feature
+on: {"index.html": ["#bulk"], "*": ["a[href='bulk.html']"]}   # optional, one line of JSON:
+                           # elements named from outside, for an artifact that cannot be marked
+---
+```
+
+A feature with no `phase:` is undecided, and the harness shows it in every view under *No phase* until someone decides. A `cut` card is in no view at all - it is on the feature map, under *Cut*, with its reason. That a feature **is** a whole screen is said in the config, on the screen entry (`feature: 'PRT-ORD-005'`), and stays hand-written.
+
+A `## Notes so far` section in the body is where specification accumulates in whatever form it arrived; the harness shows it on the card, and an edit proposed there comes back to it.
 
 `next` and `cut` entries stay as rows in the plan - they have no behaviour to describe yet. What they must carry is the reason, and for `next`, the phase and what it depends on.
 
@@ -160,6 +208,8 @@ the screen is the artifact the reviewer actually sees.]
 ## Decision state
 
 `open` → one of `kill` · `promote` · `partial` - the same three Step 8 acts on (`references/promotion.md`).
+
+**A workbench has one more value, `promoting`**, for the time between its first phase being handed over and its last one shipping. It is a decided prototype that is still in use, not an open one, and nothing should report it as undecided. It becomes `promote` when the last phase ships.
 
 **Open is not a resting state.** A prototype that has been open for a long time with no decision is the failure mode this whole structure exists to prevent - a folder where nothing is dead and nothing is alive. When a run finds one, say so and ask for the decision.
 

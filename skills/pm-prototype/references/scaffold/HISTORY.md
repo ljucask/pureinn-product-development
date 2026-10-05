@@ -64,6 +64,37 @@ The twenty-seventh came from the owner using it. The bars became floating rounde
 - **a box did not stay on what it was drawn around.** Marks were fractions of the frame - a place on the glass, not on the page - so scrolling moved the page out from under them, and a note added to one read those window fractions as page fractions and pinned somewhere else again. A mark is now anchored to the element under its centre
 - **a quick second press could be ignored.** The guard that stops an opening click from also closing what it opened was a flag cleared by `setTimeout(0)`, and a browser runs input ahead of timers. It is the click event itself now
 
+The twenty-eighth added the bridge to the repo - `serve.py`, `sync.py`, *Save to project*, *Edit description* as a proposal, live reload - and then an independent security review of all four files, with every finding fixed and tested:
+
+- **text could write code into the config.** `sync.py` found the end of its generated block with the first `*/`-terminated marker, and a feature description is free text: one containing the close marker ended the block early and left the rest of the old block behind as live JavaScript in every reviewer's harness. Reachable from a proposal typed into a card. The block's text now cannot contain `*/`, and two markers is an error
+- **the dot-file guard read the path before it was decoded**, so `/%2eenv` was served where `/.env` was refused; a symlink inside the folder was a way out of it
+- **a reviewer's field could write headings into `review/notes.md`** - the file the agent reads at the start of a session. Only the note text was flattened; severity, screen, name and selector were not
+- **the frame is not always the prototype.** After a reviewer follows an outbound link, the window in the frame is someone else's page, and it could post picks in a loop, forge the event log, and receive the view. Messages are now bound to named origins on both sides, a pick is taken only when the shell asked for one, and the client takes orders only from its parent
+- smaller: CSV cells that start like a formula, a corrupt `proposals.json` being replaced by one entry, two saves in a second sharing a file name, the overall note skipping the sanitiser on load
+
+The twenty-ninth was an independent correctness review of the same four files - fifteen findings, fourteen reproduced in a browser before they were reported, all fixed, the suite at forty-six:
+
+- **a link followed inside the prototype showed a feature the view was hiding.** The view's rules are keyed by screen, and they were written for the page being left, because the shell learned where it was one line too late
+- **"View all notes" opened the register and closed it in the same click** - the menu item pressed another button, and that nested press was the event the panel remembered as its own
+- **opening a card closed the card** on any screen with a time axis: arriving there opened the time panel, and one surface at a time did the rest
+- **anything typed into a card's editor was wiped by the next repaint**, and a config rewrite by `sync.py` - the documented workflow - reloaded the page under it
+- **a mark could anchor to a different element from the one it was drawn on.** The selector is a short path, and on a page with two alike lists it named the first
+- **the bottom bar ran its last controls off the edge** on a small window with a side panel open, where *Send notes* could not be reached at all
+- `sync.py` read a block-form `roles:` as nothing - which showed an admin-only feature to everyone - and `--apply` left the tail of a folded summary orphaned under the new one
+- Present threw when the view hid every screen, and left presentation mode on with nothing playing; a tour step could leave an undeclared user type behind for good
+
+The thirtieth, from use on a phone-width frame: a box drawn before marks were anchored still sat on the glass, because old marks were read as-is and never converted - "read as drawn at the top of the page" had been written down and not built. Each is now anchored the first time it is drawn with the page loaded and at its top. Doing that exposed a second trap: the frame's resize observer runs while the document is still one screen tall, and a mark adopted then is anchored to the wrong place for good, so adoption waits for the load. And a wheel turned over a mark went nowhere, because the mark takes the pointer; it is handed on to the page.
+
+The thirty-first was a readiness check before release, two ways. An agent that had never seen the framework was given only the skill and built a new prototype from nothing - three screens, states, a time axis, scenarios, two user types, three phases, seven features, a version group, the bridge, a tour - and then wrapped an app it was not allowed to edit. Both worked from the documents alone. A second pass checked every claim in the documents against the code. Between them:
+
+- **the documents said the harness reads a feature's phase from the plan; the code reads it from the card.** A phase changed only in the plan would never have reached the harness
+- **a failed or inconclusive prototype left its Feature Card on `Result: pending` for ever**, and `pm-stripe` does not pass a card that says pending
+- opening a feature's card did not go to its screen unless the feature was a whole screen or named from the config - the recommended way of marking, in the artifact, was the one that did not work. A card can now say which screen it is on
+- a tour step shorter than the pointer's travel never clicked, silently; a user type set on a tour's last step was still in force when it looped to the first
+- a `cut` feature appeared nowhere, although the feature map was said to exist so that a cut would stay visible. It is listed there now, with its reason
+- a screen on another address threw, and said nothing; `serve.py` printed its address into a buffer nobody could read when run in the background; `sync.py` called a prototype with no cards an error
+- thirty-odd stale statements from two rebuilds of the chrome: old control names, a spotlight that no longer exists, "glass islands"
+
 Bugs found that way, none of which a reading of the code would have caught:
 
 - three panels could be open over the prototype with no way to clear them, because each had been given its own reason to ignore a press outside it. One rule now: a press outside closes it, and the prototype is outside

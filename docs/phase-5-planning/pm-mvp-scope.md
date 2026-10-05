@@ -4,8 +4,8 @@
 
 **Phase:** 5 - Planning (exit artifact)  
 **Agent mode:** `decision` - drafts, then requires your review  
-**Version:** 2.1.0  
-**Triggers:** MVP scope, delivery stripes, MVP cut, feature prioritization, stripe assignment, Phase 5
+**Version:** 2.2.0  
+**Triggers:** MVP scope, delivery stripes, MVP cut, feature prioritization, stripe assignment, workbench prototype phases, Phase 5
 
 ---
 
@@ -76,12 +76,32 @@ If features already carry phase assignments from `pm-product-roadmap` (e.g., a R
 
 ---
 
+## When a workbench prototype already made the cut
+
+A prototype folder under `prototypes/` whose `meta.md` says `Purpose: workbench` was built wider than the MVP and then cut down by roadmap phase, so its `feature-plan-prt.md` already carries a phase per built feature. The skill detects it in the state check and reads that split as the **proposal** instead of deriving a cut from KANO/V×C from scratch.
+
+| Feature is | Phase is read from | What happens |
+|---|---|---|
+| Promoted (Feature Card with `promoted_from:`) | Feature Card and `feature_list.md` | Phase read, stripe assigned |
+| Still `PRT-`, built, phase set | `feature-plan-prt.md` | Shown as the proposed IN / later split; no stripe yet |
+| Still `PRT-`, built, no phase | - | Undecided - routed to `/pm-prototype`, not placed here |
+| `next` / `cut` in the plan | `feature-plan-prt.md` | Carried into Post-MVP / Cut with the recorded reason |
+| No prototype counterpart | - | The normal cut |
+
+- **Offered, not imposed** - the split is shown with the folder it came from and you confirm or change it.
+- **Promotion does not happen here.** `PRT-` features become Feature Cards with real `FEAT-` IDs through `/pm-prototype`, phase by phase. A `PRT-` ID is never written into `feature_list.md`, a card, or a stripe; unpromoted first-phase features are listed as awaiting promotion and get their stripe on the re-run.
+- **Matched by reference** (`promoted_from:` or the prototype's `targets`), never by a similar name.
+- A workbench split is stakeholder alignment, not user evidence - the capacity check against team size and timeline still runs.
+
+---
+
 ## Dependencies
 
 **Required before running:**
 - `pm-features-list` - must include Dependency Map, KANO Analysis, and V×C Matrix (all approved)
 
 **Recommended:**
+- `pm-prototype` (workbench) - if the MVP was cut down in a workbench prototype, its feature plan is the proposed phase split
 - `pm-prioritize` - recommended to run before MVP scope if priority order has been updated
 - `pm-kpis` - North Star and AARRR metrics validate MVP scope alignment
 - `pm-business-case` - revenue model and runway inform how aggressive the MVP cut should be
@@ -92,4 +112,4 @@ If features already carry phase assignments from `pm-product-roadmap` (e.g., a R
 - `pm-product-roadmap` (v3) - delivery view populated with stripe and phase data
 - `pm-stripe` - uses stripe assignments to orchestrate the JIT cycle per stripe
 
-**Related skills:** `pm-features-list`, `pm-prioritize`, `pm-product-roadmap`, `pm-stripe`
+**Related skills:** `pm-features-list`, `pm-prioritize`, `pm-product-roadmap`, `pm-stripe`, `pm-entity-registry`, `pm-prototype`

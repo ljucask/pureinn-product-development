@@ -4,7 +4,7 @@
 
 **Phase:** 6-7 - JIT Delivery (session start point)  
 **Agent mode:** `never` - value is the live interactive session  
-**Version:** 3.10.0  
+**Version:** 3.11.0  
 **Triggers:** stripe, delivery stripe, JIT cycle, build feature, impact analysis, security review, test types, test type matrix, dependency scan, SCA, regression gate, delivery plan, build order, sequence, parallel, Phase 6, next feature, kanban, timeline, delivery visualization, rebuild plan, WIP limit, delivery_plan.html, interactive delivery plan, click-for-detail
 
 ---
@@ -87,6 +87,8 @@ Session start → pm-stripe
   ├─ 5_In_Review         → code review + Section 4             → 6_Shipped
   └─ all 6_Shipped       → Close Stripe
 ```
+
+When a feature came from a prototype (`promoted_from:` on its card), Design Inspection also checks the **Prototype carry-over** that `/pm-feature-design` records: what the prototype already resolved, and what the production design changes against it. A missing record, or a prototype result still pending, sends the card back before build.
 
 ---
 

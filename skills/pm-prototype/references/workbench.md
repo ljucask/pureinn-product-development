@@ -36,13 +36,15 @@ Rival versions are declared as version groups, not as copies of a screen: the ha
 The moment there are enough ideas and the question changes from *what could this be* to *what ships first*.
 
 1. **Take the phases from the roadmap, do not invent a second set.** If the workspace has a roadmap, its phase names and order are the ones used. If it has none, ask for them - and say that `/pm-product-roadmap` is where they will have to live once this is promoted.
-2. **Put every `built` feature in a phase, or cut it.** `cut` needs its reason. A feature left with no phase is undecided, and the harness lists it under *No phase yet* so the gap is visible.
+2. **Put every `built` feature in a phase, or cut it.** `cut` needs its reason. A feature left with no phase is undecided, and the harness lists it under *No phase* so the gap is visible.
 3. **The feasibility pass is not optional.** Divergence ignored implementation cost by design, so before a feature is placed in the first phase, its card states what the production version is and what it costs (`prototype-folder.md` § a prototype feature card has to be buildable). Without this the MVP is chosen by what looks good in a meeting, which is the one failure this stage exists to prevent.
 4. **Read the result in the harness.** *Phase: MVP* shows the product as it would first ship. Later phases are added one at a time, and a single feature can be switched in by hand to argue about it.
 
 Phase is a decision the user makes. Offer the placement with a recommendation and the reasoning; never assign phases silently.
 
 ### 3. Hand over
+
+Set `Decision: promoting` in `meta.md` when the first phase is handed over (`prototype-folder.md` § Decision state), and write who decided what into `findings.md` under a `## Decisions` heading: the date, who was in the room, which features went into which phase and why, what was cut and why.
 
 What a developer gets: the feature map by phase, a card per feature, and the prototype itself - where each feature can be found, seen as each user type, and clicked through.
 
@@ -52,14 +54,16 @@ Promotion follows `promotion.md`, phase by phase rather than all at once: the fi
 
 | Feature is | Its phase lives in |
 |---|---|
-| still `PRT-` | `feature-plan-prt.md` |
+| still `PRT-` | its card in `feature-cards/` (`phase:`), mirrored in its row in `feature-plan-prt.md` |
 | promoted to `FEAT-` | the Feature Card and `feature_list.md` |
 
-The harness config is **generated from those, never edited as the origin**. A phase changed only in `harness.config.js` is a second truth, and the next generation overwrites it.
+The harness config is **generated from those, never edited as the origin** - `python3 build/sync.py` writes the config's `features` from the cards' frontmatter, between two markers, and touches nothing else. A phase changed only in `harness.config.js` is a second truth, and the next run overwrites it. `sync.py --check` says whether the two still agree.
+
+**An edit made in the harness is a proposal.** Opened from a feature's card, *Edit description* saves to `review/proposals.json` and changes nothing; the card shows the proposed wording marked as proposed. `sync.py --apply` is the act of accepting, and it is run when the author has agreed. The card is what a developer builds from - a browser does not get to rewrite it.
 
 **Cards have to be reachable from where the harness is served.** The harness fetches a card relative to `harness.html`, and a server cannot hand out a file above its own root. Serve the prototype folder (so `build/harness.html` reaches `feature-cards/`), or generate the cards into `build/cards/`. A card that cannot be fetched shows only what the config carries, and says so.
 
-After promotion the feature's entry in the config keeps its place and gains `card:` pointing at the Feature Card, so the prototype still opens the specification a developer should build from.
+After promotion the `PRT-` card stays in `feature-cards/` and stays what the harness shows - it is inside the folder the harness is served from, which the production Feature Card is not. Add one line to it, `promoted_to: FEAT-...`, and keep its `phase:` in step with the Feature Card for as long as the workbench is live.
 
 ---
 

@@ -4,8 +4,8 @@
 
 **Phase:** 3a - Validation (Hard Gate)  
 **Agent mode:** `never` - value is the live dialogue  
-**Version:** 1.0.0  
-**Triggers:** hypotheses, hypothesis validation, go no go, experiment plan, ICP, assumption map, validation results
+**Version:** 1.1.1  
+**Triggers:** hypotheses, hypothesis validation, go no go, experiment plan, ICP, assumption map, validation results, prototype result, prototype verdict
 
 ---
 
@@ -82,7 +82,22 @@ Both modes use the same Hypothesis Register - it is updated progressively, not r
 | Pre-order | Market + Solution | Highest (financial commitment) |
 | Concierge MVP | Solution + Market | Highest (delivery + payment) |
 | Waitlist | Market | Low-Medium |
+| Wizard of Oz MVP | Solution | Medium (behaviour without build) |
+| No-code / clickable Prototype | Solution + UX | Medium (behaviour, not commitment) - built via `/pm-prototype` |
 | Survey | Customer + Market | Low (breadth confirmation only) |
+
+**Prototype experiments route to `/pm-prototype`.** When the experiment for a hypothesis is a no-code or clickable prototype, this skill records the hypothesis and its success criteria and hands over; `pm-prototype` decides whether a prototype is the cheapest test at all, builds it, and records the result against that same criterion.
+
+A prototype result comes back as one of four verdict states. Only the first two update a hypothesis:
+
+| Verdict | Effect on the Hypothesis Register |
+|---|---|
+| `Supported within scope` | Confirmed - for the stated population and dimension only, scope written into Result |
+| `Refuted within scope` | Rejected, scope written into Result |
+| `Prototype or study failure` | No update - the instrument failed, belief is unchanged. Fix it and re-run |
+| `Inconclusive` | No update - schedule another round or a different method |
+
+A prototype result is behaviour, not commitment: it never satisfies a Market hypothesis on its own. A workbench prototype (built wide, cut down by roadmap phase) produces decisions and stakeholder alignment, not a verdict - it updates no hypothesis.
 
 **Commitment hierarchy (strongest to weakest):**
 1. Credit card / pre-payment
@@ -116,8 +131,9 @@ Provide the verdict (GO / PIVOT / STOP) and key evidence. Pureinn logs it and ro
 - `pm-problem-validation` - Phase 2 evidence base
 
 **Produces for:**
+- `pm-prototype` - builds the prototype for a hypothesis tested by a no-code / clickable prototype, returns a four-state verdict
 - `pm-lean-canvas` - validated problem, customer, and solution feed Lean Canvas inputs
 - `pm-prd` - validation evidence and Go/No-Go verdict are required PRD sections
 - `pm-product-roadmap` (v1) - hypotheses and risks section
 
-**Related skills:** `design-thinking`, `pm-personas`, `jtbd-building`, `pm-problem-validation`, `pm-lean-canvas`
+**Related skills:** `design-thinking`, `pm-personas`, `jtbd-building`, `pm-problem-validation`, `pm-lean-canvas`, `pm-prototype`

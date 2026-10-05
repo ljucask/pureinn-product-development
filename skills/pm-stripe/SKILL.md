@@ -6,7 +6,7 @@ metadata:
   agent-mode: never
   standalone: needs-inputs
   author: https://github.com/ljucask
-  version: "3.10.0"
+  version: "3.11.0"
   domain: product-management
   triggers: stripe, delivery stripe, JIT cycle, feature design, build feature, impact analysis, security review, test types, test type matrix, dependency scan, SCA, regression gate, delivery plan, build order, sequence, parallel, Phase 6, Phase 7, next feature, kanban, timeline, delivery visualization, rebuild plan, WIP limit, delivery_plan.html, interactive delivery plan, click-for-detail
   role: orchestrator
@@ -23,6 +23,11 @@ metadata:
 This skill's value is the live dialogue - `--agent` is not supported. If invoked with `--agent`, warn once ("this skill needs interactive back-and-forth; agent mode would hollow it out") and proceed interactively.
 
 ---
+
+## Artifact language
+Checks `state.json` → `artifact_language`. Default (unset or "English"): no change in behavior.
+- If set to a non-English language: write prose content (descriptions, rationale, rule text) in that language.
+- Never translate: IDs, frontmatter keys and enum values, section headers other skills parse, file names - these stay English always, regardless of the setting.
 
 ## Standalone run
 Needs the artifacts listed under **Dependencies** - it synthesizes them, so without them there is nothing to synthesize.
@@ -223,10 +228,17 @@ Review Feature Card /features/cards/FEAT-[ID].md:
     [ ] Placement in app described
     [ ] Design system reference present or Figma link provided
 
+  Prototype carry-over (only if the card has `promoted_from:` or a prototype reference)
+    [ ] "Resolved by the prototype" is listed, and nothing in Sections 1-3 reopens it
+    [ ] "Changed against the prototype" is listed - or says "none"
+    [ ] Prototype reference does not read `Result: pending`
+
   Open register items (from /domain/open_questions.md - read-only)
     [ID]  [heading]  [Type]  [Priority]   - or "none"
     [ ] No open BLK- for this feature
 ```
+
+**Prototype carry-over (when the feature came from a prototype).** If the card carries `promoted_from: PRT-...` or the prototype reference block that `/pm-prototype` writes, Section 3 must end with a `### Prototype carry-over` subsection from `/pm-feature-design`. Check both of its lists. A production design that departs from a Reference prototype without saying so is how the prototype stops being binding - and nobody notices until build. If the subsection is missing, or the reference still says `Result: pending`, do not approve: route back to `/pm-feature-design`. Skip this block entirely for a feature with no prototype behind it.
 
 **Open-items lookup (mandatory).** Read the `## Open` section of `domain/open_questions.md` and list every entry that names this FEAT-ID (Impact, Target or Context) or whose ID appears in the card. Show ID + heading + Type + Priority only - the register stays the single home, nothing is copied into the card. An open `BLK-` blocks approval; open `OQ-` / `DIV-` entries are shown so the reviewer approves knowingly, but do not block. No register → one line saying so.
 

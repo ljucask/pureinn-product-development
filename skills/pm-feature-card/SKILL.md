@@ -6,13 +6,13 @@ metadata:
   agent-mode: synthesis
   standalone: needs-inputs
   author: https://github.com/ljucask
-  version: "2.6.0"
+  version: "2.7.0"
   domain: product-management
-  triggers: feature card, FEAT-ID, feature spec, feature lifecycle, cards, in design, figma state, security review, test types, mutex tags, delivery plan, artifact language, localization
+  triggers: feature card, FEAT-ID, feature spec, feature lifecycle, cards, in design, figma state, security review, test types, mutex tags, delivery plan, promoted_from, prototype reference, artifact language, localization
   role: specialist
   scope: specification
   output-format: document
-  related-skills: pm-feature-design, pm-features-list, pm-stripe, pm-entity-registry
+  related-skills: pm-feature-design, pm-features-list, pm-stripe, pm-entity-registry, pm-prototype
 ---
 
 # PM - Feature Card
@@ -68,6 +68,7 @@ Manages Feature Cards in the FDD+SDD framework. A Feature Card is the atomic del
 
 **Section ownership:**
 - Frontmatter: pm-features-list (init) + pm-mvp-scope (stripe assignment) + pm-feature-design (status updates)
+- `promoted_from:` and the prototype reference block: pm-prototype only - see "Prototype provenance" below. This skill preserves them and never writes them
 - Section 1 (Biznis Mantinely): pm-feature-design
 - Section 2 (Acceptance Criteria): pm-feature-design
 - Section 3 (JIT Technical Design): pm-feature-design
@@ -104,6 +105,7 @@ Check for existing Feature Card at `/features/cards/[FEAT-ID].md`.
 | Edge Case Coverage | [complete / partial / stub] | [missing table on a card at 2_Spec_Done or later = pre-5.62.0 card → `/pm-feature-design [FEAT-ID] --edge-cases`] |
 | Section 3 (JIT Technical Design) | [populated / stub] | |
 | Section 4 (Realizacny Protokol) | [populated / pending] | |
+| Prototype provenance | [promoted_from: PRT-... / reference, Result: ... / none] | [`Result: pending` = a prototype result is still expected before build → `/pm-prototype`] |
 
 **Verdict:** [One sentence - what stage the card is in, what is next]
 
@@ -283,6 +285,39 @@ sequenceDiagram
 
 ---
 
+## Prototype provenance (written by pm-prototype - preserve)
+
+Two optional elements can appear on a card. Neither is part of the stub template, **both are written only by `/pm-prototype`**, and this skill must carry them through every operation - review, status advance, manual re-creation, Notion push - unchanged.
+
+**1. `promoted_from:` - optional frontmatter field**
+
+```yaml
+promoted_from: PRT-[NAME]-NNN   # optional. Written by pm-prototype at promotion. The prototype feature this card was promoted from.
+```
+
+Present only on a card that started as a prototype feature and was promoted (pm-prototype Step 8, its `references/promotion.md`). The value is a prototype feature ID from `prototypes/[prototype-name]/feature-plan-prt.md`. The card's own `id:` is always a real `FEAT-ID` - a `PRT-` ID never appears as `id:`, in a file name, in `feature_list.md`, or in a dependency. `promoted_from:` is the one place on a production card where a `PRT-` ID is legitimate.
+
+**2. Prototype reference block - lightweight note, outside Sections 1-4**
+
+```
+Prototype: [/prototypes/[prototype-name]/ or /prototypes/[FEAT-ID]-prototype-spec.md]
+Prototype URL: [live/preview URL, local harness URL, or "pending build"]
+Audience: [who the prototype is for]
+Expected outcome: [the success criterion, written before any result]
+Result: pending
+```
+
+Written by pm-prototype Step 7 when a feature already in the plan gets a prototype. `Result:` starts as `pending` and is later updated by pm-prototype (result mode) to one of its four verdict states: `Supported within scope`, `Refuted within scope`, `Prototype or study failure`, `Inconclusive`.
+
+**What this skill does with them:**
+- **Never writes, edits, moves or removes either one.** Not when creating a card manually (a manually created card has no prototype provenance - do not add an empty field or an empty block), not when advancing status, not when normalizing a card to the template. A card that carries them and is missing from the template is not drift.
+- **Never fills `Result:`.** A verdict comes from `/pm-prototype`, against the threshold written in `Expected outcome`. Do not infer it from the conversation.
+- **Reports them in Step 0.** `Result: pending` means the card says a prototype result is still expected before build - say so and route to `/pm-prototype`. `Refuted within scope` on a card heading into design or build is flagged the same way.
+- **Does not check them for truth.** Whether the `PRT-` ID or the prototype folder still exists is `pm-audit`'s check; what the prototype resolved and what the production spec changes against it is recorded by `pm-feature-design` (Section 3, `### Prototype carry-over`).
+- **Labels stay English** under any `artifact_language`: `promoted_from`, the five labels of the block, and the `Result:` values are read literally by other skills.
+
+---
+
 ## Notion push
 
 **Runs after Feature Card Section 4 is complete (status: 6_Shipped).**
@@ -310,6 +345,9 @@ If Feature Backlog URL is blank in pureinn-variables.md: save locally, remind us
 **Stub (1_Backlog) must have:**
 - [ ] All frontmatter fields populated (id, title, status, stripe, owner, priority, prd_ref, feature_flag, flag_default; `security_review: none` placeholder; `test_types: [unit]` placeholder)
 - [ ] Sections 1-4 present as stubs (not filled); Section 2 carries the Edge Case Coverage table with 6 TBD rows
+
+**Prototype provenance (any status):**
+- [ ] `promoted_from:` and the prototype reference block, if present, are unchanged - never added, edited, or dropped by this skill
 
 **After pm-feature-design (2_Spec_Done) must have:**
 - [ ] `security_review` set from the Step 1.5 assessment (no longer the `none` stub default unless genuinely no trigger met)

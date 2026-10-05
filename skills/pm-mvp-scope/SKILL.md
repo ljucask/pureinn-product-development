@@ -1,18 +1,18 @@
 ---
 name: pm-mvp-scope
-description: Define MVP scope and delivery plan from the prioritized FDD Feature List. Makes the IN/POST-MVP/CUT decision per feature (recorded in the single `phase` field, never a separate `mvp` flag), assigns each feature to a Delivery Stripe. Updates feature_list.md and Feature Card frontmatter (phase + stripe). If features already carry a phase (Rebuild where roadmap split phases), reads it instead of re-deciding the cut and only assigns stripes. After user approval, updates Notion Feature entries with phase and stripe assignment. Phase 5 exit artifact. Required input for pm-stripe JIT cycle.
+description: Define MVP scope and delivery plan from the prioritized FDD Feature List. Makes the IN/POST-MVP/CUT decision per feature (recorded in the single `phase` field, never a separate `mvp` flag), assigns each feature to a Delivery Stripe. Updates feature_list.md and Feature Card frontmatter (phase + stripe). If features already carry a phase (Rebuild where roadmap split phases, or a workbench prototype that already placed its built features into roadmap phases), reads it as the proposed cut instead of re-deciding from scratch, confirms it, and only assigns stripes. After user approval, updates Notion Feature entries with phase and stripe assignment. Phase 5 exit artifact. Required input for pm-stripe JIT cycle.
 license: MIT
 metadata:
   agent-mode: decision
   standalone: needs-inputs
   author: https://github.com/ljucask
-  version: "2.1.0"
+  version: "2.2.0"
   domain: product-management
-  triggers: MVP scope, delivery stripes, MVP cut, feature prioritization, stripe assignment, Phase 5
+  triggers: MVP scope, delivery stripes, MVP cut, feature prioritization, stripe assignment, workbench prototype phases, Phase 5
   role: specialist
   scope: planning
   output-format: document
-  related-skills: pm-features-list, pm-prioritize, pm-product-roadmap, pm-stripe, pm-entity-registry
+  related-skills: pm-features-list, pm-prioritize, pm-product-roadmap, pm-stripe, pm-entity-registry, pm-prototype
 ---
 
 # PM - MVP Scope
@@ -27,6 +27,11 @@ Supports `--agent`: runs autonomously in a subagent, drafts the artifact from ex
 - **Review required:** the artifact contains commitments - after drafting, require the user's review before finalizing; do not close decisions autonomously.
 
 ---
+
+## Artifact language
+Checks `state.json` → `artifact_language`. Default (unset or "English"): no change in behavior.
+- If set to a non-English language: write prose content (descriptions, rationale, rule text) in that language.
+- Never translate: IDs, frontmatter keys and enum values, section headers other skills parse, file names - these stay English always, regardless of the setting.
 
 ## Standalone run
 Needs the artifacts listed under **Dependencies** - it synthesizes them, so without them there is nothing to synthesize.
@@ -52,6 +57,24 @@ The canonical Feature Card carries one field for this: **`phase`** (`MVP` / `MVP
 
 **If features already carry a `phase` (a Rebuild where `/pm-product-roadmap` already split phases, e.g. P0 Pilot = MVP):** the cut is already decided - **read it, do not re-litigate IN/POST**. This skill's remaining job is then only **stripe assignment** (delivery channels + dependency order). Confirm the phase-derived cut with the user, then assign stripes.
 
+**The same path applies when a workbench prototype already made the cut.** A prototype folder at `pureinn-workspace/[project-slug]/prototypes/*/` whose `meta.md` says `**Purpose:** workbench` was built wider than the MVP on purpose and then cut down by roadmap phase - so its `feature-plan-prt.md` already carries a phase per `built` feature. That is a phase decision someone already made over a clickable product; read it, do not re-derive it from KANO/V×C.
+
+| Feature is | Its phase is read from | What this skill does with it |
+|---|---|---|
+| promoted - a Feature Card with `promoted_from: PRT-[NAME]-NNN` | the Feature Card and `feature_list.md` (the source of truth changed hands at promotion) | the rule above - read the phase, assign the stripe |
+| still `PRT-`, state `built`, phase set | `feature-plan-prt.md` | show it as the **proposed** IN / later split. It has no `FEAT-ID` yet, so it gets no stripe and is not written anywhere by this skill |
+| still `PRT-`, state `built`, no phase | - | undecided, not POST-MVP. List it as open and route to `/pm-prototype` (converge), do not place it here |
+| `next` / `cut` in the plan | `feature-plan-prt.md` | `next` carries its phase into Post-MVP; `cut` carries its recorded reason into Cut. Do not reopen a cut without new information |
+| in `feature_list.md` with no prototype counterpart | nowhere yet | the normal Step 1 cut |
+
+Rules for this path:
+- **Offer, do not impose.** Present the split as the workbench's proposal, name the prototype folder it came from, and ask for confirmation. The user's judgment overrides it, same as it overrides KANO/V×C. A change the user makes here to a still-`PRT-` feature is recorded in the MVP Scope artifact and flagged as a divergence from `feature-plan-prt.md` - this skill does not edit the prototype folder; `/pm-prototype` updates the plan.
+- **Promotion does not happen here.** Turning a `PRT-` feature into a Feature Card with a real `FEAT-ID` and `promoted_from:` is done by `/pm-prototype`, phase by phase (its `references/promotion.md`). Never write a `PRT-` ID into `feature_list.md`, a Feature Card, or a stripe - a prototype ID in a production register is exactly what the separate ID exists to prevent. First-phase features that are still `PRT-` are listed under "awaiting promotion" with the route `/pm-prototype`; stripes are assigned to them on the re-run after promotion (delta mode).
+- **Match by reference, never by name.** A `PRT-` feature corresponds to a `FEAT-` feature only through `promoted_from:` or the prototype's `meta.md` → `targets`. If two look like the same feature and nothing links them, ask - do not merge them on a similar title.
+- **A phase conflict is surfaced, not resolved silently.** If a promoted card's `phase` differs from the row it came from, the card wins (it is the live artifact) - say so in one line.
+- **What the workbench split is evidence for.** A room agreeing over a prototype is stakeholder alignment, not user evidence. The capacity reconciliation in Step 1 still runs against the confirmed IN-list, and Group 1's "what must the MVP prove" is still asked.
+- More than one workbench folder: ask which one governs. A prototype with `**Purpose:** test` carries no phase split and is ignored here.
+
 This is the Phase 5 exit artifact. pm-stripe uses this structure to orchestrate the JIT cycle - picking the next ready feature in each stripe and routing to pm-feature-design + build.
 
 ---
@@ -63,6 +86,7 @@ This is the Phase 5 exit artifact. pm-stripe uses this structure to orchestrate 
 - All four artifacts from pm-features-list must be approved by user before running this skill
 
 **Recommended before running:**
+- `pm-prototype` (workbench purpose) - if the MVP was cut down in a workbench prototype, its `feature-plan-prt.md` is the proposed phase split and promotion of the first phase should run before stripes are assigned
 - `pm-kpis` - North Star and AARRR metrics validate MVP scope alignment
 - `pm-business-case` - revenue model and runway inform how aggressive the MVP cut should be
 
@@ -82,6 +106,8 @@ Check for existing artifacts:
 - Delivery Stripe assignments (in feature_list.md and Feature Card frontmatter)
 
 Also check: does `features/feature_list.md` exist with KANO and V×C? Stub Feature Cards created? This skill cannot run without them.
+
+Also check for a workbench prototype: any `prototypes/*/meta.md` with `**Purpose:** workbench`. If one exists, read its `meta.md` and `feature-plan-prt.md` in full and report it in the state check - folder name, how many `built` features carry a phase, how many have none, how many are already promoted (Feature Cards with `promoted_from:`). Then follow the workbench path in "`phase` is the single axis" above instead of opening Group 1 with a cut from scratch.
 
 Look for: MVP scope that's too large (more than 3-4 months of work), no explicit out-of-scope list, features assigned to stripes that violate dependencies (blocked feature in Stripe 1, blocker in Stripe 2), domain boundary confusion across stripes (mixing unrelated domains in one stripe creates parallel conflict risk).
 
@@ -346,6 +372,7 @@ After all updates: report counts (Features enriched, errors). Remind user that p
 - [ ] Post-MVP list with reason for deferral and target phase
 - [ ] Cut list with rationale
 - [ ] MVP size is realistic vs. team and timeline
+- [ ] Workbench prototype present: its phase split was shown as a proposal and confirmed, no `PRT-` ID written into `feature_list.md` / cards / stripes, unpromoted first-phase features routed to `/pm-prototype`
 
 **Delivery Stripes must cover:**
 - [ ] Each stripe has a coherent domain focus (minimizes register conflicts)

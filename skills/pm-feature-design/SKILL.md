@@ -6,13 +6,13 @@ metadata:
   agent-mode: decision
   standalone: needs-inputs
   author: https://github.com/ljucask
-  version: "2.7.0"
+  version: "2.8.0"
   domain: product-management
-  triggers: feature design, JIT design, design by feature, sequence diagram, feature spec, security review, mutex tags, edge cases, edge case coverage, edge case backfill, Phase 6
+  triggers: feature design, JIT design, design by feature, sequence diagram, feature spec, security review, mutex tags, edge cases, edge case coverage, edge case backfill, promoted from prototype, prototype carry-over, Phase 6
   role: specialist
   scope: specification
   output-format: document
-  related-skills: pm-feature-viability, pm-entity-registry, pm-business-rules-library, pm-decision-model, pm-process-flows, pm-feature-card, pm-stripe, pm-open-questions
+  related-skills: pm-feature-viability, pm-entity-registry, pm-business-rules-library, pm-decision-model, pm-process-flows, pm-feature-card, pm-stripe, pm-open-questions, pm-prototype
 ---
 
 # PM - Feature Design (JIT)
@@ -27,6 +27,11 @@ Supports `--agent`: runs autonomously in a subagent, drafts the artifact from ex
 - **Review required:** the artifact contains commitments - after drafting, require the user's review before finalizing; do not close decisions autonomously.
 
 ---
+
+## Artifact language
+Checks `state.json` → `artifact_language`. Default (unset or "English"): no change in behavior.
+- If set to a non-English language: write prose content (descriptions, rationale, rule text) in that language.
+- Never translate: IDs, frontmatter keys and enum values, section headers other skills parse, file names - these stay English always, regardless of the setting.
 
 ## Standalone run
 Needs the artifacts listed under **Dependencies** - it synthesizes them, so without them there is nothing to synthesize.
@@ -87,6 +92,7 @@ If the project has an existing codebase, Claude Code MUST scan the relevant serv
 
 **Recommended before running:**
 - `pm-stripe` - confirms this feature is next in its Stripe and dependencies are met
+- `pm-prototype` - only when the card carries `promoted_from:` or a prototype reference: the prototype's findings and its `PRT-` card are read first (see Prototype carry-over)
 
 **Produces artifacts used by:**
 - Feature Card (Sections 1-3 populated)
@@ -114,6 +120,56 @@ Open register items for [FEAT-ID]:
 
 ---
 
+## Prototype carry-over
+
+Applies only when the Feature Card carries `promoted_from: PRT-[NAME]-NNN` in its frontmatter, or a prototype reference block (`Prototype:` / `Prototype URL:` / `Audience:` / `Expected outcome:` / `Result:`). Both are written by `/pm-prototype`; this skill reads them and never edits them. No such field or block on the card → skip this section entirely.
+
+A prototype that came before the design already settled some questions and deliberately faked others. Designing without reading it does two kinds of damage: the interrogation reopens what was already decided, and the production spec drifts from the prototype without anyone writing down where.
+
+**Read first, at Step 0, before the interrogation - in full:**
+
+| Source | Where | What it gives |
+|---|---|---|
+| `meta.md` | `prototypes/[prototype-name]/` | `Purpose` (test / workbench), `Classification` (Disposable / Reference / Evolutionary), `Decision`, what is deliberately simulated |
+| `findings.md` | same folder | what was observed, what was **not** tested, known distortions |
+| the `PRT-` card | `feature-cards/` in that folder | how the feature behaves in the prototype, what is simulated in it, what the production version is and costs |
+| `domain.md` / `rules.md` | same folder, only if they exist | where the prototype deliberately diverged from the global registers |
+
+Locate the folder from the `Prototype:` path, or by finding the `promoted_from` ID in a `prototypes/*/feature-plan-prt.md` - do not derive the folder name from the ID. An external-tool prototype has a spec file instead of a folder: read the spec and its `## Result` section. State coverage ("Read meta.md, findings.md, PRT-AMA-003 in prototypes/ama-lifecycle/"). **If the folder, the `PRT-` card or `findings.md` cannot be found, say so and continue without carry-over** - never reconstruct what the prototype "probably" showed; the dangling reference is `pm-audit`'s finding.
+
+**Check `Result:` before designing:**
+
+| `Result:` / state | What to do |
+|---|---|
+| `pending` | **Surface it before anything else.** The card says a result is expected before build proceeds. AskUserQuestion: record the result first via `/pm-prototype` (Recommended when the prototype has been shown to anyone) / design now and treat nothing in the prototype as resolved. Under `--agent`: do not choose - design with nothing treated as resolved and flag it in the summary |
+| `Supported within scope` | resolved **for the scope stated** - the population and the dimension the prototype represented, nothing wider |
+| `Refuted within scope` | flag before designing: the evidence went against this feature as prototyped. Confirm what changed since, or stop |
+| `Prototype or study failure` / `Inconclusive` | nothing was learned about the feature. Treat nothing as resolved |
+| workbench prototype (no verdict) | its decisions are stakeholder alignment, not user evidence. Flow and scope decisions made over it are settled; a belief about users it rested on is not |
+
+**Record two things in the design output** - a subsection of Section 3, written in Step 4c:
+
+```markdown
+### Prototype carry-over
+
+**Prototype:** [/prototypes/[prototype-name]/](/prototypes/[prototype-name]/) · [PRT-[NAME]-NNN] · Classification: [Disposable / Reference / Evolutionary] · Result: [state]
+
+**Resolved by the prototype (not reopened in this design):**
+- [decision or behaviour] - [where it is recorded: findings.md / PRT card section]
+
+**Changed against the prototype:**
+- [what the production spec does differently] - [why: simulated in the prototype / rule from the register / feasibility / decided since]
+- none - if the production spec follows the prototype as built
+```
+
+- **What the prototype resolved.** Each item must trace to `findings.md` or the `PRT-` card. In Step 1.5, carry these in as settled - propose them back for a one-line confirmation, do not re-interrogate them. What `findings.md` lists under "what we did not test" and everything the card marks as simulated is **not** resolved and gets the normal interrogation. The 6 edge case categories are always walked: a prototype rarely exercises them.
+- **What changed against it.** Every point where Sections 1-3 depart from the prototype's flow, states or measurement, with the reason. For a **Reference** prototype this list is mandatory even when empty (`none`): Reference is binding for flow, states and measurement (not architecture), and an undocumented divergence is how it quietly stops being binding. Disposable: record divergences from the findings only. Evolutionary: the code is on a branch in the real repo - treat it as existing code in the Step 2 scan.
+- A local `rules.md` / `domain.md` entry that was promoted into the global registers is referenced by its `BR-` / entity link in Section 1 as usual, not from here.
+- The prototype folder is history (or, for a workbench, owned by `/pm-prototype`): **never edit it from this skill.** A change belongs in the Feature Card.
+- Under a non-English `artifact_language` the subsection header and the three bold labels stay English.
+
+---
+
 ## Step 0: Current state check
 
 Read the Feature Card at `/features/cards/[FEAT-ID].md`.
@@ -126,8 +182,9 @@ Read the Feature Card at `/features/cards/[FEAT-ID].md`.
 | decision_models.md | [exists / not found] | |
 | Dependencies met | [yes / no] | [list unmet deps] |
 | Open register items | [N open / none / no register] | [IDs - see Open-items lookup] |
+| Prototype | [promoted_from: PRT-... / reference block / none] | [Classification · Result - see Prototype carry-over] |
 
-Show the Open-items lookup block under the table.
+Show the Open-items lookup block under the table. If the Prototype row is not `none`, run the Prototype carry-over reads now and surface a `pending` or `Refuted within scope` result before going further.
 
 **Verdict:** [One sentence - ready to design or what is blocking]
 
@@ -458,6 +515,8 @@ sequenceDiagram
 - `[src/validators/ValidatorName.ts]` - [guard condition implementation]
 ```
 
+If the card carries `promoted_from:` or a prototype reference, close Section 3 with the `### Prototype carry-over` subsection (template and rules in the Prototype carry-over section above). Leave the card's `promoted_from:` field and prototype reference block exactly as they are.
+
 **4c-UX. Section 3b - UX/UI Context** (include only if feature has a UI component)
 
 ```markdown
@@ -536,6 +595,7 @@ Summary:
 - Sequence diagram: [N] actors, [N] steps, [N] alt paths
 - Acceptance Criteria: [N] ACs covering happy path + [N] edge cases + flag OFF
 - Edge Case Coverage: [6/6 resolved] - [N] by AC, [N] N/A, [N] OQ
+- Prototype carry-over: [N] resolved by the prototype, [N] changed against it   (only if the card came from / references a prototype)
 
 [Open-items lookup block - re-run now, not reused from Step 0]
 
@@ -567,6 +627,7 @@ Design Inspection checklist:
   [ ] Every AC-ID in the table exists in Section 2 and carries the matching [EC-XXX] tag
   [ ] Every BR-ID in Section 1 is enforced by at least one AC marked (enforces BR-ID)
   [ ] Open register items reviewed (lookup block below); no open BLK- for this feature
+  [ ] If promoted from / referencing a prototype: carry-over subsection present, every divergence from the prototype has a reason, Result is not pending
 
 [Open-items lookup block]
   [ ] Edge cases from decision table are covered
@@ -610,6 +671,12 @@ Commit: `spec([FEAT-ID]): edge case coverage backfill`
 **Open items:**
 - [ ] Open-items lookup shown at Step 0 and re-run at Step 5; register text never copied into the card
 - [ ] Open `BLK-` for this feature → not advanced toward `3_Ready_to_Build`
+
+**Prototype carry-over (only when the card has `promoted_from:` or a prototype reference):**
+- [ ] `meta.md`, `findings.md` and the `PRT-` card read in full before the interrogation; coverage stated; a missing source named, never reconstructed
+- [ ] `Result: pending` / `Refuted within scope` surfaced before designing
+- [ ] Section 3 carries `### Prototype carry-over` with both lists; resolved items trace to findings or the PRT card; Reference prototype → "Changed against the prototype" present even if `none`
+- [ ] `promoted_from:`, the prototype reference block and the prototype folder left untouched
 
 **Security dimension:**
 - [ ] `security_review` assessed in Step 1.5 against the 8 security areas, verdict stated with the area(s) touched

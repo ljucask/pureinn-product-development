@@ -244,7 +244,8 @@ State "Phase 3b partially done elsewhere" and list which artifacts exist.
 
 /pm-prototype          → A prototype to validate a flow, UX hypothesis, or concept before real build -
                           a tool-ready spec (Lovable / v0 / Figma Make) or built in-repo behind a
-                          review harness; result mode feeds back to the Feature Card / hypothesis register
+                          review harness; also a workbench to cut a wide prototype down to an MVP by phase;
+                          result mode feeds back to the Feature Card / hypothesis register
                          [Cross-phase - use anytime there is genuine uncertainty worth de-risking cheaply]
 
 /pm-stress-test        → Adversarial stakeholder pushback simulator (investor / CFO / board / CTO / DPO...)

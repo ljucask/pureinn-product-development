@@ -14,28 +14,25 @@ Set `title` in the config: it names the prototype in the chrome and in the brows
 
 Why byte-for-byte: the value is that the same keystroke hides the chrome and the same event format comes out of every prototype, so findings stay comparable. A harness re-invented per prototype has neither.
 
+## Files, continued
+
+| File | Copy byte-for-byte | What it is for |
+|---|---|---|
+| `serve.py` | yes | serves the prototype; saves what a reviewer sends into the project; reloads the prototype when a file changes |
+| `sync.py` | yes | writes the config's `features` from `../feature-cards/` |
+
 ## Use
 
 ```bash
-cp harness.html harness-client.js harness.config.js  <prototype>/build/
-cd <prototype>/build && python3 -m http.server 8000
-# open http://localhost:8000/harness.html
+cp harness.html harness-client.js harness.config.js serve.py sync.py  <prototype>/build/
+python3 <prototype>/build/serve.py          # prints the URL to open
 ```
 
-**Serve it with caching off, and threaded.** `python3 -m http.server` sends no `Cache-Control`, so browsers cache your config heuristically - you edit `harness.config.js`, reload, and see nothing changed. It is also single-threaded, and the harness holds the page plus an iframe plus the three side-by-side copies open at once, so one stalled connection wedges the whole server and every later request hangs with no error. Use this instead:
+`serve.py` is the standard library and nothing else. It binds to `127.0.0.1`, sends `no-store` so an edited config is picked up on reload, and is threaded - a prototype with a looping video holds a connection open, and a single-threaded server then hangs every other request with no error.
 
-```python
-# serve.py
-import http.server, socketserver
-class H(http.server.SimpleHTTPRequestHandler):
-    def end_headers(self):
-        self.send_header('Cache-Control', 'no-store, must-revalidate')
-        super().end_headers()
-class S(socketserver.ThreadingTCPServer):
-    allow_reuse_address = True
-    daemon_threads = True
-S(("", 8000), H).serve_forever()
-```
+In a prototype folder (one with `meta.md` beside `build/`) it serves the **folder**, so the harness can reach `feature-cards/`, and opens at `/build/harness.html`. Anywhere else it serves its own folder.
+
+Any static host will also do for showing it - the bridge below is simply absent there.
 
 **It must be served, not opened as `file://`.** The artifact runs in an iframe so the device switcher triggers its real media queries - inside a plain container they respond to the window, not the container, and "mobile" would change nothing while appearing to work. Browsers block cross-document access for `file://` frames, so a local server is the price of that honesty.
 
@@ -53,6 +50,74 @@ Then in every prototype page:
 
 The artifact never depends on the harness. Open a page directly and it still runs - it simply has no state switching, no scrub and no event capture.
 
+## Around something that already exists (Wrap mode)
+
+The harness does not need the prototype to know about it.
+
+1. Copy `harness.html`, `harness-client.js`, `harness.config.js`, `serve.py` and `sync.py` into the folder the app's pages are served from - or into the folder **above** it, with `src: 'app/index.html'`, which leaves the app's own folder untouched.
+2. In the config, list the pages under `screens` (`src` relative to `harness.html`) and remove what does not apply. For pages that render no states, set `states: []` and the State control goes away. Write `features` by hand, with `on` selectors - there are no cards for `sync.py` to read.
+3. `python3 serve.py`.
+
+**The pages must be on the same origin as the harness.** The shell reads the artifact's document to place notes, marks, labels and the view's rules; across origins it can show the page and nothing else, and it says so when such a screen is opened. A deployed app at another address has to be served through the same host, or copied beside the harness.
+
+What works on pages that are left exactly as they are, and what needs one line added to them:
+
+| Works untouched | Needs `<script src="harness-client.js">` in the page |
+|---|---|
+| screens, device widths, mockup, side by side | **states** - the page has to render them |
+| notes, marks, screenshots, the report | **variants**, **time**, **response speed** |
+| author's labels and the *What is real* screen | scenarios that scroll, and scrolling in a presentation |
+| the feature list, phases, user types and versions through `on` selectors | the event log of what was clicked inside the page |
+| scenarios and tour steps that click a declared element | |
+
+So an untouched app gets the review layer and the feature view, not the simulation. Adding the client is one line; making the page answer `Harness.on('state', ...)` is the real work, and it is the same work as on any prototype.
+
+A page served from somewhere else than its harness names the harness before loading the client: `<script>window.HARNESS_ORIGINS = ['https://review.example.com'];</script>`.
+
+## The bridge: between the harness and the code
+
+With `serve.py` behind it, three things work that a static host cannot give:
+
+| | |
+|---|---|
+| **Save to project** | the primary action in *Send notes*. Writes `review/notes/<time>-<who>.json` and appends a readable entry to `review/notes.md`. Whoever works on the prototype in the repo reads them there - nothing to copy or paste |
+| **Edit description** | on a feature's card. Saves the new description and notes to `review/proposals.json` as a **proposal**; the card shows it marked *Proposed - not applied yet*. Nothing else changes until `sync.py --apply` |
+| **Live reload** | a change under the artifact reloads the frame and keeps the screen, state and view; a change to the config reloads the page onto the same place. Never while a note is being written |
+
+**It writes only into `review/`, and never from a path in a request** - file names are built on the server. Every write needs the `X-Harness: 1` header and a `Host` of this machine: a page on another site cannot send that header without a preflight the server does not answer, and a rebound DNS name does not carry this Host. Dot-files are not served, and there are no directory listings.
+
+The server listens on port 8931 unless given another, takes at most 8 MB in one save, follows no symlink out of the folder, and refuses a request that another site made.
+
+`review/` holds reviewers' names, notes and screenshots. `serve.py` does not serve it as files, and **it must not be published with the prototype**: when the folder goes to a host, leave `review/` behind.
+
+Nothing a reviewer sends can shape `review/notes.md` beyond its own line - every field beside the note text is flattened to one line, because that file is read by an agent as well as a person.
+
+The bridge is looked for only on `localhost` / `127.0.0.1`. A hosted harness has no `serve.py` behind it, and probing for one would put an error in every reviewer's console.
+
+### What the bridge answers
+
+For a script, or an agent checking its own work, the routes are plain HTTP on the same address:
+
+| | | |
+|---|---|---|
+| `GET /__harness/ping` | is the bridge here | `{ bridge: 1, prototype, prefix, writes }` |
+| `GET /__harness/changes` | newest change among the shell files and among everything else | `{ shell, art }` |
+| `GET /__harness/proposals` | every proposal, with its `status`: `open`, `superseded`, `applied` | a list |
+| `POST /__harness/notes` | save a review | `{ from, asked, overall, notes: [...], marks: [...] }` → `{ ok, file }` |
+| `POST /__harness/proposal` | propose a description | `{ feature, field: "desc" \| "spec", value, was, by }` → `{ ok, proposal }` |
+
+Both `POST`s need `Content-Type: application/json` and `X-Harness: 1`.
+
+## The feature list is generated
+
+```bash
+python3 build/sync.py           # rewrite `features` in harness.config.js from ../feature-cards/
+python3 build/sync.py --check   # exit 1 if they no longer agree
+python3 build/sync.py --apply   # accept the open proposals into the cards, then rewrite
+```
+
+It rewrites only what sits between its two markers. `phases`, `roles`, `versions` and `view` stay hand-written: they are asked once per project. A `cut` card is in no view and is listed on the feature map with its `reason:`; a card with no phase is reported, and its feature is shown in every view under *No phase* until someone decides. With no `feature-cards/` folder there is nothing to generate and the config is left alone.
+
 ## What the client gives the artifact
 
 | | |
@@ -62,13 +127,37 @@ The artifact never depends on the harness. Open a page directly and it still run
 | `Harness.log(name, detail)` | one event into the local log. Never a network call |
 | `Harness.nextWeekday(day, hour)` | time-relative fixture helper - `nextWeekday(3, 20)` is the next Wednesday at 20:00 |
 | `Harness.ago(minutes)` | a timestamp in the past, relative to now |
-| `await Harness.wait()` | a simulated delay, scaled by the latency setting - zero when it is off |
+| `await Harness.wait(base)` | a simulated delay, scaled by the response-speed setting - zero when it is instant. `base` is your own duration in ms; left out, a short realistic one is used |
+| `Harness.has(id)` | is this feature in the current view? Always true outside the harness |
+| `Harness.version(group)` | which option of a version group is showing |
+| `Harness.embedded` | true when the page is running inside the shell |
+
+`kind` is one of `state` · `variant` · `time` · `latency` · `role` · `phase` · `features` · `versions`. `Harness.on` returns a function that unsubscribes.
+
+## Addresses
+
+Everything the harness is showing can be opened by link - that is what `Copy this view` builds, and it is the quickest way to point someone, or an agent's user, at a change.
+
+| Parameter | |
+|---|---|
+| `screen` | a screen's `src` from the config |
+| `state` · `variant` · `device` | one of the declared states / variants; `desktop`, `tablet` or `mobile` |
+| `t` | the time value on that screen |
+| `mockup=1` | with the device frame |
+| `role` · `phase` | a user type id, a phase id, or `all` |
+| `fx` | features switched by hand: `PRT-A-001:1,PRT-A-002:0` |
+| `ver` | version groups: `hero:B` |
+| `review=1` | open as a reviewer, with the brief |
+| `m` | the author's line for that reviewer - it is in the address, so nothing private |
+| `x` | generated screens left out of a review link: `overview,instructions` |
+
+A value the config does not declare is ignored.
 
 **Never hardcode a date in a fixture.** A prototype that has visibly rotted between the build and the showing discredits itself for free.
 
 ## Keys
 
-`h` hides and restores the menus. Arrow keys, Enter and Escape drive the screen panel while it is open. In hidden mode the artifact is shown exactly as a user would see it - no islands, no notes, no device frame, no notch.
+`h` hides and restores the menus. Arrow keys, Enter and Escape drive the screen panel while it is open. In hidden mode the artifact is shown exactly as a user would see it - no bars, no side panels, no notes, no device frame, no notch.
 
 **The viewport does not change.** Only a desktop view goes full-bleed - there the window *is* the viewport, so white to the edges is honest. A phone or tablet keeps its own size, because otherwise "hide chrome" would silently swap the viewport under review for a different one.
 
@@ -108,7 +197,7 @@ A prototype hides its own behaviour. The journey that only starts when someone p
 
 The usual fix is a demo panel drawn **inside** the artifact. That is scaffolding shipped in the product's own UI, and it is exactly what this harness exists to take out - it survives into screenshots, into the handover, and sometimes into production.
 
-So a screen declares what can be done on it, in `activities`, and the shell lists them under **`Try it`** in the dock. The group hides itself on a screen that declares none, and the button carries the count.
+So a screen declares what can be done on it, in `activities`, and the shell lists them under **Scenarios** in the bottom bar. The group hides itself on a screen that declares none, and the button carries the count.
 
 | Kind | Written as | What it does |
 |---|---|---|
@@ -162,7 +251,7 @@ Switches are real switches (`role="switch"`), everything is reachable by keyboar
 
 **A switch by hand is marked *Shown manually***, and a feature the user type hides cannot be switched at all - its switch is disabled and says why. Two presses never stack: the first undoes a hand switch, and only if the feature is then still the wrong way round does it set a new one.
 
-**What travels.** `Copy this view` and `Invite to review` carry role, phase, hand switches and versions. A comment and every logged event record the role and phase they were made in. `Reset` returns to the config's `view`.
+**What travels.** `Copy this view` and `Invite to review` carry role, phase, hand switches and versions. A comment and every logged event record the role and phase they were made in. `Reset view` returns to the config's `view`.
 
 **In script** - for what a stylesheet cannot do:
 
@@ -181,9 +270,9 @@ A tour step may set `role` and `phase`, so a presentation can walk the MVP and t
 
 ## One surface at a time
 
-The dropdowns, the situation panel, the view panel, the notes panel and the screen panel are all ways of asking the harness something, and two of them open at once is two answers competing for the same corner of the screen. Opening any one closes the rest.
+The menus, the time-and-speed panel, the feature column, the note register, the send sheets and the screen panel are all ways of asking the harness something, and two of them open at once is two answers competing for the same corner of the screen. Opening any one closes the rest.
 
-**Two rules, and they hold for every surface without exception.**
+**Two rules, and they hold for every surface. The single exception is named in the first.**
 
 1. **Only one is open at a time.** Opening the screen panel, the feature column, time and speed, the note register, a menu or a send sheet closes whatever was open before it. Two things open at once is two things to close, and the second was nearly always opened to replace the first. The one case kept: the *User type* menu, which is a control for the feature list and leaves it open.
 2. **A press outside closes it, and the prototype counts as outside.** The artifact is a separate document, so the shell listens inside it as well as around it.
@@ -232,23 +321,23 @@ Every disclosure note carries `real:`, what the element would be in production. 
 
 **The bottom bar is the top bar's twin**: the same height, the same white, one row. Left to right - the view, then *State*, *Scenarios*, *Time and speed*, *Share*, then *Add note*, *Mark* and *Send notes* at the right.
 
-No control has a label above it; each carries its own word. The one exception is *Phase*, because a row of phase names does not say what it is. When the bar narrows - a smaller window, or a sidebar open - *Scenarios*, *Time and speed*, *Share* and *Mark* fall back to their icons. *State*, *Add note* and *Send notes* never do: a reader has to be able to find those by name.
+No control has a label above it; each carries its own word. The one exception is *Phase*, because a row of phase names does not say what it is. When the bar narrows - a smaller window, or a sidebar open - *Scenarios*, *Time and speed*, *Share* and *Mark* fall back to their icons. *State*, *Add note* and *Send notes* keep their words through that step: a reader has to be able to find those by name. Only at the last one - a small laptop with a side panel open, the bar under 940px - does every control become its icon with its name as the tooltip, because there the choice is between words and reaching the controls at all. The feature column narrows on a small window for the same reason.
 
 *Send notes* stays visible and keeps its count. Without a backend nothing reaches you until it is pressed.
 
-Spotlight moved up beside `Present`: it is a way of showing someone something, not a way of recording anything.
 
-**Notes have their own island**, bottom right, on a warm ground rather than the cool glass - it is a different job from driving the prototype and it looks like one: *Mark something* (pin, box, marker, spotlight), *Write one* (an unanchored note, the overall note, the editor) and *When you finish*. They had outgrown being a group inside the bar that drives the prototype.
 
-**Not every note points at something.** `Note` writes one about the screen with no anchor - "this screen has no way back" does not belong pinned to an arbitrary button. And after a box or a marker stroke, a bubble offers *Add a note here* for a few seconds and then gets out of the way.
+**Notes sit at the right end of the bottom bar**: `Add note ▾` (*Something I click*, *This screen*, *The whole prototype*), `Mark ▾` (*Box*, *Marker pen*) and `Send notes`, with *View all notes* under the caret beside it.
+
+**Not every note points at something.** `Add note ▾` → `This screen` writes one about the screen with no anchor - "this screen has no way back" does not belong pinned to an arbitrary button. And after a box or a marker stroke, a bubble offers *Add a note here* for a few seconds and then gets out of the way.
 
 **`View all notes`** at the foot of the rail opens the note editor on the right: every note in one place, filtered by kind, severity and text, editable and deletable. Clicking a row goes to where that note lives - its screen, its state, its device - and flashes its pin. **Edit happens in the panel**, not back in the bubble; and a note being written in the bubble can carry on there via the small expand icon beside its close control. The rail is a notepad; this is the register. While it is open the rail steps aside.
 
-**Closing a card rolls it up; it does not delete it.** Clicking the strip or its pin brings it back. Only the `Notes` toggle removes the layer, and that state is not carried in a shared link - so no link can hand on a screen where an invented number has lost its label.
+**Closing a card rolls it up; it does not delete it.** Clicking the strip or its pin brings it back. Only the `Labels` toggle in the top bar removes the author's labels - `Notes` beside it does the same for the reviewer's notes and marks - and that state is not carried in a shared link - so no link can hand on a screen where an invented number has lost its label.
 
 A selector that matches nothing renders as an orphan card with a warning instead of vanishing, so a renamed class is visible rather than silent.
 
-## Marks and the spotlight
+## Marks
 
 A note explains; a **mark points**. Some things cannot be said with a pin - *this region*, *these three words*, *the gap here* - so there are two marking tools beside `Add note`:
 
@@ -257,11 +346,11 @@ A note explains; a **mark points**. Some things cannot be said with a pin - *thi
 | | |
 |---|---|
 | **Box** | drag a rectangle around something |
-| **Marker** | drag across it, like a highlighter |
+| **Marker pen** | drag across it, like a highlighter |
 
 Both belong to a screen + state + device exactly as a comment does - a box around a narrow layout means nothing on a wide one. Hover a mark to remove it.
 
-**Spotlight** is the live version of the same instinct - *look here*, while someone is watching. Everything but the pointer steps back. It is deliberately **not saved**: a gesture, not a record.
+Switching `Notes` off hides marks along with the notes, and choosing a mark tool switches them back on - drawing something invisible is not a feature.
 
 ## Placing a comment
 
@@ -302,7 +391,11 @@ The reviewer's name is asked in the review brief, and - because most notes get w
 
 Comments live in that reviewer's own `localStorage`. **Without a backend they reach you only when the reviewer presses Send**, which is why that control is permanent, counts what is waiting, and nudges once after the first comment. `Send` copies a formatted summary to the clipboard, opens a prefilled mail when `review.to` is set, and saves a text file. Set `review.submitTo` to an endpoint and it posts instead - the only reason to do that is a run with several reviewers where you cannot depend on each of them remembering.
 
-Open the harness with **`?review=1`** and the reviewer gets the task first, then three steps, then Start. Send it that way; the share button preserves the flag.
+Open the harness with **`?review=1`** and the reviewer gets the task first, then three steps, then Start. Send it that way; `Copy this view` preserves the flag.
+
+**What leaves the browser, and when.** Nothing, until a reviewer acts. *Copy notes*, *Email* and the file exports carry the notes only. *Send to the author* - present only when `review.submitTo` is set - also carries the session's event log, and says so beside the button. *Save to project* writes to this machine through `serve.py`. The line an author adds in *Invite to review* travels in the link itself, so it is in the browser history and the host's access log of whoever opens it: do not put anything private in it.
+
+**The shell and the artifact only talk to each other.** The shell takes messages only from this origin and the origins of the screens its config declares; the artifact's client takes them only from its parent window, and only when the parent is its own origin or one the page names in `window.HARNESS_ORIGINS` before loading the client. A reviewer who follows a link out of the prototype has put a stranger's page in the frame, and it gets no channel.
 
 Reviewers never see each other's comments. For an async test with real users that is required, not a shortcoming - a shared thread contaminates the sample the moment the second person reads the first.
 
@@ -313,8 +406,8 @@ Reviewers never see each other's comments. For an async test with real users tha
 | **Grid** | cycles off → 8px → 64px. 8 asks whether an element sits on the rhythm, 64 whether the layout does. Drawn in the shell over the frame - measured from the iframe itself, so inside a device mockup it stops at the screen and takes its corner radius rather than bleeding over the bezel |
 | **All three** (in the device switcher) | THIS screen on desktop, tablet and phone at once, each at its own natural size and all at one scale, bottom-aligned - a product shot, not three columns. It is a choice of *device*, so it lives beside the three it replaces rather than as a control of its own |
 | **Screens** | ALL screens at the width the device switcher is set to |
-| **Simulate** | opens the simulation panel - the time axis with **play** and reset, and latency. Time is something being *run*, not a value being picked, and the panel is where the next dimensions go (audience, data volume, locale) without the bar growing a row. The chip shows the current value; the panel remembers whether it was open |
-| **Latency** | `none` / `realistic` / `slow`, published to the artifact. `await Harness.wait()` resolves immediately when it is off and costs nothing to call, so a prototype can be honest about waiting without being slow to build. A prototype that answers everything instantly teaches the wrong expectation |
+| **Time and speed** | opens the simulation panel - this screen's time axis with **play** and reset, and the response speed. Time is something being *run*, not a value being picked. The button shows the current time value where the screen declares an axis |
+| **Response speed** | *Instant* / *Normal* / *Slow* in the panel; the artifact receives `none` / `realistic` / `slow`. `await Harness.wait()` resolves immediately when it is instant and costs nothing to call, so a prototype can be honest about waiting without being slow to build. A prototype that answers everything instantly teaches the wrong expectation |
 | **Present** | full screen, chrome down to prev / pause / next, each slot sweeping that screen's time across its range and scrolling the page through its own height |
 
 A **pointer is on screen for the whole run**, resting inside the artifact and travelling to each declared target before it taps, so a run reads as someone using the prototype rather than as screens changing on their own.
@@ -327,11 +420,13 @@ A **pointer is on screen for the whole run**, resting inside the artifact and tr
 
 **A note cannot be placed in either multi view.** A pin belongs to one frame; with three or six on screen and no rail, `Add note` is disabled and says why.
 
+**Each step declares what it shows, and says nothing about what it does not.** A step's `role` and `phase` hold for that step only; one that names neither is shown in the view the author had before pressing `Present`, and that view comes back when the tour ends. A step with a `click` lasts at least about three seconds whatever its `hold`, because the pointer has to aim, travel, pause and press.
+
 **A presentation may drive the artifact; it must not invent input.** With no `tour` it walks the screens in order at `present.hold` ms each. Declare a `tour` when the demo has a story, and each step says exactly what is shown - `screen`, `state`, `variant`, `time`, `scroll`, `click`, `say`, `hold`. `click` is the only thing that touches the artifact, it is declared rather than guessed, and the element is ringed before it fires. Arrow keys step, space pauses, Escape exits.
 
 ## Presenting it
 
-Press play and the harness runs the prototype on its own. With no `tour` it walks the screens in order; declare one and each step says exactly what is shown - screen, state, variant, a fixed time, how far to scroll, and one selector to click.
+Press `Present` and the harness runs the prototype on its own. With no `tour` it walks the screens in order; declare one and each step says exactly what is shown - screen, state, variant, a fixed time, how far to scroll, and one selector to click.
 
 **A tour that only scrolls narrates the prototype. A tour that clicks uses it.** Where a declared click lands on a link, the screen changes because it was pressed, not because the tour jumped there, and the shell follows the artifact the same way it does when a reviewer clicks. Name the screen on the following step anyway: it costs nothing when the click already took you there, and it recovers the walk if a click ever misses.
 
@@ -353,11 +448,11 @@ Without this the copies sat frozen at the top, which made side by side good for 
 
 The sheet offers **one primary action and one beside it**, with the rest as quiet links - and which is primary follows whose hands it is in: a reviewer wants to send (Copy, then Email), a maker wants the report. Four buttons of equal weight is a menu, not a choice.
 
-The sheet behind `Return notes` does not list the notes again - the rail already shows them. It carries the covering note (or a field to write one, if it is still missing) and a single control to look the rest over before they go.
+The sheet behind `Send notes` does not list the notes again - the rail already shows them. It carries the covering note (or a field to write one, if it is still missing) and a single control to look the rest over before they go.
 
-The sheet separates **Send it back** (Copy · Email · the endpoint) from **Or keep a copy** (PDF report · Text · CSV · JSON). Getting the notes to a person and keeping a copy of them are not the same act. CSV is one row per note - severity, screen, state, device, anchor, author, time - and opens in a spreadsheet with a BOM so Excel reads it as UTF-8. JSON carries everything, marks included.
+The sheet separates **Send your notes** (Save to project · Send to the author · Copy notes · Email - each present only when it can work) from **Or keep a copy** (PDF report · Text · CSV · JSON). Getting the notes to a person and keeping a copy of them are not the same act. CSV is one row per note - severity, screen, state, device, anchor, author, time - and opens in a spreadsheet with a BOM so Excel reads it as UTF-8. JSON carries everything, marks included.
 
-`Return notes` → **PDF report** assembles everything into one page and hands it to the browser's print dialogue, which is where a PDF comes from without a library:
+`Send notes` → **PDF report** assembles everything into one page and hands it to the browser's print dialogue, which is where a PDF comes from without a library:
 
 It is styled in the tool's own language - the coral-to-gold accent, the mono labels, the same cards - so what lands in someone's inbox is recognisably the thing they were looking at.
 
@@ -375,8 +470,8 @@ Three conveniences the contract does not require, but that a reviewer expects fr
 | | |
 |---|---|
 | **Mockup** | A device frame around the artifact, modelled on the real hardware rather than a generic rounded rectangle: iPhone with its Dynamic Island and side buttons, iPad with an even bezel and camera, MacBook with a camera notch, browser chrome and the base under the lid. Off by default: it is presentation, and a usability test does not want it |
-| **Share** | Copies a link carrying the whole state - screen, state, variant, time, device, mockup. The recipient opens *exactly* what you were looking at, and can keep clicking. For a prototype that beats sending a static image |
-| **Export PNG** | Saves the current screen, with the mockup if it is on - **the same frame, cut-outs included**, because a mockup that loses its notch on export is a different mockup - and with any **marks** drawn on it, but **never** the notes. The split is what each one is for: a note explains and travels as text, so the report and the CSV carry all of it; a mark only says "this bit", and a mark left out of the picture says nothing at all |
+| **Share ▾ → Copy this view** | Copies a link carrying the whole state - screen, state, variant, time, device, mockup. The recipient opens *exactly* what you were looking at, and can keep clicking. For a prototype that beats sending a static image |
+| **Share ▾ → Screenshot** | Saves the current screen as a PNG, with the mockup if it is on - **the same frame, cut-outs included**, because a mockup that loses its notch on export is a different mockup - and with any **marks** drawn on it, but **never** the notes. The split is what each one is for: a note explains and travels as text, so the report and the CSV carry all of it; a mark only says "this bit", and a mark left out of the picture says nothing at all |
 
 **The honest limit on export.** No browser API rasterises another document, so the artifact's DOM is cloned into an SVG foreignObject with its stylesheets inlined. That works, and it is fragile: cross-origin images, webfonts and canvas content will not come through. Every failure drops into capture mode - chrome and notes hidden, a message telling you to take a system screenshot - rather than saving something silently wrong.
 

@@ -58,7 +58,7 @@ pureinn-workspace/[slug]/
     onboarding/                                  ← pm-onboarding (role-specific briefs)
   meetings/                                      ← pm-meeting (per-meeting notes, created on demand)
     prep/                                        ← pm-discovery-interview (session agendas, created on demand)
-  prototypes/                                    ← pm-prototype (spec files + in-repo prototype folders, created on demand)
+  prototypes/                                    ← pm-prototype (spec files + in-repo prototype folders with build/ and review/, created on demand)
   stress-tests/                                  ← pm-stress-test (pushback rehearsals + prep summaries, created on demand)
   root-cause/                                    ← pm-root-cause (anomaly investigations, created on demand)
 ```

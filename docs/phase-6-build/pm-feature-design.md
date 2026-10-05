@@ -4,8 +4,8 @@
 
 **Phase:** 6 - JIT Delivery  
 **Agent mode:** `decision` - drafts, then requires your review before finalizing  
-**Version:** 2.7.0  
-**Triggers:** feature design, JIT design, design by feature, sequence diagram, feature spec, security review, test types, mutex tags, edge cases, edge case coverage, edge case backfill, Phase 6
+**Version:** 2.8.0  
+**Triggers:** feature design, JIT design, design by feature, sequence diagram, feature spec, security review, test types, mutex tags, edge cases, edge case coverage, edge case backfill, promoted from prototype, prototype carry-over, Phase 6
 
 ---
 
@@ -57,7 +57,7 @@ Sets status to `2_Spec_Done` (or `2b_In_Design` for frontend features awaiting F
 - `pm-stripe` - Impact Analysis reads BR-IDs from Section 1
 - `pm-feature-card` - populates the card sections
 
-**Related skills:** `pm-feature-viability`, `pm-entity-registry`, `pm-business-rules-library`, `pm-decision-model`, `pm-process-flows`, `pm-feature-card`, `pm-stripe`, `pm-open-questions`
+**Related skills:** `pm-feature-viability`, `pm-entity-registry`, `pm-business-rules-library`, `pm-decision-model`, `pm-process-flows`, `pm-feature-card`, `pm-stripe`, `pm-open-questions`, `pm-prototype`
 
 ---
 
@@ -66,6 +66,31 @@ Sets status to `2_Spec_Done` (or `2b_In_Design` for frontend features awaiting F
 A genuine judgment call, legacy-vs-code divergence, or concrete build blocker surfaced during Discovery Interrogation is logged directly in `domain/open_questions.md` (Live Register 5, `pm-open-questions`) - Type: Question / Divergence / Blocker. A Subtask is different: it's a nuance for the developer to handle during build, not something nobody has decided yet - keep the two separate.
 
 **Open items are pulled into view, not copied.** At the start of the run (Step 0) and again at the design review (Step 5) the skill looks up every Open entry in the register that names this FEAT-ID and shows it as ID, heading, Type and Priority. An open `BLK-` keeps the feature from `3_Ready_to_Build`; open `OQ-`/`DIV-` entries are shown, and the interrogation tries to resolve them. The card itself never lists them.
+
+---
+
+## Prototype carry-over
+
+Applies only when the Feature Card carries `promoted_from: PRT-[NAME]-NNN` or a prototype reference block - both written by `pm-prototype`, both left untouched here.
+
+**Read first, before the interrogation:** the prototype's `meta.md` (purpose, classification, decision, what is simulated), its `findings.md` (what was observed, what was not tested, known distortions) and the `PRT-` card. If any of them cannot be found, the skill says so and continues without carry-over - it never reconstructs what the prototype "probably" showed.
+
+**`Result:` is checked before designing:**
+
+| Result | Effect on the design run |
+|---|---|
+| `pending` | Surfaced before anything else - record the result via `/pm-prototype` first, or design with nothing treated as resolved |
+| `Supported within scope` | Resolved for the stated scope only |
+| `Refuted within scope` | Flagged before designing |
+| `Prototype or study failure` / `Inconclusive` | Nothing learned - nothing treated as resolved |
+| Workbench prototype (no verdict) | Flow and scope decisions are settled; they are stakeholder alignment, not user evidence |
+
+**Two things are recorded** in a `### Prototype carry-over` subsection of Section 3:
+
+- **Resolved by the prototype** - so the JIT design does not reopen a settled question. Each item traces to `findings.md` or the `PRT-` card. Anything the prototype simulated or did not test still gets the full interrogation, and the 6 edge case categories are always walked.
+- **Changed against the prototype** - every point where the production spec departs from the prototype's flow, states or measurement, with the reason. Mandatory for a **Reference** prototype even when the answer is `none`: an undocumented divergence is how a Reference prototype quietly stops being binding.
+
+The prototype folder is never edited from this skill - a change belongs in the Feature Card.
 
 ---
 

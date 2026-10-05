@@ -1,6 +1,6 @@
 ---
 name: pm-prototype
-description: Cross-phase prototyping engine. Takes a scoped chunk of the product (a feature, a PRD initiative, the whole product, or any slice) and gets a prototype of it built by one of two paths - compiled as a tool-ready spec for an external tool (Lovable, v0/Vercel, Base44, Figma Make), or built in-repo by a coding agent against a harness that carries the states, fixtures, per-screen time and latency, per-screen activities that say what can be done on each screen so scaffolding never ships inside the artifact's own UI, variants, device widths, an honesty layer that labels what is simulated, reviewer comments with a no-backend return path, and a feedback report. Gate-checks whether a prototype is worth it at all, then decides depth and path from who it is for and which uncertainty it resolves. On re-run, captures the result against a precommitted threshold and feeds it back to the Feature Card / hypothesis register. Also serves as a workbench: a prototype built wider than the MVP, then cut down by roadmap phase in the harness (seen as each user type, version groups per screen or element, features switched on and off, a view limited to one phase) and handed to developers as a clickable reference. Use anytime you want to validate, shape or scope before real build.
+description: Cross-phase prototyping engine. Takes a scoped chunk of the product (a feature, a PRD initiative, the whole product, or any slice) and gets a prototype of it built by one of two paths - compiled as a tool-ready spec for an external tool (Lovable, v0/Vercel, Base44, Figma Make), or built in-repo by a coding agent against a harness that carries the states, fixtures, per-screen time and latency, per-screen activities that say what can be done on each screen so scaffolding never ships inside the artifact's own UI, variants, device widths, an honesty layer that labels what is simulated, reviewer comments with a no-backend return path, and a feedback report. Gate-checks whether a prototype is worth it at all, then decides depth and path from who it is for and which uncertainty it resolves. On re-run, captures the result against a precommitted threshold and feeds it back to the Feature Card / hypothesis register. Also serves as a workbench: a prototype built wider than the MVP, then cut down by roadmap phase in the harness (seen as each user type, version groups per screen or element, features switched on and off, a view up to a chosen phase) and handed to developers as a clickable reference. Use anytime you want to validate, shape or scope before real build.
 license: MIT
 metadata:
   agent-mode: decision
@@ -61,7 +61,7 @@ This file is the flow. Detail that only one path needs lives in `references/` ne
 | `prototype-folder.md` | The folder an in-repo prototype lives in, `targets:`, provenance for `context/`, the decision state | **Step 3b - created before the build**, updated at 7, closed at 8 |
 | `promotion.md` | Classification before the first line of code; kill and promotion once there is a decision | Step 3b, then Step 8 |
 | `workbench.md` | The second purpose - build wide, cut down by roadmap phase, hand over. Roles, phases, features and versions in the harness | Step 2 finds the purpose is shaping and scoping, not testing |
-| `scaffold/` | The harness itself - copy `harness.html` and `harness-client.js` byte-for-byte, edit only `harness.config.js`. `HISTORY.md` is for changing the harness, not for using it | on the in-repo path, and in Wrap mode |
+| `scaffold/` | The harness itself - copy `harness.html`, `harness-client.js`, `serve.py` and `sync.py` byte-for-byte, edit only `harness.config.js`. `serve.py` serves it and saves review notes into the project; `sync.py` generates the feature list from the cards. `scaffold/README.md` is the manual for all of it. `check.py` and `HISTORY.md` are for changing the harness and are not copied. `HISTORY.md` is for changing the harness, not for using it | on the in-repo path, and in Wrap mode |
 
 ---
 
@@ -147,7 +147,7 @@ hard dependency for runs that need nothing from it.
 **Detect mode - three modes, plus one check that applies to all of them:**
 
 - **Wrap mode** - the user already has the thing. A built prototype, a running
-  app, a set of HTML screens, a deployed URL, and what they want is the review
+  app, a set of HTML screens, and what they want is the review
   layer around it: *"I have an app, put the harness on it"*, *"I need reviewers
   to comment on this"*. **Go straight to `references/in-repo-loop.md` § the
   harness and Step 7b.** Do not run the intent gate, do not ask about audience
@@ -166,7 +166,7 @@ hard dependency for runs that need nothing from it.
 
 **Wrap mode needs no workspace and no Pureinn project.** It is the one entry
 someone reaches from a bare install, and it must stay that way: the harness is
-three files copied next to what they already have, plus a config naming their
+the harness files copied next to what they already have, with a config naming their
 screens. If there is a workspace, write the prototype reference back as Step 7
 describes; if there is not, say where the harness landed and stop there.
 
@@ -368,16 +368,18 @@ The block under point 2 is the shape of the record on both paths.
 
    **A prototype-or-study failure cascades nowhere.** It updates nothing downstream, because nothing was learned about the product - it says the instrument needs fixing and the test re-running. **Inconclusive** cascades nothing either; it schedules another round or a different method.
 
+   **One line is the exception on all four states: the Feature Card's own `Result:`.** It always records the state the prototype ended in, so it stops reading `pending` - `pm-stripe` will not pass a card whose prototype result is still pending, and a failed instrument is a result to record even though it changes nothing about the product.
+
 4. **Before a kill is recorded, check it is defensible** - all five conditions in `references/hypotheses.md` § 4. Before that bar is met, "iterate the representation" is usually the more accurate conclusion than "the idea is wrong".
 
-**Workbench:** none of points 1-4 apply - there is no verdict to give. Record the decisions instead: who decided, which feature went into which phase and why, what was cut and why. Then promote phase by phase per `references/workbench.md` § Hand over.
+**Workbench:** none of points 1-4 apply - there is no verdict to give. Record the decisions instead, in `findings.md` under `## Decisions`: who decided, which feature went into which phase and why, what was cut and why. Set `Decision: promoting` in `meta.md` once the first phase is handed over. Then promote phase by phase per `references/workbench.md` § Hand over.
 
 5. **Act on the decision** - `references/promotion.md`. The verdict is what the evidence says; the decision is what you do about it, and they are not the same field.
 
    | Decision | What happens |
    |---|---|
    | **Kill** | findings kept, code not. Folder deleted or archived with the reason; production registers untouched; an Evolutionary branch closed explicitly rather than abandoned |
-   | **Promote** | layer by layer - thin card becomes a Feature Card with a real `FEAT-ID` and `promoted_from:`; local rules and entities move into the global registers; the folder then **freezes as history and is never edited again** |
+   | **Promote** | layer by layer - thin card becomes a Feature Card with a real `FEAT-ID` and `promoted_from:`; local rules and entities move into the global registers; the folder then **freezes as history and is never edited again** (workbench exception: it is promoted a phase at a time and stays live until its last phase ships) |
    | **Partial** | promote what earned it, kill the rest **explicitly**, and record which was which. A partial decision that does not say what was dropped is an open decision wearing a decided label |
 
 ---
@@ -397,6 +399,7 @@ The block under point 2 is the shape of the record on both paths.
 - [ ] Path stated out loud with its reason before building
 - [ ] External path only: compiled build prompt following the tool's construction rules (`references/external-tools.md`; Lovable rules if Lovable)
 - [ ] In-repo path only: harness in place per `references/in-repo-loop.md`, all four states reachable
+- [ ] In-repo path only: served with `build/serve.py`; `review/notes.md` and open proposals read at the start of every session and each one routed; no proposal applied without the author's yes; `sync.py --check` passing at the end
 - [ ] Design direction chosen, with the rejection named - not defaulted into
 - [ ] Prototype language asked, and not confused with `artifact_language`
 - [ ] No lorem ipsum on any task path; fixtures time-relative rather than dated

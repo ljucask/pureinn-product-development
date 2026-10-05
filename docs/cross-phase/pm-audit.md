@@ -4,8 +4,8 @@
 
 **Phase:** Cross-phase  
 **Agent mode:** `synthesis` - runs fully autonomously  
-**Version:** 1.5.0  
-**Triggers:** audit, health check, consistency check, workspace check, framework drift, version migration, fix inconsistencies, sanity check, naming check, anti-pattern, strategic consistency, cross-artifact check, re-check
+**Version:** 1.6.0  
+**Triggers:** audit, health check, consistency check, workspace check, framework drift, version migration, fix inconsistencies, sanity check, naming check, anti-pattern, strategic consistency, cross-artifact check, re-check, prototype check, open prototype, PRT id leak
 
 ---
 
@@ -54,6 +54,13 @@ Checks include:
 - Framework version drift (artifacts missing fields introduced in newer Pureinn versions)
 - **Edge Case Coverage** - a card at `2_Spec_Done` or later without the table (pre-5.62.0) is reported and routed to `/pm-feature-design [FEAT-ID] --edge-cases`, active cards first; the audit never writes the missing ACs itself. For cards that have the table: exactly the 6 canonical rows, no empty/TBD cell from `3_Ready_to_Build` on, no `N/A` without a feature-specific reason, and every AC-ID / OQ-ID in it resolves (a dangling one is P0, same as a BR-ID)
 - **Open questions hygiene** - open items have exactly one home, `domain/open_questions.md` (Live Register 5). Flags an "Open Questions" section reappearing in PRD/Roadmap/Feature Cards/reconcile reports, duplicated open-item text, or an `OQ-`/`DIV-`/`BLK-` ID that doesn't resolve to a register entry.
+- **Prototype hygiene** - report-and-route, never auto-fixed. Runs on a whole-workspace run and on `/pm-audit features`; skipped when there is no `prototypes/` folder. Four checks, each routed to `/pm-prototype`:
+  - a prototype folder whose `meta.md` says `Decision: open`, reported with its purpose and its age from the `Created` date (no date - no age, never estimated) - P2
+  - a `PRT-` ID in a production register (`feature_list.md`, a Feature Card `id` / file name / dependency, business rules, decision models, entities). It must never be there; the only legitimate places are a card's `promoted_from:` value and the prototype reference path - P1
+  - a Feature Card whose `promoted_from:` names a `PRT-` ID or prototype folder that does not exist - P1
+  - a workbench prototype (`Purpose: workbench`) with a `built` feature that has no phase while others have one - P2. A workbench where no built feature has a phase yet is still diverging and is only noted
+
+  The audit never closes a prototype decision, never turns a `PRT-` ID into an invented `FEAT-ID`, never deletes a `promoted_from:` line and never assigns a phase - those decisions belong to `/pm-prototype`.
 
 **Tier 2 - Substance (strategic - read-only):**
 Does the strategic layer agree with itself and with the research it was built on? PRD target customer vs. personas, value proposition vs. validated pains, roadmap phases vs. feature phases, pricing vs. willingness to pay signal.
@@ -98,4 +105,4 @@ Tier 2 is read-only. It surfaces each contradiction as `[CONFLICT]` and routes t
 
 If no workspace is found: tell the user to run `/pureinn` (greenfield) or `/pm-reverse-extract` / `/pm-reconcile` (existing product) first.
 
-**Related skills:** `pm-reconcile`, `pm-reverse-extract`, `pm-feature-card`, `pm-features-list`, `pm-stripe`, `pm-open-questions`
+**Related skills:** `pm-reconcile`, `pm-reverse-extract`, `pm-feature-card`, `pm-features-list`, `pm-stripe`, `pm-open-questions`, `pm-prototype`

@@ -37,6 +37,8 @@ Runs an intent gate first: is a prototype worth it, or go straight to build? If 
 
 **Wrap mode** puts the harness over an app or prototype you already have - no gate, no workspace needed.
 
+**Workbench:** build the prototype wider than the MVP, then cut it down in the harness - by user type, by roadmap phase, feature by feature - and hand it to developers with a card per feature beside the screen. Served with the bundled `serve.py`, review notes are saved into the project and the prototype reloads as the code changes.
+
 Writes a prototype reference back into the Feature Card. On re-run (result mode) records the verdict as one of four states and cascades to the hypothesis register.
 
 **Agent mode:** `decision` - drafts autonomously, decisions wait for your review.

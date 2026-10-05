@@ -15,20 +15,18 @@
   The cost is that this must be SERVED, not opened as file:// - browsers block
   cross-document access for file:// frames.
 
-      python3 -m http.server 8000     then open  localhost:8000/harness.html
+      python3 serve.py     then open the address it prints
 
-  Design: the chrome floats over a dotted canvas as translucent glass islands,
-  the language every current prototyping tool speaks, with Pureinn's live coral
-  to gold gradient as the accent. Deliberately NOT warm cream with terracotta -
-  this framework's own design research names that exact combination as a generic
-  2026 AI-default cluster, and a file that ships as a reference should not look
-  generated. Nothing native is left unstyled: a stock <select> is the single
-  loudest "unfinished" signal in a tool like this.
+  Design: the chrome is a few opaque objects resting on a dotted canvas - a
+  bar across the top, its twin across the bottom, and side panels that push the
+  artifact aside rather than cover it. Flat accent, one dark block for the
+  view, nothing under 11px. The reasoning is in README.md § Design intent, and
+  the two earlier looks it replaced are in HISTORY.md.
 
   Contract implemented here: states · fixtures (client) · time scrub · variants ·
-  device presets · annotations · event log · disclosure. See ../in-repo-loop.md
-  for what each one is for. Mockup, share and image export are conveniences on
-  top of the contract, not part of it.
+  device presets · annotations · event log · disclosure · the view. See
+  ../in-repo-loop.md for what each one is for. Mockup, share and image export
+  are conveniences on top of the contract, not part of it.
 -->
 <html lang="en">
 <head>
@@ -2209,6 +2207,83 @@
     .dock .cta { padding: 0 9px; }
     .vseg button { padding: 0 8px; }
   }
+
+  /* ══ one orange, in one place ══
+     The brand's orange went out with the gradient, and the bottom bar lost
+     the only warm thing in it. It comes back as a single role: on the dark
+     view block, the phase that is selected - the thing that decides what the
+     whole prototype is being read as. Ink on orange is 9:1; white on it never
+     passed. Nowhere else, or it stops meaning anything. */
+  :root { --hot: #ff9a52; }
+  .vseg button[aria-pressed="true"] { background: var(--hot); color: #14161b; font-weight: 650; box-shadow: 0 1px 3px rgba(0,0,0,.35); }
+  .vseg button.is-in { background: rgba(255,154,82,.22); color: #fff; }
+  .isle--view .ib.is-set { background: var(--hot); color: #14161b; }
+  .isle--view .ib.is-set svg { color: #14161b; }
+  .dock [data-vw-phase-grp] .grp__l { color: var(--hot); }
+  .vw__meter i.is-in { opacity: 1; }
+
+  /* ══ one motion in the feature column ══
+     Every state change there moves the same way: same duration, same curve.
+     Rows, switches, tags, the filter, a phase folding, the card arriving. */
+  .vw__f { transition: background var(--fast) var(--ease), opacity var(--med) var(--ease); }
+  .vw__f .vw__name b { transition: color var(--med) var(--ease), font-weight var(--med) var(--ease); }
+  .vw__eye { transition: background var(--med) var(--ease); }
+  .vw__eye:after { transition: transform var(--med) var(--ease), width var(--fast) var(--ease); }
+  .vw__tag.is-new { animation: vw-tag var(--med) var(--ease) both; }
+  @keyframes vw-tag { from { opacity: 0; transform: translateX(6px); } }
+  .vw__flt button { transition: background var(--med) var(--ease), color var(--med) var(--ease), box-shadow var(--med) var(--ease); }
+  .vw__grp svg { transition: transform var(--med) var(--ease); }
+  .vw__rows.is-opening { animation: vw-unfold var(--med) var(--ease); }
+  .vw__rows.is-opening .vw__f { animation: vw-row var(--med) var(--ease) both; }
+  .vw__rows.is-opening .vw__f:nth-child(2) { animation-delay: 20ms; }
+  .vw__rows.is-opening .vw__f:nth-child(3) { animation-delay: 40ms; }
+  .vw__rows.is-opening .vw__f:nth-child(4) { animation-delay: 60ms; }
+  .vw__rows.is-opening .vw__f:nth-child(n+5) { animation-delay: 80ms; }
+  @keyframes vw-row { from { opacity: 0; transform: translateY(-4px); } }
+  .vseg button { transition: background var(--med) var(--ease), color var(--med) var(--ease), box-shadow var(--med) var(--ease), transform var(--fast) var(--ease); }
+
+  /* ══ editing a feature's description ══ */
+  .fc__ta {
+    display: block; width: 100%; padding: 10px 12px; border: 0; border-radius: 10px; resize: vertical;
+    background: #fff; box-shadow: 0 0 0 1px rgba(20,22,27,.14); color: var(--ink);
+    font: 13.5px/1.55 var(--font);
+  }
+  .fc__ta:focus { outline: 2px solid #14161b; outline-offset: 1px; }
+  .fc__save { background: #14161b; color: #fff; }
+  .fc__save:hover { background: #2a2d35; }
+  .fc__prop {
+    display: inline-block; vertical-align: 1px; margin-left: 4px; padding: 3px 7px; border-radius: 6px;
+    background: rgba(255,154,82,.22); color: #7a3a10; font: 600 11px/1 var(--font); letter-spacing: 0; text-transform: none;
+  }
+
+  /* the last of the warm tints, brought into line with the rest */
+  .rail__all { background: rgba(20,22,27,.05); color: var(--ink-2); border-radius: 9px; }
+  .rail__all:hover { background: rgba(20,22,27,.1); color: var(--ink); }
+  .sheet__ta, .sheet textarea { border-radius: 10px; }
+
+  /* The last step. With a side panel open on a small laptop the bar is under
+     940px, and there the choice is between words and reaching the controls at
+     all. Every control becomes its icon, with its name as the tooltip; the
+     phase row and the note count stay. */
+  @container (max-width: 940px) {
+    .dock .ib:not([data-vw-btn]), .dock .cta { font-size: 0; gap: 0; padding: 0; width: 34px; justify-content: center; }
+    .dock .ib:not([data-vw-btn]) > span, .dock .ib .caret, .dock .cta > span:not([data-send-n]) { display: none; }
+    .dock [data-vw-btn] { padding: 0 8px; }
+    .dock [data-vw-phase-grp] .grp__l { display: none; }
+    .dock .cta { width: auto; padding: 0 9px; gap: 6px; }
+    .dock .cta .cta__n { font-size: 11px; }
+    .vseg button { padding: 0 7px; }
+    .dock .sep { margin: 0 1px; }
+  }
+
+  /* the feature column gives way before the prototype does */
+  :root { --insp: clamp(320px, 30vw, 400px); }
+  @container (max-width: 760px) {
+    .dock .vw__word { display: none; }
+    .dock > .isle--view { gap: 4px; padding: 0 6px 0 8px; }
+    .dock > .isle { gap: 0; }
+    .dock { gap: 0 4px; padding-right: 4px; }
+  }
 </style>
 </head>
 <body>
@@ -2342,7 +2417,7 @@
   </div>
   <!-- bound to whatever device is selected above -->
   <button class="ib ib--icon" type="button" data-mockup aria-pressed="false" title="Draw the device hardware around it"><svg><use href="#i-frame"/></svg></button>
-      <button class="ib ib--tuck" type="button" data-menu="mock" aria-haspopup="menu" aria-expanded="false" title="Web or native, the glass, and opening the app"><span data-mock-label>Web</span><svg class="caret"><use href="#i-chevron"/></svg></button>
+      <button class="ib ib--tuck" type="button" data-menu="mock" aria-haspopup="menu" aria-expanded="false" title="Web or native, and the screen reflection"><span data-mock-label>Web</span><svg class="caret"><use href="#i-chevron"/></svg></button>
   <button class="ib ib--icon" type="button" data-promo-btn aria-pressed="false" title="Every screen at this device's width, side by side"><svg><use href="#i-gallery"/></svg></button>
   <span class="sep"></span>
   <!-- bound to nothing in particular -->
@@ -2481,10 +2556,10 @@
 
 <div class="sheet sheet--invite" data-invite-sheet hidden role="dialog" aria-labelledby="invite-h">
   <div class="sheet__top">
-    <h2 class="sheet__h" id="invite-h">Send it to someone</h2>
+    <h2 class="sheet__h" id="invite-h">Invite someone to review</h2>
     <button class="nav__x" type="button" data-invite-close aria-label="Close"><svg><use href="#i-x"/></svg></button>
   </div>
-  <p class="sheet__p">They get the same instruments you have - the widths, the mockup, the grid, side by side, the presentation, a screenshot - plus the task, their name on every note, and a Send control that will not let them leave without offering. What they do not get is your event log or the ability to hand out links.</p>
+  <p class="sheet__p">They can view the prototype, add notes and send them back to you. They cannot see your event log or create invite links.</p>
   <p class="sheet__p">Add a line if there is something specific you want <em>this</em> person to look at.</p>
   <textarea class="sheet__ta" data-invite-msg rows="3" placeholder="e.g. Ignore the styling - tell me whether the assignment step makes sense."></textarea>
   <div class="picks" data-invite-picks hidden>
@@ -2499,7 +2574,7 @@
 
 <div class="sheet" data-sheet hidden role="dialog" aria-labelledby="sheet-h">
   <div class="sheet__top">
-    <h2 class="sheet__h" id="sheet-h">Return your notes</h2>
+    <h2 class="sheet__h" id="sheet-h">Send your notes</h2>
     <button class="nav__x" type="button" data-sheet-close aria-label="Close"><svg><use href="#i-x"/></svg></button>
   </div>
   <p class="sheet__p" data-sheet-p></p>
@@ -2623,6 +2698,10 @@
   var cfg = window.HARNESS_CONFIG || {};
   var screens  = cfg.screens  || [{ label: 'Prototype', src: 'index.html' }];
   var states   = cfg.states   || ['empty', 'full', 'error', 'unauth'];
+  /* `states: []` means the artifact renders none - a wrapped app, usually. One
+     nominal state keeps everything keyed by state working; the control goes. */
+  var noStates = !states.length;
+  if (noStates) states = ['full'];
   var variants = cfg.variants || [];
   var annots   = cfg.annotations || {};
   var review   = cfg.review || {};
@@ -2697,7 +2776,10 @@
   var frameLoaded = false;
 
   /* ---------- shared state, deep-linkable ---------- */
-  var q = new URLSearchParams(location.search);
+  /* a reload the bridge asked for comes back to where it was */
+  var resume = null;
+  try { resume = sessionStorage.getItem('harness:resume'); sessionStorage.removeItem('harness:resume'); } catch (e) { resume = null; }
+  var q = new URLSearchParams(resume || location.search);
   var startScreen = screens.findIndex(function (s) { return s.src === q.get('screen'); });
   if (startScreen < 0) startScreen = 0;
   var reviewMode = q.get('review') === '1';
@@ -2757,7 +2839,11 @@
        ver      which option of a version group is showing */
   var roles    = cfg.roles    || [];
   var phases   = cfg.phases   || [];
-  var features = cfg.features || [];
+  var allFeatures = cfg.features || [];
+  /* a cut feature is a decision, not something to show: it is in no view, and
+     it is on the feature map with its reason */
+  var features = allFeatures.filter(function (f) { return f.status !== 'cut'; });
+  var cutFeatures = allFeatures.filter(function (f) { return f.status === 'cut'; });
   var vgroups  = (cfg.versions || []).concat(features.filter(function (f) {
     return f.versions && f.versions.length;
   }).map(function (f) {
@@ -2784,6 +2870,9 @@
   })();
   var viewFromLink = q.has('role') || q.has('phase') || q.has('fx') || q.has('ver');
   var vwFlash = '';         // a temporary outline rule, while a feature is being pointed at
+  var bridge = null;        // set when the local serve.py answers - see "the bridge"
+  var proposals = [];       // edits proposed to features, as serve.py holds them
+  var fcEdit = false;       // the open card is being edited
 
   /* Time is per screen, so the shared value belongs to the screen the link
      opened on. Carrying one number across scales - minutes here, days there -
@@ -2849,6 +2938,9 @@
      which is not the same as six remarks about six elements and does not
      belong pinned to one of them. */
   var summary   = readStore('summary', null);
+  /* sanitised on the way in, like every other note - hoisted function, and it
+     keeps its own allowlist inside for exactly this call */
+  if (summary && summary.html) summary.html = clean(summary.html);
   var askedFor  = (function () {
     var m = q.get('m');
     if (!m) return readStore('asked', '');
@@ -3000,7 +3092,7 @@
 
     var ic = document.createElement('span');
     ic.className = 'nav__ico';
-    ic.innerHTML = '<svg><use href="#s-' + (s.icon || (s.disclosure ? 'info' : 'detail')) + '"/></svg>';
+    ic.innerHTML = '<svg><use href="#s-' + String(s.icon || (s.disclosure ? 'info' : 'detail')).replace(/[^a-z-]/g, '') + '"/></svg>';
     b.appendChild(ic);
 
     var t = document.createElement('span');
@@ -3122,7 +3214,7 @@
        screen and concludes the prototype does nothing - which is what
        happened. Opening it is done once per screen, and closing it sticks:
        the remembered preference still wins on every later visit. */
-    if (simEl && simEl.hidden && !timeShown[current.screen]) {
+    if (simEl && simEl.hidden && !timeShown[current.screen] && vwEl.hidden && fcEl.hidden) {
       timeShown[current.screen] = true;
       openSim(true);
     }
@@ -3536,6 +3628,7 @@
       b.setAttribute('aria-pressed', String(get()));
       annotEl.hidden = !labelsOn && !commentsOn;
       drawAnnots();
+      drawMarks();
     });
   }
   toggle('[data-toggle-labels]',   function () { return labelsOn; },   function (v) { labelsOn = v; });
@@ -3575,7 +3668,7 @@
 
   /* ---------- the reviewer's link ----------
      Review mode is a different job from sharing a state: it opens with the
-     task, asks who is looking, and keeps Return notes in front of them. The
+     task, asks who is looking, and keeps Send notes in front of them. The
      author needs a way to produce that link without knowing the query string. */
   var inviteSheet = document.querySelector('[data-invite-sheet]');
   var inviteMsg = document.querySelector('[data-invite-msg]');
@@ -3797,6 +3890,7 @@
      pen are painted onto the same canvas as the artifact, at the same scale,
      in the same colours the screen uses. The note rail stays out of both. */
   function paintMarks(ctx, x0, y0, w, h, fromTop) {
+    if (!commentsOn) return;
     var here = mineHere().map(function (m) { return fromTop ? markAt(m, 0, 0) : markInFrame(m); });
     if (!here.length) return;
     ctx.save();
@@ -4012,11 +4106,15 @@
     var w = null;
     try { w = frame.contentWindow; } catch (e) { w = null; }
     if (!w) return;
-    w.addEventListener('scroll', repositionIdle, { passive: true });
-    w.addEventListener('resize', repositionIdle, { passive: true });
-    /* marks belong to the page, so they travel with it */
-    w.addEventListener('scroll', drawMarks, { passive: true });
-    w.addEventListener('resize', drawMarks, { passive: true });
+    /* a window on another address can be held but not listened to - the
+       reference is given freely and the first call on it throws */
+    try {
+      w.addEventListener('scroll', repositionIdle, { passive: true });
+      w.addEventListener('resize', repositionIdle, { passive: true });
+      /* marks belong to the page, so they travel with it */
+      w.addEventListener('scroll', drawMarks, { passive: true });
+      w.addEventListener('resize', drawMarks, { passive: true });
+    } catch (e) { /* another origin: shown, not followed */ }
   }
 
   var railSettle = null;
@@ -4727,6 +4825,8 @@
 
   function paintState() {
     var el = document.querySelector('[data-state-label]');
+    var grp = el && el.closest('.grp');
+    if (grp) { grp.hidden = noStates; if (grp.nextElementSibling && grp.nextElementSibling.classList.contains('sep')) grp.nextElementSibling.hidden = noStates; }
     if (el) el.textContent = 'State: ' + nameOf(current.state);
   }
 
@@ -4775,7 +4875,7 @@
        INSIDE the artifact - scaffolding shipped in the product's own UI, which
        is exactly what the harness exists to take out.
 
-       So each screen may declare what can be done on it. Four kinds, and every
+       So each screen may declare what can be done on it. Five kinds, and every
        one of them is something the artifact could already do:
 
          state   switch to a declared state
@@ -4844,7 +4944,7 @@
 
   /* ---------- one surface at a time ----------
 
-     The dropdowns, the situation panel, the notes panel and the screen panel
+     The menus, the time-and-speed panel, the feature column, the note register and the screen panel
      are all ways of asking the harness something, and two of them open at once
      is two answers competing for the same corner of the screen. Opening any
      one closes the rest.
@@ -4901,7 +5001,14 @@
         b.classList.add('is-on');
         b.insertAdjacentHTML('beforeend', icon('i-check'));
       }
-      b.addEventListener('click', function () { closeMenu(); it.fn(); });
+      b.addEventListener('click', function () {
+        closeMenu();
+        it.fn();
+        /* Some items open a surface by pressing another button, and that
+           nested press is the event the surface remembers. This click is the
+           one still travelling to the document, so it has to be the guard. */
+        armOpened();
+      });
       el.appendChild(b);
     });
     document.body.appendChild(el);
@@ -4920,7 +5027,7 @@
       var i = items.indexOf(document.activeElement);
       if (e.key === 'ArrowDown') { e.preventDefault(); items[(i + 1) % items.length].focus(); }
       if (e.key === 'ArrowUp')   { e.preventDefault(); items[(i - 1 + items.length) % items.length].focus(); }
-      if (e.key === 'Escape')    { closeMenu(); btn.focus(); }
+      if (e.key === 'Escape')    { e.stopPropagation(); closeMenu(); btn.focus(); }
     });
   }
 
@@ -4933,7 +5040,7 @@
   document.addEventListener('click', function (e) {
     if (openMenu && !openMenu.el.contains(e.target)) closeMenu();
     /* A panel with no close button of its own has to be dismissible the way
-       every other floating thing is. The situation panel is the exception: it
+       every other floating thing is. The time-and-speed panel used to be the exception: it
        drives the artifact, so clicking the artifact to watch what it did must
        not shut the control that did it. */
     /* The click that opened a surface must not also close it. Judging that by
@@ -4990,6 +5097,14 @@
 
   function setMarking(kind) {
     marking = marking === kind ? null : kind;
+    /* drawing a mark while notes are hidden would draw something invisible */
+    if (marking && !commentsOn) {
+      commentsOn = true;
+      document.querySelector('[data-toggle-comments]').setAttribute('aria-pressed', 'true');
+      annotEl.hidden = false;
+      drawAnnots();
+      drawMarks();
+    }
     document.body.classList.toggle('is-marking', !!marking);
     markBtns().forEach(function (b) {
       b.setAttribute('aria-pressed', String(b.getAttribute('data-mark') === marking));
@@ -5077,6 +5192,10 @@
       var mid = m.kind === 'box' ? [m.x + m.w / 2, m.y + m.h / 2] : m.pts[Math.floor(m.pts.length / 2)];
       var el = doc.elementFromPoint(mid[0] * d.vw, mid[1] * d.vh);
       var sel = el && selectorIn(doc, el);
+      /* the selector is a short path, not a unique one: on a page with two
+         alike lists it can name the first while the mark was drawn on the
+         second. Kept only if it finds the very element it was built from. */
+      if (sel && doc.querySelector(sel) !== el) sel = null;
       if (sel) {
         var r = el.getBoundingClientRect();
         if (r.width && r.height) {
@@ -5107,11 +5226,29 @@
   function drawMarks() {
     marksSvg.innerHTML = '';
     marksEl.querySelectorAll('.mk__x').forEach(function (n) { n.remove(); });
+    /* A box and a pen stroke are a reviewer's notes in another form. Switching
+       notes off and leaving them on screen is switching off half of it. */
+    if (!commentsOn) return;
     if (document.body.classList.contains('is-compare') || document.body.classList.contains('is-promo')) return;
     var box = frame.getBoundingClientRect();
     var wrapBox = wrap.getBoundingClientRect();
     var ox = box.left - wrapBox.left, oy = box.top - wrapBox.top;
 
+    /* A mark saved before marks were anchored has only a place on the glass,
+       and stays there while the page moves under it. Each one is anchored the
+       first time it is drawn with the page at its top - which is where the
+       frame is when a screen has just loaded, and where most of them were
+       drawn. After that it behaves like any other. */
+    var dm = docMetrics(), adopted = false, settled = false;
+    /* only against a page that has finished arriving: this runs on every
+       resize of the frame, and a document still loading is one screen tall -
+       an old mark measured against that is anchored to the wrong place for
+       good */
+    try { settled = frameLoaded && frame.contentDocument.readyState === 'complete'; } catch (e) { settled = false; }
+    if (settled && dm && !dm.sx && !dm.sy) {
+      mineHere().forEach(function (m) { if (!m.doc) { markToDoc(m); adopted = true; } });
+      if (adopted) writeStore('marks', marks);
+    }
     mineHere().forEach(function (m) {
       var v = markInFrame(m);
       var g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
@@ -5217,6 +5354,13 @@
     }
     marksEl.addEventListener('pointerup', finish);
     marksEl.addEventListener('pointercancel', finish);
+    /* A mark sits over the artifact and takes the pointer, so a wheel turned
+       above one went nowhere: the page under a box could not be scrolled from
+       the box. The wheel is handed on to the page it was meant for. */
+    marksEl.addEventListener('wheel', function (e) {
+      if (marking) return;
+      try { frame.contentWindow.scrollBy(e.deltaX, e.deltaY); } catch (err) { /* another origin */ }
+    }, { passive: true });
   })();
 
   /* A mark says "here"; often the next thing wanted is "and this is why". The
@@ -5843,7 +5987,7 @@
     sheetList.innerHTML = '';
     sheetActs.innerHTML = '';
     document.querySelector('[data-sheet-p]').textContent = total()
-      ? 'Nothing has left this browser yet. Pick how to return ' + (total() === 1 ? 'this note' : 'these ' + total() + ' notes') + '.'
+      ? 'Nothing has left this browser yet. Pick how to send ' + (total() === 1 ? 'this note' : 'these ' + total() + ' notes') + '.'
       : 'No notes yet. Press Add note and click something, or write one Overall note.';
 
     /* The rail already shows the notes in full. Repeating them here made the
@@ -5920,6 +6064,7 @@
        this is in - a reviewer wants to send, a maker wants the report. */
     if (total()) {
       var send = [
+        { k: 'save', ico: 'i-down', label: 'Save to project',    fn: saveToProject,  on: !!bridge },
         { k: 'send', ico: 'i-send', label: 'Send to the author', fn: submitEndpoint, on: !!review.submitTo },
         { k: 'copy', ico: 'i-copy', label: 'Copy notes',         fn: copyOut,        on: true },
         { k: 'mail', ico: 'i-mail', label: 'Email',              fn: mailOut,        on: !!review.to }
@@ -5932,7 +6077,7 @@
         { k: 'json', ico: 'i-down', label: 'JSON',       fn: jsonOut,     note: 'everything, machine-readable' }
       ];
 
-      var primary = review.submitTo ? 'send' : (reviewMode ? 'copy' : null);
+      var primary = bridge ? 'save' : review.submitTo ? 'send' : (reviewMode ? 'copy' : null);
 
       var sendGrp = group('Send your notes', send.map(function (a) {
         return actionBtn(a.k === primary ? 'cta' : 'ib', a.ico, a.label, a.fn);
@@ -6035,6 +6180,9 @@
     var cols = Object.keys(list[0]);
     var esc2 = function (v) {
       v = String(v === undefined || v === null ? '' : v);
+      /* A cell that starts like a formula IS one to a spreadsheet, and this
+         text came from a reviewer or from the page under review. */
+      if (/^[=+\-@\t\r]/.test(v)) v = "'" + v;
       return /[",\n;]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
     };
     var out = [cols.join(',')].concat(list.map(function (r) {
@@ -6853,7 +7001,7 @@
        the side-by-side views good for comparing a header and useless for
        anything below it - and most of what a reviewer argues about is below
        it. They scroll now, and they scroll together. */
-    if (srcdoc) fr.srcdoc = srcdoc; else fr.src = src;
+    if (srcdoc) fr.srcdoc = srcdoc; else { fr.src = src; fr.setAttribute('data-src', src); }
     fr.addEventListener('load', function () { watchMiniScroll(fr); viewInto(fr); });
     mockEl2.appendChild(bar); mockEl2.appendChild(fr);
     hardware(mockEl2, dev);
@@ -6976,10 +7124,18 @@
     var st = all[stepAt];
 
     if (st.screen && st.screen !== current.screen) pickScreen(screenIndex(st.screen));
-    if (st.role || st.phase) {
-      if (st.role)  view.role  = st.role;
-      if (st.phase) view.phase = st.phase;
-      applyView();
+    /* Each step says what the prototype is shown as, or says nothing and gets
+       the view the author had before pressing Present. Without that a user
+       type set on the last step was still in force when the tour came round
+       to the first one again. Only ids the config declares are taken. */
+    if (hasView && viewBefore) {
+      var base = JSON.parse(viewBefore);
+      var wantRole  = (st.role === 'all' || roles.some(function (r) { return r.id === st.role; }))   ? st.role  : base.role;
+      var wantPhase = (st.phase === 'all' || phases.some(function (p) { return p.id === st.phase; })) ? st.phase : base.phase;
+      if (wantRole !== view.role || wantPhase !== view.phase) {
+        view.role = wantRole; view.phase = wantPhase;
+        applyView();
+      }
     }
     if (st.state && states.indexOf(st.state) > -1) {
       current.state = st.state;
@@ -6997,6 +7153,10 @@
     if (st.say) sayEl.textContent = st.say;
 
     var hold = st.hold || HOLD;
+    /* a click is aimed, travelled to, paused over and then made - up to about
+       two and a half seconds. A shorter step moved on before it fired, with
+       nothing to say so. */
+    if (st.click) hold = Math.max(hold, 3200);
     clearInterval(sweepTimer);
     var t0 = Date.now();
     sweepTimer = setInterval(function () {
@@ -7088,10 +7248,16 @@
     if (on) applyStep(stepAt);
   }
 
+  var viewBefore = null;
   function present(on) {
+    if (on && !steps().length) { toast('Every screen is hidden in this view. Nothing to present.', 4200); return; }
     presenting = on;
     document.body.classList.toggle('is-present', on);
     if (on) {
+      /* a tour may set the user type and the phase; the view the author had
+         before pressing Present comes back when it ends */
+      viewBefore = JSON.stringify(view);
+      dismissView();
       if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(function () {});
       closeNav();
       stepAt = 0;
@@ -7106,6 +7272,11 @@
       showBar.style.width = '0';
       sayEl.hidden = true;
       if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(function () {});
+      if (viewBefore) {
+        var was = JSON.parse(viewBefore); viewBefore = null;
+        view.role = was.role; view.phase = was.phase; view.force = was.force; view.ver = was.ver;
+        applyView();
+      }
       requestAnimationFrame(drawAnnots);
     }
   }
@@ -7224,7 +7395,7 @@
     if (view.role !== 'all')
       hide.push('[data-role]:not([data-role~="' + cssq(view.role) + '"])');
     vgroups.forEach(function (g) {
-      hide.push('[data-version-of="' + g.id + '"]:not([data-version="' + versionOf(g) + '"])');
+      hide.push('[data-version-of="' + cssq(g.id) + '"]:not([data-version="' + cssq(versionOf(g)) + '"])');
     });
     /* And one rule per selector is still not enough. A selector with an
        unclosed bracket does not just void its own rule: the parser keeps
@@ -7236,6 +7407,9 @@
     return hide.map(function (h) { return h + '{display:none !important}'; }).join('\n') + '\n' + vwFlash;
   }
   function fileOf(fr) {
+    /* a scaled copy knows which screen it was built for */
+    var src = fr.getAttribute('data-src');
+    if (src) return src;
     try { return (fr.contentWindow.location.pathname || '').split('/').pop(); } catch (e) { return ''; }
   }
   function viewInto(fr) {
@@ -7313,6 +7487,9 @@
       return;
     }
     hit.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    /* the same pre-check the view's own rules get: a selector the browser
+       cannot parse must not reach the stylesheet */
+    sels = sels.filter(function (s) { try { d.querySelector(s); return true; } catch (e) { return false; } });
     vwFlash = sels.map(function (s) {
       return s + '{outline:2px solid #ed6d57 !important;outline-offset:3px !important}';
     }).join('\n');
@@ -7351,6 +7528,12 @@
     if (i < 0 && f.on && !Array.isArray(f.on)) {
       i = screens.findIndex(function (sc) { return !!f.on[sc.src]; });
     }
+    /* a feature marked only inside the artifact has no way to say where it is
+       but its card */
+    if (i < 0 && f.screen) {
+      var named = [].concat(f.screen);
+      i = screens.findIndex(function (sc) { return named.indexOf(sc.src) > -1; });
+    }
     return i;
   }
 
@@ -7360,7 +7543,7 @@
   var vwShut = readStore('vwShut', {});   // which phases are folded
   var fcId = null;                         // the feature whose card is open
   var vwUnfold = null;                     // the phase that was just unfolded, for one paint
-  var vwFlip = null;                       // { id, was } - the switch that was just pressed
+  var vwSeen = {};                         // each feature's shown/hidden at the last paint
   var vwLastShown = -1;
 
   function chips(list, picked, attr) {
@@ -7404,7 +7587,7 @@
 
     var shown = features.filter(function (f) { return !featureOff(f); }).length;
     var chipEl = document.querySelector('[data-vw-chip]');
-    chipEl.innerHTML = features.length ? 'Features ' + shown + ' <b>/ ' + features.length + '</b>' : 'Versions';
+    chipEl.innerHTML = features.length ? '<span class="vw__word">Features </span>' + shown + ' <b>/ ' + features.length + '</b>' : 'Versions';
     if (vwLastShown > -1 && vwLastShown !== shown) {
       chipEl.classList.remove('is-bump'); void chipEl.offsetWidth; chipEl.classList.add('is-bump');
     }
@@ -7417,7 +7600,7 @@
     var dirty = view.role !== 'all' || view.phase !== ((cfg.view || {}).phase || 'all') ||
       Object.keys(view.force).length || Object.keys(view.ver).length;
     document.querySelector('[data-vw-reset]').hidden = !dirty;
-    if (vwEl.hidden) return;
+    if (vwEl.hidden) { features.forEach(function (f) { vwSeen[f.id] = !!featureOff(f); }); return; }
 
     var order = phases.map(function (p) { return p.id; }).concat(['']);
     function inPhase(pid) {
@@ -7475,16 +7658,22 @@
         var off = featureOff(f), forced = view.force[f.id] === 1;
         var byRole = off && off.indexOf('Not for ') === 0;
         var at = screenOfFeature(f);
-        h += '<div class="vw__f' + (off ? ' is-off' : '') + (fcId === f.id ? ' is-open' : '') + '" data-vw-f="' + esc(f.id) + '">' +
+        /* Drawn as it WAS, then flipped a frame later. A phase or a user type
+           changes many rows at once, and each of them should be seen to move:
+           a list that redraws itself in its new state gives no sign of what
+           just changed. */
+        var was = vwSeen.hasOwnProperty(f.id) ? vwSeen[f.id] : !!off;
+        var moved = was !== !!off;
+        h += '<div class="vw__f' + (was ? ' is-off' : '') + (fcId === f.id ? ' is-open' : '') + '" data-vw-f="' + esc(f.id) + '"' +
+          (moved ? ' data-flipc="is-off:' + (off ? 1 : 0) + '"' : '') + '>' +
           '<div class="vw__fr">' +
             '<button class="vw__name" type="button" data-vw-name title="Open the description">' +
               '<span><b>' + esc(f.name || f.id) + '</b><small>' + esc(f.id) +
               (at > -1 ? ' · ' + esc(screens[at].label) : '') + '</small></span></button>' +
-            (forced ? '<span class="vw__tag vw__tag--forced">Shown manually</span>'
-                    : off ? '<span class="vw__tag">' + esc(off) + '</span>' : '') +
+            (forced ? '<span class="vw__tag vw__tag--forced' + (moved ? ' is-new' : '') + '">Shown manually</span>'
+                    : off ? '<span class="vw__tag' + (moved ? ' is-new' : '') + '">' + esc(off) + '</span>' : '') +
             '<button class="vw__eye" type="button" role="switch" data-vw-eye aria-checked="' +
-              String(vwFlip && vwFlip.id === f.id ? !vwFlip.was : !off) + '"' +
-              (vwFlip && vwFlip.id === f.id ? ' data-flip="aria-checked:' + String(!off) + '"' : '') + ' aria-label="' +
+              String(!was) + '"' + (moved ? ' data-flip="aria-checked:' + String(!off) + '"' : '') + ' aria-label="' +
               esc('Show ' + (f.name || f.id)) + '"' + (byRole ? ' disabled title="Hidden for this user type"' : '') + '></button>' +
           '</div></div>';
       });
@@ -7498,12 +7687,18 @@
        transition - a new element has no previous state to move from. The one
        control that was just pressed is therefore drawn in its OLD state and
        flipped a frame later, which is all a transition needs. */
+    void vwBody.offsetWidth;
     vwBody.querySelectorAll('[data-flip]').forEach(function (el) {
       var p = el.getAttribute('data-flip').split(':');
       el.removeAttribute('data-flip');
-      void el.offsetWidth;
       el.setAttribute(p[0], p[1]);
     });
+    vwBody.querySelectorAll('[data-flipc]').forEach(function (el) {
+      var p = el.getAttribute('data-flipc').split(':');
+      el.removeAttribute('data-flipc');
+      el.classList.toggle(p[0], p[1] === '1');
+    });
+    features.forEach(function (f) { vwSeen[f.id] = !!featureOff(f); });
   }
 
   /* The panel grows out of the island that opened it, not out of the middle
@@ -7564,9 +7759,7 @@
       var wasOff = !!featureOff(f);
       delete view.force[f.id];
       if (!!featureOff(f) === wasOff) view.force[f.id] = wasOff ? 1 : 0;
-      vwFlip = { id: f.id, was: wasOff };
       changeView('feature');
-      vwFlip = null;
     }
     else if (t.hasAttribute('data-vw-fold')) {
       var k = t.getAttribute('data-vw-fold');
@@ -7624,6 +7817,16 @@
       var end = lines.indexOf('---', 1);
       if (end > 0) lines = lines.slice(end + 1);
     }
+    /* "Notes so far" is shown at the top of the card, from the config, where
+       a proposed edit to it can be shown too. Printing the card file's own
+       copy further down would say it twice. */
+    var kept = [], skipping = false;
+    lines.forEach(function (ln) {
+      var t = ln.trim().toLowerCase();
+      if (t.indexOf('## ') === 0) skipping = t.replace(/^#+\s*/, '') === 'notes so far';
+      if (!skipping) kept.push(ln);
+    });
+    lines = kept;
     var out = [], para = [], list = [], table = [];
     function flush() {
       if (para.length)  { out.push('<p>' + mdInline(para.join(' ')) + '</p>'); para = []; }
@@ -7673,17 +7876,34 @@
       '</div>' +
       '<h2 id="fc-h">' + esc(f.name || f.id) + '</h2>' +
       '<span class="fc__id">' + esc(f.id) + '</span>' +
-      '<div class="fc__acts"><button class="vw__act" type="button" data-fc-show>Show in prototype</button></div>';
+      '<div class="fc__acts"><button class="vw__act" type="button" data-fc-show>Show in prototype</button>' +
+      (bridge ? '<button class="vw__act" type="button" data-fc-edit>Edit description</button>' : '') + '</div>';
     var doc = fcCache[f.id];
+    var pd = proposed(f.id, 'desc'), ps = proposed(f.id, 'spec');
+    var desc = pd ? pd.value : (f.desc || ''), spec = ps ? ps.value : (f.spec || '');
+    var tag = '<span class="fc__prop">Proposed - not applied yet</span>';
+    if (fcEdit) {
+      /* already on screen: leave it. Anything typed lives only in these
+         fields, and a phase switch or a finished fetch repaints this card. */
+      if (fcEl.querySelector('[data-fc-desc]')) return;
+      document.querySelector('[data-fc-body]').innerHTML =
+        '<h3>Description</h3><textarea class="fc__ta" data-fc-desc rows="3" aria-label="Description">' + esc(desc) + '</textarea>' +
+        '<h3>Notes so far</h3><textarea class="fc__ta" data-fc-spec rows="7" aria-label="Notes so far">' + esc(spec) + '</textarea>' +
+        '<p class="fc__miss" style="margin-top:10px">Saved as a proposal in <code>review/proposals.json</code>. The plan and the card change when the author applies it.</p>' +
+        '<div class="fc__acts"><button class="vw__act fc__save" type="button" data-fc-save>Save proposal</button>' +
+        '<button class="vw__act" type="button" data-fc-cancel>Cancel</button></div>';
+      return;
+    }
     document.querySelector('[data-fc-body]').innerHTML =
-      (f.desc ? '<p class="lead">' + esc(f.desc) + '</p>' : '') +
-      (f.spec ? '<h3>Notes so far</h3><div class="fc__note">' + esc(f.spec) + '</div>' : '') +
+      (desc ? '<p class="lead">' + esc(desc) + (pd ? ' ' + tag : '') + '</p>' : '') +
+      (spec ? '<h3>Notes so far' + (ps ? ' ' + tag : '') + '</h3><div class="fc__note">' + esc(spec) + '</div>' : '') +
       (doc === undefined ? (f.card ? '<p class="fc__miss">Loading the description…</p>' : '')
         : doc === null ? '<p class="fc__miss">The full description could not be loaded.</p>' : doc) +
       (!f.desc && !f.spec && !f.card ? '<p class="fc__miss">No description yet.</p>' : '');
   }
   function openCard(f) {
     var swap = fcId !== f.id;
+    if (swap) fcEdit = false;
     fcId = f.id;
     if (notesOpen) openNotes(false);
     fcEl.hidden = false;
@@ -7692,15 +7912,18 @@
     paintCard();
     paintView();
     if (!featureOff(f)) showFeature(f);
-    if (f.card && fcCache[f.id] === undefined) {
-      fetch(f.card).then(function (r) { if (!r.ok) throw new Error(String(r.status)); return r.text(); })
-        .then(function (t) { fcCache[f.id] = mdToHtml(t); })
-        .catch(function () { fcCache[f.id] = null; })
-        .then(paintCard);
-    }
+    loadCard(f);
+  }
+  function loadCard(f) {
+    if (!f || !f.card || fcCache[f.id] !== undefined) return;
+    fetch(f.card, { cache: 'no-store' }).then(function (r) { if (!r.ok) throw new Error(String(r.status)); return r.text(); })
+      .then(function (t) { fcCache[f.id] = mdToHtml(t); })
+      .catch(function () { fcCache[f.id] = null; })
+      .then(paintCard);
   }
   function closeCard() {
     fcId = null;
+    fcEdit = false;
     fcEl.hidden = true;
     paintView();
     placeView();
@@ -7719,9 +7942,145 @@
       var f = features.filter(function (x) { return x.id === fcId; })[0];
       if (f) showFeature(f);
     }
+    else if (t.hasAttribute('data-fc-edit'))   { fcEdit = true; paintCard(); var ta = fcEl.querySelector('[data-fc-desc]'); if (ta) ta.focus(); }
+    else if (t.hasAttribute('data-fc-cancel')) { fcEdit = false; paintCard(); }
+    else if (t.hasAttribute('data-fc-save'))   saveProposal();
   });
+
+  /* ---------- the bridge ----------
+
+     Served by scaffold/serve.py, the harness can put what a reviewer does
+     back into the project: notes into `review/notes/`, an edited description
+     into `review/proposals.json`. Whoever works on the prototype in the repo -
+     a person, or the agent - reads them there. That is the whole round trip
+     between this layer and the code: nothing to copy, nothing to paste.
+
+     Two things it deliberately does not do. It never writes to the feature
+     plan or a card: an edit made here is a PROPOSAL, shown as one, until the
+     author applies it. And it is asked for only on this machine - a hosted
+     harness has no serve.py behind it, and probing for one would put an error
+     in every reviewer's console. */
+  function bridgeGet(path) {
+    return fetch('/__harness/' + path, { cache: 'no-store' })
+      .then(function (r) { if (!r.ok) throw new Error(String(r.status)); return r.json(); });
+  }
+  function bridgePost(path, data) {
+    return fetch('/__harness/' + path, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Harness': '1' },
+      body: JSON.stringify(data)
+    }).then(function (r) { if (!r.ok) throw new Error(String(r.status)); return r.json(); });
+  }
+  function proposed(id, field) {
+    var hit = null;
+    proposals.forEach(function (p) {
+      if (p && p.feature === id && p.field === field && p.status === 'open') hit = p;
+    });
+    return hit;
+  }
+  function saveProposal() {
+    var f = features.filter(function (x) { return x.id === fcId; })[0];
+    if (!f || !bridge) return;
+    var jobs = [];
+    [['desc', '[data-fc-desc]'], ['spec', '[data-fc-spec]']].forEach(function (pair) {
+      var el = fcEl.querySelector(pair[1]);
+      if (!el) return;
+      var now = proposed(f.id, pair[0]);
+      var was = now ? now.value : (f[pair[0]] || '');
+      var value = el.value.trim();
+      if (value === was.trim()) return;
+      jobs.push(bridgePost('proposal', { feature: f.id, field: pair[0], value: value, was: f[pair[0]] || '', by: reviewerName || '' })
+        .then(function (r) {
+          proposals.forEach(function (p) {
+            if (p.feature === f.id && p.field === pair[0] && p.status === 'open') p.status = 'superseded';
+          });
+          proposals.push(r.proposal);
+        }));
+    });
+    if (!jobs.length) { fcEdit = false; paintCard(); return; }
+    Promise.all(jobs).then(function () {
+      fcEdit = false; paintCard();
+      toast('Saved as a proposal in review/proposals.json', 4500);
+      record('harness:proposal', f.id);
+    }).catch(function () {
+      toast('Could not save. Is serve.py still running?', 6000);
+    });
+  }
+  function saveToProject() {
+    return bridgePost('notes', {
+      prototype: cfg.name || 'prototype', title: cfg.title || '', from: reviewerName || '',
+      exported: new Date().toISOString(), asked: askedFor || '',
+      overall: overall() ? overall().text : '',
+      view: { role: view.role, phase: view.phase },
+      notes: written(), marks: marks
+    }).then(function (r) {
+      closeSheet();
+      toast('Saved to the project: ' + r.file, 5200);
+      record('harness:saved-to-project', r.count);
+    }).catch(function () {
+      toast('Could not save to the project. Is serve.py still running?', 6000);
+    });
+  }
+
+  /* The other direction: the code changed, so the prototype reloads. A file
+     under the artifact reloads the frame and keeps the screen, the state and
+     the view; a change to the shell or its config reloads the page onto the
+     same place. Never while someone is writing a note - a stale prototype for
+     a few seconds costs less than a lost sentence. */
+  function herePath() {
+    var p = new URLSearchParams();
+    p.set('screen', current.screen);
+    p.set('state', current.state);
+    if (variants.length) p.set('variant', current.variant);
+    p.set('device', current.device);
+    if (current.mockup) p.set('mockup', '1');
+    if (reviewMode) p.set('review', '1');
+    viewParams(p);
+    return location.pathname + '?' + p.toString();
+  }
+  function watchChanges() {
+    var seen = null, owed = false;
+    setInterval(function () {
+      if (document.hidden) return;
+      bridgeGet('changes').then(function (now) {
+        if (!seen) { seen = now; return; }
+        /* never under someone's hands: a note being written, a description
+           being edited, a sheet half filled in */
+        var busy = editing() || fcEdit || !!document.querySelector('[data-sheet]:not([hidden]), [data-invite-sheet]:not([hidden])');
+        if (now.shell !== seen.shell) {
+          if (busy) return;
+          /* The place is handed over in sessionStorage, not the address. Put
+             in the address it stayed there, and the next reload by hand went
+             back to that view instead of the one chosen since. */
+          try { sessionStorage.setItem('harness:resume', herePath().split('?')[1] || ''); } catch (e) { /* private mode */ }
+          location.reload();
+          return;
+        }
+        if (now.art !== seen.art) { seen = now; owed = true; }
+        if (owed && !busy) {
+          owed = false;
+          try { frame.contentWindow.location.reload(); } catch (e) { load(); }
+          Object.keys(fcCache).forEach(function (k) { delete fcCache[k]; });
+          loadCard(features.filter(function (x) { return x.id === fcId; })[0]);
+          toast('Prototype updated');
+        }
+      }).catch(function () { /* the server went away; the page still works */ });
+    }, 1500);
+  }
+  (function findBridge() {
+    if (location.hostname !== '127.0.0.1' && location.hostname !== 'localhost') return;
+    bridgeGet('ping').then(function (info) {
+      if (!info || !info.bridge) return;
+      bridge = info;
+      document.body.classList.add('is-bridge');
+      bridgeGet('proposals').then(function (p) { proposals = Array.isArray(p) ? p : []; paintCard(); }).catch(function () {});
+      watchChanges();
+    }).catch(function () {});
+  })();
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && !fcEl.hidden) { e.stopImmediatePropagation(); closeCard(); }
+    if (e.key === 'Escape' && !fcEl.hidden) {
+      e.stopImmediatePropagation();
+      if (fcEdit) { fcEdit = false; paintCard(); } else closeCard();
+    }
   });
 
   /* ---------- the feature map ----------
@@ -7749,6 +8108,16 @@
           '</tr>';
         }).join('') + '</table></div>';
     }).join('');
+    if (cutFeatures.length) {
+      secs += '<div class="sec"><span class="lab">Cut · ' + cutFeatures.length + '</span>' +
+        '<p class="lead" style="margin:0 0 12px;font-size:13.5px">Decided against, with the reason. Not in any view.</p>' +
+        '<table style="width:100%;border-collapse:collapse;font-size:13.5px">' + cutFeatures.map(function (f) {
+          var td = '<td style="padding:11px 12px 11px 0;border-top:1px solid var(--line);vertical-align:top';
+          return '<tr data-cut="' + esc(f.id) + '">' + td + ';width:34%"><b style="font-weight:650">' + esc(f.name || f.id) + '</b>' +
+            '<div style="margin-top:3px;font:500 11px var(--mono);color:var(--ink3)">' + esc(f.id) + '</div></td>' +
+            td + ';color:var(--ink2)">' + esc(f.reason || f.desc || 'No reason recorded.') + '</td></tr>';
+        }).join('') + '</table></div>';
+    }
     var inner =
       '<span class="lab">' + esc(cfg.title || cfg.name || 'Prototype') + ' · feature map</span>' +
       '<h1>Features by phase</h1>' +
@@ -7825,18 +8194,37 @@
     }, true);
   }
 
+  /* Who the shell will talk to. The artifact is a document in a frame, and a
+     reviewer can follow a link in it to anywhere - at which point "the window
+     in the frame" is a stranger's page. So messages go only to, and are taken
+     only from, this origin and the origins of the screens the config declares
+     (a wrapped app may be served from elsewhere). */
+  var trusted = (function () {
+    var set = {};
+    set[location.origin] = true;
+    screens.forEach(function (sc) {
+      try { set[new URL(sc.src, location.href).origin] = true; } catch (e) { /* not a URL */ }
+    });
+    return set;
+  })();
+  function targetOrigin() {
+    if (location.protocol === 'file:') return '*';
+    try { return new URL(current.screen, location.href).origin; } catch (e) { return location.origin; }
+  }
   function send(kind, value, only) {
     var msg = { __harness: true, type: kind, value: value };
-    if (only) { try { only.contentWindow.postMessage(msg, '*'); } catch (e) {} return; }
-    if (frameReady) frame.contentWindow.postMessage(msg, '*');
+    var to = targetOrigin();
+    if (only) { try { only.contentWindow.postMessage(msg, to); } catch (e) {} return; }
+    if (frameReady) { try { frame.contentWindow.postMessage(msg, to); } catch (e) {} }
     // every scaled copy gets the same push, so a state change is not a lie in
     // two of the three frames on screen
-    miniFrames().forEach(function (f) { try { f.contentWindow.postMessage(msg, '*'); } catch (e) {} });
+    miniFrames().forEach(function (f) { try { f.contentWindow.postMessage(msg, to); } catch (e) {} });
   }
 
   window.addEventListener('message', function (e) {
     var d = e.data;
     if (!d || !d.__harness) return;
+    if (location.protocol !== 'file:' && !trusted[e.origin]) return;
     var mf = miniFrames().filter(function (x) { return x.contentWindow === e.source; })[0];
     if (d.type === 'ready' && mf) {
       var f = mf;
@@ -7846,7 +8234,7 @@
       pushView(f);
       return;
     }
-    if (d.type === 'ready') {
+    if (d.type === 'ready' && e.source === frame.contentWindow) {
       frameReady = true;
       send('state', current.state);
       send('variant', current.variant);
@@ -7862,8 +8250,10 @@
        document loaded three more times: without this they would triple the
        event log and answer a presented aim three extra times. */
     if (e.source !== frame.contentWindow) return;
-    if (d.type === 'event') { events.push(d.entry); countEvents(); }
-    if (d.type === 'pick') { placeComment(d); }
+    /* capped: a page in the frame can post these in a loop */
+    if (d.type === 'event' && events.length < 5000) { events.push(d.entry); countEvents(); }
+    /* a pick is only an answer to the shell having asked for one */
+    if (d.type === 'pick' && picking) { placeComment(d); }
     if (d.type === 'point') { aimed(d); }
   });
 
@@ -7913,7 +8303,12 @@
     var here = null;
     try { here = frame.contentWindow.location.pathname; } catch (e) { return; }
     if (!here) return;
-    var file = here.split('/').pop();
+    /* compare whole paths, not file names: a screen declared as
+       `pages/deep.html` is not `deep.html` */
+    var hit = screens.filter(function (sc) {
+      try { return new URL(sc.src, location.href).pathname === here; } catch (e) { return false; }
+    })[0];
+    var file = hit ? hit.src : here.split('/').pop();
     if (!file || file === current.screen) return;
     /* findIndex, not screenIndex - that one falls back to the first screen for
        anything it does not know, which here would silently claim an outbound
@@ -7934,10 +8329,21 @@
 
   frame.addEventListener('load', function () {
     frameLoaded = true;
+    /* A screen on another address can be shown and nothing else: the shell may
+       not read it. Said once, plainly, instead of failing quietly. */
+    var readable = true;
+    try { readable = !!frame.contentDocument; } catch (e) { readable = false; }
+    if (!readable && !load._told) {
+      load._told = true;
+      toast('This screen is on another address. It is shown, but notes, marks and the feature view need it on this one.', 7000);
+    }
+    /* adopt first: the view's `on` selectors are keyed by screen, and after a
+       link followed inside the artifact `current.screen` is still the page
+       that was left - which showed features the view was meant to hide */
+    adoptScreen();
     viewInto(frame);
     watchArtifactScroll();
     watchArtifactClicks();
-    adoptScreen();
     if (picking) attachShellPick();
     /* An artifact without the client never announces itself, so the work the
        'ready' message would have triggered is done here instead - everything
@@ -7946,6 +8352,7 @@
     setTimeout(function () {
       if (!frameReady) { paintArtworkTone(); paintSafeArea(); }
       drawAnnots();
+      drawMarks();          // the page has arrived: marks can be measured against it now
     }, 120);
   });
 
