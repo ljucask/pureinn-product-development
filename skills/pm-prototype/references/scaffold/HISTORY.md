@@ -134,3 +134,11 @@ Bugs found that way, none of which a reading of the code would have caught:
 - `annotEl.querySelector('.note--comment')` looked for cards in the layer they do not live in, so the saved-note confirmation flash never played once
 - and one introduced by the review itself, caught only because it was re-run in a browser: `clean()` is called at load on stored notes, so a module-level `var KEEP` was still `undefined` when it ran and the exception took the whole boot with it. `node --check` passed. **Hoisting is not an ordering guarantee, and a syntax check is not a load**
 - `.seg` and `.grp` set their own `display`, which beats the browser's rule for `[hidden]` - hiding the variant group did nothing at all
+
+The thirty-second took the harness off the author's machine. Published as a Claude artifact it keeps notes and proposed versions in the artifact's store, each person under their own id. What that round settled:
+
+- leaving a note and proposing a version are separate rights. They started as one ("can write"), which meant anyone invited to comment could also spend Claude usage and fill the version list. One `access` block now says which level each needs, the harness reads it to decide what to offer, and `publish.py` generates the store's rules from it - so a button the store would refuse is not drawn
+- Approve was shown to Editors, who cannot write another person's version. It is the author's alone
+- the author could not read anyone's notes without leaving the harness. The notes list has Everyone's notes: named, read-only, markup cleaned on the way in
+- the bundle was assembled by hand each time, and each time something was missed - the reserved `index.html`, the config fetched after the page. `publish.py` does it the same way every time and leaves `review/` out
+- the record lived only in the store. `pull.py` writes notes and versions into `review/team/` as documents a person can read; a version's file names are checked before anything is written, because they were typed by someone else

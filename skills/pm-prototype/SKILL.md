@@ -6,7 +6,7 @@ metadata:
   agent-mode: decision
   standalone: yes
   author: https://github.com/ljucask
-  version: "1.4.0"
+  version: "1.5.0"
   domain: product-management
   triggers: prototype, prototyping, workbench, scope the MVP in a prototype, feature phases in prototype, role view, proof of concept, POC, spike, validate before build, lovable, base44, v0, figma make, clickable prototype, mockup, throwaway, quick validation, in-repo prototype, coding agent prototype, prototype harness
   role: specialist
@@ -61,7 +61,8 @@ This file is the flow. Detail that only one path needs lives in `references/` ne
 | `prototype-folder.md` | The folder an in-repo prototype lives in, `targets:`, provenance for `context/`, the decision state | **Step 3b - created before the build**, updated at 7, closed at 8 |
 | `promotion.md` | Classification before the first line of code; kill and promotion once there is a decision | Step 3b, then Step 8 |
 | `workbench.md` | The second purpose - build wide, cut down by roadmap phase, hand over. Roles, phases, features and versions in the harness | Step 2 finds the purpose is shaping and scoping, not testing |
-| `scaffold/` | The harness itself - copy `harness.html`, `harness-client.js`, `serve.py` and `sync.py` byte-for-byte, edit only `harness.config.js`. `serve.py` serves it and saves review notes into the project; `sync.py` generates the feature list from the cards. `scaffold/README.md` is the manual for all of it. `check.py` and `HISTORY.md` are for changing the harness and are not copied. `HISTORY.md` is for changing the harness, not for using it | on the in-repo path, and in Wrap mode |
+| `published-review.md` | Sharing the prototype as a Claude artifact with a team: the publish bundle, who may leave notes and who may propose a version, everyone's notes for the author, and pulling notes and versions back into `review/team/` | the reviewers are not at the author's machine and have Claude accounts in the same organisation |
+| `scaffold/` | The harness itself - copy `harness.html`, `harness-client.js`, `serve.py`, `sync.py`, `publish.py` and `pull.py` byte-for-byte, edit only `harness.config.js`. `serve.py` serves it and saves review notes into the project; `sync.py` generates the feature list from the cards. `scaffold/README.md` is the manual for all of it. `check.py` and `HISTORY.md` are for changing the harness and are not copied. `HISTORY.md` is for changing the harness, not for using it | on the in-repo path, and in Wrap mode |
 
 ---
 
@@ -399,6 +400,7 @@ The block under point 2 is the shape of the record on both paths.
 - [ ] Path stated out loud with its reason before building
 - [ ] External path only: compiled build prompt following the tool's construction rules (`references/external-tools.md`; Lovable rules if Lovable)
 - [ ] In-repo path only: harness in place per `references/in-repo-loop.md`, all four states reachable
+- [ ] Published for a team only: bundled with `build/publish.py` (never by hand), published on the author's go-ahead, `review/` not in the bundle; after the round, notes and versions pulled into `review/team/` with `build/pull.py` and each one routed
 - [ ] In-repo path only: served with `build/serve.py`; `review/notes.md` and open proposals read at the start of every session and each one routed; no proposal applied without the author's yes; `sync.py --check` passing at the end
 - [ ] Design direction chosen, with the rejection named - not defaulted into
 - [ ] Prototype language asked, and not confused with `artifact_language`
@@ -445,7 +447,7 @@ prototypes/[prototype-name]/                  in-repo path - a folder
 
 External path, feature-scoped: `[FEAT-ID]-prototype-spec.md`. Initiative, product or slice: a descriptive `[scope-slug]`.
 
-In-repo path: a kebab-case folder named for what it explores - `ama-lifecycle`, `pricing-tiers` - never for a date or a version. Shape in `references/prototype-folder.md`.
+In-repo path: a kebab-case folder named for what it explores - `onboarding-flow`, `pricing-tiers` - never for a date or a version. Shape in `references/prototype-folder.md`.
 
 **Never both for the same prototype.** One prototype, one artifact; two means they drift and nobody knows which one is current.
 

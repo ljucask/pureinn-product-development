@@ -32,6 +32,9 @@ pureinn-workspace/[project-slug]/prototypes/[prototype-name]/
                           + harness.html, harness-client.js, harness.config.js, serve.py, sync.py
   review/                 written by the harness through serve.py - never by hand
                           notes.md · notes/*.json · proposals.json
+                          team/ - pulled from a published prototype by pull.py:
+                          notes.md · versions.md · versions/<name>/ · raw/
+  publish/                written by publish.py - the bundle that goes out; never edited
 ```
 
 Always at the **workspace root**, never nested under an initiative. A prototype often has no initiative yet - that is frequently why it exists - and moving it later when it acquires one is churn. The relationship is carried by `targets:`, not by the path.
@@ -230,4 +233,4 @@ Four records, kept apart, because each supports a different claim - implementati
 
 ## Naming
 
-`prototypes/[prototype-name]/` in kebab-case, named for what it explores rather than for a date or a version: `ama-lifecycle`, `pricing-tiers`, `dispatcher-assignment`. Feature IDs inside a prototype are `PRT-[NAME]-001` - deliberately not `FEAT-`, so a prototype ID can never be mistaken for a committed feature, and killing one leaves no hole in the production register.
+`prototypes/[prototype-name]/` in kebab-case, named for what it explores rather than for a date or a version: `onboarding-flow`, `pricing-tiers`, `dispatcher-assignment`. Feature IDs inside a prototype are `PRT-[NAME]-001` - deliberately not `FEAT-`, so a prototype ID can never be mistaken for a committed feature, and killing one leaves no hole in the production register.

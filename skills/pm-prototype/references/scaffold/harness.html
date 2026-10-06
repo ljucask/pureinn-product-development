@@ -2284,6 +2284,94 @@
     .dock > .isle { gap: 0; }
     .dock { gap: 0 4px; padding-right: 4px; }
   }
+
+  /* ══ what changed in this release ══ */
+  .rel {
+    position: fixed; z-index: 28; left: calc(var(--edge) + 4px); bottom: calc(var(--top) + var(--edge) * 2 + 4px);
+    width: min(340px, calc(100vw - 32px)); padding: 14px 16px 12px;
+    background: #fff; border-radius: var(--rr); box-shadow: var(--lift), 0 24px 60px -24px rgba(20,22,27,.4);
+    animation: rise var(--med) var(--ease);
+  }
+  .rel__top { display: flex; align-items: center; gap: 8px; }
+  .rel__top b { flex: 1 1 auto; font-size: 13px; font-weight: 680; color: var(--ink); }
+  .rel ul { margin: 8px 0 0; padding-left: 17px; font-size: 12.5px; line-height: 1.55; color: var(--ink-2); }
+  .rel li { margin: 3px 0; }
+  body.is-bare .rel, body.is-present .rel { display: none; }
+
+  /* ══ versions ══ */
+  .ib.is-ver { background: var(--hot); color: #14161b; }
+  .ib.is-ver:hover { background: var(--hot); }
+  .sheet--edit .sheet__ta { width: 100%; }
+  .sheet--edit .cta[disabled] { opacity: .6; cursor: default; }
+  @container (max-width: 1640px) { .dock [data-menu="version"] .caret { display: none; } }
+
+  /* ══ the note card fits its rail ══
+     Two things pushed it out: the labels were raised to a readable size and
+     the severity dots to a pressable one, and the last row no longer fitted
+     on one line; and the card being written sits a little proud of the rail,
+     which the rail then cut off. The row wraps, and the rail leaves room. */
+  .rail { width: calc(var(--rail) - 30px); padding-left: 20px; padding-right: 8px; }
+  .note__add { flex-wrap: wrap; row-gap: 8px; column-gap: 6px; }
+  .note__add .note__save { margin-left: auto; }
+  .note__add .note__kbd { letter-spacing: .06em; }
+  .note, .note * { min-width: 0; }
+  .note__body, .note__text, .note [contenteditable] { overflow-wrap: anywhere; }
+
+  /* ══ the note editor, laid out ══
+     Name, text, a formatting strip, severity on one line with its dots, and
+     the button that saves across the full width - one thing per line, in the
+     order they are used. */
+  .note__who-in { width: 100%; height: 32px; margin: 2px 0 8px; padding: 0 10px; border-radius: 8px; font-size: 12.5px; background: rgba(20,22,27,.05); }
+  .note__tools {
+    display: inline-flex; gap: 2px; margin-top: 10px; padding: 2px;
+    border-radius: 9px; background: rgba(20,22,27,.05);
+  }
+  .fmt { width: 28px; height: 26px; border-radius: 7px; font-size: 12.5px; color: var(--ink-2); }
+  .fmt:hover { background: #fff; color: var(--ink); box-shadow: 0 1px 2px rgba(20,22,27,.12); }
+  .fmt--img svg { width: 14px; height: 14px; }
+  .note__add { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 10px; margin-top: 12px; }
+  .note__add .note__kbd {
+    flex: 0 0 auto; font: 600 12px/1 var(--font); letter-spacing: 0; text-transform: none; color: var(--ink-2);
+  }
+  .note__add .sev { flex: 0 0 auto; width: auto; margin: 0; gap: 4px; }
+  .note__add .sev button { width: 26px; height: 26px; min-width: 26px; border-radius: 8px; }
+  .note__add .sev button:hover { background: rgba(20,22,27,.06); }
+  .note__add .sev button i { width: 11px; height: 11px; opacity: .35; }
+  .note__add .sev button[aria-pressed="true"] { background: rgba(20,22,27,.07); transform: none; }
+  .note__add .sev button[aria-pressed="true"] i { box-shadow: none; opacity: 1; }
+  .note__add .note__save {
+    flex: 1 0 100%; margin-left: 0; height: 34px; padding: 0 12px; border-radius: 9px;
+    font: 620 12.5px/1 var(--font); box-shadow: none; text-align: center;
+  }
+
+  /* The two small buttons at a card's corner were columns of the card: 78px
+     of every line of text given up for two icons on the first one. They sit
+     in the corner now, and the text has the width. */
+  .note { position: relative; }
+  .note > .note__grow, .note > .note__x { position: absolute; top: 9px; margin: 0; }
+  .note > .note__x { right: 9px; }
+  .note > .note__grow { right: 35px; }
+  .note__body > :first-child { padding-right: 52px; }
+
+  /* ══ a screen that is a proposal ══ */
+  .nav__i--new { box-shadow: inset 0 0 0 1px rgba(255,154,82,.55); }
+  .nav__i--new[aria-current="true"] { box-shadow: inset 0 0 0 1px rgba(255,255,255,.4); }
+  .nav__new {
+    display: block; margin-top: 6px; font: 700 11px/1.3 var(--mono); letter-spacing: .04em;
+    text-transform: uppercase; color: var(--hot);
+  }
+  .nav__i[aria-current="true"] .nav__new { color: #fff; }
+
+  /* ══ a colleague's note, in the author's list ══ */
+  .nrow__by { display: block; margin: 2px 0 4px; font: 600 11.5px/1.3 var(--font); color: #ffb48a; }
+
+  /* ══ what each access level may do, in the share sheet ══ */
+  .lv { width: 100%; margin: 12px 0 2px; border-collapse: collapse; font-size: 12px; line-height: 1.45; }
+  .lv th, .lv td { padding: 8px 10px; text-align: left; vertical-align: top; border-top: 1px solid rgba(22,24,29,.09); }
+  .lv tr:first-child th, .lv tr:first-child td { border-top: 0; }
+  .lv th { width: 34%; font-weight: 650; color: var(--ink); white-space: nowrap; }
+  .lv td { color: var(--ink-2); }
+  .lv tr.is-me th, .lv tr.is-me td { background: rgba(194,69,45,.07); }
 </style>
 </head>
 <body>
@@ -2501,6 +2589,14 @@
     </div>
   </div>
 
+  <span class="sep" data-ver-sep hidden></span>
+  <div class="grp" data-ver-grp hidden>
+    <span class="grp__l">Version</span>
+    <div class="grp__row">
+      <button class="ib" type="button" data-menu="version" aria-haspopup="menu" aria-expanded="false" title="Switch between the main prototype and proposed versions, or propose a change"><svg><use href="#i-layers"/></svg><span data-ver-label>Version: Main</span><svg class="caret"><use href="#i-chevron"/></svg></button>
+    </div>
+  </div>
+
   <span class="sep"></span>
   <div class="grp">
     <span class="grp__l">Share</span>
@@ -2559,6 +2655,12 @@
     <h2 class="sheet__h" id="invite-h">Invite someone to review</h2>
     <button class="nav__x" type="button" data-invite-close aria-label="Close"><svg><use href="#i-x"/></svg></button>
   </div>
+  <div data-invite-cloud hidden>
+    <p class="sheet__p">Access is given in Claude, not here: open the <b>Share</b> menu of this artifact, add the person, and choose their level. The level decides what they can do in this prototype.</p>
+    <table class="lv" data-invite-levels></table>
+    <p class="sheet__p" data-invite-me></p>
+  </div>
+  <div data-invite-local>
   <p class="sheet__p">They can view the prototype, add notes and send them back to you. They cannot see your event log or create invite links.</p>
   <p class="sheet__p">Add a line if there is something specific you want <em>this</em> person to look at.</p>
   <textarea class="sheet__ta" data-invite-msg rows="3" placeholder="e.g. Ignore the styling - tell me whether the assignment step makes sense."></textarea>
@@ -2569,6 +2671,7 @@
   </div>
   <div class="sheet__acts">
     <button class="cta wide" type="button" data-invite-copy><svg><use href="#i-copy"/></svg><span>Copy the link</span></button>
+  </div>
   </div>
 </div>
 
@@ -2870,6 +2973,11 @@
   })();
   var viewFromLink = q.has('role') || q.has('phase') || q.has('fx') || q.has('ver');
   var vwFlash = '';         // a temporary outline rule, while a feature is being pointed at
+  var versions = [];        // proposed versions of the prototype - see "versions"
+  var activeVersion = 'main';
+  var baseScreens = screens.slice();
+  var mainCache = {};       // the main version's files, as fetched, by path
+  var cloud = null;         // set when the page runs as a Claude artifact - see "published as an artifact"
   var bridge = null;        // set when the local serve.py answers - see "the bridge"
   var proposals = [];       // edits proposed to features, as serve.py holds them
   var fcEdit = false;       // the open card is being edited
@@ -2910,6 +3018,8 @@
      refuses every write; a full quota refuses this one - images are the usual
      cause. Either way the reviewer is told once, while they can still export. */
   function writeStore(k, v) {
+    /* published as a Claude artifact, notes also go to its shared store */
+    if (k === 'comments') cloudSync();
     try { localStorage.setItem(KEY + ':' + k, JSON.stringify(v)); return true; }
     catch (e) {
       if (!storeBroken) {
@@ -3069,7 +3179,11 @@
     return h;
   }
 
+  function buildNav() {
+  navList.innerHTML = '';
   var realCount = 0;
+  document.querySelector('[data-nav-count]').textContent =
+    screens.filter(function (s) { return !generated(s); }).length;
   screens.forEach(function (s, i) {
     /* A generated screen is about the prototype, not part of it. Sitting in the
        same list, in the same styling, it reads as one more thing to click
@@ -3080,7 +3194,7 @@
     }
     var b = document.createElement('button');
     b.type = 'button'; b.className = 'nav__i' + (aboutDoc(s) ? ' nav__i--doc' : '');
-    b.setAttribute('aria-current', String(i === startScreen));
+    b.setAttribute('aria-current', String(s.src === current.screen));
     b.setAttribute('data-in', aboutDoc(s) ? 'docs' : 'screens');
     if (aboutDoc(s) && shut.docs) b.hidden = true;
     if (!aboutDoc(s)) realCount++;
@@ -3108,6 +3222,13 @@
     var out = document.createElement('span');
     out.className = 'nav__out';
     b.appendChild(out);
+    if (s.proposed) {
+      b.classList.add('nav__i--new');
+      var tag = document.createElement('span');
+      tag.className = 'nav__new';
+      tag.textContent = s.proposed;
+      b.appendChild(tag);
+    }
 
     b.addEventListener('click', function () { pickScreen(i); closeNav(); });
     navList.appendChild(b);
@@ -3116,7 +3237,9 @@
     var key = h.getAttribute('data-sec');
     h.querySelector('b').textContent = navList.querySelectorAll('[data-in="' + key + '"]').length;
   });
-  navCur.textContent = screens[startScreen].label;
+  navCur.textContent = screens[screenIndex(current.screen)].label;
+  }
+  buildNav();
 
   function pickScreen(i) {
     /* A document is one page about the prototype. Three scaled copies of it, or
@@ -3682,6 +3805,15 @@
     if (opening) { closeSurfaces('sheet'); armOpened(); }
     inviteSheet.hidden = !opening;
     if (inviteSheet.hidden) return;
+    /* Published, a link with a view in it goes nowhere and access is not ours
+       to give: the host's Share menu decides who gets in and at which level.
+       What this sheet can do is say where that is and what each level means
+       HERE, from the same access block the store's rules were made from. */
+    var pub = !!cloud;
+    inviteSheet.querySelector('[data-invite-cloud]').hidden = !pub;
+    inviteSheet.querySelector('[data-invite-local]').hidden = pub;
+    document.getElementById('invite-h').textContent = pub ? 'Share with your team' : 'Invite someone to review';
+    if (pub) { paintLevels(); return; }
     // only offer what this prototype actually has
     var any = false;
     ['overview', 'instructions'].forEach(function (k) {
@@ -3694,6 +3826,29 @@
     inviteMsg.focus();
   });
   document.querySelector('[data-invite-close]').addEventListener('click', function () { inviteSheet.hidden = true; });
+  function paintLevels() {
+    var ver = access.versions === 'contributor', all = access.allNotes === 'editor';
+    var rows = [
+      ['Viewer',      'Looks at the prototype and at proposed versions. Cannot leave notes.'],
+      ['Contributor', 'Leaves notes' + (ver ? ' and proposes versions.' : '. Cannot propose a version.')],
+      ['Editor',      'Leaves notes, proposes versions' + (all ? ", reads everyone's notes." : '.')],
+      ['You, the author', "Reads everyone's notes and approves versions."]
+    ];
+    var mine = cloud.owner ? 3 : cloud.admin ? 2 : cloud.write === false ? 0 : 1;
+    var t = inviteSheet.querySelector('[data-invite-levels]');
+    t.innerHTML = '';
+    rows.forEach(function (r, i) {
+      if (i === 3 && !cloud.owner) r = ['Author', r[1]];
+      var tr = document.createElement('tr');
+      if (i === mine) tr.className = 'is-me';
+      var th = document.createElement('th'); th.scope = 'row'; th.textContent = r[0];
+      var td = document.createElement('td'); td.textContent = r[1];
+      tr.appendChild(th); tr.appendChild(td); t.appendChild(tr);
+    });
+    inviteSheet.querySelector('[data-invite-me]').textContent = cloud.owner
+      ? 'To collect feedback, invite reviewers as Contributors. Give Editor only to people who should propose changes.'
+      : 'Your level is ' + rows[mine][0] + '. Only the author can change who has access.';
+  }
 
   document.querySelector('[data-invite-copy]').addEventListener('click', function () {
     var msg = inviteMsg.value.trim();
@@ -4848,6 +5003,34 @@
   };
 
   var MENUS = {
+    version: function () {
+      var can = !!engine() && canPropose();
+      var mine = versionById(activeVersion);
+      var list = [{ h: 'Which version of the prototype' },
+        { ico: 'i-layers', t: 'Main', d: 'The version the author published', on: activeVersion === 'main', fn: function () { showVersion('main'); } }]
+        .concat(versions.map(function (v) {
+          return { ico: 'i-user', t: v.name, d: (v.status === 'approved' ? 'Approved - part of Main. ' : 'Proposed - not merged. ') + (v.summary || ''),
+                   on: activeVersion === v.id, fn: function () { showVersion(v.id); } };
+        }));
+      if (engine() && canPropose()) list.push({ sep: true }, { h: 'Propose a change' },
+        { ico: 'i-pen', t: 'Change this screen', d: can ? 'Say what should be different. Saved as your own version' : 'Needs Claude - available when the prototype is published',
+          fn: function () { openEdit('change'); } },
+        { ico: 'i-screen', t: 'Add a screen', d: can ? 'Describe a screen that is missing' : 'Needs Claude - available when the prototype is published',
+          fn: function () { openEdit('new'); } });
+      /* an approval can be taken back, by whoever could give it */
+      if (canApprove()) versions.filter(function (v) { return v.status === 'approved'; }).forEach(function (v) {
+        list.push({ ico: 'i-reset', t: 'Take ' + v.name + ' out of Main', d: 'It goes back to being a proposal', fn: function () {
+          v.status = 'proposed'; delete v.approvedAt;
+          saveVersion(v).then(function () { showVersion('main'); toast(v.name + ' is a proposal again.'); });
+        } });
+      });
+      if (mine) {
+        list.push({ sep: true });
+        if (mine.status !== 'approved' && canApprove()) list.push({ ico: 'i-check', t: 'Approve this version', d: 'Marks it as accepted, to be merged into the main prototype', fn: function () { approveVersion(mine); } });
+        if (ownsVersion(mine) || canApprove()) list.push({ ico: 'i-x', t: 'Delete this version', d: 'Removes ' + mine.name + ' for everyone', fn: function () { deleteVersion(mine); } });
+      }
+      return list;
+    },
     role: function () {
       return [{ h: 'Show the prototype as one user type' }].concat(
         [{ id: 'all', label: 'All user types', desc: 'Nothing hidden by user type' }].concat(roles).map(function (r) {
@@ -4912,7 +5095,7 @@
     share: function () { return [
       { h: 'Send it to someone' },
       { ico: 'i-share', t: 'Copy this view',   d: 'This exact screen, state, time and device. No task attached', fn: function () { press('[data-share]'); } },
-      { ico: 'i-user',  t: 'Invite to review', d: 'Opens with the task and a prompt to send notes back', fn: function () { press('[data-invite]'); }, maker: true },
+      { ico: 'i-user',  t: cloud ? 'Access and sharing' : 'Invite to review', d: cloud ? 'Where to give access, and what each level may do here' : 'Opens with the task and a prompt to send notes back', fn: function () { press('[data-invite]'); }, maker: true },
       { sep: true },
       { h: 'Take a copy' },
       { ico: 'i-image', t: 'Screenshot',    d: 'This screen as a PNG, with any marks on it. Notes stay out', fn: function () { press('[data-shot]'); } },
@@ -4973,7 +5156,7 @@
        is a control FOR the feature list rather than a rival to it. */
     if (except !== 'view' && !keepView && vwEl && fcEl && (!vwEl.hidden || !fcEl.hidden)) dismissView();
     if (except !== 'sheet') {
-      document.querySelectorAll('[data-sheet], [data-invite-sheet]').forEach(function (el) { el.hidden = true; });
+      document.querySelectorAll('[data-sheet], [data-invite-sheet], [data-edit-sheet]').forEach(function (el) { el.hidden = true; });
     }
   }
 
@@ -5057,7 +5240,8 @@
        sheets included. One rule, so nobody has to learn which panels obey it. */
     if (!e.target.closest('[data-vw],[data-fc],[data-vw-isle],.menu')) dismissView();
     if (!e.target.closest('.sheet,[data-send],.menu')) {
-      document.querySelectorAll('[data-sheet], [data-invite-sheet]').forEach(function (el) { el.hidden = true; });
+      /* (the edit sheet is a .sheet too) */
+      document.querySelectorAll('[data-sheet], [data-invite-sheet], [data-edit-sheet]').forEach(function (el) { el.hidden = true; });
     }
   });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeMenu(); });
@@ -5074,12 +5258,28 @@
        the artifact is outside. Leaving a panel open "because it drives the
        artifact" meant three of them stacked up with no way to clear the
        screen short of finding each close button. */
-    d.addEventListener('click', function () {
+    d.addEventListener('click', function (e) {
+      /* A version's screen is drawn from stored text, so a link in it would
+         load the MAIN version of the next screen and quietly leave the
+         version. The shell follows the link itself instead. */
+      if (activeVersion !== 'main') {
+        var a = e.target.closest ? e.target.closest('a[href]') : null;
+        var to = -1;
+        if (a) {
+          try {
+            var path = new URL(a.getAttribute('href'), location.href).pathname;
+            to = screens.findIndex(function (sc) {
+              try { return !generated(sc) && new URL(sc.src, location.href).pathname === path; } catch (err) { return false; }
+            });
+          } catch (err) { to = -1; }
+        }
+        if (to > -1) { e.preventDefault(); pickScreen(to); return; }
+      }
       closeMenu();
       if (sameClick()) return;
       if (!simEl.hidden) openSim(false);
       dismissView();
-      document.querySelectorAll('[data-sheet], [data-invite-sheet]').forEach(function (el) { el.hidden = true; });
+      document.querySelectorAll('[data-sheet], [data-invite-sheet], [data-edit-sheet]').forEach(function (el) { el.hidden = true; });
     }, true);
   }
 
@@ -5418,6 +5618,7 @@
   var panelEdit = null;
 
   var CHIPS = [
+    { k: 'kind', v: 'team',    t: "Everyone's notes", team: true },
     { k: 'kind', v: 'comment', t: 'My notes' },
     { k: 'kind', v: 'label',   t: "Author's labels" },
     { k: 'kind', v: null,      t: 'Everything' },
@@ -5431,6 +5632,7 @@
     CHIPS.forEach(function (ch) {
       var b = document.createElement('button');
       b.type = 'button'; b.className = 'chip2'; b.textContent = ch.t;
+      if (ch.team) { b.setAttribute('data-team-chip', ''); b.hidden = true; }
       b.setAttribute('aria-pressed', String(filter[ch.k] === ch.v));
       b.addEventListener('click', function () {
         filter[ch.k] = (filter[ch.k] === ch.v && ch.k === 'sev') ? null : ch.v;
@@ -5444,8 +5646,41 @@
   })();
   notesQ.addEventListener('input', function () { filter.q = notesQ.value.toLowerCase(); paintNotes(); });
 
+  /* Everyone's notes, for the author. A reviewer sees only their own; the
+     person the review is FOR has to see all of it in one place, by who said
+     it - or the notes exist and nobody reads them. Read-only here: a note
+     belongs to whoever wrote it. */
+  var teamNotes = [];
+  function loadTeamNotes() {
+    if (!cloud) return;
+    cloud.db.collection('notes').get().then(function (heads) {
+      var ids = heads.docs.map(function (h) { return h.id; }).filter(function (id) { return id !== cloud.uid; });
+      return Promise.all(ids.map(function (id) {
+        return cloud.db.collection('notes/' + id + '/items').get().then(function (snap) {
+          return snap.docs.map(function (d) { var n = d.data() || {}; n.id = d.id; n.by = id; if (n.html) n.html = clean(n.html); return n; });
+        }).catch(function () { return []; });
+      })).then(function (lists) {
+        teamNotes = [].concat.apply([], lists);
+        var names = Promise.resolve({});
+        try { if (ids.length && typeof cloud.user.profiles === 'function') names = Promise.resolve(cloud.user.profiles(ids)); } catch (e) { /* no names */ }
+        return names.then(function (ps) {
+          teamNotes.forEach(function (n) { n.byName = (ps && ps[n.by] && ps[n.by].name) || n.who || 'Someone'; });
+        }, function () {
+          teamNotes.forEach(function (n) { n.byName = n.who || 'Someone'; });
+        });
+      });
+    }).then(function () { paintTeamCount(); if (notesOpen) paintNotes(); }).catch(function () {});
+  }
+  function paintTeamCount() {
+    var chip = document.querySelector('[data-team-chip]');
+    if (chip) { chip.hidden = !teamNotes.length; chip.textContent = "Everyone's notes (" + teamNotes.length + ')'; }
+  }
+
   function allNotes() {
     var out = [];
+    teamNotes.forEach(function (n) {
+      out.push({ kind: 'team', cm: n, screen: n.screen, text: n.text || '', html: n.html });
+    });
     comments.forEach(function (cm) {
       if (cm.draft) return;
       out.push({ kind: 'comment', cm: cm, screen: cm.screen, text: cm.text || '', html: cm.html });
@@ -5524,13 +5759,13 @@
     notesList.innerHTML = '';
     list.forEach(function (n) {
       var row = document.createElement('div');
-      row.className = 'nrow' + (n.kind === 'label' ? ' nrow--doc' : '') +
+      row.className = 'nrow' + (n.kind === 'label' ? ' nrow--doc' : '') + (n.kind === 'team' ? ' nrow--team' : '') +
                       (focusNote && n.cm === focusNote ? ' is-on' : '');
 
       var top = document.createElement('div');
       top.className = 'nrow__top';
       var dot = document.createElement('i');
-      dot.className = n.kind === 'comment' && !n.summary ? 'dot sev-' + (n.cm.severity || 'normal') : 'dot';
+      dot.className = (n.kind === 'comment' || n.kind === 'team') && !n.summary ? 'dot sev-' + (n.cm.severity || 'normal') : 'dot';
       if (n.kind === 'label') dot.style.background = '#ed6d57';
       if (n.summary) dot.style.background = '#6c5ce0';
       var where = document.createElement('span');
@@ -5539,6 +5774,13 @@
         : screenLabel(n.screen) + (n.cm ? ' · ' + n.cm.state + (n.cm.device ? ' · ' + n.cm.device : '') : '');
       top.appendChild(dot); top.appendChild(where);
       row.appendChild(top);
+      if (n.kind === 'team') {
+        var by = document.createElement('span');
+        by.className = 'nrow__by';
+        by.textContent = n.cm.byName + (n.cm.version && n.cm.version !== 'main' ? ' · on a proposed version' : '') +
+          (n.cm.release ? ' · ' + n.cm.release : '');
+        row.appendChild(by);
+      }
 
       if (panelEdit && n.cm === panelEdit) {
         row.appendChild(rowEditor(n.cm, n.summary));
@@ -5849,7 +6091,7 @@
     var cm = {
       id: 'c' + Date.now(),
       screen: current.screen, state: current.state, variant: current.variant,
-      device: current.device, role: view.role, phase: view.phase,
+      device: current.device, role: view.role, phase: view.phase, version: activeVersion,
       selector: null, anchor: about || '',
       who: reviewerName, severity: 'normal', text: '', html: '',
       at: new Date().toISOString(), draft: true, fresh: true
@@ -5882,7 +6124,7 @@
       screen: current.screen,
       state: current.state,
       variant: current.variant,
-      device: current.device, role: view.role, phase: view.phase,
+      device: current.device, role: view.role, phase: view.phase, version: activeVersion,
       selector: d.selector || null,
       rx: typeof d.rx === 'number' ? d.rx : undefined,
       ry: typeof d.ry === 'number' ? d.ry : undefined,
@@ -5987,7 +6229,7 @@
     sheetList.innerHTML = '';
     sheetActs.innerHTML = '';
     document.querySelector('[data-sheet-p]').textContent = total()
-      ? 'Nothing has left this browser yet. Pick how to send ' + (total() === 1 ? 'this note' : 'these ' + total() + ' notes') + '.'
+      ? (cloud ? 'Your notes are saved to this prototype as you write them, and the author can read them. You can also send ' : 'Nothing has left this browser yet. Pick how to send ') + (total() === 1 ? 'this note' : 'these ' + total() + ' notes') + '.'
       : 'No notes yet. Press Add note and click something, or write one Overall note.';
 
     /* The rail already shows the notes in full. Repeating them here made the
@@ -8021,6 +8263,463 @@
     });
   }
 
+  /* ---------- versions ----------
+
+     A version is one person's changes to the prototype, shown BESIDE the main
+     one: "v4 - Jana". It is not a copy. It holds only the files that person
+     changed or added, and every other screen is the main one - so it can be
+     as small as a renamed button or as large as three new screens, and it
+     lives at the same address as everything else.
+
+     It is made by saying what should change. The words go to Claude with the
+     screen as it stands; what comes back is stored as that person's version
+     and shown at once. Nothing in the main prototype moves. Everyone can
+     switch to a version and compare; the author approves one, and whoever
+     works in the repo merges it there and publishes a release.
+
+     Where it is kept depends on where the harness runs: published as an
+     artifact, in the artifact's store, under the person's own id; served
+     locally, in this browser only - which is enough to try it, and to test
+     it.
+
+     One guard. A version is text that came from a model and from another
+     person, and it is drawn inside this page. Markup and style are taken as
+     given. Script is not: a script survives only if the main version of that
+     screen carries the very same one. A change of behaviour is a change to
+     the code, and goes through the repo. */
+  function versionById(id) {
+    for (var i = 0; i < versions.length; i++) if (versions[i].id === id) return versions[i];
+    return null;
+  }
+  /* What Main is. The published files, plus every APPROVED version laid over
+     them, oldest first. Approving is the author saying "this is the prototype
+     now", and it would be a strange approval that changed nothing anyone
+     could see - so it shows for everyone at once. The source catches up at
+     the next release, when the approved versions are merged into it. */
+  function approvedOverlay() {
+    var files = {}, extra = [];
+    versions.filter(function (v) { return v.status === 'approved'; })
+      .sort(function (a, b) { return String(a.approvedAt || a.at).localeCompare(String(b.approvedAt || b.at)); })
+      .forEach(function (v) {
+        Object.keys(v.files || {}).forEach(function (p) { files[p] = v.files[p]; });
+        (v.screens || []).forEach(function (sc) {
+          var copy = JSON.parse(JSON.stringify(sc));
+          copy.proposed = 'Approved - in the source at the next release';
+          extra.push(copy);
+        });
+      });
+    return { files: files, screens: extra };
+  }
+  /* every file the current view replaces: approved ones, then the version being shown */
+  function effectiveFiles() {
+    var files = approvedOverlay().files, v = versionById(activeVersion);
+    if (v && v.status !== 'approved') Object.keys(v.files || {}).forEach(function (p) { files[p] = v.files[p]; });
+    return files;
+  }
+  function versionFile(path) {
+    var f = effectiveFiles()[path];
+    return typeof f === 'string' ? f : null;
+  }
+  /* The screens of the current view. A screen a version adds belongs with the
+     prototype's screens, marked as a proposal - not after the documents about
+     the prototype, where it used to land and read as one of them. */
+  function viewScreens() {
+    var extra = approvedOverlay().screens, v = versionById(activeVersion);
+    if (v && v.status !== 'approved') (v.screens || []).forEach(function (sc) {
+      var copy = JSON.parse(JSON.stringify(sc));
+      copy.proposed = 'Proposed in ' + v.name + ' - not merged';
+      extra.push(copy);
+    });
+    var seen = {}, list = [];
+    baseScreens.forEach(function (sc) { seen[sc.src] = true; });
+    extra = extra.filter(function (sc) { if (seen[sc.src]) return false; seen[sc.src] = true; return true; });
+    var at = baseScreens.findIndex(function (sc) { return aboutDoc(sc); });
+    if (at < 0) at = baseScreens.length;
+    return baseScreens.slice(0, at).concat(extra, baseScreens.slice(at));
+  }
+  function ownsVersion(v) { return cloud ? v.owner === cloud.uid : true; }
+  /* Who may do what, on a published prototype. The levels are the artifact's
+     own - Viewer, Contributor, Editor, and the author - and the config says
+     which of them each thing needs:
+
+         access: { notes: 'contributor', versions: 'editor', allNotes: 'owner' }
+
+     Those are the defaults: anyone invited as a Contributor can leave notes,
+     proposing a version takes an Editor, and only the author reads everyone's
+     notes and approves a version. The same block is what the store's rules are
+     generated from at publish, so what the page offers and what the store
+     accepts cannot disagree. Served locally there is one person and no levels. */
+  var access = (function () {
+    var a = cfg.access || {};
+    return { notes: 'contributor', versions: a.versions === 'contributor' ? 'contributor' : 'editor',
+             allNotes: a.allNotes === 'editor' ? 'editor' : 'owner' };
+  })();
+  function canApprove() { return cloud ? !!cloud.owner : true; }
+  function canPropose() {
+    if (!cloud) return true;
+    return access.versions === 'contributor' ? cloud.write !== false : !!cloud.admin;
+  }
+  function readsAllNotes() { return !!cloud && (access.allNotes === 'editor' ? !!cloud.admin : !!cloud.owner); }
+  function engine() {
+    if (typeof window.HARNESS_ENGINE === 'function') return window.HARNESS_ENGINE;
+    if (cloud && cloud.sample) return cloudEngine;
+    return null;
+  }
+  function mainFile(path) {
+    if (mainCache[path] !== undefined) return Promise.resolve(mainCache[path]);
+    return fetch(path, { cache: 'no-store' }).then(function (r) { return r.ok ? r.text() : null; })
+      .catch(function () { return null; })
+      .then(function (t) { mainCache[path] = t; return t; });
+  }
+  /* The version's text for one screen, made safe to draw and complete enough
+     to draw alone: stylesheets the version changed are put inline, because the
+     frame would otherwise fetch the main ones. */
+  function composeVersion(v, src) {
+    var files = effectiveFiles();
+    return mainFile(src).then(function (base) {
+      var doc = new DOMParser().parseFromString(files[src], 'text/html');
+      var allowed = {};
+      if (base) {
+        var bdoc = new DOMParser().parseFromString(base, 'text/html');
+        bdoc.querySelectorAll('script').forEach(function (sc) { allowed[(sc.getAttribute('src') || '') + '|' + sc.textContent.trim()] = true; });
+      }
+      allowed['harness-client.js|'] = true;
+      doc.querySelectorAll('script').forEach(function (sc) {
+        if (!allowed[(sc.getAttribute('src') || '') + '|' + sc.textContent.trim()]) sc.remove();
+      });
+      doc.querySelectorAll('*').forEach(function (el) {
+        for (var i = el.attributes.length - 1; i >= 0; i--) {
+          var a = el.attributes[i];
+          if (a.name.indexOf('on') === 0 || (/^(href|src|action)$/.test(a.name) && /^\s*javascript:/i.test(a.value))) el.removeAttribute(a.name);
+        }
+      });
+      doc.querySelectorAll('link[rel="stylesheet"][href]').forEach(function (l) {
+        var css = files[l.getAttribute('href')];
+        if (typeof css !== 'string') return;
+        var st = doc.createElement('style');
+        st.textContent = css;
+        l.replaceWith(st);
+      });
+      return '<!doctype html>' + doc.documentElement.outerHTML;
+    });
+  }
+  function paintVersion() {
+    var show = (!!engine() && canPropose()) || versions.length > 0;
+    document.querySelector('[data-ver-grp]').hidden = !show;
+    document.querySelector('[data-ver-sep]').hidden = !show;
+    var v = versionById(activeVersion);
+    document.querySelector('[data-ver-label]').textContent = 'Version: ' + (v ? v.name : 'Main');
+    document.querySelector('[data-menu="version"]').classList.toggle('is-ver', !!v);
+  }
+  function showVersion(id) {
+    var v = versionById(id);
+    if (v && v.status === 'approved') v = null;        // it is part of Main now
+    activeVersion = v ? v.id : 'main';
+    screens = viewScreens();
+    if (!screens.some(function (sc) { return sc.src === current.screen; })) current.screen = screens[0].src;
+    buildNav();
+    paintVersion();
+    load();
+    record('harness:version', activeVersion);
+    if (v) toast('Showing ' + v.name + '. Screens it did not change are the main ones.', 3600);
+  }
+  function loadVersions() {
+    var p = cloud ? cloudVersions() : Promise.resolve(readStore('versions', []));
+    return p.then(function (list) {
+      versions = (list || []).filter(function (v) { return v && v.id && v.files; });
+      versions.sort(function (a, b) { return String(a.at).localeCompare(String(b.at)); });
+      if (activeVersion !== 'main' && !versionById(activeVersion)) { showVersion('main'); return; }
+      /* approved versions are part of Main, so Main may have just changed */
+      var before = screens.map(function (sc) { return sc.src; }).join('|');
+      screens = viewScreens();
+      var changed = before !== screens.map(function (sc) { return sc.src; }).join('|');
+      if (changed) buildNav();
+      if (changed || versionFile(current.screen) !== null) load();
+      paintVersion();
+    }).catch(function () { paintVersion(); });
+  }
+  function saveVersion(v) {
+    if (!cloud) {
+      writeStore('versions', versions);
+      return Promise.resolve();
+    }
+    var body = JSON.parse(JSON.stringify(v));
+    delete body.owner;
+    var owner = v.owner || cloud.uid;
+    return cloud.db.doc('versions/' + owner).set({ updated: new Date().toISOString() })
+      .then(function () { return cloud.db.doc('versions/' + owner + '/items/' + v.id).set(body); });
+  }
+  function cloudVersions() {
+    return cloud.db.collection('versions').get().then(function (heads) {
+      return Promise.all(heads.docs.map(function (h) {
+        return cloud.db.collection('versions/' + h.id + '/items').get().then(function (snap) {
+          return snap.docs.map(function (d) { var v = d.data() || {}; v.id = d.id; v.owner = h.id; return v; });
+        });
+      }));
+    }).then(function (lists) { return [].concat.apply([], lists); });
+  }
+  function approveVersion(v) {
+    v.status = 'approved';
+    v.approvedAt = new Date().toISOString();
+    saveVersion(v).then(function () {
+      showVersion('main');
+      toast(v.name + ' is approved and now part of Main for everyone. It goes into the source with the next release.', 6200);
+    })
+      .catch(function () { toast('Could not save the approval.', 5000); });
+  }
+  function deleteVersion(v) {
+    var done = function () {
+      versions = versions.filter(function (x) { return x !== v; });
+      if (!cloud) writeStore('versions', versions);
+      if (activeVersion === v.id) showVersion('main'); else paintVersion();
+      toast(v.name + ' deleted.');
+    };
+    if (!cloud) { done(); return; }
+    cloud.db.doc('versions/' + (v.owner || cloud.uid) + '/items/' + v.id).delete().then(done)
+      .catch(function () { toast('Could not delete that version.', 5000); });
+  }
+
+  /* Asking Claude. One request is one screen: the screen as it stands, what
+     should change, and the names of the other screens so links can point at
+     them. The answer is the whole screen back, not a patch - a patch against
+     markup a model has only read once is the thing that fails. */
+  function cloudEngine(req) {
+    var ask = [
+      'You are editing one screen of a clickable HTML prototype. Return ONLY JSON.',
+      req.mode === 'new'
+        ? 'Write a NEW screen as a complete HTML document, in the same visual language as the reference screen: reuse its <head>, stylesheets, class names and layout conventions.'
+        : 'Change the screen below as asked and return the complete updated HTML document. Keep everything that was not asked about exactly as it is, including every <script>, <link>, class and data- attribute.',
+      'Do not add <script> elements or inline event handlers; they are removed. Use only relative links to these existing screens: ' + req.screens.join(', ') + '.',
+      'JSON shape: {"summary": "one short sentence saying what changed", "label": "a 1-3 word screen name (new screens only)", "html": "<!doctype html>..."}',
+      '',
+      'WHAT IS ASKED: ' + req.instruction,
+      '',
+      (req.mode === 'new' ? 'REFERENCE SCREEN' : 'CURRENT SCREEN') + ' (' + req.screen + '):',
+      req.html
+    ].join('\n');
+    return cloud.sample.json(ask, { modelTier: 'complex', cache: false });
+  }
+  var editSheet = null, editBusy = false;
+  function openEdit(mode) {
+    var run = engine();
+    if (!run) { toast('Changing the prototype by description needs Claude. It is available when the prototype is published.', 6000); return; }
+    if (!canPropose()) { toast('Proposing a version needs ' + (access.versions === 'editor' ? 'Editor' : 'Contributor') + ' access to this prototype. You can still leave notes.', 6500); return; }
+    if (generated(screens[screenIndex(current.screen)])) { toast('Open a screen of the prototype first.'); return; }
+    closeSurfaces('sheet');
+    armOpened();
+    if (editSheet) editSheet.remove();
+    var v = versionById(activeVersion);
+    var into = v && ownsVersion(v) && v.status !== 'approved' ? v : null;
+    editSheet = document.createElement('div');
+    editSheet.className = 'sheet sheet--edit';
+    editSheet.setAttribute('data-edit-sheet', '');
+    editSheet.setAttribute('role', 'dialog');
+    editSheet.setAttribute('aria-labelledby', 'edit-h');
+    editSheet.innerHTML =
+      '<div class="sheet__top"><h2 class="sheet__h" id="edit-h"></h2>' +
+      '<button class="nav__x" type="button" data-edit-close aria-label="Close">' + icon('i-x') + '</button></div>' +
+      '<p class="sheet__p" data-edit-p></p>' +
+      '<textarea class="sheet__ta" data-edit-text rows="4" aria-label="What should change"></textarea>' +
+      '<div class="sheet__acts"><button class="cta wide" type="button" data-edit-go></button></div>' +
+      '<p class="sheet__fine" data-edit-note></p>';
+    editSheet.querySelector('h2').textContent = mode === 'new' ? 'Add a screen' : 'Change this screen';
+    editSheet.querySelector('[data-edit-p]').textContent = mode === 'new'
+      ? 'Describe the screen that is missing. It is added to your version, in the style of the screen you are on.'
+      : 'Say what should be different on "' + screens[screenIndex(current.screen)].label + '". The main prototype does not change.';
+    editSheet.querySelector('[data-edit-text]').placeholder = mode === 'new'
+      ? 'e.g. A confirmation screen after a job is assigned, with the courier and the time.'
+      : 'e.g. Move the search into the top bar and make the primary button say what it does.';
+    editSheet.querySelector('[data-edit-go]').textContent = into ? 'Update ' + into.name : 'Create my version';
+    editSheet.querySelector('[data-edit-note]').textContent = into
+      ? 'Added to ' + into.name + '.'
+      : 'Saved as a new version with your name. Everyone can switch to it; the author decides whether it is merged.';
+    editSheet.querySelector('[data-edit-close]').addEventListener('click', function () { editSheet.hidden = true; });
+    editSheet.querySelector('[data-edit-go]').addEventListener('click', function () { runEdit(mode, into); });
+    document.body.appendChild(editSheet);
+    editSheet.querySelector('textarea').focus();
+  }
+  function runEdit(mode, into) {
+    if (editBusy) return;
+    var text = editSheet.querySelector('[data-edit-text]').value.trim();
+    if (!text) { editSheet.querySelector('textarea').focus(); return; }
+    var go = editSheet.querySelector('[data-edit-go]'), note = editSheet.querySelector('[data-edit-note]');
+    var src = current.screen, run = engine();
+    editBusy = true;
+    go.disabled = true; go.textContent = 'Claude is working...';
+    note.textContent = 'This usually takes under a minute. You can keep using the prototype.';
+    var current_ = versionFile(src);
+    (current_ !== null ? Promise.resolve(current_) : mainFile(src)).then(function (html) {
+      if (!html) throw new Error('no screen');
+      return run({ mode: mode, instruction: text, screen: src, html: html,
+                   screens: screens.filter(function (sc) { return !generated(sc); }).map(function (sc) { return sc.src; }) });
+    }).then(function (res) {
+      if (!res || typeof res.html !== 'string' || res.html.length < 20) throw new Error('empty');
+      var v = into;
+      if (!v) {
+        var n = versions.reduce(function (m, x) { var k = parseInt((String(x.name).match(/^v(\d+)/) || [])[1], 10); return k > m ? k : m; }, 0) + 1;
+        v = { id: 'v' + Date.now(), name: 'v' + n + ' - ' + (reviewerName || 'Someone'), at: new Date().toISOString(),
+              base: (cfg.release && cfg.release.id) || '', status: 'proposed', files: {}, screens: [], log: [] };
+        if (cloud) v.owner = cloud.uid;
+        versions.push(v);
+      }
+      if (mode === 'new') {
+        var slug = String(res.label || text).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 30) || 'screen';
+        var file = slug + '.html', k = 2;
+        while (screens.some(function (sc) { return sc.src === file; })) file = slug + '-' + (k++) + '.html';
+        v.files[file] = res.html;
+        v.screens.push({ label: String(res.label || 'New screen').slice(0, 40), src: file, icon: 'detail', desc: String(res.summary || text).slice(0, 120) });
+        src = file;
+      } else {
+        v.files[src] = res.html;
+      }
+      v.summary = String(res.summary || text).slice(0, 200);
+      v.log.push({ at: new Date().toISOString(), asked: text.slice(0, 500), screen: src, did: v.summary });
+      return saveVersion(v).then(function () {
+        editBusy = false;
+        if (editSheet) editSheet.hidden = true;
+        current.screen = src;
+        showVersion(v.id);
+        record('harness:version-edit', { version: v.id, screen: src, mode: mode });
+      });
+    }).catch(function (err) {
+      editBusy = false;
+      go.disabled = false; go.textContent = into ? 'Update ' + into.name : 'Create my version';
+      note.textContent = err && err.code === 'not_granted' ? 'Claude was not allowed for this page, so nothing was changed.'
+        : err && err.code === 'rate_limited' ? 'Claude is busy. Try again in a moment.'
+        : 'That did not work, and nothing was changed. Try saying it more simply, or one change at a time.';
+    });
+  }
+  loadVersions();
+
+  /* ---------- published as an artifact ----------
+
+     The same harness, published as a Claude artifact, needs no server of its
+     own to share notes: the artifact has a store, and the people opening it
+     are already signed in. So when that store is there, every note a person
+     writes is kept in it as well as in their browser, under their own id:
+
+         notes/<their id>/items/<note id>
+
+     The rules the page is published with let each person read and write only
+     their own notes, and let the author - and editors - read everyone's.
+     Reviewers do not see each other's, which is what a review needs: the
+     second opinion must not be shaped by the first.
+
+     Nothing here runs unless the platform hands over `window.claude`. Served
+     from a folder, or from any other host, this whole section is inert. */
+  function cloudBody(c) {
+    var o = {};
+    ['screen', 'state', 'variant', 'device', 'role', 'phase', 'selector', 'anchor', 'rx', 'ry', 'fx', 'fy',
+     'who', 'severity', 'text', 'html', 'at', 'mark', 'version'].forEach(function (k) {
+      if (c[k] !== undefined && c[k] !== null) o[k] = c[k];
+    });
+    o.release = (cfg.release && cfg.release.id) || '';
+    /* a document may hold 256 KiB; a note with a large picture keeps its
+       words and says the picture stayed behind */
+    if (o.html && o.html.length > 180000) { o.html = esc(noteText(c)); o.pictureLeftBehind = true; }
+    return o;
+  }
+  function cloudSync() {
+    if (!cloud) return;
+    clearTimeout(cloudSync._t);
+    cloudSync._t = setTimeout(function () {
+      var col = cloud.db.collection('notes/' + cloud.uid + '/items');
+      var live = {};
+      comments.forEach(function (c) {
+        if (c.draft || !c.id) return;
+        live[c.id] = true;
+        var body = cloudBody(c), key = JSON.stringify(body);
+        if (cloud.sent[c.id] === key) return;
+        cloud.sent[c.id] = key;
+        col.doc(c.id).set(body).catch(function () {
+          delete cloud.sent[c.id];
+          if (!cloud.warned) {
+            cloud.warned = true;
+            toast('This note was not saved to the shared prototype. It is still in this browser - ask for Contributor access.', 7000);
+          }
+        });
+      });
+      Object.keys(cloud.sent).forEach(function (id) {
+        if (live[id]) return;
+        delete cloud.sent[id];
+        col.doc(id).delete().catch(function () {});
+      });
+      /* One small document per person, beside their notes. Without it the
+         author can read a reviewer's notes only by already knowing the
+         reviewer's id - a collection with nothing in it but sub-collections
+         lists as empty. */
+      var n = Object.keys(live).length, stamp = n + ':' + Object.keys(cloud.sent).sort().join(',');
+      if (cloud.head !== stamp) {
+        cloud.head = stamp;
+        cloud.db.doc('notes/' + cloud.uid).set({ count: n, updated: new Date().toISOString(),
+          release: (cfg.release && cfg.release.id) || '' }).catch(function () {});
+      }
+    }, 700);
+  }
+  (function findCloud() {
+    if (!window.claude || typeof window.claude.use !== 'function') return;
+    Promise.all([window.claude.use('db'), window.claude.use('user'), window.claude.use('sample')]).then(function (got) {
+      var db = got[0], user = got[1], sample = got[2];
+      if (!db || !user || typeof user.id !== 'function') return null;
+      return Promise.resolve(user.id()).then(function (uid) {
+        if (!uid) return null;
+        cloud = { db: db, uid: uid, user: user, sent: {}, warned: false, sample: sample || null, admin: false, owner: false, write: null };
+        document.body.classList.add('is-cloud');
+        /* shown at once: the control must not wait for the list of versions
+           to arrive, or a slow or refused read leaves it missing altogether */
+        paintVersion();
+        Promise.all([
+          Promise.resolve().then(function () { return user.isOwner(); }).catch(function () { return false; }),
+          Promise.resolve().then(function () { return user.canEdit(); }).catch(function () { return false; }),
+          Promise.resolve().then(function () { return user.can('data.write'); }).catch(function () { return null; })
+        ]).then(function (lv) {
+          cloud.owner = !!lv[0]; cloud.admin = !!lv[1]; cloud.write = lv[2];
+          paintVersion();
+          if (readsAllNotes()) loadTeamNotes();
+        });
+        loadVersions();
+        if (typeof user.me === 'function') {
+          Promise.resolve(user.me()).then(function (me) {
+            if (me && me.name && !reviewerName) { reviewerName = me.name; writeStore('name', reviewerName); }
+          }).catch(function () {});
+        }
+        /* notes this person wrote on another device come along */
+        return db.collection('notes/' + uid + '/items').get().then(function (snap) {
+          var have = {};
+          comments.forEach(function (c) { have[c.id] = true; });
+          var added = 0;
+          snap.docs.forEach(function (d) {
+            var n = d.data();
+            if (!n) return;
+            cloud.sent[d.id] = JSON.stringify(n);
+            if (have[d.id]) return;
+            n.id = d.id;
+            if (n.html) n.html = clean(n.html);
+            comments.push(n);
+            added++;
+          });
+          if (added) { paintSend(); drawAnnots(); }
+          writeStore('comments', comments);      // and anything written before the store answered goes up
+        });
+      });
+    }).catch(function () { /* no store for this view: the page works from the browser alone */ });
+  })();
+
+  /* What changed since the last time: said once per release, to whoever opens
+     the prototype, and kept reachable from the screen panel's foot. */
+  (function releaseNote() {
+    var rel = cfg.release;
+    if (!rel || !rel.id || !rel.notes || !rel.notes.length) return;
+    if (readStore('seenRelease', '') === rel.id) return;
+    var el = document.createElement('div');
+    el.className = 'rel'; el.setAttribute('role', 'status');
+    el.innerHTML = '<div class="rel__top"><b></b><button class="nav__x" type="button" aria-label="Close">' + icon('i-x') + '</button></div><ul></ul>';
+    el.querySelector('b').textContent = rel.title || 'New in this version';
+    rel.notes.forEach(function (t) { var li = document.createElement('li'); li.textContent = t; el.querySelector('ul').appendChild(li); });
+    el.querySelector('button').addEventListener('click', function () { writeStore('seenRelease', rel.id); el.remove(); });
+    document.body.appendChild(el);
+  })();
+
   /* The other direction: the code changed, so the prototype reloads. A file
      under the artifact reloads the frame and keeps the screen, the state and
      the view; a change to the shell or its config reloads the page onto the
@@ -8045,7 +8744,7 @@
         if (!seen) { seen = now; return; }
         /* never under someone's hands: a note being written, a description
            being edited, a sheet half filled in */
-        var busy = editing() || fcEdit || !!document.querySelector('[data-sheet]:not([hidden]), [data-invite-sheet]:not([hidden])');
+        var busy = editing() || fcEdit || !!document.querySelector('[data-sheet]:not([hidden]), [data-invite-sheet]:not([hidden]), [data-edit-sheet]:not([hidden])');
         if (now.shell !== seen.shell) {
           if (busy) return;
           /* The place is handed over in sessionStorage, not the address. Put
@@ -8273,6 +8972,13 @@
     if (generated(s)) {
       frame.removeAttribute('src');
       frame.srcdoc = s.disclosure ? disclosureDoc() : s.overview ? overviewDoc() : s.featureMap ? featureMapDoc() : instructionsDoc();
+    } else if (versionFile(current.screen) !== null) {
+      /* this screen is changed, or added, in the version being shown */
+      var want = current.screen, ver = activeVersion;
+      frame.removeAttribute('src');
+      composeVersion(versionById(ver), want).then(function (doc) {
+        if (current.screen === want && activeVersion === ver) frame.srcdoc = doc;
+      });
     } else {
       frame.removeAttribute('srcdoc');
       frame.src = current.screen;

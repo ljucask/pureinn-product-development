@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.65.0] - 2026-10-06
+
+### A prototype can be reviewed by a team as a Claude artifact - publish.py bundles the prototype and generates the store's access rules from one access block, so leaving notes and proposing a version are separate rights; reviewers leave notes and Editors propose named versions by describing a change, which the author approves into Main; the author reads everyone's notes in the harness; pull.py writes all notes and proposed versions into the project as readable files under review/team/; 61 browser tests
+
+---
+
+
 ## [5.64.0] - 2026-10-05
 
 ### pm-prototype becomes a workbench with a harness wired to the repo - a prototype can now be built wider than the MVP and cut down by roadmap phase in the harness (user types, phases, features switched on and off, versions, a feature card beside the screen), then handed over; the bundled serve.py saves review notes and proposed description edits into the project and reloads the prototype as files change, sync.py generates the feature list from the cards; the harness chrome is rebuilt as opaque floating toolbars to AA contrast with plain control names; pm-mvp-scope, pm-feature-card, pm-feature-design, pm-stripe, pm-audit and pm-hypotheses now read what a prototype produces; 49 browser tests

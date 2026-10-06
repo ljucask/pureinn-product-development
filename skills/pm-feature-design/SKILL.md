@@ -135,7 +135,7 @@ A prototype that came before the design already settled some questions and delib
 | the `PRT-` card | `feature-cards/` in that folder | how the feature behaves in the prototype, what is simulated in it, what the production version is and costs |
 | `domain.md` / `rules.md` | same folder, only if they exist | where the prototype deliberately diverged from the global registers |
 
-Locate the folder from the `Prototype:` path, or by finding the `promoted_from` ID in a `prototypes/*/feature-plan-prt.md` - do not derive the folder name from the ID. An external-tool prototype has a spec file instead of a folder: read the spec and its `## Result` section. State coverage ("Read meta.md, findings.md, PRT-AMA-003 in prototypes/ama-lifecycle/"). **If the folder, the `PRT-` card or `findings.md` cannot be found, say so and continue without carry-over** - never reconstruct what the prototype "probably" showed; the dangling reference is `pm-audit`'s finding.
+Locate the folder from the `Prototype:` path, or by finding the `promoted_from` ID in a `prototypes/*/feature-plan-prt.md` - do not derive the folder name from the ID. An external-tool prototype has a spec file instead of a folder: read the spec and its `## Result` section. State coverage ("Read meta.md, findings.md, PRT-ONB-003 in prototypes/onboarding-flow/"). **If the folder, the `PRT-` card or `findings.md` cannot be found, say so and continue without carry-over** - never reconstruct what the prototype "probably" showed; the dangling reference is `pm-audit`'s finding.
 
 **Check `Result:` before designing:**
 

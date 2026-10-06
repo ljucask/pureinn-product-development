@@ -15,7 +15,7 @@ window.HARNESS_CONFIG = {
   name: 'prototype',
 
   /* Shown in the chrome and in the browser tab. Falls back to `name`.
-     This is the prototype's name, not the product's - "AMA lifecycle v1"
+     This is the prototype's name, not the product's - "Onboarding flow v1"
      rather than "Acme". */
   title: '',
 
@@ -294,6 +294,22 @@ window.HARNESS_CONFIG = {
   // ],
 
   // view: { phase: 'mvp' },
+
+  /* PUBLISHED AS A CLAUDE ARTIFACT (see ../published-review.md). Who may do
+     what, in the artifact's own levels. Leaving a note is open to every
+     Contributor. These are the defaults:
+
+       versions   who may propose a version by describing a change:
+                  'editor' (default) or 'contributor'
+       allNotes   who reads everyone's notes: 'owner' (default) or 'editor'
+
+     Approving a version is always the author's. publish.py generates the
+     store's rules from this block - never write them by hand. Served locally
+     there is one person and none of this applies. */
+  // access: { versions: 'editor', allNotes: 'owner' },
+
+  /* A note shown once to each person, per id. publish.py --release writes it. */
+  // release: { id: 'r2', title: 'New in this version', notes: ['...'] },
 
   /* Add this to `screens` for the register read as a plan - every feature
      under its phase. It exists only when `features` is not empty:

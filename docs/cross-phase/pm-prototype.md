@@ -4,7 +4,7 @@
 
 **Phase:** Cross-phase (Discovery → Build)  
 **Agent mode:** `decision` - drafts autonomously, then requires your review before anything is final  
-**Version:** 1.4.0  
+**Version:** 1.5.0  
 **Triggers:** prototype, prototyping, proof of concept, POC, spike, validate before build, lovable, base44, v0, figma make, clickable prototype, mockup, throwaway, quick validation, in-repo prototype, coding agent prototype, prototype harness
 
 ---
@@ -53,6 +53,8 @@ In a workbench the left end of the harness's bottom bar becomes the view:
 Pressing a feature's name opens its card beside the screen - what it should do, who it is for, the notes so far - and takes you to the screen it is on. A generated **feature map** lists every feature under its phase.
 
 Served with the bundled `serve.py`, the harness is wired to the repo: *Save to project* writes a reviewer's notes into `review/`, an edited feature description is saved as a proposal that the author accepts with `sync.py --apply`, and a change to the prototype's files reloads it in place. `sync.py` generates the harness's feature list from the feature cards, so a phase is typed once, and `sync.py --check` says whether the two still agree. The bridge exists only on your own machine; `review/` holds reviewers' names and notes and is not published with the prototype.
+
+For a team in one Claude organisation the prototype can be published as a Claude artifact instead: `publish.py` bundles it, people open one link, leave notes and - with Editor access - propose a change as a named version by describing it. Leaving notes and proposing a version are separate rights, set in one `access` block; the author reads everyone's notes in the harness and approves versions. `pull.py` writes all notes and proposed versions into the project as `review/team/notes.md`, `review/team/versions.md` and the changed screens as files.
 
 The shell itself is floating and opaque: a bar across the top, its twin across the bottom, and side panels that push the prototype aside rather than cover it. Only one panel is open at a time, and a press outside closes it. Phases come from the roadmap, and no feature goes into the first one without its production cost stated - divergence ignores implementation on purpose, so convergence may not.
 

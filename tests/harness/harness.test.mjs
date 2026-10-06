@@ -992,3 +992,352 @@ test('a screen on another address is shown with a plain notice and no error', as
   assert.deepEqual(errors, []);
   await ctx.close(); other.close();
 });
+
+/* ---------- versions: a stand-in for Claude, so the layer can be driven ---------- */
+
+async function openWithEngine(query = '') {
+  const ctx = await browser.newContext({ viewport: { width: 1500, height: 950 } });
+  const page = await ctx.newPage();
+  const errors = [];
+  page.on('pageerror', e => errors.push(String(e)));
+  await page.addInitScript(() => {
+    window.__asked = [];
+    window.HARNESS_ENGINE = async req => {
+      window.__asked.push({ mode: req.mode, screen: req.screen, instruction: req.instruction, screens: req.screens });
+      if (req.instruction === 'fail') throw new Error('no');
+      if (req.mode === 'new') return { summary: 'Added a receipt screen.', label: 'Receipt',
+        html: '<!doctype html><html><head><title>r</title></head><body><h1 id="receipt">Receipt</h1><a id="back" href="index.html">Back</a><script>parent.__evil = 2</' + 'script></body></html>' };
+      return { summary: 'Renamed the queue.', html: req.html
+        .replace('>Queue</section>', ' onclick="parent.__evil = 1">Morning queue</section>')
+        .replace('</body>', '<script>parent.__evil = 3</' + 'script></body>') };
+    };
+  });
+  await page.goto(base + '/harness.html' + query);
+  await page.frameLocator('#frame').locator('body').waitFor();
+  await page.waitForTimeout(350);
+  return { page, errors, art: page.frameLocator('#frame'), close: () => ctx.close() };
+}
+const pickVersionItem = async (page, text) => { await page.click('[data-menu="version"]'); await page.locator('.menu__i', { hasText: text }).first().click(); };
+
+test('with no way to ask Claude and no versions, the version control is not there', async () => {
+  const h = await open();
+  assert.equal(await h.page.locator('[data-menu="version"]').isVisible(), false);
+  await h.close();
+});
+
+test('a change by description becomes a named version beside the main one, and cannot bring script with it', async () => {
+  const h = await openWithEngine('?phase=all');
+  assert.equal(await h.page.locator('[data-ver-label]').textContent(), 'Version: Main');
+  await pickVersionItem(h.page, 'Change this screen');
+  await h.page.fill('[data-edit-text]', 'Call it the morning queue.');
+  await h.page.click('[data-edit-go]');
+  await h.art.locator('#queue', { hasText: 'Morning queue' }).waitFor({ timeout: 5000 });
+  assert.equal(await h.page.locator('[data-ver-label]').textContent(), 'Version: v1 - Someone');
+  assert.deepEqual(await h.page.evaluate(() => window.__asked[0]), { mode: 'change', screen: 'index.html', instruction: 'Call it the morning queue.', screens: ['index.html', 'settings.html'] });
+
+  /* what came back carried a script and a handler; neither runs */
+  await h.art.locator('#queue').click();
+  await h.page.waitForTimeout(200);
+  assert.equal(await h.page.evaluate(() => window.__evil), undefined);
+  /* the screen's own script is the same one the main version has, so it stays */
+  assert.equal(await h.art.locator('#state').textContent(), 'full', 'the artifact still talks to the shell');
+  /* and the view still applies to a version's screen */
+  await h.page.click('[data-vw-phase="mvp"]');
+  assert.equal(await visible(h.art, '#bulk'), false);
+  await h.page.click('[data-vw-phase="all"]');
+
+  /* a link inside the version stays inside the version */
+  await h.art.locator('#tosettings').click();
+  await h.art.locator('#settings').waitFor();
+  assert.equal(await h.page.locator('[data-ver-label]').textContent(), 'Version: v1 - Someone');
+  await h.page.click('[data-nav-btn]');
+  await h.page.locator('.nav__i', { hasText: 'Queue' }).click();
+  await h.art.locator('#queue', { hasText: 'Morning queue' }).waitFor();
+
+  /* the main one is untouched, and one press away */
+  await pickVersionItem(h.page, 'Main');
+  await h.art.locator('#queue').waitFor();
+  assert.equal((await h.art.locator('#queue').textContent()).trim(), 'Queue');
+  assert.deepEqual(h.errors, []);
+  await h.close();
+});
+
+test('a version can add a screen, a second change goes into the same version, and it survives a reload', async () => {
+  const h = await openWithEngine('?phase=all');
+  await pickVersionItem(h.page, 'Add a screen');
+  await h.page.fill('[data-edit-text]', 'A receipt after assigning.');
+  await h.page.click('[data-edit-go]');
+  await h.art.locator('#receipt').waitFor({ timeout: 5000 });
+  assert.equal(await h.page.locator('[data-nav-current]').textContent(), 'Receipt');
+  assert.equal(await h.page.evaluate(() => window.__evil), undefined, 'a new screen keeps no script at all');
+  await h.art.locator('#back').click();
+  await h.art.locator('#queue').waitFor();
+
+  await pickVersionItem(h.page, 'Change this screen');
+  assert.match(await h.page.locator('[data-edit-go]').textContent(), /Update v1/);
+  await h.page.fill('[data-edit-text]', 'Call it the morning queue.');
+  await h.page.click('[data-edit-go]');
+  await h.art.locator('#queue', { hasText: 'Morning queue' }).waitFor({ timeout: 5000 });
+  await h.page.click('[data-menu="version"]');
+  assert.equal(await h.page.locator('.menu__i b', { hasText: /^v\d/ }).count(), 1, 'still one version');
+  await h.page.keyboard.press('Escape');
+
+  await h.page.reload();
+  await h.page.frameLocator('#frame').locator('body').waitFor();
+  await h.page.waitForTimeout(400);
+  await pickVersionItem(h.page, 'v1 - Someone');
+  await h.art.locator('#queue', { hasText: 'Morning queue' }).waitFor({ timeout: 5000 });
+  await h.page.click('[data-nav-btn]');
+  assert.equal(await h.page.locator('.nav__i', { hasText: 'Receipt' }).count(), 1);
+  await h.page.keyboard.press('Escape');
+
+  /* a proposed screen sits with the prototype's screens, before the documents, and says what it is */
+  await h.page.click('[data-nav-btn]');
+  const order = await h.page.locator('.nav__i .nav__t').allTextContents();
+  assert.ok(order.indexOf('Receipt') > -1 && order.indexOf('Receipt') < order.indexOf('Feature map'), order.join(' | '));
+  assert.match(await h.page.locator('.nav__i', { hasText: 'Receipt' }).locator('.nav__new').textContent(), /Proposed in v1 - Someone/);
+  assert.equal(await h.page.locator('.nav__i', { hasText: 'Receipt' }).getAttribute('data-in'), 'screens');
+  await h.page.keyboard.press('Escape');
+
+  /* switching back and forth does not lose the way to the new screen */
+  for (let i = 0; i < 3; i++) {
+    await pickVersionItem(h.page, 'Main');
+    await h.art.locator('#queue').waitFor();
+    await pickVersionItem(h.page, 'v1 - Someone');
+    await h.page.waitForTimeout(250);
+  }
+  await h.page.click('[data-nav-btn]');
+  await h.page.locator('.nav__i', { hasText: 'Receipt' }).click();
+  await h.art.locator('#receipt').waitFor({ timeout: 5000 });
+  await pickVersionItem(h.page, 'Add a screen');
+  await h.page.fill('[data-edit-text]', 'Another one.');
+  await h.page.click('[data-edit-go]');
+  await h.page.locator('[data-nav-current]', { hasText: 'Receipt' }).waitFor();
+  assert.equal(await h.page.evaluate(() => window.__asked.length), 1, 'one request since the reload');
+  await h.art.locator('#receipt').waitFor({ timeout: 5000 });
+  await h.page.click('[data-nav-btn]');
+  assert.equal(await h.page.locator('.nav__i', { hasText: 'Receipt' }).count(), 2, 'the second added screen is there too');
+  await h.page.keyboard.press('Escape');
+
+  /* approving makes it part of Main, for whoever opens Main */
+  await pickVersionItem(h.page, 'Approve this version');
+  assert.equal(await h.page.locator('[data-ver-label]').textContent(), 'Version: Main');
+  await h.page.click('[data-nav-btn]');
+  await h.page.locator('.nav__i', { hasText: 'Queue' }).click();
+  await h.art.locator('#queue', { hasText: 'Morning queue' }).waitFor({ timeout: 5000 });
+  await h.page.click('[data-nav-btn]');
+  assert.match(await h.page.locator('.nav__i', { hasText: 'Receipt' }).first().locator('.nav__new').textContent(), /Approved/);
+  await h.page.keyboard.press('Escape');
+  await h.page.reload();
+  await h.page.frameLocator('#frame').locator('#queue', { hasText: 'Morning queue' }).waitFor({ timeout: 5000 });
+
+  /* and the approval can be taken back */
+  await pickVersionItem(h.page, 'Take v1 - Someone out of Main');
+  await h.art.locator('#queue').waitFor();
+  await h.page.waitForTimeout(300);
+  assert.equal((await h.art.locator('#queue').textContent()).trim(), 'Queue');
+  await pickVersionItem(h.page, 'v1 - Someone');
+  await pickVersionItem(h.page, 'Delete this version');
+  assert.equal(await h.page.locator('[data-ver-label]').textContent(), 'Version: Main');
+  assert.deepEqual(h.errors, []);
+  await h.close();
+});
+
+test('when the change fails, nothing is created and the sheet says so', async () => {
+  const h = await openWithEngine();
+  await pickVersionItem(h.page, 'Change this screen');
+  await h.page.fill('[data-edit-text]', 'fail');
+  await h.page.click('[data-edit-go]');
+  await h.page.locator('[data-edit-note]', { hasText: 'nothing was changed' }).waitFor({ timeout: 4000 });
+  assert.equal(await h.page.locator('[data-ver-label]').textContent(), 'Version: Main');
+  await h.close();
+});
+
+test('a note being written fits inside its rail, at a wide and a narrow window', async () => {
+  const h = await open();
+  for (const [width, height] of [[1720, 1283], [1440, 900], [1280, 800]]) {
+    await h.page.setViewportSize({ width, height });
+    await h.page.click('[data-menu="note"]');
+    await h.page.locator('.menu__i', { hasText: 'This screen' }).click();
+    await h.page.locator('[data-rail] [contenteditable]').first().fill('The queue says nothing about which job is late.');
+    await h.page.waitForTimeout(300);
+    const m = await h.page.evaluate(() => {
+      const rail = document.querySelector('[data-rail]').getBoundingClientRect();
+      const card = document.querySelector('[data-rail] .note--comment').getBoundingClientRect();
+      const out = [...document.querySelectorAll('[data-rail] .note--comment button, [data-rail] .note--comment [contenteditable]')]
+        .map(e => [e.className, e.getBoundingClientRect()]).filter(([, r]) => r.width > 0 && (r.left < card.left - 1 || r.right > card.right + 1)).map(([c]) => c);
+      return { cardInRail: card.left >= rail.left - 1 && card.right <= rail.right + 1, out };
+    });
+    assert.equal(m.cardInRail, true, 'the card is cut by the rail at ' + width);
+    assert.deepEqual(m.out, [], 'controls run out of the card at ' + width);
+    await h.page.locator('[data-rail] .note--comment .note__x').first().click();
+    await h.page.waitForTimeout(400);
+  }
+  await h.close();
+});
+
+/* ---------- published: a stand-in for the artifact's store and its levels ---------- */
+
+async function openPublished(level, seed = {}) {
+  const ctx = await browser.newContext({ viewport: { width: 1500, height: 950 } });
+  const page = await ctx.newPage();
+  const errors = [];
+  page.on('pageerror', e => errors.push(String(e)));
+  await page.addInitScript(({ level, seed }) => {
+    const store = window.__store = Object.assign({}, seed);
+    const snap = (id, data) => ({ id, data: () => JSON.parse(JSON.stringify(data)) });
+    const db = {
+      collection: p => ({ get: async () => ({ docs: Object.keys(store)
+        .filter(k => k.startsWith(p + '/') && k.slice(p.length + 1).indexOf('/') < 0)
+        .map(k => snap(k.slice(p.length + 1), store[k])) }) }),
+      doc: p => ({ set: async d => { store[p] = d; }, delete: async () => { delete store[p]; },
+                   get: async () => snap(p.split('/').pop(), store[p]) })
+    };
+    const user = { id: async () => 'u_me', me: async () => ({ name: 'Me' }),
+      isOwner: async () => level === 'owner', canEdit: async () => level === 'owner' || level === 'editor',
+      can: async () => true, profiles: async ids => Object.fromEntries(ids.map(i => [i, { name: i === 'u_ann' ? 'Ann Example' : '' }])) };
+    const sample = Object.assign(async () => ({ text: '' }), { json: async () => ({ summary: 'x', html: '<p>x</p>' }) });
+    window.claude = { use: async n => ({ db, user, sample })[n] || null };
+  }, { level, seed });
+  await page.goto(base + '/harness.html?phase=all');
+  await page.frameLocator('#frame').locator('body').waitFor();
+  await page.waitForTimeout(500);
+  return { page, errors, close: () => ctx.close() };
+}
+const colleague = {
+  'notes/u_ann': { count: 1 },
+  'notes/u_ann/items/n1': { screen: 'index.html', state: 'full', severity: 'high', who: 'typed name', at: '2026-01-01T10:00:00Z',
+    text: 'The header hides the deadline.', html: 'The header <img src=x onerror="window.__evil=9"> hides the deadline.' }
+};
+
+test('published: a Contributor can leave notes but is not offered a version to propose', async () => {
+  const h = await openPublished('contributor');
+  assert.equal(await h.page.locator('[data-menu="version"]').isVisible(), false);
+  assert.equal(await h.page.evaluate(() => document.body.classList.contains('is-cloud')), true);
+  await h.close();
+});
+
+test('published: an Editor is offered a version to propose, and cannot approve', async () => {
+  const h = await openPublished('editor', {
+    'versions/u_ann': { updated: 'x' },
+    'versions/u_ann/items/v1': { name: 'v1 - Ann', by: 'Ann', at: '2026-01-01T10:00:00Z', status: 'proposed', files: { 'index.html': '<!doctype html><title>q</title><p>Ann</p>' }, screens: [], log: [] }
+  });
+  await h.page.click('[data-menu="version"]');
+  const items = await h.page.locator('.menu__i').allTextContents();
+  assert.ok(items.some(t => /Change this screen/i.test(t)), items.join(' | '));
+  assert.ok(items.some(t => /v1 - Ann/.test(t)));
+  await h.page.locator('.menu__i', { hasText: 'v1 - Ann' }).first().click();
+  await h.page.waitForTimeout(400);
+  await h.page.click('[data-menu="version"]');
+  const after = await h.page.locator('.menu__i').allTextContents();
+  assert.equal(after.some(t => /Approve/i.test(t)), false, after.join(' | '));
+  assert.deepEqual(h.errors, []);
+  await h.close();
+});
+
+test('published: the author sees a colleague\'s note, named, read-only, and its markup made safe', async () => {
+  const h = await openPublished('owner', colleague);
+  await h.page.evaluate(() => document.querySelector('[data-open-notes]').click());
+  const chip = h.page.locator('[data-team-chip]');
+  await chip.waitFor({ state: 'visible', timeout: 4000 });
+  assert.match(await chip.textContent(), /Everyone's notes \(1\)/);
+  await chip.click();
+  const row = h.page.locator('.nrow--team');
+  assert.equal(await row.count(), 1);
+  assert.match(await row.locator('.nrow__by').textContent(), /Ann Example/);
+  assert.match(await row.locator('.nrow__t').textContent(), /hides the deadline/);
+  assert.equal(await row.locator('.nrow__act').count(), 0);
+  assert.equal(await h.page.evaluate(() => window.__evil), undefined);
+  assert.deepEqual(h.errors, []);
+  await h.close();
+});
+
+test('published: the share sheet says where access is given and what each level may do', async () => {
+  const h = await openPublished('owner');
+  await h.page.evaluate(() => document.querySelector('[data-invite]').click());
+  const sheet = h.page.locator('[data-invite-sheet]');
+  assert.equal(await sheet.locator('#invite-h').textContent(), 'Share with your team');
+  assert.equal(await sheet.locator('[data-invite-local]').isVisible(), false);
+  assert.match(await sheet.locator('[data-invite-cloud]').textContent(), /Share menu/);
+  const rows = await sheet.locator('.lv tr').allTextContents();
+  assert.equal(rows.length, 4);
+  assert.match(rows[1], /Contributor.*Cannot propose a version/);
+  assert.match(await sheet.locator('.lv tr.is-me').textContent(), /You, the author/);
+  await h.close();
+  const e = await openPublished('editor');
+  await e.page.evaluate(() => document.querySelector('[data-invite]').click());
+  assert.match(await e.page.locator('.lv tr.is-me').textContent(), /^Editor/);
+  await e.close();
+});
+
+test('published: an Editor does not see other people\'s notes', async () => {
+  const h = await openPublished('editor', colleague);
+  await h.page.evaluate(() => document.querySelector('[data-open-notes]').click());
+  await h.page.waitForTimeout(500);
+  assert.equal(await h.page.locator('[data-team-chip]').isVisible(), false);
+  await h.close();
+});
+
+test('publish.py bundles the prototype: config inlined, index renamed, review left out, rules from access', async () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'harness-pub-'));
+  try {
+    const build = path.join(dir, 'build');
+    fs.mkdirSync(path.join(build, 'review'), { recursive: true });
+    for (const f of ['harness.html', 'harness-client.js', 'publish.py', 'serve.py']) fs.copyFileSync(path.join(scaffold, f), path.join(build, f));
+    for (const f of ['index.html', 'settings.html']) fs.copyFileSync(path.join(fixture, f), path.join(build, f));
+    fs.writeFileSync(path.join(build, 'review', 'notes.md'), 'private');
+    fs.writeFileSync(path.join(build, 'harness.config.js'),
+      fs.readFileSync(path.join(fixture, 'harness.config.js'), 'utf8').replace('window.HARNESS_CONFIG = {', "window.HARNESS_CONFIG = {\n  access: { versions: 'contributor', allNotes: 'editor' },"));
+    const r = spawnSync('python3', [path.join(build, 'publish.py'), '--release', 'r2', '--note', 'One </script> thing'], { encoding: 'utf8' });
+    assert.equal(r.status, 0, r.stderr);
+    const out = path.join(dir, 'publish');
+    const pageHtml = fs.readFileSync(path.join(out, 'prototype.html'), 'utf8');
+    assert.ok(pageHtml.startsWith('<title>'));
+    /* the page is title, one stylesheet, then the chrome - no stylesheet text left over as content */
+    const afterStyle = pageHtml.slice(pageHtml.indexOf('</style>') + 8).trimStart();
+    assert.ok(afterStyle.startsWith('<'), afterStyle.slice(0, 80));
+    assert.equal(pageHtml.slice(0, pageHtml.indexOf('</style>')).includes('<header'), false);
+    assert.equal(/<!doctype|<html|<body/i.test(pageHtml.slice(0, 2000)), false);
+    assert.equal(pageHtml.includes('<script src="harness.config.js">'), false);
+    assert.ok(pageHtml.includes("src: 'home.html'"));
+    assert.ok(pageHtml.includes('"id": "r2"'));
+    assert.equal(pageHtml.includes('One </script> thing'), false);
+    const files = JSON.parse(fs.readFileSync(path.join(out, 'files.json'), 'utf8'));
+    assert.deepEqual(Object.keys(files).sort(), ['harness-client.js', 'home.html', 'settings.html']);
+    assert.equal(fs.existsSync(path.join(out, 'files', 'review')), false);
+    const caps = JSON.parse(fs.readFileSync(path.join(out, 'capabilities.json'), 'utf8'));
+    const rule = p => caps.db.rules.find(x => x.path === p);
+    assert.equal(rule('versions/{self}').write, 'interact');
+    assert.equal(rule('notes').read, 'admin');
+    assert.equal(rule('notes/{self}').write, 'interact');
+    assert.equal(rule('versions').write, 'owner');
+  } finally { fs.rmSync(dir, { recursive: true, force: true }); }
+});
+
+test('pull.py writes readable notes and versions, and a version cannot write outside its folder', async () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'harness-pull-'));
+  try {
+    const raw = path.join(dir, 'review', 'team', 'raw');
+    const put = (p, d) => { fs.mkdirSync(path.dirname(path.join(raw, p)), { recursive: true }); fs.writeFileSync(path.join(raw, p), JSON.stringify(d)); };
+    put('names.json', { u_ann: 'Ann Example' });
+    put('notes/u_ann/items/n1.json', { screen: 'index.html', severity: 'low', text: 'Small thing.', at: '2026-01-01T10:00:00Z', version: 'v1' });
+    put('notes/u_ann/items/n2.json', { screen: 'index.html', severity: 'high', text: 'Broken.\n## Injected heading\n[link](x)', at: '2026-01-02T10:00:00Z' });
+    put('versions/u_ann/items/v1.json', { name: 'v1 - Ann', status: 'approved', at: '2026-01-01T09:00:00Z',
+      log: [{ asked: 'make it blue', did: 'Made it blue.', at: '2026-01-01T09:00:00Z', screen: 'index.html' }],
+      files: { 'index.html': '<p>blue</p>', '../../escape.html': 'x', '/abs.html': 'x' }, screens: [] });
+    const r = spawnSync('python3', [path.join(scaffold, 'pull.py'), '--raw', raw], { encoding: 'utf8' });
+    assert.equal(r.status, 0, r.stderr);
+    const team = path.join(dir, 'review', 'team');
+    const notes = fs.readFileSync(path.join(team, 'notes.md'), 'utf8');
+    assert.ok(notes.indexOf('High - Ann Example') < notes.indexOf('Low - Ann Example'));
+    assert.ok(notes.includes('on v1 - Ann'));
+    assert.equal(/^## Injected/m.test(notes), false);
+    assert.equal(notes.includes('[link]'), false);
+    const versions = fs.readFileSync(path.join(team, 'versions.md'), 'utf8');
+    assert.ok(versions.includes('Approved - part of Main'));
+    assert.ok(versions.includes('Asked: make it blue'));
+    assert.equal(fs.readFileSync(path.join(team, 'versions', 'v1-ann', 'index.html'), 'utf8'), '<p>blue</p>');
+    assert.equal(fs.existsSync(path.join(dir, 'review', 'escape.html')), false);
+    assert.equal(fs.existsSync(path.join(dir, 'escape.html')), false);
+  } finally { fs.rmSync(dir, { recursive: true, force: true }); }
+});

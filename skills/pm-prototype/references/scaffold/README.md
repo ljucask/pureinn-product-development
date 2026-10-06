@@ -10,7 +10,7 @@ The reference implementation of the contract in [`../in-repo-loop.md`](../in-rep
 | `harness-client.js` | yes | no |
 | `harness.config.js` | as a starting point | **yes - this is the only one** |
 
-Set `title` in the config: it names the prototype in the chrome and in the browser tab. It is the prototype's name, not the product's - *"AMA lifecycle v1"* rather than *"Acme"*.
+Set `title` in the config: it names the prototype in the chrome and in the browser tab. It is the prototype's name, not the product's - *"Onboarding flow v1"* rather than *"Acme"*.
 
 Why byte-for-byte: the value is that the same keystroke hides the chrome and the same event format comes out of every prototype, so findings stay comparable. A harness re-invented per prototype has neither.
 
@@ -20,6 +20,8 @@ Why byte-for-byte: the value is that the same keystroke hides the chrome and the
 |---|---|---|
 | `serve.py` | yes | serves the prototype; saves what a reviewer sends into the project; reloads the prototype when a file changes |
 | `sync.py` | yes | writes the config's `features` from `../feature-cards/` |
+| `publish.py` | yes | bundles the prototype for publishing as a Claude artifact: page, files, access rules |
+| `pull.py` | yes | turns the notes and versions people left on a published prototype into readable files in `review/team/` |
 
 ## Use
 
@@ -107,6 +109,17 @@ For a script, or an agent checking its own work, the routes are plain HTTP on th
 | `POST /__harness/proposal` | propose a description | `{ feature, field: "desc" \| "spec", value, was, by }` → `{ ok, proposal }` |
 
 Both `POST`s need `Content-Type: application/json` and `X-Harness: 1`.
+
+## Published: one link for a team
+
+The whole process is in [`../published-review.md`](../published-review.md). What the kit does:
+
+- **`publish.py`** writes `../publish/`: `prototype.html` (the harness without its document skeleton, config written in), `files/` (screens, client, cards), `files.json`, `capabilities.json`. A screen named `index.html` becomes `home.html` and references are rewritten, because the host keeps that name for the page. `review/`, the bridge and the scripts are left out. `--release <id> --title --note` adds a release note each person sees once.
+- **`access`** in the config says who may do what, in the artifact's own levels: `{ versions: 'editor', allNotes: 'owner' }` by default. Any Contributor leaves notes; proposing a version takes an Editor; only the author reads everyone's notes and approves. `publish.py` generates the store's rules from the same block the harness reads.
+- **In the harness**, a person who may not propose a version is not offered one, Approve is the author's alone, and the author's notes list gains **Everyone's notes**: each colleague's note with their name, read-only.
+- **`pull.py`** reads `../review/team/raw/` (fetched by Claude Code with the ArtifactData tool) and writes `notes.md`, `versions.md` and `versions/<name>/<screen>`. Notes are grouped by screen, most serious first. Nothing pulled is run, a note cannot write its own headings, and a version cannot name a file outside its folder.
+
+Not available inside an artifact: file exports, print, and sharing a view by address.
 
 ## The feature list is generated
 
